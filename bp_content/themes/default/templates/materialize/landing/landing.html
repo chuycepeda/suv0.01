@@ -184,7 +184,6 @@
 							{% endif %}
                      </li>	
 				    {% endif %}
-				    <li id="nav-video"><a href="#modal3" class="modal-trigger menu-item btn white-text" style="background-color:#5DB9B7; margin-left: 20px;margin-right: 20px;">Segundo informe</a></li>
 
 				  </ul>
 				  <ul class="side-nav hide-on-large-only" id="mobile-demo">
@@ -242,7 +241,7 @@
 				    <br>
 				    <div class="row center">
 				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a la plataforma de</h3>
-				      <h1 class="header col s12 " style="color:#54ACA8!important; font-family:Novecentowide-Bold;">Alcalde en Línea</h1>
+				      <h1 class="header col s12 brand-color-text" style="font-family:Novecentowide-Bold;    text-shadow: rgb(255, 255, 255) 1px 1px 1px;">{{app_name}}</h1>
 					  {% if not is_mobile %}<h3 class="col s10 offset-s1 light center header white-text" style="font-size:2.2rem;">Un espacio en el que podrás mandar peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.</h3>{% endif %}
 				    </div>
 				    <div class="row center">
@@ -251,7 +250,7 @@
 				    <br>
 				  </div>
 				</div>
-				<div class="parallax"><img src="/{{theme}}/materialize/images/landing/landingH.png?v=1" alt="Unsplashed background img 1" style="display: block; -webkit-filter: brightness(75%);"></div>
+				<div class="parallax"><img src="{{city_splash}}" alt="Unsplashed background img 1" style="display: block; -webkit-filter: brightness(65%);"></div>
 			</div>
 		{% endblock %}
 
@@ -264,7 +263,7 @@
 				    <div class="col s12 m4">
 				      <div class="icon-block">
 				        <h2 class="center brand-color-text"><i class="mdi-editor-insert-emoticon" style="font-size:45px;"></i></h2>
-				        <h5 class="center" style="color:#54ACA8!important; font-family: Agenda-Bold;">¿Cómo funciona?</h5>
+				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">¿Cómo funciona?</h5>
 
 				        <p class="center light" style="font-size: 18px;">Regístrate para enviar tu petición al alcalde. Al crear una cuenta podrás enviar la solicitud que será registrada en tu historial. Recibirás notificaciones de cómo va tu petición.</p>
 				      </div>
@@ -273,18 +272,18 @@
 				    <div class="col s12 m4">
 				      <div class="icon-block">
 				        <h2 class="center brand-color-text"><i class="mdi-action-receipt" style="font-size:45px;"></i></h2>
-				        <h5 class="center" style="color:#54ACA8!important; font-family: Agenda-Bold;">Reporta y Participa</h5>
+				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Reporta y Participa</h5>
 
-				        <p class="center light" style="font-size: 18px;">Al reportar una solicitud estarás colaborando como ciudadano para hacer de Guadalupe una mejor ciudad. Ayúdanos con tu participación para dar atención a las necesidades de nuestro municipio.</p>
+				        <p class="center light" style="font-size: 18px;">Al reportar una solicitud estarás colaborando como ciudadano para hacer de {{city_name}} una mejor ciudad. Ayúdanos con tu participación para dar atención a las necesidades de nuestro municipio.</p>
 				      </div>
 				    </div>
 
 				    <div class="col s12 m4">
 				      <div class="icon-block">
 				        <h2 class="center brand-color-text"><i class="mdi-action-favorite-outline" style="font-size:45px;"></i></h2>
-				        <h5 class="center" style="color:#54ACA8!important; font-family: Agenda-Bold;">Sé parte del cambio</h5>
+				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Sé parte del cambio</h5>
 
-				        <p class="center light" style="font-size: 18px;">Ayúdanos a conocer las necesidades de nuestra ciudad. Juntos lograremos el cambio que estas esperando. En tus manos está transformar Ciudad Guadalupe.</p>
+				        <p class="center light" style="font-size: 18px;">Ayúdanos a conocer las necesidades de nuestra {{city_name}}. Juntos lograremos el cambio que estas esperando. En tus manos está transformar {{city_name}}.</p>
 				      </div>
 				    </div>
 				  </div>
@@ -294,13 +293,13 @@
 				<div class="section no-pad-bot" style="margin-top:7%">
 				  <div class="container">
 				    <div class="row center">
-				      <h1 class="header col s12 " style="color:#FFF!important; font-family: Agenda-Bold;">Voluntad que no se detiene</h1>
-					  <h4 class="col s8 offset-s2 light center header white-text" style="    text-transform: none;">A través de Alcalde en Línea, puedes contribuir para transformar nuestra ciudad. {% if not is_mobile %}Reporta, participa y entérate de las necesidades que tenemos en nuestra comunidad. Con tu ayuda podremos ser más eficientes y lograr la transformación que Ciudad Guadalupe necesita.{% endif %}</h4>
+				      <h1 class="header col s12 " style="color:#FFF!important; font-family: Agenda-Bold;">{{city_slogan}}</h1>
+					  <h4 class="col s8 offset-s2 light center header white-text" style="    text-transform: none;">A través de {{app_name}}, puedes contribuir para transformar {{city_name}}. {% if not is_mobile %}Reporta, participa y entérate de las necesidades que tenemos en nuestra comunidad. Con tu ayuda podremos ser más eficientes y lograr la transformación que {{city_name}} necesita.{% endif %}</h4>
 				      
 				    </div>
 				  </div>
 				</div>
-				<div class="parallax"><img src="/{{theme}}/materialize/images/landing/ggente.png" alt="Unsplashed background img seal" style="display: block; transform: translate3d(-50%, 386px, 0px);"></div>
+				<div class="parallax"><img src="{{city_splash_secondary}}" alt="Unsplashed background img seal" style="display: block; transform: translate3d(-50%, 386px, 0px);"></div>
 			</div>
 		{% endblock %}
 
@@ -354,7 +353,7 @@
 		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 			        <div class="row">
 			          <div class="input-field col s12 center">
-			            <p class="center login-form-text">¡Únete a la comunidad que transforme Guadalupe!</p>
+			            <p class="center login-form-text">¡Únete a la comunidad que transforma {{city_name}}!</p>
 			          </div>
 			        </div>
 			        <div class="row margin">
@@ -410,15 +409,6 @@
 					height: 100%;
 				}
 			</style>
-            <div id="modal3" class="modal">
-		      	  <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 2px;"></i>
-                  <div class="modal-content">
-                    <div class="videoWrapper">
-					    <!-- Copy & Pasted from YouTube -->
-					    <iframe width="560" height="315" src="https://www.youtube.com/embed/ex71iYAaao8" frameborder="0" allowfullscreen></iframe>
-					</div>
-                  </div>
-            </div>
 		{% endblock %}
 
 		{% block footer %}
@@ -428,16 +418,15 @@
 
 				  <div class="row">
 				    <div class="col s12 center">
-				      <h3><img class="responsive-img" src="/{{theme}}/materialize/images/logoC.png" style="height:90px; margin-top:2px;"></h3>
-				      <h4 style="line-height: 3;font-family: Agenda-Bold;">¡Comienza HOY a transformar Ciudad Guadalupe!</h4>
+				      <h4 style="line-height: 3;font-family: Agenda-Bold;">¡Comienza HOY a transformar {{city_name}}!</h4>
 				      
 				      <div class="col s12 center">
 				      	  {% if not user_id %}
 	                      <a style="margin-bottom:30px;" href="#modal1" class="modal-trigger menu-item  waves-effect waves-light brand-color white-text btn-large ">Ingresar</a>
-	                      <a style="margin-bottom:30px;" href="#modal2" class="modal-trigger menu-item  waves-effect waves-light brand-secondary-color white-text btn-large ">Crear Cuenta</a>
+	                      <a style="margin-bottom:30px;" href="#modal2" class="modal-trigger menu-item  waves-effect waves-light brand-color white-text btn-large ">Crear Cuenta</a>
 	                      {% else %}
 	                      <a style="margin-bottom:30px;" href="{{uri_for("landing-map")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Mapa</a>
-	                      <a style="margin-bottom:30px;" href="{{uri_for("materialize-report-new")}}" class="menu-item  waves-effect waves-light brand-secondary-color white-text btn-large ">Reportar</a>
+	                      <a style="margin-bottom:30px;" href="{{uri_for("materialize-report-new")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Reportar</a>
 	                      {% endif %}
 	                  </div>
 				      {% if not user_id %}
@@ -453,14 +442,14 @@
 			{% endblock %}
 
 			<!-- START FOOTER -->
-			<footer class="page-footer brand-color darken-1" style="background-color: #00464F!important;     padding-left: 40px;">
+			<footer class="page-footer brand-color darken-1" style="padding-left: 40px;">
 				<a href="#"><i class="mdi-navigation-expand-less white-text right" style="padding: 10px;"></i></a>
 				<div class="container">
 				  <div class="row">
 				    <div class="col s12 m9">
-				      <h5 class="white-text">Protección de datos personales:</h5>
+				      <h5 class="white-text">Acerca de</h5>
 				      <p class="grey-text text-lighten-4" style="    margin-top: 3%;">
-				      		Los datos personales que voluntariamente proporciona al Municipio de Guadalupe, Nuevo León de forma electrónica ó directamente, serán recabados, protegidos, incorporados y tratados en el sistema de datos personales ubicado en Barbadillo e Hidalgo S/N, Centro de Guadalupe, Nuevo León, con fundamento en el artículo 47 de la Ley de Transparencia y Acceso a la Información del Estado de Nuevo León.
+				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.
 				      </p>
 				    </div>
 				    <div class="col s12 m2 offset-m1" style="margin-top:12px;">
@@ -469,14 +458,14 @@
 				        <!-- <li><a class="white-text" href="{{uri_for("tou")}}">Términos de uso</a></li> -->
 				        <li><a class="white-text" href="{{uri_for("privacy")}}">Aviso de privacidad</a></li>
 				        <!-- <li><a class="white-text" href="{{uri_for("contact")}}">Contacto</a></li> -->
-				        <li><a class="white-text" href="http://guadalupe.gob.mx">Gobierno de Guadalupe</a></li>
+				        <li><a class="white-text" href="{{city_url}}">Gobierno de {{city_name}}</a></li>
 				      </ul>
 				    </div>
 				  </div>
 				</div>
 				<div class="footer-copyright " style="text-align:right;">
 				  <div class="container">
-				  	© 2015 Gobierno de Guadalupe.
+				  	© 2015 Gobierno de {{city_name}}.
 				  </div>
 				</div>
 			</footer>
@@ -493,16 +482,7 @@
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js?v=25"></script>
-		  	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.color-2.1.0.js"></script>
-            <!--Start of Zopim Live Chat Script-->
-                <script type="text/javascript">
-                window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
-                d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
-                _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
-                $.src="//v2.zopim.com/?3dOI4XdtYG8BGGpYnacziAheyWLttPBV";z.t=+new Date;$.
-                type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
-                </script>
-            <!--End of Zopim Live Chat Script-->  
+		  	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.color-2.1.0.js"></script>            
 		  	<!-- Toast Notification -->
 		    {% if messages|safe %}		    	
 			    {% for message in messages %}
@@ -567,9 +547,6 @@
 						});
 
 						
-						// setTimeout(function(){ 
-						// 		$('#modal3').openModal();
-						// 	}, 1500);
 
 						var BrowserDetect = {
 							init: function() {

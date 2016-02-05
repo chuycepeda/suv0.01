@@ -22,12 +22,17 @@ config = {
 
     # application name
     'app_name':  unicode('Demo One Smart City','utf-8'),
-    'app_id': 'gpegobmx',
+    'city_name':  unicode('Ciudad Demo','utf-8'),
+    'city_url':  'http://onesmart.city',
+    'city_slogan':  'Slogan de Ciudad Demo',
+    'city_splash':  '/default/materialize/images/landing/splash.png',
+    'city_splash_secondary':  '/default/materialize/images/landing/splash_secondary.png',
+    'app_id': 'one-smart-city-demo',
     # application branding 
-    'brand_logo': '/default/materialize/images/favicon/fav-magenta.png',
-    'brand_favicon': '/default/materialize/images/favicon/fav-magenta.png',
-    'brand_color' : '#DD3DA1',
-    'brand_secondary_color' : '#03a9f4',
+    'brand_logo': '/default/materialize/images/favicon/fav-light-blue.png',
+    'brand_favicon': '/default/materialize/images/favicon/fav-light-blue.png',
+    'brand_color' : '#03A9F4',
+    'brand_secondary_color' : '#DD3DA1',
     'brand_tertiary_color' : '#EAEAEA',
     # application on social media
     'twitter_url': 'https://twitter.com/ciudadguadalupe',

@@ -308,11 +308,11 @@
 		                    </div>
 		                  </li>
 		                  <li>
-		                  	<div class="collapsible-header white-text truncate" id="my-zone-m" style="background-color:#06616D!important" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
+		                  	<div class="collapsible-header white-text truncate brand-color" id="my-zone-m" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
 		                    <div class="collapsible-body brand-color lighten-5"></div>
 		                  </li>
 		                  <li>
-		                    <div class="collapsible-header white-text" style="background-color:#0F8594!important"><i class="mdi-device-dvr"></i> Cambiar vista</div>
+		                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
 		                    <div class="collapsible-body white lighten-5 center">
 		                      <div class="row">
 		                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
@@ -365,11 +365,11 @@
 		                    </div>
                   </li>
                   <li>
-                  	<div class="collapsible-header white-text truncate" id="my-zone" style="background-color:#06616D!important" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
+                  	<div class="collapsible-header white-text truncate brand-color" id="my-zone" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
                     <div class="collapsible-body brand-color lighten-5"></div>
                   </li>
                   <li>
-                    <div class="collapsible-header white-text" style="background-color:#0F8594!important;"><i class="mdi-device-dvr"></i> Cambiar vista</div>
+                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
                     <div class="collapsible-body white lighten-5 center">
                       <div class="row">
                       	<div class="col s6" style="margin-top:15px;"><a class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
@@ -382,7 +382,7 @@
                     </div>
                   </li>
                   <li>
-                    <div class="collapsible-header white-text" style="background-color:#00A4B9"><i class="mdi-content-filter-list"></i> Filtrar</div>
+                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-content-filter-list"></i> Filtrar</div>
                     <div class="collapsible-body white lighten-5">
                         
                         <div class="row">
@@ -443,16 +443,13 @@
 		                    </div>
 		                    <div class="container row" style="margin-top:40px;">
 		                    	<p>
-		                    		A través de tu portal de atención, puedes contribuir a transformar Guadalupe en la ciudad que todos queremos. 
+		                    		A través de tu portal de atención, puedes contribuir a transformar {{city_name}} en la ciudad que todos queremos. 
 		                    	</p>
 		                    	<p>
 		                    		Reportando, administrando y dando seguimiento a las necesidades que aquejan a nuestra comunidad, juntos cuidadanos y gobierno podremos ser más eficientes y demostrar que estamos para servir.
 		                    	</p>
 		                    	<p>
-		                    		Además, aprovechando la apertura de datos del <a href="http://www.cic.mx" class="brand-color-text" style="font-family:roboto-black; display:inline!important; line-height:18px!important;" target="_blank">Centro de Integración Ciudadana</a> y el 4to compromiso con<a href="http://www.comovamosnl.org" class="brand-color-text" style="font-family:roboto-black; display:inline!important; line-height:18px!important;" target="_blank"> Alcalde cómo vamos</a>, los reportes que la comunidad realice a través de ellos, también serán respondidos desde esta plataforma. ¡Así tú decides que herramienta elegir para que podamos atenderte!
-		                    	</p>
-		                    	<p>
-		                    		¡Felicidades por ser parte! Comienza a contribuir hacia un mejor Guadalupe.
+		                    		¡Felicidades por ser parte! Comienza a contribuir hacia la mejora de nuestra ciudad {{city_name}}.
 		                    	</p>
 		                    </div>
 		                    {% if is_mobile %}
@@ -537,7 +534,7 @@
 		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 			        <div class="row">
 			          <div class="input-field col s12 center">
-			            <p class="center login-form-text">¡Únete a la comunidad que reaviva Guadalupe!</p>
+			            <p class="center login-form-text">¡Únete a la comunidad que reaviva {{city_name}}!</p>
 			          </div>
 			        </div>
 			        <div class="row margin">
@@ -661,7 +658,7 @@
 			<footer class="page-footer brand-tertiary-color" style="margin-top:0!important;">
 				<div class="footer-copyright " style="text-align:right;">
 				  <div class="container">
-				  	© 2015 Gobierno de Guadalupe.
+				  	© 2015 Gobierno de {{city_name}}.
 				  </div>
 				</div>
 			</footer>
@@ -681,15 +678,6 @@
 		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js?v=5"></script>
 		  	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.color-2.1.0.js"></script>
-            <!--Start of Zopim Live Chat Script-->
-                <script type="text/javascript">
-                window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
-                d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
-                _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
-                $.src="//v2.zopim.com/?3dOI4XdtYG8BGGpYnacziAheyWLttPBV";z.t=+new Date;$.
-                type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
-                </script>
-            <!--End of Zopim Live Chat Script-->  
 		  	<!-- Toast Notification -->
 		    {% if messages|safe %}		    	
 			    {% for message in messages %}

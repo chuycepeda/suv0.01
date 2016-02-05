@@ -15,7 +15,7 @@
 
 {% block header_content %}
 	<!-- START CONTENT -->
-	<div class="parallax-container z-depth-3" style="height:auto; background-color:#235B63;">
+	<div class="parallax-container z-depth-3" style="height:auto;">
 		<div class="section no-pad-bot" style="padding-bottom: 40px;">
 		  <div class="container center row" style="margin-top: 80px;opacity: 0.9;">
 		    <div class="white brand-color-text center col s10 m6 offset-m3 offset-s1" style="opacity: 1; top: 0px;">
@@ -28,8 +28,8 @@
 				        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 				        <div class="row">
 				          <div class="input-field col s12 center">
-				            {% if is_referral %}<p class="center login-form-text">Haz como {{_username}} ({{_email}}) y transforma Ciudad Guadalupe !</p>
-				            {% else %}<p class="center login-form-text">¡ÚNETE A LA COMUNIDAD QUE TRANSFORMA CIUDAD GUADALUPE!</p>{% endif %} 
+				            {% if is_referral %}<p class="center login-form-text">Haz como {{_username}} ({{_email}}) y transforma {{city_name}} !</p>
+				            {% else %}<p class="center login-form-text">¡ÚNETE A LA COMUNIDAD QUE TRANSFORMA {{city_name}}!</p>{% endif %} 
 				          </div>
 				        </div>
 				        <div class="row margin">
@@ -72,7 +72,7 @@
 			    </div>
 		  </div>
 		</div>
-		<div class="parallax"><img src="/{{theme}}/materialize/images/landing/gpemap.png" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 351px, 0px);    -webkit-filter: blur(2px);"></div>
+		<div class="parallax"><img src="{{city_splash}}" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 351px, 0px);    -webkit-filter: blur(2px);"></div>
 	</div>
 {% endblock %}
 
