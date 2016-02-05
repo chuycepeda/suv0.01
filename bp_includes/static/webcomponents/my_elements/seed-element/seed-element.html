@@ -1,0 +1,131 @@
+<!--
+    @license
+    Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+    This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+    The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+    The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+    Code distributed by Google as part of the polymer project is also
+    subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+Element providing solution to no problem in particular, use it to create your own structured components.
+
+##### Example
+
+    <seed-element></seed-element>
+
+@element seed-element
+@blurb Element providing solution to no problem in particular, use it to create your own structured components.
+@status alpha
+@homepage http://polymerlabs.github.io/seed-element
+-->
+<polymer-element name="seed-element" attributes="notitle author">
+
+  <template>
+
+    <link rel="stylesheet" href="seed-element.css">
+
+    <h1>Hello from seed-element</h1>
+    <content></content>
+
+  </template>
+
+  <script>
+
+    Polymer({
+      /**
+       * The `author` attribute sets an initial author
+       *
+       * @attribute author
+       * @type string
+       * @default 'Dimitri Glazkov'
+       */
+      author: 'Dimitri Glazkov',
+
+      /**
+       * `fancy` is a property that does something fancy.
+       *
+       * @property fancy
+       * @type bool
+       * @default false
+       */
+      fancy: false,
+      /**
+       *  LIFECYCLE CALLBACK METHODS, more info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
+       */
+      created: function() {
+          // Called when: An instance of the element is created.
+      },
+      ready: function( ) {
+          // Called when: The <polymer-element> has been fully prepared (e.g. shadow DOM created, property observers setup, event listeners attached, etc).
+      },
+      attached: function () { 
+          // Called when: An instance of the element was inserted into the DOM.
+      },
+      domReady: function() {
+          // Called when: Called when the element’s initial set of children are guaranteed to exist. This is an appropriate time to poke at the element’s parent or light DOM children. Another use is when you have sibling custom elements (e.g. they’re .innerHTML‘d together, at the same time). Before element A can use B’s API/properties, element B needs to be upgraded. The domReady callback ensures both elements exist.
+      },
+      detached: function() {
+          // Called when: An instance was removed from the DOM.
+      },
+      attributeChanged: function(oldVal, newVal, attrName){
+        //Called when: An attribute was added, removed, or updated. Note: Changed watchers are often easier to use and can watch either ordinary properties or attribute changes matching published properties. You need:
+          
+         /* <polymer-element name="g-cool" attributes="better best">
+                Polymer({
+                  better: '',
+                  best: '',
+                  betterChanged: function(oldValue, newValue) {
+                    
+                  },
+                  bestChanged: function(oldValue, newValue) {
+                    
+                  }
+                });
+            </polymer-element> 
+        */
+          
+        //attribute name is at attrName[2][1][0];
+        //this component name is at attrName[2][0].localName;
+        //attribute previous value is at oldVal;
+        //attribute current value is at newVal;
+      },
+
+      /**
+       * The `sayHello` method will return a greeting.
+       *
+       * @method sayHello
+       * @param {String} greeting Pass in a specific greeting.
+       * @return {String} Returns a string greeting.
+       */
+      sayHello: function(greeting) {
+        var response = greeting || 'Hello World!';
+        return 'seed-element says, ' + response;
+      },
+
+      /**
+       * The `seed-element-lasers-success` event is fired whenever we
+       * call fireLasers.
+       *
+       * @event seed-element-lasers-success
+       * @param {Object} detail
+       *   @param {string} detail.sound An amazing sound.
+       */
+
+      /**
+       * The `fireLasers` method will fire the lasers. At least
+       * it will dispatch an event that claims lasers were fired :)
+       *
+       * @method fireLasers
+       */
+      fireLasers: function() {
+        this.fire('seed-element-lasers-success', { sound: 'Pew pew pew!' });
+      }
+
+    });
+
+  </script>
+
+</polymer-element>

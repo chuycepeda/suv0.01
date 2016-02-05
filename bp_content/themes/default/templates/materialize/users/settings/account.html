@@ -1,0 +1,195 @@
+{% extends landing_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>{{app_name}} » Settings Account</title>{% endblock %}
+   
+{% block page_css %}
+	<style shim-shadowdom>
+	    paper-tabs {
+	      background-color: transparent;
+	      color: #fff;
+	      cursor:pointer;
+	    }
+
+	    paper-tabs[noink][nobar] paper-tab.core-selected {
+	      color: #fff;      
+	    }
+
+	    paper-tabs::shadow #selectionBar {
+	      background-color: rgba(255, 255, 255, 1);
+	    }
+
+	    paper-tabs paper-tab::shadow #ink {
+	      color: rgba(255, 255, 255, 1);
+	    }
+
+	    paper-tab {
+	      cursor:pointer;
+	    }
+
+	    .collapsible-header {
+		    font-weight: bolder!important;
+		    font-family: roboto-regular!important;
+		}
+  	</style>
+{% endblock %}
+
+{% block page_components %}
+    <link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import">
+{% endblock %}
+
+{% block header_content %}
+  <div class="parallax-container z-depth-3" style="max-height:200px;overflow:hidden;">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <br><br>
+        <h2 class="header center white-text">Administrar mi cuenta</h2>        
+        <br><br>
+      </div>
+    </div>
+    <div class="parallax brand-color"></div>
+  </div>
+{% endblock %}
+
+
+{% block body_content %}
+	<div class="section">
+		<div class="container">
+		<h3 class="col s12 m10 offset-m1 grey-text" style="font-weight: 200">Cambia tu contraseña o correo desde esta sección.</h3>
+			<!--breadcrumbs start-->
+		    <div id="breadcrumbs-wrapper" class=" grey lighten-3">
+		      <div class="container">
+		        <paper-tabs id="scrollableTabs" selected="2" class="brand-color" scrollable style="margin-left: -20px; width: 110%;   margin-top: 5px;">
+		          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')">Perfil</paper-tab>
+		          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-referrals") }}', '_top')">Recomendaciones</paper-tab>
+		          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-account") }}', '_top')">Cuenta</paper-tab>
+		      </paper-tabs>
+		      </div>
+		    </div>
+		    <!--breadcrumbs end-->
+			<div class="row">
+				<ul class="collapsible collapsible-accordion col s12 m6 offset-m3" data-collapsible="accordion">
+					<li class="">
+						<div class="collapsible-header brand-color-text text-darken-4" style="border-bottom: none"><i class="mdi-action-lock"></i> Cambiar contraseña</div>
+						<div class="collapsible-body" style="display: none;">
+								<form id="form_edit_password" action="/user/settings/password/" method="post" class="col s12">
+						          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+						          <div class="row">
+						            <div class="input-field col s12">
+						              <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text text-darken-3"></i>
+						              <input id="current_password" name="current_password" type="password">
+						              <label for="current_password">Contraseña actual</label>
+						            </div>
+						          </div>
+						          <div class="row">
+						            <div class="input-field col s12">
+						              <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+						              <input id="password" name="password" type="password">
+						              <label for="password">Nueva contraseña</label>
+						            </div>
+						          </div>
+						          <div class="row">
+						            <div class="input-field col s12">
+						              <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+						              <input id="c_password" name="c_password" type="password">
+						              <label for="c_password">Confirmar nueva contraseña</label>
+						            </div>
+						          </div>
+						          <div class="row">
+						            <div class="row">
+						              <div class="input-field col s12">
+						                <button class="waves-effect waves-light brand-color white-text btn right" type="submit" name="action">Actualizar
+						                  <i class="mdi-content-send right"></i>
+						                </button>
+						              </div>
+						            </div>
+						          </div>
+						        </form>
+						</div>
+					</li>
+					<li class="">
+						<div class="collapsible-header brand-color-text text-darken-4" style="border-bottom: none"><i class="mdi-communication-email"></i> Cambiar correo</div>
+						<div class="collapsible-body" style="display: none;">
+							<div class="col s12 center" style="margin-top:8px;">
+						        <div class="row" style="margin-left:0px;">
+						            <div class="input-field col s12">
+						              <i class="mdi-communication-email prefix brand-color-text brand-color-text text-darken-3"></i>
+						              <input id="current_email" type="email" value="{{email}}" disabled>
+						              <label for="current_email">Correo actual</label>
+						            </div>
+						        </div>
+						        <form id="form_edit_email" action="/user/settings/email/" method="post" class="col s12">
+						          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+						          <div class="row">
+						            <div class="input-field col s12">
+						              <i class="mdi-communication-email prefix brand-color-text brand-color-text"></i>
+						              <input id="new_email" name="new_email" type="email" class="validate">
+						              <label for="new_email">Nuevo Correo</label>
+						            </div>
+						          </div>
+						          <div class="row">
+						            <div class="input-field col s12">
+						              <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+						              <input id="password" name="password" type="password" class="required">
+						              <label for="password">Contraseña</label>
+						            </div>
+						          </div>
+						          <div class="row" style="margin-bottom:20px;">
+						              <div class="input-field col s12">
+						                <button class="waves-effect waves-light brand-color white-text btn right" type="submit" name="action">Actualizar
+						                  <i class="mdi-content-send right"></i>
+						                </button>
+						              </div>
+						          </div>
+						        </form>
+						    </div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="row">
+				<ul class="collapsible collapsible-accordion col s12 m6 offset-m3" data-collapsible="accordion">
+
+					<li class="grey-text text-lighten-2">
+						<div class="collapsible-header" style="border-bottom: none"><i class="mdi-action-delete"></i> Eliminar cuenta </div>
+					    <div class="collapsible-body" style="display: none;">
+								<form id="form_delete_account" action="/user/settings/delete/" method="post" class="col s12">
+						          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+						          <div class="row">
+						            <div class="input-field col s12">
+						              <i class="mdi-action-lock-outline  prefix brand-color-text" style="color:red"></i>
+						              <input id="password" name="password" type="password">
+						              <label for="password">Contraseña</label>
+						            </div>
+						          </div>
+						          <div class="row">
+						            <div class="input-field col s12" style="margin-left: 45px;">
+						              <div class="controls" id="captcha">
+						                  {{captchahtml | safe}}
+						              </div>
+						            </div>
+						          </div>
+						          <div class="row">
+						            <div class="row">
+						              <div class="input-field col s12">
+						                <button class="btn red waves-effect waves-light right" type="submit" name="action" style="margin-bottom:10px">Eliminar sin recuperación
+						                  <i class="mdi-content-send right"></i>
+						                </button>
+						              </div>
+						            </div>
+						          </div>
+						        </form>
+					    </div>
+					</li>
+				</ul>
+			</div>
+	    </div>
+   	</div>
+{% endblock %}
+
+{% block footer_content %}
+{% endblock %}
+
+<!-- ADD PAGE SCRIPT ELEMENTS-->
+{% block page_scripts %}
+{% endblock %}

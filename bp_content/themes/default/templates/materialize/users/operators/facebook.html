@@ -1,0 +1,478 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block page_css %}
+  <style type="text/css">
+      td {
+          padding: 3px!important;
+          padding-top:7px!important;
+      }
+      thead {
+          border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+      }
+  </style>
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Comentarios en el muro de Facebook 
+            <button class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;" id="loginbtn" {% if facebook_appID %} onclick="myFacebookLogin()" >Inicia sesión con Facebook {% else %}>Facebook sin configuración {% endif %}</button>
+            <div id="main-preloader" class="preloader-wrapper small active right" style="display:none;">
+              <div class="spinner-layer spinner-green-only">
+                <div class="circle-clipper left">
+                  <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                  <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                  <div class="circle"></div>
+                </div>
+              </div>
+            </div>
+            <a id="new-rep" href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;display:none;" target="_blank">Crear reporte<i class="mdi-content-add right"></i></a>
+            </h5>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+    <div class="container">
+      <div class="section">
+       <div class="row" style="margin-top:30px">
+            <div class="row">
+              <div class="col s12">
+                <ul class="collection with-header" id="feed">    
+                  <li id="init-header" class="collection-header"><h4>Inicia sesión para cargar los comentarios en el muro oficial.</h4></li>              
+                </ul>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <input type="text" id="object_id" value="" hidden>
+    <div id="modalReport" class="modal" style="display: none; opacity: 1; font-family: roboto-medium;">
+      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+      <div class="modal-content grey-text row" style="overflow-y:scroll; font-family:roboto-medium">
+        <div class="row">
+          <div class="row">
+              <p class="center">Llena la siguiente forma para crear un reporte.</p>
+          </div>
+          <div class="divider"></div>
+          <h1 class="center">INSERTAR FORMA AQUÍ</h1>
+        </div>
+      </div>
+      <div class="modal-footer" style="background-color:#E4E4E4;">
+        <a href="#" class="menu-item waves-effect waves-white btn brand-color modal-action" onclick="ticket();">Crear</a>
+        <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close" style="margin-right:20px;">Cerrar</a>
+      </div>
+    </div>
+    <div id="modalConversation" class="modal" style="display: none; opacity: 1; font-family: roboto-medium;">
+      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+      <div class="modal-content grey-text row" style="overflow-y:scroll; font-family:roboto-medium">
+        <div class="row">
+          <div class="row">
+            <div class="input-field col s12 center">
+              <p class="center">Esta es la conversación asociada al comentario, si quieres responder llena la casilla hasta abajo y has clic en responder.</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="col s12">
+            <ul class="collection with-header" id="conversation">       
+            </ul>
+          </div>
+          <div class="row">
+              <div class="input-field col s12 l6 right">
+                  <i class="mdi-editor-mode-comment prefix brand-color-text brand-color-text"></i>
+                  <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="320" style="height: 22px;" type="text" ></textarea>
+                  <label for="commentbox">Escribe aquí tu comentario</label>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="background-color:#E4E4E4;">
+        <a href="#" class="menu-item waves-effect waves-white btn brand-color modal-action" onclick="respond();">Responder</a>
+        <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close" style="margin-right:20px;">Cerrar</a>
+      </div>
+    </div>
+
+  <div id="sentiment" class="card-panel center" style="display:none;">
+    <h4 style="color: #022BB3;margin-bottom: 33px;">Nivel de positivismo en las conversaciones</h4>
+    <svg id="fillgauge5" width="19%" height="200"></svg>
+    <div class="row">
+      <div class="col s6 m3">
+        <h6 style="margin-top: 30px; margin-bottom: -30px;color: #CFCB37;">Postura política: Conservador</h6>
+        <svg id="fillgauge1" width="19%" height="200"></svg>
+      </div>
+      <div class="col s6 m3">
+        <h6 style="margin-top: 30px; margin-bottom: -30px;color: #1CD03B;">Postura política: Verde</h6>
+        <svg id="fillgauge2" width="19%" height="200"></svg>
+      </div>
+      <div class="col s6 m3">
+        <h6 style="margin-top: 30px; margin-bottom: -30px;color: #7A4BCC;">Postura política: Liberal</h6>
+        <svg id="fillgauge3" width="19%" height="200"></svg>
+      </div>
+      <div class="col s6 m3">
+        <h6 style="margin-top: 30px; margin-bottom: -30px;color: #D42221;">Postura política: Libertador</h6>
+        <svg id="fillgauge4" width="19%" height="200"></svg>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+  <script src="/{{theme}}/materialize/js/plugins/d3/d3.v3.min.js"></script>
+  <script src="/{{theme}}/materialize/js/plugins/d3/liquidFillGauge.js"></script>
+  <script>
+    var counter_ids=[], conv_array=[];
+    var accessToken = '';
+    $(document).ready(function() {
+        $.ajaxSetup({ cache: true });
+        $.getScript('//connect.facebook.net/en_US/sdk.js', function(){
+          FB.init({
+            appId: '{{facebook_appID}}',
+            version: 'v2.5'
+          });     
+        });
+    });
+
+    function myFacebookLogin() {
+      //Linked in dev at https://developers.facebook.com/apps/201422020200516/dashboard/
+      //API DOC at https://developers.facebook.com/docs/javascript/howto/jquery/v2.5
+      FB.login(function(init){
+        Materialize.toast('<span class="toast-info">Cargando muro.</span>', 2000);
+        console.log('init', init);
+        accessToken = init.authResponse.accessToken;
+        $('#loginbtn').hide();
+        $('#init-header').hide();
+        $('#main-preloader').show();
+
+        //GET User: https://developers.facebook.com/docs/graph-api/reference/user/
+        FB.api(
+            "/me",
+            {
+              fields: ['id','about','age_range','bio','birthday','education','email','first_name','gender','hometown','inspirational_people','last_name','link','location','locale','middle_name','name','relationship_status','religion','significant_other','quotes','timezone','work','cover']
+            },
+            function (response) {
+              if (response && !response.error) {
+                console.log(response);
+              }
+            }
+        );
+
+        //GET User Picture: https://developers.facebook.com/docs/graph-api/reference/user/picture/
+        FB.api(
+            "/me/picture",
+            { 
+              "type": "large" 
+            },
+            function (response) {
+              if (response && !response.error) {
+                console.log(response);
+              }
+            }
+        );
+
+        //GET FEED
+        FB.api("/{{facebook_handle}}/feed",
+          function (response) {
+            if (response && !response.error) {
+              console.log('feed', response);
+              var _feed = document.getElementById('feed');
+              var url='', d=0;
+              var html='<li class="collection-header blue darken-4 white-text"><h4>Comentarios recientes en /{{facebook_handle}}.</h4></li>';
+              
+              //Populate collection
+              for (var i=0, j=response.data.length; i<j; i++){
+                d = 5-i%2*2;
+                html += '<li class="grey lighten-'+d+' collection-item"><div class="row"><span class="col s12">'+ response.data[i].message +'</span></div><div class="row"><button onclick="openConversation(\''+response.data[i].id.trim()+'\');return false;" class="btn left blue darken-2 truncate" style="margin-top:10px;margin-bottom:10px">Ver conversación (<span id="counter_'+response.data[i].id.trim()+'">-</span>) <i class="mdi-editor-mode-comment right"></i></button><button onclick="createReport(\''+response.data[i].id.trim()+'\');return false;" class="btn right brand-color truncate" style="margin-top:10px;margin-bottom:10px">Crear reporte<i class="mdi-content-send right"></i></button></div></li>';
+                counter_ids.push('counter_'+response.data[i].id.trim());                
+              }
+              _feed.innerHTML = html;
+              Materialize.toast('<span class="toast-success">Muro cargado con éxito.</span>', 4500);
+              
+              //Populate counters
+              loadConversations();
+            }
+          }
+        );
+    
+      //OTHER METHODS
+        //GET TAGS
+        // FB.api("/{{facebook_handle}}/tagged",
+        //   function (response) {
+        //     if (response && !response.error) {
+        //       console.log('tagged', response);
+        //     }
+        //   }
+        // );
+
+        //GET A PARTICULAR COMMENT
+        // FB.api(
+        //     "/489123151148189_1007320712661761",
+        //     function (response) {
+        //       if (response && !response.error) {
+        //         console.log('comment', response);
+        //       }
+        //     }
+        // );
+
+        //GET COMMENTS FROM A PARTICULAR COMMENT: https://developers.facebook.com/docs/graph-api/reference/v2.5/object/comments/#read
+        // FB.api(
+        //     "/489123151148189_1007320712661761/comments",   //adding ?summary=1&total_count returns the total of comments associated.
+        //     function (response) {
+        //       if (response && !response.error) {
+        //         console.log('conversation', response);
+        //       }
+        //     }
+        // );
+
+        //POST A COMMENT INSIDE A CONVERSATION: https://developers.facebook.com/docs/graph-api/reference/object/comments/#publish
+        // FB.api(
+        //     "/489123151148189_1007320712661761/comments",
+        //     "POST",
+        //     {
+        //         "message": "This is a test comment."
+        //     },
+        //     function (response) {
+        //       if (response && !response.error) {
+        //         console.log(response);
+        //       }
+        //     }
+        // );
+
+        //POST A COMMENT ON A PAGE: https://developers.facebook.com/docs/graph-api/reference/page/feed/#publish
+        // FB.api(
+        //     "/{{facebook_handle}}/feed",
+        //     "POST",
+        //     {
+        //         "message": "This is a test comment."
+        //     },
+        //     function (response) {
+        //       if (response && !response.error) {
+        //         console.log(response);
+        //       }
+        //     }
+        // );
+      }, 
+      {
+        scope: 'publish_actions'
+      });
+    }
+
+    function loadConversations(){
+      var total = 0, elem = null;
+      for (var i=0, j=counter_ids.length; i<j; i++){
+        url = "https://graph.facebook.com/v2.5/"+counter_ids[i].replace('counter_','')+"/comments?access_token="+accessToken+"&summary=1&total_count";
+        $.ajax({
+            url: url,
+            async: false,
+            success: function(response) {
+                if (response && !response.error) {
+                  total = response.summary.total_count;    
+                  for(var v=0,w=response.data.length;v<w;v++){
+                    conv_array.push(cleanUpSpecialChars(response.data[v].message));
+                  }
+                }
+            }
+        });
+        document.getElementById(counter_ids[i]).innerHTML = total;
+      }
+      $('#main-preloader').hide();
+      $('#new-rep').show();
+      calculateSentiment();
+    }
+
+    function cleanUpSpecialChars(str){
+      str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+      str = str.replace(/[àáâãäå]/g,"a");
+      str = str.replace(/[ÈÉÊË]/g,"E");
+      str = str.replace(/[éèëê]/g,"e");
+      str = str.replace(/[ÍÌÎÏ]/g,"I");
+      str = str.replace(/[íîïì]/g,"i");
+      str = str.replace(/[ÓÖÒÔ]/g,"O");
+      str = str.replace(/[óòôö]/g,"o");
+      str = str.replace(/[ÚÜÛÙ]/g,"U");
+      str = str.replace(/[úùûü]/g,"u");
+      str = str.replace(/[Ñ]/g,"N");
+      str = str.replace(/[ñ]/g,"n");
+      str = str.replace(/[Ç]/g,"C");
+      str = str.replace(/[ç]/g,"c");
+      str = str.replace(/(?:\r\n|\r|\n)/g, '');
+      return str.replace(/[^a-zA-Z0-9 ]/g, "").trim();
+    }
+
+    function createReport(id){
+      console.log('creatingReport');
+      document.getElementById('object_id').value = id;
+      var url = "{{uri_for('materialize-organization-report')}}?accessToken=" + accessToken + "&id=" + id;
+      console.log('url', url);
+      //using accessToken and id we should build this at materialize-organization-report and do an ajax GET.
+      /*
+        TO GET COMMENT: 
+          url = https://graph.facebook.com/v2.5/<comment_id>?access_token=<accessToken>
+          $.ajax({
+              url: url,
+              async: false,
+              success: function(response) {
+                  if (response && !response.error) {
+                    console.log(response)
+                  }
+              }
+          });
+      */
+      /*
+        TO GET USER: 
+          url = https://graph.facebook.com/v2.5/<user_id>?access_token=<accessToken>
+          $.ajax({
+              url: url,
+              async: false, data: {"fields": '["id","about","age_range","bio","birthday","education","email","first_name","gender","hometown","inspirational_people","last_name","link","location","locale","middle_name","name","relationship_status","religion","significant_other","quotes","timezone","work","cover"]'},
+              success: function(response) {
+                  if (response && !response.error) {
+                    console.log(response)
+                  }
+              }
+          });
+      */
+
+      window.open(url, "_blank");
+    }
+
+    function openConversation(id){
+      $('#modalConversation').openModal();
+      document.getElementById('commentbox').value = "";
+      document.getElementById('object_id').value = id;
+      var html='', url = "https://graph.facebook.com/v2.5/"+id+"?access_token="+accessToken;
+      $.ajax({
+          url: url,
+          async: false,
+          success: function(response) {
+              if (response && !response.error) {
+                html ='<li class="collection-header blue darken-4 white-text" style="line-height: 1.3rem;"><h6>'+response.message+'</h6></li>';
+              }
+          }
+      });
+      url = "/"+id+"/comments";
+      FB.api(
+          url,
+          function (response) {
+            if (response && !response.error) {
+              console.log('conversation', response);
+              var d=0;
+              for (var i=0, j=response.data.length; i<j; i++){
+                d = 5-i%2*2;
+                html += '<li class="grey lighten-'+d+' collection-item"><div class="row" style="margin-left: 35px;"><span class="col s12 m6">'+ response.data[i].message +'</span><div class="col s12 m5 offset-m1"><span class="col s12 truncate grey-text">'+response.data[i].created_time.substr(0,10)+'</span><span class="col s12 truncate grey-text" style="margin-top:10px;">'+response.data[i].from.name+'</span><span class="col s12"><button onclick="createReport(\''+response.data[i].id.trim()+'\');return false;" class="btn right brand-color truncate" style="margin-top:10px;margin-bottom:10px">Crear reporte<i class="mdi-content-send right"></i></button></span></div></div></li>';
+              }
+              document.getElementById('conversation').innerHTML = html;
+              $('#modalConversation').openModal();
+            }
+          }
+      );    
+    }
+
+    function respond(){
+      var commentval = document.getElementById('commentbox').value;
+      if (commentval != ""){
+        var url = "/"+document.getElementById('object_id').value+"/comments";
+        FB.api(
+            url,
+            "POST",
+            {
+                "message": commentval
+            },
+            function (response) {
+              if (response && !response.error) {
+                console.log(response);
+                Materialize.toast('<span class="toast-success">Tu respuesta ha llegado a Facebook.</span>', 4500);
+                openConversation(document.getElementById('object_id').value);
+              }
+            }
+        );
+      }else{
+        Materialize.toast('<span class="toast-warning">Oops! Nos encontramos un comentario vacío, llena tu comentario y luego da clic en responder.</span>', 4500);
+      }
+    }
+
+    function ticket(){
+      console.log('nothing to do here');
+    }
+
+    function calculateSentiment(){
+      // https://indico.io/dashboard/
+      // https://indico.io/docs#sentiment
+
+      $.post(
+        'https://apiv2.indico.io/sentiment/batch?key={{indicoio_apikey}}',
+        JSON.stringify({
+          'data': conv_array, 'language': "spanish"
+        })
+      ).then(function(res) { 
+        $('#sentiment').show();
+        console.log('sentiment', JSON.parse(res).results.avg());
+
+        createGauge("fillgauge5", "#1374CF", "#0534CF", "#FFFFAA", "#1374CF", JSON.parse(res).results.avg()*100.0);
+        
+        $.post(
+          'https://apiv2.indico.io/political/batch?key={{indicoio_apikey}}',
+          JSON.stringify({
+            'data': conv_array, 'language': "spanish"
+          })
+        ).then(function(res) { 
+          var results = JSON.parse(res).results;
+          console.log('political', results);
+          var conservative = 0, green = 0, liberal = 0, libertarian = 0;
+          for(var i =0, j=results.length; i<j; i++){
+            conservative += results[i].Conservative; 
+            green += results[i].Green; 
+            liberal += results[i].Liberal; 
+            libertarian += results[i].Libertarian;
+          }
+          conservative /= results.length;
+          green /= results.length;
+          liberal /= results.length;
+          libertarian /= results.length;
+
+          createGauge("fillgauge1", "#CFCB37", "#ABA72F", "#FFFFAA", "#CFCB37", conservative*100.0);
+          createGauge("fillgauge2", "#31CF31", "#1F7F20", "#FFFFAA", "#31CF31", green*100.0);
+          createGauge("fillgauge3", "#774ECF", "#4A3186", "#FFFFAA", "#774ECF", liberal*100.0);
+          createGauge("fillgauge4", "#CF201F", "#861414", "#FFFFAA", "#CF201F", libertarian*100.0);
+
+        });
+      });
+    }
+
+    function createGauge(id, col1, col2, col3, col4, value){
+      var config = liquidFillGaugeDefaultSettings();
+        config.circleThickness = 0.15;
+        config.circleColor = col1;
+        config.textColor = col2;
+        config.waveTextColor = col3;
+        config.waveColor = col4;
+        config.textVertPosition = 0.8;
+        config.waveAnimateTime = 1000;
+        config.waveHeight = 0.05;
+        config.waveAnimate = true;
+        config.waveRise = false;
+        config.waveHeightScaling = false;
+        config.waveOffset = 0.25;
+        config.textSize = 0.75;
+        config.waveCount = 3;
+        var gauge = loadLiquidFillGauge(id, value, config);
+    }
+
+    Array.prototype.avg=function(fn){
+        fn =fn || function(e,i){return e};
+        return (this.map(fn).reduce(function(a,b){return parseFloat(a)+parseFloat(b)},0) / this.length ) ; 
+    };
+  </script>
+{% endblock %}

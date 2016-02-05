@@ -1,0 +1,27 @@
+{
+  "name": "gmchart-element",
+  "version": "0.0.0",
+  "authors": [
+    "chuycepeda <chuycepeda@gmail.com>"
+  ],
+  "description": "This element is a modified version of `google-chart` to produce Material Design Google Charts.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "seed"
+  ],
+  "main": "gmchart-element.html",
+  "license": "MIT",
+  "homepage": "https://github.com/chuycepeda/polymer-elements/tree/master/my_elements/gmchart-element",
+  "ignore": [
+    "/.*",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  }
+}

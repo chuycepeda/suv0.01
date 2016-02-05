@@ -1,0 +1,753 @@
+{% extends landing_layout %}
+
+{% block title %}
+  <title>{{app_name}} » Trends</title>
+{% endblock %}
+
+{% block page_css %}
+	<style type="text/css">
+
+		.fwidth{
+			min-width: 193px;
+		}
+		/*
+			WORDLE
+		*/
+		.word {
+		  display: block;
+		  position: absolute;
+		  text-decoration: none;
+		  border: 1px solid transparent;
+		  cursor: pointer;
+		}
+		.word:hover {
+		  font-weight: bold;
+		  cursor: normal;
+		}
+		.rotated {
+		  -webkit-transform: rotate(90deg);
+		  -moz-transform: rotate(90deg);
+		  -o-transform: rotate(90deg);
+		  -ms-transform: rotate(90deg);
+		  transform: rotate(90deg);
+		}
+
+		/*
+			D3
+		*/
+		#containeroccu {
+			top:50px;
+			left:2%;
+		}
+		#hourly_values svg.chartOccu{
+			border-color: white;
+			border-radius: 3px;
+			border-width: 3px;
+			margin-top:4px;
+			margin-left: 24px;
+			padding: 3px;
+		}
+
+		#hourly_values svg rect {
+			fill: #BDBDBD;
+		}
+
+		#hourly_values svg rect.sel {
+			stroke: #FFCC28!important;
+			stroke-width:5px;
+		}
+
+		#hourly_values svg text {
+			fill: #D5D6D5;
+		}
+
+		#hourly_values svg text.hidden {
+			display: none;
+		}
+
+		#hourly_values p.subtitle {
+			font-size: 15px;
+			line-height: 19px;
+			color: #D5D6D5;
+			margin-top: 2px;
+		}
+
+		#tiles {
+			font-size: 12px;
+			clear: both;
+		}
+
+		#tiles th {
+			vertical-align: top;
+			padding: 3px;
+			color: #D5D6D5;
+		}
+
+		th.h7, th.h8, th.h9, th.h10, th.h11, th.h12, th.h13, th.h14, th.h15, th.h16, th.h17, th.h18, th.h19 {
+			color: #D5D6D5 !important;
+		}  
+
+		#tiles tr th {
+			padding-top: 12px;
+		}
+
+		#tiles tr:first-child th {
+			padding-top: 3px;
+		}
+
+		#tiles td {
+			-webkit-perspective: 1000;
+			padding: 0!important;
+		}
+
+		#tiles .tile {
+			width: 38px;
+			height: 38px;
+			position: relative;
+			-webkit-transform-style: preserve-3d;
+			-webkit-transition: 0.7s;
+		}
+
+		.face {
+			position: absolute;
+			-webkit-backface-visibility: hidden;
+			width: 36px;
+			height: 36px;
+			background: #eee;
+			border: 1px solid white;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+		}
+
+		#tiles td.sel .face {
+			border-color: black;
+		}
+
+		.face.hidden {
+			display: none;
+		}
+
+		#tiles td.dim .screen {
+			opacity: 0.6;
+		}
+
+		.face.back {
+			-webkit-transform: rotateY(180deg);
+		}
+
+		.tile .screen {
+			background: white;
+			opacity: 0.0;
+			width: 36px;
+			height: 36px;
+			position: absolute;
+			z-index: 1337;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+			border: 1px solid white;
+		}
+
+		#legend {
+			clear: left;
+			margin-left: 24px;
+			margin-top: 50px!important;
+			width: 185px;
+			height: 40px;
+			color: #777;
+			margin-top: 10px;
+			background: white;
+			border: 1px solid #f0f0f0;
+			overflow: hidden;
+			padding: 5px 7px;
+			-moz-border-radius: 3px;
+			border-radius: 3px;
+			font-size: 11px;
+			line-height: 11px;
+			margin-bottom: 10px;
+			margin-right: 24px;
+		}
+
+		#legend ul, #legend li {
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			outline: 0;
+			font-weight: inherit;
+			font-style: inherit;
+			font-size: 100%;
+			font-family: inherit;
+			vertical-align: baseline;
+		}
+
+		#legend ul {
+			list-style-type: none;
+			overflow: hidden;
+			clear: both;
+		}
+
+		#legend li {
+			float: left;
+			margin-right: 1px;
+			width: 14px;
+			height: 14px;
+		}
+
+		#legend p {
+			margin-top: 3px;
+		}
+
+		#legend p.more {
+			float: right;
+		}
+
+		#legend p.less {
+			float: left;
+		}
+
+		/* 11 buckets color scale : http://www.bretttolbert.com/projects/colorscale/ */
+
+		.rbow2 .q1-11 {
+			background: #f8e300;
+		}
+
+		.rbow2 .q2-11 {
+			background: #f8e100;
+		}
+
+		.rbow2 .q3-11 {
+			background: #f9ca00;
+		}
+
+		.rbow2 .q4-11 {
+			background: #f9b100;
+		}
+
+		.rbow2 .q5-11 {
+			background: #fa9800;
+		}
+
+		.rbow2 .q6-11 {
+			background: #fa7f00;
+		}
+
+		.rbow2 .q7-11 {
+			background: #fb6600;
+		}
+
+		.rbow2 .q8-11 {
+			background: #fb4c00;
+		}
+
+		.rbow2 .q9-11 {
+			background: #fc3300;
+		}
+
+		.rbow2 .q10-11 {
+			background: #fc1a00;
+		}
+
+		.rbow2 .q11-11 {
+			background: #ba0707;
+		}
+	</style>
+{% endblock %}
+
+{% block header_content %}
+  <div class="row spacer"></div>
+{% endblock %}
+
+{% block body_content %}
+  <div class="container">
+    <div class="section">
+        <div class="row grey-text text-lighten-1">
+				<div class="container" style="margin-top:100px">
+					<div id="loader_bar" class="col s12">
+			            <div class="progress" style="background-color: rgba(3, 83, 77, 0.12)!important;">
+			              <div class="indeterminate" style="background-color: rgba(3, 83, 77, 1)!important;"></div>
+			            </div>
+			        </div>
+					<div id="sb_menu" class="col s12 m2 offset-m1" style=";padding: 20px;border-radius: 4px;">
+						<h5>Tendencias</h5>
+						<div class="input-field col s6">
+	                        <input id="from" name="from" type="date" class="datepicker">
+	                        <label for="from">Desde</label>
+	                    </div>
+	                    <div class="input-field col s6">
+	                        <input id="to" name="to" type="date" class="datepicker">
+	                        <label for="to">Hasta</label>
+	                    </div>
+	                    <a class="btn waves-effect waves-light brand-color right" onclick="updateCharts()" style="margin-bottom:40px;">Actualizar <i class="mdi-action-autorenew"></i></a>
+						<a class="btn-flat amber white-text lighten-2 fwidth" href="#pie"> <i class="mdi-image-timelapse left"></i> Distribución</a><br>
+						<a class="btn-flat amber white-text lighten-1 fwidth" href="#spline"> <i class="mdi-action-trending-up left"></i> Histórico</a><br>
+						<a class="btn-flat amber white-text lighten-0 fwidth" href="#stack"> <i class="mdi-av-equalizer left"></i> Semanal</a><br>
+						<a class="btn-flat amber white-text darken-1 fwidth" href="#d3"> <i class="mdi-action-history left"></i> Horario</a><br>
+						<a class="btn-flat amber white-text darken-2 fwidth" href="#wordle"> <i class="mdi-communication-forum left"></i> Lenguaje</a>
+					</div>
+					<div class="col s12 m7 offset-m1">
+						<div class="row">
+							<h5> <i class="mdi-image-timelapse left"></i> Distribución</h5>
+							<div id="pie" class="col s12"></div>
+						</div>
+						<div class="row">
+							<h5> <i class="mdi-action-trending-up left"></i> Histórico</h5>
+							<div id="spline" class="col s12"></div>
+						</div>
+						<div class="row">
+							<h5> <i class="mdi-av-equalizer left"></i> Semanal</h5>
+							<div id="stack" class="col s12"></div>
+						</div>
+						<div class="row" style="margin-bottom:100px;">
+							<h5> <i class="mdi-action-history left"></i> Horario</h5>
+							<div id="d3" class="col s12">
+								<div id='occur' style="height: 100%;">
+									<div id="containeroccu" class="row center"> 
+										<div id="legend" class="rbow2">
+											<ul >
+												<li class="q1-11"></li>
+												<li class="q2-11"></li>
+												<li class="q3-11"></li>
+												<li class="q4-11"></li>
+												<li class="q5-11"></li>
+												<li class="q6-11"></li>
+												<li class="q7-11"></li>
+												<li class="q8-11"></li>
+												<li class="q9-11"></li>
+												<li class="q10-11"></li>
+												<li class="q11-11"></li>
+											</ul>
+											<p class="more">más reportes</p>
+											<p class="less">menos reportes</p>
+										</div>
+										<div id="vis"></div>
+										<div id="hourly_values">
+											<div class="svg"></div>
+											<p class="subtitle"></p>
+										</div>
+									</div>
+						    	</div>
+							</div>
+						</div>
+						<div class="row" style="margin-bottom: 440px; position:relative;">
+							<h5 style="margin-bottom:100px;"> <i class="mdi-communication-forum left"></i> Lenguaje</h5>
+							<div id="wordle" class="col s12 m6 offset-m4" style="height: 60%; position:absolute; margin-top:185px;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_scripts %}
+	<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+	<script src="/{{ theme }}/materialize/js/plugins/d3/d3.min.js"></script>
+	<script src="/{{ theme }}/materialize/js/plugins/d3/d3.layout.min.js"></script>
+	<script src="/{{ theme }}/materialize/js/plugins/wordle/Wordle.js"></script>
+	<script src="/{{ theme }}/materialize/js/plugins/wordle/WordleUtils.js"></script>
+	{% if not is_mobile %}
+	<script type="text/javascript">
+		$(function() {
+			var $sidebar   = $("#sb_menu"), 
+		        $window    = $(window),
+		        offset     = $sidebar.offset(),
+		        topPadding = 100;
+
+		    $window.scroll(function() {
+		        if ($window.scrollTop() > offset.top) {
+		            $sidebar.stop().animate({
+		                marginTop: $window.scrollTop() - offset.top + topPadding
+		            });
+		        } else {
+		            $sidebar.stop().animate({
+		                marginTop: 0
+		            });
+		        }
+		    });
+		});
+	</script>
+	{% endif %}
+	<script type="text/javascript">
+		var table_name = 'gpe_from_cic';
+    	var sql = new cartodb.SQL({ user: 'gpegobmx' });
+    	var query = "SELECT "+table_name+".* FROM "+table_name+", mun_poly WHERE ST_Intersects("+table_name+".the_geom, mun_poly.the_geom) AND mun_poly.name IN ('GPE')";
+	  	
+    	function updateCharts(){
+    		var _from = document.getElementById('from').value, _to = document.getElementById('to').value;
+    		if ( Date.parse(_from) <= Date.parse(_to) ){
+    			var date_qry = "(("+table_name+".created_at BETWEEN ('"+_from+"') AND (DATE '"+_to+"' + 1)))";
+	  			displayOccurrence(date_qry);
+	  			displayWordle(date_qry);				
+
+	    	}else{
+    			console.log('bad dates');
+			    Materialize.toast('<span class="toast-warning">Oops! Revisa el rango de fechas</span>',4500);
+	    	}
+    	}
+
+    	// PIE WITH DRILLDOWN
+	    	function makePie(_qry){
+				if (_qry != '') _qry = 'AND ' + _qry;
+				var url = encodeURI("http://gpegobmx.cartodb.com/api/v2/sql/?q=SELECT count(*), "+table_name+".post_cat FROM "+table_name+", mun_poly WHERE ST_Intersects("+table_name+".the_geom, mun_poly.the_geom) AND mun_poly.name IN ('GPE') " + _qry + " GROUP BY post_cat");
+				$.ajax({
+				url: url.replace('+','%2B'),
+				dataType: 'json',
+				success: function(data) {
+					console.log(data);
+				}
+				}).done(function(data) {
+
+					$('#pie').highcharts({
+				        chart: {
+				            type: 'pie'
+				        },
+				        plotOptions: {
+				            series: {
+				                dataLabels: {
+				                    enabled: true,
+				                    format: '{point.name}: {point.y:.1f}%'
+				                }
+				            }
+				        },
+
+				        tooltip: {
+				            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+				            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+				        },
+				        series: [{
+				            name: "Grupos",
+				            colorByPoint: true,
+				            data: [{
+				                name: "Comunidad",
+				                y: 56.33,
+				                drilldown: "Comunidad"
+				            }, {
+				                name: "Servicios públicos",
+				                y: 24.03,
+				                drilldown: "Servicios públicos"
+				            }, {
+				                name: "Vialidad",
+				                y: 10.38,
+				                drilldown: "Vialidad"
+				            }, {
+				                name: "Seguridad",
+				                y: 4.77,
+				                drilldown: "Seguridad"
+				            }, {
+				                name: "Emergencias",
+				                y: 0.2,
+				                drilldown: null
+				            }]
+				        }],
+				        drilldown: {
+				            series: [{
+				                name: "Comunidad",
+				                id: "Comunidad",
+				                data: [
+				                    ["Avisos", 24.13],
+				                    ["Eventos", 17.2],
+				                    ["Observador", 8.11],
+				                    ["Propuesta comunitaria", 5.33],
+				                    ["Solicitud de servicios", 0.53],
+				                    ["Solicitud de seguridad", 0.53],
+				                    ["Propuesta vial", 0.5]
+				                ]
+				            }, {
+				                name: "Servicios públicos",
+				                id: "Servicios públicos",
+				                data: [
+				                    ["Alcantarillas", 5],
+				                    ["Alumbrado", 4.32],
+				                    ["Luz eléctrica", 3.68],
+				                    ["Fuga de agua", 2.96],
+				                    ["Parques", 2.53],
+				                    ["Basura", 1.45]
+				                ]
+				            }, {
+				                name: "Vialidad",
+				                id: "Vialidad",
+				                data: [
+				                    ["Accidente", 2.76],
+				                    ["Baches", 2.32],
+				                    ["Obras", 2.31],
+				                    ["Semáforo", 1.27]
+				                ]
+				            }, {
+				                name: "Seguridad",
+				                id: "Seguridad",
+				                data: [
+				                    ["Incendio", 2.56],
+				                    ["Robo", 0.77],
+				                    ["Riesgo", 0.42]
+				                ]
+				            }]
+				        }
+				    });
+				});
+	    	}
+    		
+    	// ENDOF PIE WITH DRILLDOWN
+
+        // WORDLE 
+		  	var _wordle = new WORDLEJS.Wordle(document.getElementById('wordle'));
+			function displayWordle(_qry){
+				if (_qry != '') _qry = 'AND ' + _qry;
+				var text= '', limit=100, type='a';  /* 'default': '', 'big -> small': 'a', 'small -> big': 'b','A -> Z': 'c','shuffle': 'd'*/
+				var url = encodeURI("http://gpegobmx.cartodb.com/api/v2/sql/?q=SELECT "+table_name+".post_content FROM "+table_name+", mun_poly WHERE ST_Intersects("+table_name+".the_geom, mun_poly.the_geom) AND mun_poly.name IN ('GPE') " + _qry);
+				$.ajax({
+				url: url.replace('+','%2B'),
+				dataType: 'json',
+				success: function(data) {
+					for (var i =0; i < data.total_rows ; i++){
+						text+=data.rows[i].post_content+' ';
+					}
+					text = TextUtil.countWordOccurance(text);
+				}
+				}).done(function(data) {
+						_wordle.reset();
+					_wordle.sortType =type;
+				    _wordle.setWords(text, limit);
+				    _wordle.doLayout();
+				    $('#loader_bar').hide();
+				});
+			}
+        // ENDOF WORDLE 
+
+		// OCCURRENCE
+			var formattedData = new Array(7);  // 7 days, 24 hours array
+			for (var i = 0; i < formattedData.length; i++) { formattedData[i] = new Array(24);}
+			var buckets = 11,
+			colorScheme = 'rbow2',
+			days = [
+			    { name: 'Domingo', abbr: 'Do' },
+				{ name: 'Lunes', abbr: 'Lu' },
+				{ name: 'Martes', abbr: 'Ma' },
+				{ name: 'Miércoles', abbr: 'Mi' },
+				{ name: 'Jueves', abbr: 'Ju' },
+				{ name: 'Viernes', abbr: 'Vi' },
+				{ name: 'Sábado', abbr: 'Sá' }
+			  ],
+			hours = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'];
+			function drawTiles() {
+				var calcs = _getCalcs(),
+					range = [];
+				for (var i = 1; i <= buckets; i++) {
+					range.push(i);
+				}
+				var bucket = d3.scale.quantize().domain([0, calcs.max > 0 ? calcs.max : 1]).range(range),
+					side = d3.select('#tiles').attr('class');
+				if (side === 'front') {
+					side = 'back';
+				} else {
+					side = 'front';
+				}
+				for (var d = 0; d < formattedData.length; d++) {
+					for (var h = 0; h < formattedData[d].length; h++) {
+						var sel = '#d' + d + 'h' + h + ' .tile .' + side,
+							val = formattedData[d][h];
+						// erase all previous bucket designations on this cell
+						for (var i = 1; i <= buckets; i++) {
+							var cls = 'q' + i + '-' + buckets;
+							d3.select(sel).classed(cls, false);
+						}
+						// set new bucket designation for this cell
+						var cls = 'q' + (val > 0 ? bucket(val) : 0) + '-' + buckets;
+						d3.select(sel).classed(cls, true);
+					}
+				}
+				flipTiles();
+				_drawHourlyChart(-1);
+			}	  
+			function _getCalcs() {
+				var min = 1,
+					max = -1;
+				// calculate min + max
+				for (var d = 0; d < formattedData.length; d++) {
+					for (var h = 0; h < formattedData[d].length; h++) {
+						var tot = formattedData[d][h];
+						if (tot > max) {
+							max = tot;
+						}
+						if (tot < min) {
+							min = tot;
+						}
+					}
+				}
+				return {
+					'min': min,
+					'max': max
+				};
+			}
+			function _drawHourlyChart(day) {
+
+				d3.selectAll('#hourly_values svg').remove();
+				
+				var w = 1000,
+					h = 150;
+				
+				var weeklyData = new Array(24);
+				for (var x=0; x<24; x++){
+					weeklyData[x] = 0;
+				}
+				if (day != -1)
+					weeklyData = formattedData[day];
+				else
+					for (var x=0;x<7;x++){
+						for (var y=0; y<24;y++)
+							weeklyData[y] += formattedData[x][y];
+					}
+								
+				var y = d3.scale.linear()
+					.domain([0, d3.max(weeklyData, function(d) { return d })])
+					.range([0, h]);
+
+				
+				var chartOccu = d3.select('#hourly_values .svg')
+					.append('svg:svg')
+					.attr('class', 'chartOccu')
+					.attr('width', 1000)
+					.attr('height', 200);
+					
+				var rect = chartOccu.selectAll('rect'),
+					text = chartOccu.selectAll('text');
+				
+				rect.data(weeklyData)
+					.enter()
+						.append('svg:rect')
+							.attr('x', function(d, i) { return i * 42; })
+							.attr('y', function(d) { return h - y(d) })
+							.attr('height', function(d) { return y(d)})
+							.attr('width', 37)
+							.attr('class', function(d, i) { return 'hr' + i});
+				
+				text.data(hours)
+					.enter()
+						.append('svg:text')
+							.attr('class', function(d, i) { return (i % 3) ? 'hidden hr' + i : 'visible hr' + i })
+							.attr("x", function(d, i) { return i * 42 })
+							.attr("y", 166)
+							.attr("text-anchor", 'left')
+							.text(String);
+			}
+			function flipTiles() {
+
+				var oldSide = d3.select('#tiles').attr('class'), newSide = '';
+
+				if (oldSide == 'front') {
+					newSide = 'back';
+				} else {
+					newSide = 'front';
+				}
+
+				var flipper = function(h, d, side) {
+					return function() {
+						var sel = '#d' + d + 'h' + h + ' .tile',
+							rotateY = 'rotateY(180deg)';
+						
+						if (side === 'back') {
+							rotateY = 'rotateY(0deg)';	
+						}
+						
+						d3.select(sel).style('-webkit-transform', rotateY);
+					};
+				};
+
+				for (var h = 0; h < hours.length; h++) {
+					for (var d = 0; d < days.length; d++) {
+						var side = d3.select('#tiles').attr('class');
+						setTimeout(flipper(h, d, side), (h * 20) + (d * 20) + (Math.random() * 100));
+					}
+				}
+				d3.select('#tiles').attr('class', newSide);
+			}
+			function createTiles() {
+
+				var html = '<table id="tiles" class="front">';
+
+				html += '<tr><th><div>&nbsp;</div></th>';
+
+				for (var h = 0; h < hours.length; h++) {
+					html += '<th class="h' + h + '">' + hours[h] + '</th>';
+				}
+				
+				html += '</tr>';
+
+				for (var d = 0; d < days.length; d++) {
+					html += '<tr class="d' + d + '">';
+					html += '<th>' + days[d].abbr + '</th>';
+					for (var h = 0; h < hours.length; h++) {
+						html += '<td id="d' + d + 'h' + h + '" class="d' + d + ' h' + h + '"><div class="tile"><div class="face front"></div><div class="face back"></div></div></td>';
+					}
+					html += '</tr>';
+				}
+				
+				html += '</table>';
+				d3.select('#vis').html(html);
+			}
+			function selectHourlyChartBar(hour) {
+
+				d3.selectAll('#hourly_values .chartOccu rect').classed('sel', false);
+				d3.selectAll('#hourly_values .chartOccu rect.hr' + hour).classed('sel', true);
+				d3.selectAll('#hourly_values .chartOccu text').classed('hidden', true);
+				d3.selectAll('#hourly_values .chartOccu text.hr' + hour).classed('hidden', false);
+			}
+			function displayOccurrence(_qry){
+				if (_qry != '') _qry = ' WHERE ' + _qry;
+				//GET TimeZone on client system
+				var dateToday = new Date();
+				var dateText = dateToday.toString();
+				var idxTZ = dateText.indexOf('(');
+				var TZ = dateText.substring(idxTZ+1,dateText.length-1);
+
+
+				for (var i = 0; i < formattedData.length; i++){
+				  for (var j = 0; j < formattedData[i].length; j++){
+				    formattedData[i][j] = 0;
+				  }
+				}
+
+				d3.select('#vis').classed(colorScheme, true);
+
+				var url = encodeURI("http://gpegobmx.cartodb.com/api/v2/sql/?q=SELECT date_part('dow', "+table_name+".created_at at time zone '"+TZ+"') as day_y, date_part('hour', "+table_name+".created_at at time zone '"+TZ+"') as hour_x, count( "+table_name+".*) FROM " + table_name + _qry + " GROUP BY day_y, hour_x ORDER BY day_y, hour_x asc");
+
+
+				// QUERY CARTODB
+				$.ajax({
+				url: url.replace('+','%2B'),
+				dataType: 'json',
+				success: function(data) {
+					for (var i =0; i < data.total_rows ; i++){
+					    formattedData[data.rows[i].day_y][data.rows[i].hour_x] = data.rows[i].count;
+					}
+					createTiles();
+				}
+				}).done(function(data) {
+					drawTiles();
+					d3.select('.subtitle').html('Incidencia semanal');		
+					
+				    // tiles mouseover events
+					$('#tiles td').hover(function() {
+						$(this).addClass('sel');
+						var tmp = $(this).attr('id').split('d').join('').split('h'),
+							day = parseInt(tmp[0]),
+							hour = parseInt(tmp[1]);
+						
+						_drawHourlyChart(day);
+						selectHourlyChartBar(hour);
+						d3.select('.subtitle').html('Incidencia los ' + days[day].name +" a las "+ hours[hour] +"m: " + Math.round(formattedData[day][hour]));
+					}, function() {
+						$(this).removeClass('sel');
+						_drawHourlyChart(-1);
+						d3.select('.subtitle').html('Incidencia semanal');
+					});
+
+				});
+			}
+		// ENDOF OCCURRENCE
+
+
+		displayOccurrence('');
+	  	displayWordle('');	
+
+	</script>
+{% endblock %}

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>highcharts-element Demo</title>
+        <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
+        <link rel="import" href="highcharts-element.html">
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+        <style>
+            code {
+              color: #007000;
+            }
+            body:before {
+            content: "";
+            position: fixed;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            -webkit-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+            -moz-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+            box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+            z-index: 100;
+            }
+            body{
+                background: #bbbfbf;
+                font-family: Roboto;
+                text-align: center;
+            }
+            .card.full {
+                background: white;
+                min-width: 280px;
+                max-width: 1300px;
+                min-height: 300px;
+                height: auto;
+                position: relative;
+                margin: 16px;
+                margin-right: 16px!important;
+                border-radius: 2px;
+                width: 99%;
+                display: inline-block;
+            }
+            
+            #sortable { list-style-type: none; }
+            
+            .ui-state-default.ui-sortable-handle{
+                border: 1px solid rgba(211, 211, 211, 0);
+                background: rgba(230, 230, 230, 0) ;
+                font-weight: normal;
+                color: rgba(85, 85, 85, 0); 
+                cursor: -webkit-grab;
+            }
+        </style> 
+	</head>
+	<body>
+        <img src="https://www.polymer-project.org/images/logos/p-logo.svg" style="max-width:100%;height:auto;"><br>
+        <p>This is a simple <code>highcharts-element</code>, a way to multiple HighchartsJS charts... unfortunately it's buggy for some charts.</p>
+        
+        <ul id="sortable">
+            
+            <li class="ui-state-default"><highcharts-element class="card full" __type="pie" __data='{"name": "Delivered amount","data": [["Bananas", 8],["Kiwi", 3],["Mixed nuts", 1],["Oranges", 6],["Apples", 8],["Pears", 4],["Clementines", 4],["Reddish (bag)", 1],["Grapes (bunch)", 1]]}'></highcharts-element></li>
+            
+            <li class="ui-state-default"><highcharts-element class="card full" __type="donut" __enable3D="true" __title="Fruit Delivery 2" __subtitle="Highchart Polymer Element " __crosshairX="false" __crosshairY="false" __data='{"name": "Delivered amount","data": [["Bananas", 8],["Kiwi", 3],["Mixed nuts", 1],["Oranges", 6],["Apples", 8],["Pears", 4],["Clementines", 4],["Reddish (bag)", 1],["Grapes (bunch)", 1]]}'></highcharts-element></li>
+            
+            <li class="ui-state-default"><highcharts-element class="card full" __type="column" __enable3D="false" __title="Fruit Delivery 2" __subtitle="Highchart Polymer Element " __crosshairX="false" __crosshairY="false" __data='{"name": "Delivered amount","data": [["Bananas", 8],["Kiwi", 3],["Mixed nuts", 1],["Oranges", 6],["Apples", 8],["Pears", 4],["Clementines", 4],["Reddish (bag)", 1],["Grapes (bunch)", 1]]},{"name": "Delivered amount","data": [["Bananas", 18],["Kiwi", 13],["Mixed nuts", 1],["Oranges", 16],["Apples", 18],["Pears", 14],["Clementines", 14],["Reddish (bag)", 11],["Grapes (bunch)", 11]]}'></highcharts-element></li>
+            
+            <li class="ui-state-default"><highcharts-element class="card full" __type="area" __enable3D="false" __title="Fruit Delivery 2" __subtitle="Highchart Polymer Element " __crosshairX="false" __crosshairY="false" __data='{"name": "Delivered amount","data": [["Bananas", 8],["Kiwi", 3],["Mixed nuts", 1],["Oranges", 6],["Apples", 8],["Pears", 4],["Clementines", 4],["Reddish (bag)", 1],["Grapes (bunch)", 1]]},{"name": "Delivered amount","data": [["Bananas", 18],["Kiwi", 13],["Mixed nuts", 1],["Oranges", 16],["Apples", 18],["Pears", 14],["Clementines", 14],["Reddish (bag)", 11],["Grapes (bunch)", 11]]}'></highcharts-element></li>
+            
+            <li class="ui-state-default"><highcharts-element class="card full" __type="scatter" __enable3D="false" __title="Fruit Delivery 2" __subtitle="Highchart Polymer Element " __crosshairX="true" __crosshairY="true" __data='{"name": "Delivered amount","data": [["Bananas", 8],["Kiwi", 3],["Mixed nuts", 1],["Oranges", 6],["Apples", 8],["Pears", 4],["Clementines", 4],["Reddish (bag)", 1],["Grapes (bunch)", 1]]},{"name": "Delivered amount","data": [["Bananas", 18],["Kiwi", 13],["Mixed nuts", 1],["Oranges", 16],["Apples", 18],["Pears", 14],["Clementines", 14],["Reddish (bag)", 11],["Grapes (bunch)", 11]]}'></highcharts-element></li>
+            
+            <li class="ui-state-default"><highcharts-element class="card full" __type="spline" __enable3D="false" __title="Fruit Delivery 2" __subtitle="Highchart Polymer Element " __crosshairX="true" __crosshairY="true" __data='{"name": "Delivered amount","data": [["Bananas", 8],["Kiwi", 3],["Mixed nuts", 1],["Oranges", 6],["Apples", 8],["Pears", 4],["Clementines", 4],["Reddish (bag)", 1],["Grapes (bunch)", 1]]},{"name": "Delivered amount","data": [["Bananas", 18],["Kiwi", 13],["Mixed nuts", 1],["Oranges", 16],["Apples", 18],["Pears", 14],["Clementines", 14],["Reddish (bag)", 11],["Grapes (bunch)", 11]]}'></highcharts-element></li>
+            
+           
+        </ul>
+        
+        <script src="Highcharts-4.0.4/js/highcharts.js"></script>
+        <script src="Highcharts-4.0.4/js/highcharts-3d.js"></script>
+        <script src="Highcharts-4.0.4/js/modules/exporting.js"></script>
+        <script>
+            $(function() {
+                 $( "#sortable" ).sortable();
+                 $( "#sortable" ).disableSelection();
+            });
+        </script>
+	</body>
+</html>

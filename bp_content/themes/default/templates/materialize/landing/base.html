@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="{{ locale_language_id }}"> <!--<![endif]-->
+
+
+{% block document_head %}
+	<head>
+  		{% block title %}<title>{{app_name}}</title>{% endblock %}
+
+		<!-- All meta tags from config files -->
+	    {% block metadata %}
+			{{ meta_tags_code }}
+	    {% endblock %}
+
+		{% block favicons %}
+		    <link rel="icon" href="{{brand_favicon}}" sizes="32x32">
+		{% endblock %}
+
+	  	<!-- CSS  -->
+	  	{% block stylesheets %}
+	  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
+		    <link href="/{{theme}}/materialize/css/style.css?v=1" type="text/css" rel="stylesheet" media="screen,projection">
+		    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css">
+		    <style type="text/css">
+		    	#lean-overlay{
+		    		    background: transparent!important;
+		    	}
+		    	#sidenav-overlay{
+		    		    display: none!important;
+		    	}
+	    		.toast {background-color: white!important;}
+	    		.toast-success{ color: #00464F!important; line-height: 18px;}
+	    		.toast-danger{ color: #CE1212!important; line-height: 18px;}
+	    		.toast-warning{ color: #CEB029!important; line-height: 18px;}
+	    		.toast-info{ color: #2095CB!important; line-height: 18px;}
+	    		@-webkit-keyframes pulsate {
+				    0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+				    50% {opacity: 1.0;}
+				    100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+				}
+
+				.icon-block {
+				  padding: 0 15px;
+				}
+				.icon-block .material-icons {
+				  font-size: inherit;
+				}
+				ul li{
+					font-family: roboto-thin!important;
+				}
+				.g-recaptcha{
+					  margin-left: 23%;
+  					  -webkit-transform: scale(0.8);
+  					  transform: scale(0.8);
+				}
+				html, body { height: 100%; margin: 0; padding: 0; }
+				#map {height: 95%}
+				.spacer{margin-bottom: 35px;}
+
+				/*BRANDING*/
+				.brand-color{
+					background-color: {{brand_color}}!important;
+				}
+				.brand-color-text{
+					color:{{brand_color}}!important;
+				}
+				.brand-secondary-color{
+					background-color: {{brand_secondary_color}}!important;
+				}
+				.brand-secondary-color-text{
+					color:{{brand_secondary_color}}!important;
+				}
+				.brand-tertiary-color{
+					background-color: {{brand_tertiary_color}}!important;
+				}
+				.brand-tertiary-color-text{
+					color:{{brand_tertiary_color}}!important;
+				}
+				.btn{
+					background-color: {{brand_color}};
+				}
+				.btn:hover{
+					background-color: {{brand_secondary_color}}!important;
+                    color:white!important;
+				}
+				.btn-large{
+					background-color: {{brand_color}};
+				}
+				.btn-large:hover{
+					background-color: {{brand_secondary_color}}!important;
+				}
+				.btn-floating{
+					background-color: {{brand_color}};
+				}
+				.btn-floating:hover{
+					background-color: {{brand_secondary_color}}!important;
+				}			    
+				#loader {
+				  border-top-color: {{brand_color}}!important;
+				}
+				#loader:before {
+				  border-top-color: {{brand_secondary_color}}!important;
+				}
+				#loader:after {
+				  border-top-color: {{brand_tertiary_color}}!important;
+				}
+		    	.gpe-green-darken-1{
+		    		background-color: #79A63F;
+		    	}
+		    	.gpe-green-darken-2{
+		    		background-color: #50823B;
+		    	}
+
+		    	[type=checkbox].filled-in:checked+label:after{
+		    	    border: 2px solid {{brand_secondary_color}}!important;
+    				background-color: {{brand_secondary_color}}!important;
+		    	}
+
+	    	</style>
+		    {% block page_css %}
+		    <style type="text/css">
+		    	.side-nav li:hover {
+				    background-color: #fff!important;
+				}
+		    </style>
+		    {% endblock %}
+		{% endblock %}
+		
+		<!-- All google, mixpanel and analytics tags from config files. -->
+		{% block analytics %}
+			{{ google_analytics_code }}
+		{% endblock %}
+	    
+	    <!-- All JavaScript at the bottom, except these. -->
+		{% block priority_js %}
+			<script type="text/javascript" src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>	
+    		<script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
+   		 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
+		{% endblock %}
+
+		<!--  POLYMER   -->
+		{% block webcomponents %}
+			{% block page_components %}{% endblock %}
+		{% endblock %} 
+
+	</head>
+{% endblock %}
+
+{% block document_body %}
+	<body>
+		{% block navbar %}
+			<!-- START NAVBAR -->
+			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-2">
+				<div class="nav-wrapper" style="background:white;">
+				  <a href="{{uri_for("landing")}}" class="brand-logo">
+				  	<img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:60px; {% endif %}">
+				  	<div id="main-preloader" class="preloader-wrapper small active right" style="display: none;margin-top:12px;margin-left:12px;">
+                      <div class="spinner-layer spinner-blue">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+
+                      <div class="spinner-layer spinner-red">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+
+                      <div class="spinner-layer spinner-yellow">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+
+                      <div class="spinner-layer spinner-green">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+				  </a>
+				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert brand-color-text"></i></a>
+				  <ul id="nav-mobile" class="right hide-on-med-and-down">
+				    {% if not user_id %}
+					    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Ingresar</a></li>
+					    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn brand-color" style="color:white; margin-left: 20px;margin-right: 20px;">Crear Cuenta</a></li>
+				    {% else %}
+				    	{% if user_is_callcenter %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% elif user_is_secretary %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% elif user_is_agent %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% elif user_is_operator %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% endif %}
+					    <li id="nav-report" {% if path == uri_for('landing-map') %}style="border-bottom: 5px solid #4EC8BC;"{% endif %}><a href="{{uri_for("landing-map")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
+					    <li id="nav-report-new" {% if path == uri_for('materialize-report-new') %}style="border-bottom: 5px solid #4EC8BC;"{% endif %}><a href="{{uri_for("materialize-report-new")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
+					    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+			                  <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-reports") }}">Mis reportes</a>
+		                        </li>
+		                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
+		                        </li>
+		                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
+		                        </li>
+		                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
+		                        </li>
+			            </ul>
+					    <li class="nav-user" {% if path == uri_for('materialize-reports') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-referrals') %}style="border-bottom: 5px solid #4EC8BC;"{% endif %}>
+	                        	{% if has_picture %}
+									<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+											<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
+											<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+			                        </a>
+								{% else %}
+									<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+											<div style="position: absolute;left: 0px;">
+												<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
+											</div>
+											<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+			                        </a>
+								{% endif %}
+	                     </li>	
+				    {% endif %}
+				  </ul>
+				  <ul class="side-nav hide-on-large-only" id="mobile-demo">
+				    {% if not user_id %}
+					    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingresar</a></li>
+					    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white-text brand-color">Crear cuenta</a></li>
+				    {% else %}
+					    {% if user_is_callcenter %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% elif user_is_secretary %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% elif user_is_agent %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% elif user_is_operator %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+						{% endif %}
+					    <li id="nav-report"><a href="{{uri_for("landing-map")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
+					    <li id="nav-report-new"><a href="{{uri_for("materialize-report-new")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
+					    <li class="no-padding">
+	                        <ul class="collapsible collapsible-accordion">
+	                            <li class="bold">
+	                            	<a class="collapsible-header waves-effect waves-cyan">
+							    	{% if has_picture %}
+										<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:45px">
+									{% else %}
+			                        	<span class="circle red lighten-1" style="width: 45px;   height: 45px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; margin-top: 10px;margin-left: 10px;">{{ name_i }}</span>
+									{% endif %}
+										<i class="material-icons right" style="line-height: 1.25;margin-left: -38px; font-size:50px;">arrow_drop_down</i>
+	                            	<div class="collapsible-body">
+	                                    <ul>
+										  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
+					                      <li><a href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a></li>
+					                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
+					                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
+	                                    </ul>
+	                                </div>
+	                            </li>
+	                        </ul>
+	                     </li>
+					     <li class="divider"></li>
+				    {% endif %}
+				    {% if path == uri_for('landing-map') %}
+				    <li>
+				    	<div class="hide-on-med-only">
+		                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()">
+		                  <li>
+		                    <div class="collapsible-header white-text truncate brand-color"> Estás viendo <span id="rep_count_M" style="font-family: roboto-regular;">0</span> reportes.</div>
+		                    <div class="collapsible-body white">
+		                    	<p style="padding: 8px;">
+    		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde_M" checked>
+    		                    	<label for="check_alcalde_M">Vía Alcalde en Línea: <span style="color:#4EC8BC" id="c_alcalde_M"></span></label>
+    		                    </p>
+		                    	<p style="padding: 8px;">
+    		                    	<input type="checkbox" class="filled-in layerControl" id="check_cic_M">
+    		                    	<label for="check_cic_M">Vía CIC: <span style="color:#43D1EC" id="c_cic_M"></span></label>
+    		                    </p>
+		                    </div>
+		                  </li>
+		                  <li>
+		                  	<div class="collapsible-header white-text truncate" id="my-zone-m" style="background-color:#06616D!important" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
+		                    <div class="collapsible-body brand-color lighten-5"></div>
+		                  </li>
+		                  <li>
+		                    <div class="collapsible-header white-text" style="background-color:#0F8594!important"><i class="mdi-device-dvr"></i> Cambiar vista</div>
+		                    <div class="collapsible-body white lighten-5 center">
+		                      <div class="row">
+		                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
+		                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light yellow tooltipped" data-position="top" data-delay="50" data-tooltip="Agrupado" onclick="setMapView('cluster');"><i class="mdi-maps-pin-drop"></i></a></div>
+		                      </div>
+		                      <div class="row">
+		                      	<div class="col s6"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="top" data-delay="50" data-tooltip="Intensidad" onclick="setMapView('heat');"><i class="mdi-social-whatshot"></i></a></div>
+		                      	<div class="col s6"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light light-blue tooltipped" data-position="top" data-delay="50" data-tooltip="Recurrencia" onclick="setMapView('intensity');"><i class="mdi-image-blur-circular"></i></a></div>
+		                      </div>
+		                    </div>
+		                  </li>
+		                  <!-- <li>
+		                    <div class="collapsible-header gpe-green-darken-1 white-text"><i class="mdi-content-filter-list"></i> Filtrar</div>
+		                    <div class="collapsible-body whitelighten-5">
+		                      
+		                    </div>
+		                  </li> -->
+		                </ul>
+		              </div>
+				    </li>
+				    {% endif %}
+				  </ul>
+				</div>
+			</nav>
+			<!-- END NAVBAR -->
+		{% endblock %}
+
+		{% block header_content %}
+		{% endblock %}
+
+		{% block body_content %}
+			<div id="map">				
+			</div>
+			<div class="hide-on-small-only" style="width:270px; position:fixed; top:12%; left:3%;">
+				<div>
+	            	<input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
+				</div>
+                <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+                  <li>
+                    <div class="collapsible-header white-text truncate brand-color"> <i class="mdi-navigation-arrow-drop-down"></i> Estás viendo <span id="rep_count" style="font-family: roboto-regular;">0</span> reportes.</div>
+		                    <div class="collapsible-body white">
+		                    	<p style="padding: 8px;">
+    		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde" checked>
+    		                    	<label for="check_alcalde">Vía Alcalde en Línea: <span style="color:#4EC8BC" id="c_alcalde"></span></label>
+    		                    </p>
+		                    	<p style="padding: 8px;">
+    		                    	<input type="checkbox" class="filled-in layerControl" id="check_cic">
+    		                    	<label for="check_cic">Vía CIC: <span style="color:#43D1EC" id="c_cic"></span></label>
+    		                    </p>
+		                    </div>
+                  </li>
+                  <li>
+                  	<div class="collapsible-header white-text truncate" id="my-zone" style="background-color:#06616D!important" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
+                    <div class="collapsible-body brand-color lighten-5"></div>
+                  </li>
+                  <li>
+                    <div class="collapsible-header white-text" style="background-color:#0F8594!important;"><i class="mdi-device-dvr"></i> Cambiar vista</div>
+                    <div class="collapsible-body white lighten-5 center">
+                      <div class="row">
+                      	<div class="col s6" style="margin-top:15px;"><a class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
+                      	<div class="col s6" style="margin-top:15px;"><a class="btn-floating btn-large waves-effect waves-light yellow tooltipped" data-position="top" data-delay="50" data-tooltip="Agrupado" onclick="setMapView('cluster');"><i class="mdi-maps-pin-drop"></i></a></div>
+                      </div>
+                      <div class="row">
+                      	<div class="col s6"><a class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="top" data-delay="50" data-tooltip="Intensidad" onclick="setMapView('heat');"><i class="mdi-social-whatshot"></i></a></div>
+                      	<div class="col s6"><a class="btn-floating btn-large waves-effect waves-light light-blue tooltipped" data-position="top" data-delay="50" data-tooltip="Recurrencia" onclick="setMapView('intensity');"><i class="mdi-image-blur-circular"></i></a></div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="collapsible-header white-text" style="background-color:#00A4B9"><i class="mdi-content-filter-list"></i> Filtrar</div>
+                    <div class="collapsible-body white lighten-5">
+                        
+                        <div class="row">
+                            <div class="container">
+                                <div class="input-field col s12">
+                                    <button class="waves-effect waves-light btn filterbtn col s12" id="statusfilterbtn">Status</button>
+                                    <button class="waves-effect waves-light btn filterbtn col s12" id="categoryfilterbtn" disabled>Categorias</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="container">
+                                <div class="switch">
+                                    Fechas : 
+                                    <label>
+                                        Off
+                                        <input type="checkbox" class="filterControl" id="calendar">
+                                        <span class="lever"></span> On
+                                    </label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input id="from" type="date" class="datepicker filterControl" disabled>
+                                    <label for="from">Desde</label>
+                                </div>
+                                <div class="input-field col s6">
+                                    <input id="until" type="date" class="datepicker filterControl" disabled>
+                                    <label for="until">Hasta</label>
+                                </div>                    
+                            </div>
+                        </div>
+                        <div class="row center">
+                            <div class="container">
+                                <div class="input-field col s12" id='removeFilter'>
+                                    <span><a class="btn-floating waves-effect waves-light red" ><i class="mdi-content-clear"></i></a></span>
+                                    <span style="padding-left: 5px; vertical-align: middle; text-transform: uppercase;cursor:pointer;">Remover filtros</span>
+                                </div>
+                            </div>
+                        </div>
+                                        
+                    </div>
+                  </li>
+                </ul>
+            </div>                                    
+		{% endblock %}
+
+		{% block right_sidebar %}
+			<!-- Right sidebar -->
+            <aside id="right-sidebar-nav">
+		        <ul id="chat-out" id="chat-out" class="side-nav rightside-navigation" style="margin-top:65px;">
+		        	<li class="li-hover">
+                    	<a href="#" data-activates="chat-out" class="chat-close-collapse right" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
+                    </li>
+		            <li class="li-hover">
+		                <ul class="chat-collapsible" data-collapsible="expandable">
+		                <li>
+		                    <div class="container row" style="margin-top:40px;">
+		                    	
+		                    </div>
+		                    <div class="container row" style="margin-top:40px;">
+		                    	<p>
+		                    		A través de tu portal de atención, puedes contribuir a transformar Guadalupe en la ciudad que todos queremos. 
+		                    	</p>
+		                    	<p>
+		                    		Reportando, administrando y dando seguimiento a las necesidades que aquejan a nuestra comunidad, juntos cuidadanos y gobierno podremos ser más eficientes y demostrar que estamos para servir.
+		                    	</p>
+		                    	<p>
+		                    		Además, aprovechando la apertura de datos del <a href="http://www.cic.mx" class="brand-color-text" style="font-family:roboto-black; display:inline!important; line-height:18px!important;" target="_blank">Centro de Integración Ciudadana</a> y el 4to compromiso con<a href="http://www.comovamosnl.org" class="brand-color-text" style="font-family:roboto-black; display:inline!important; line-height:18px!important;" target="_blank"> Alcalde cómo vamos</a>, los reportes que la comunidad realice a través de ellos, también serán respondidos desde esta plataforma. ¡Así tú decides que herramienta elegir para que podamos atenderte!
+		                    	</p>
+		                    	<p>
+		                    		¡Felicidades por ser parte! Comienza a contribuir hacia un mejor Guadalupe.
+		                    	</p>
+		                    </div>
+		                    {% if is_mobile %}
+		                    <div class="container row center" style="margin-top:40px;">
+			                    <a href="#modal2" class="modal-trigger menu-item btn white-text brand-color" style="margin-left: 20px;margin-right: 20px;">Registro</a>
+							</div>
+		                    {% endif %}
+		                </li>
+		                </ul>
+		            </li>
+		        </ul>
+		    </aside>
+		{% endblock %}
+
+		{% block page_floatings %}
+			{% if user_id and path != uri_for('materialize-report-new') %}
+			<!-- Floating Action Button -->
+            <div class="fixed-action-btn" style="bottom: 65px; right: 60px;">
+                <a class="btn-floating btn-large brand-color">
+                  <i class="large mdi-content-add"></i>
+                </a>
+                <ul>
+                  <li><a id="chatout-btn" href="#" data-activates="chat-out" class="btn-floating brand-secondary-color chat-collapse" onclick="$('#right-sidebar-nav').show()"><i class="large mdi-communication-live-help"></i></a></li>
+                  {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="btn-floating brand-secondary-color"><i class="large mdi-communication-email"></i></a></li>{% endif %}
+                  {% if path != uri_for('landing-map') %}<li><a href="{{ uri_for('landing-map') }}" class="btn-floating brand-secondary-color"><i class="large mdi-social-public"></i></a></li>{% endif %}
+                  <li><a href="{{ uri_for('materialize-report-new') }}" class="btn-floating brand-color"><i class="large mdi-maps-place"></i></a></li>
+                </ul>
+            </div>
+            <!-- Floating Action Button -->
+            {% else %}
+            <a id="chatout-btn" href="#" data-activates="chat-out" class="btn-floating brand-secondary-color chat-collapse" onclick="$('#right-sidebar-nav').show()" style="display:none;"></a>
+			{% endif %}
+		{% endblock %}
+
+
+		{% block modals_content %}
+			<div id="modal1" class="modal white brand-color-text center" >
+		      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+		      <div class="modal-content">
+	        	<form id="form_login_user" action="/login/" method="post">
+		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+			        <div class="row">
+			          <div class="input-field col s12 center">
+			            <p class="center login-form-text">Usa tu correo y contraseña para ingresar</p>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-social-person-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="login_email" name="email" type="email" class="validate">
+			            <label for="email" class="center-align">Correo</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="login_password" name="password" type="password">
+			            <label for="password">Contraseña</label>
+			          </div>
+			        </div>
+			        <div class="row">          
+			          <div class="input-field col s12 m12 l12  login-text" style="display:none;">
+			              <input id="login_remember-me" name="remember_me" type="checkbox" />
+			              <label for="remember-me">Recordarme</label>
+			          </div>
+			        </div>
+			        <div class="row">
+			          <div class="input-field col s12">
+			            <a class="btn-large waves-effect waves-light col s12 brand-color white-text" style="cursor:pointer;" onclick="sendForm('form_login_user')">Ingresar</a>
+			          </div>
+			        </div>
+			        <div class="row">
+				        <p class="margin right-align medium-small right"><a target="_blank" href="{{ uri_for("password-reset") }}">¿Olvidaste tu contraseña?</a></p>
+			        </div>
+			      </form>
+		      </div>
+		    </div>
+		    <div id="modal2" class="modal white brand-color-text center" style="max-height:80%;">
+		      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+		      <div class="modal-content">
+	        	<form id="form_register_user" action="/register/" method="post">
+		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+			        <div class="row">
+			          <div class="input-field col s12 center">
+			            <p class="center login-form-text">¡Únete a la comunidad que reaviva Guadalupe!</p>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-social-person-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="register_name" name="name" type="text">
+			            <label for="name" class="center-align">Nombre</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-communication-email prefix brand-color-text brand-color-text"></i>
+			            <input id="register_email" name="email" type="email" class="validate">
+			            <label for="email" class="center-align">Correo</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="register_password" name="password" type="password">
+			            <label for="password">Contraseña</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			        	{{captchahtml | safe}}
+			          </div>
+			        </div>
+			        <div class="row">
+			          <div class="input-field col s12">
+			            <a class="btn-large waves-effect waves-light col s12 brand-color white-text" style="cursor:pointer;" onclick="sendForm('form_register_user')">Registrarme</a>
+			          </div>
+			        </div>
+			        <div class="row">
+			        	<p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("tou")}}">Términos de uso</a></p>
+				        <p class="margin right-align medium-small right"><a target="_blank" href="{{uri_for("privacy")}}">Aviso de privacidad</a></p>
+			        </div>
+			      </form>
+		      </div>
+		    </div>
+		    <div id="modal3" class="modal" style="top: 80px!important; font-family: roboto-medium; max-height: 85%;">
+		      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+              <div id="modal3_content" class="modal-content brand-color-text row" style="overflow-y:scroll;">
+                <div class="row">
+	                <img id="report_image" class="responsive-img center col s12 m6" style="margin-top: 12px;" src="" style="display:none;">
+	                <div id="gSV" class="col s12" style="display:none;">
+	                	<div id='gSVpanorama' style='height: 300px;overflow: hidden;-webkit-transform: translateZ(0px); background-color:#4EC8BC'></div>
+	                </div>
+	            </div>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-receipt brand-color-text"></i>Ticket: <span id="report_cartodb_id" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-book brand-color-text"></i>Estado: <span id="report_status" class="brand-secondary-color-text"></span></p>
+		        <p class="col s12 m4"><i style="padding:8px;" class="mdi-social-group-add brand-color-text"></i>Seguidores: 
+		        <span id="report_followers" class="brand-secondary-color-text"></span>
+				{% if user_id %}
+                <a href="#" id="followBtn" class="waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Seguir este reporte te permite ver su historial de cambios y sumarte a la conversación."   style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;" onclick="followReport(this)">Seguir</a>
+                {% else %}
+					<a href="{{ uri_for('login') }}" class="modal-trigger menu-item waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Seguir este reporte te permite ver su historial de cambios y sumarte a la conversación." style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;" >Seguir</a></li>
+                {% endif %}
+		        </p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-event brand-color-text"></i>Fecha: <span id="report_date" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m8"><i style="padding:8px;" class="mdi-maps-pin-drop brand-color-text"></i>Dirección: <span id="report_address" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work brand-color-text"></i>Grupo: <span id="report_group_category" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-image-style brand-color-text"></i>Categoría: <span id="report_sub_category" class="brand-secondary-color-text"></span></p>
+                <p class="col s12"><i style="padding:8px;" class="mdi-action-description brand-color-text"></i>Descripción: <span id="report_description" class="brand-secondary-color-text"></span></p>
+                <p class="col s12" style="margin-left:10px;">Cambios y comentarios: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
+                {% if user_id %}
+                <div class="row">
+                    <div class="input-field col s11 offset-s1 m7 offset-m1">
+                        <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+                        <label for="commentbox">Agrega tu comentario aquí...</label>
+                    </div>
+                    <div class="input-field col s11 offset-s1 m7 offset-m1">
+		            	<a class="btn waves-effect waves-light sm-green white-text right" style="cursor:pointer;" id="submit_report_form_comment">Comentar <i class="mdi-content-send right"></i></a>
+		            </div>
+                </div> 
+                {% endif %}
+                <input id="report_ticket" type="hidden" value="">
+                <input id="report_follows" type="hidden" value="">
+              </div>
+              <div class="modal-footer" style="background-color:#E4E4E4;">              	
+                <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close" style="margin-right:20px;">Cerrar</a>
+              </div>
+            </div>
+            <!-- MODALS FOR FILTERS -->
+            <!-- FOR STATUS -->
+            <div id="modalstatusfilterbtn" class="modal">
+		      	<i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+                <div class="modal-content" id= "statusfilterContainer">
+                    
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="card-panel">
+                                <span class="card-title">
+                                    <span style="font-size: 30px;">Selecciona un estado</span>
+                                </span>
+                                <div class="row">
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="halted"><label for="halted">En espera</label></p>
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="answered"><label for="answered">Respondido</label></p>
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="assigned"><label for="assigned">Asignado</label></p>
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="solved"><label for="solved">Resuelto</label></p>                
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="rejected"><label for="rejected">Rechazado</label></p>
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="working"><label for="working">En proceso</label></p>
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="failed "><label for="failed ">Fallo</label></p>
+                                    <p class="col s12 m4 l3"><input class="filterControl filterStatus" type="checkbox" id="open"><label for="open">Abierto</label></p>         
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>            
+            <!-- FOR CATEGORIES AND SUBS -->
+            <div id="modalcategoryfilterbtn" class="modal">
+		     	<i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+                <div class="modal-content" id="categoryfilterContainer"></div>
+            </div>  
+		{% endblock %}
+
+		{% block footer %}
+			<!-- START FOOTER -->
+			<footer class="page-footer brand-tertiary-color" style="margin-top:0!important;">
+				<div class="footer-copyright " style="text-align:right;">
+				  <div class="container">
+				  	© 2015 Gobierno de Guadalupe.
+				  </div>
+				</div>
+			</footer>
+			<!-- END FOOTER -->
+		
+		
+		{% endblock %}
+
+	  	<!-- All Scripts start here -->
+		{% block scripts %}
+			<!-- jQuery Library -->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
+		    <!--materialize js-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+		    <!--scrollbar-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js?v=5"></script>
+		  	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.color-2.1.0.js"></script>
+            <!--Start of Zopim Live Chat Script-->
+                <script type="text/javascript">
+                window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+                d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+                _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+                $.src="//v2.zopim.com/?3dOI4XdtYG8BGGpYnacziAheyWLttPBV";z.t=+new Date;$.
+                type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+                </script>
+            <!--End of Zopim Live Chat Script-->  
+		  	<!-- Toast Notification -->
+		    {% if messages|safe %}		    	
+			    {% for message in messages %}
+		    		<script type="text/javascript">
+		            	var resendIndex = 0 ;
+		            	var _text = "{{ message[0]|safe }}";
+		            	var _textAdditionals = "";
+						resendIndex = _text.search('resend');
+						if ( resendIndex > 0 ){
+							//this is the case when resend-activation-link is sent
+							// 1: Add this text as html to toast additionals
+							_textAdditionals = '<a class="toast-warning" href="/'+_text.substr(resendIndex).replace(/ /g,'/')+'/">Clic here if you need us to resend activation link. Previous link will be forgotten.</a>';
+							// 2: Trim this text from toast
+							_text = _text.substr(0, resendIndex-1);							
+						}
+						var _msg = '<span class="toast-{{ message[1]|safe }}">'+_text+'</span>';
+		            	Materialize.toast(_msg, 4500);
+		            	if (_textAdditionals != "") Materialize.toast(_textAdditionals, 10000);
+		            </script>
+			    {% endfor %}
+			{% endif %}	
+
+            {%if not is_mobile and path == uri_for('landing') %} 
+	            {% block raptor %}
+				<script src="https://hammerjs.github.io/dist/hammer.js"></script>
+				<script src="/{{ theme }}/materialize/js/plugins/raptor/raptor.js?v=5"></script>
+				<script type="text/javascript">
+					$(window).load(function() {
+						$('body').raptorize({
+							'enterOn' : 'konami-code'
+						});
+					});
+				</script>
+                {% endblock %}
+	        {%endif%}
+	        {% block onload_methods %}
+				<script type="text/javascript">
+	    			var is_Safari = false, not_Chrome = false;
+					$(function(){						
+
+						$('a[href*=#]:not([href=#])').click(function() {
+						    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+						      var target = $(this.hash);
+						      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+						      if (target.length) {
+						        $('html,body').animate({
+						          scrollTop: target.offset().top
+						        }, 2000);
+						        return false;
+						      }
+						    }
+						});
+					    $('.button-collapse').sideNav({
+					      edge: 'right'
+					    });
+						$('.modal-trigger').leanModal();
+						$('.tooltipped').tooltip({delay: 50});
+					    $('.parallax').parallax();
+						$(".menu-item").click(function(){
+							$('.button-collapse').sideNav('hide');
+						});
+
+
+						var BrowserDetect = {
+							init: function() {
+								this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+								this.version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion) || "an unknown version";
+								this.OS = this.searchString(this.dataOS) || "an unknown OS";
+								console.log("Detected " + this.browser + " v." + this.version + " running {{app_name}} in a " + this.OS);
+								if (this.browser != 'Chrome' && this.browser.indexOf('Safari') == -1 && this.browser.indexOf('iPhone') == -1 && this.browser != 'Firefox') {
+									alert("Lo sentimos, esta plataforma está diseñada para navegadores distintos al tuyo..");
+								}
+								else if (this.browser.indexOf("Safari") != -1)
+									is_Safari = true;
+								else if (this.browser.indexOf("Chrome") == -1)
+									not_Chrome = true;
+							},
+							searchString: function(data) {
+								for (var i = 0; i < data.length; i++) {
+									var dataString = data[i].string;
+									var dataProp = data[i].prop;
+									this.versionSearchString = data[i].versionSearch || data[i].identity;
+									if (dataString) {
+										if (dataString.indexOf(data[i].subString) != -1) return data[i].identity;
+									} else if (dataProp) return data[i].identity;
+								}
+							},
+							searchVersion: function(dataString) {
+								var index = dataString.indexOf(this.versionSearchString);
+								if (index == -1) return;
+								return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+							},
+							dataBrowser: [{
+								string: navigator.userAgent,
+								subString: "Chrome",
+								identity: "Chrome"
+							}, {
+								string: navigator.userAgent,
+								subString: "OmniWeb",
+								versionSearch: "OmniWeb/",
+								identity: "OmniWeb"
+							}, {
+								string: navigator.vendor,
+								subString: "Apple",
+								identity: "Safari",
+								versionSearch: "Version"
+							}, {
+								prop: window.opera,
+								identity: "Opera",
+								versionSearch: "Version"
+							}, {
+								string: navigator.vendor,
+								subString: "iCab",
+								identity: "iCab"
+							}, {
+								string: navigator.vendor,
+								subString: "KDE",
+								identity: "Konqueror"
+							}, {
+								string: navigator.userAgent,
+								subString: "Firefox",
+								identity: "Firefox"
+							}, {
+								string: navigator.vendor,
+								subString: "Camino",
+								identity: "Camino"
+							}, { // for newer Netscapes (6+)
+								string: navigator.userAgent,
+								subString: "Netscape",
+								identity: "Netscape"
+							}, {
+								string: navigator.userAgent,
+								subString: "MSIE",
+								identity: "Explorer",
+								versionSearch: "MSIE"
+							}, {
+								string: navigator.userAgent,
+								subString: "Gecko",
+								identity: "Mozilla",
+								versionSearch: "rv"
+							}, { // for older Netscapes (4-)
+								string: navigator.userAgent,
+								subString: "Mozilla",
+								identity: "Netscape",
+								versionSearch: "Mozilla"
+							}],
+							dataOS: [{
+								string: navigator.platform,
+								subString: "Win",
+								identity: "Windows"
+							}, {
+								string: navigator.platform,
+								subString: "Mac",
+								identity: "Mac"
+							}, {
+								string: navigator.userAgent,
+								subString: "iPhone",
+								identity: "iPhone/iPod"
+							}, {
+								string: navigator.platform,
+								subString: "Linux",
+								identity: "Linux"
+							}]
+						};
+						BrowserDetect.init();	
+
+						{% if path == uri_for('landing-map') or path == uri_for('landing-map')  %}
+							setTimeout(function(){ 
+								document.getElementById('chatout-btn').click();
+							}, 1500);
+						{% endif %}
+
+
+						{% if user_is_secretary %}
+						 console.log("he's a secretary!!")
+						{% else %}
+						 console.log("he's not a secretary!!")
+						{% endif %}
+						{% if user_is_agent %}
+						 console.log("he's an agent!!")
+						{% else %}
+						 console.log("he's not an agent!!")
+						{% endif %}
+						{% if user_is_operator %}
+						 console.log("he's an operator!!")
+						{% else %}
+						 console.log("he's not an operator!!")
+						{% endif %}
+						{% if user_is_callcenter %}
+						 console.log("he's from callcenter!!")
+						{% else %}
+						 console.log("he's not from callcenter!!")
+						{% endif %}
+
+					}); 
+					function sendForm(formID){
+			    		if (formID == "form_login_user"){
+			    			if (document.getElementById('login_email').value != "" && document.getElementById('login_password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_login"){
+			    			if (document.getElementById('email').value != "" && document.getElementById('password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_register_user"){
+			    			if (document.getElementById('register_name').value != "" && document.getElementById('register_email').value != "" && document.getElementById('register_password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('register_password').value) == document.getElementById('register_password').value && cleanUpMailSpecialChars(document.getElementById('register_email').value) == document.getElementById('register_email').value)
+			    					document.getElementById(formID).submit();
+			    				else
+			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_register"){
+			    			if (document.getElementById('r_name').value != "" && document.getElementById('r_email').value != "" && document.getElementById('r_password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('r_password').value) == document.getElementById('r_password').value && cleanUpMailSpecialChars(document.getElementById('r_email').value) == document.getElementById('r_email').value)
+			    					document.getElementById(formID).submit();
+			    				else
+			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_pass_reset"){
+			    			if (document.getElementById('password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('password').value) == document.getElementById('password').value){
+			    					document.getElementById('c_password').value = document.getElementById('password').value;
+			    					document.getElementById(formID).submit();
+			    				}else
+			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en tu contraseña</span>',4500);
+
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}
+
+					}
+					function cleanUpSpecialChars(str){
+						str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+						str = str.replace(/[àáâãäå]/g,"a");
+						str = str.replace(/[ÈÉÊË]/g,"E");
+						str = str.replace(/[éèëê]/g,"e");
+						str = str.replace(/[ÍÌÎÏ]/g,"I");
+						str = str.replace(/[íîïì]/g,"i");
+						str = str.replace(/[ÓÖÒÔ]/g,"O");
+						str = str.replace(/[óòôö]/g,"o");
+						str = str.replace(/[ÚÜÛÙ]/g,"U");
+						str = str.replace(/[úùûü]/g,"u");
+						str = str.replace(/[Ñ]/g,"N");
+						str = str.replace(/[ñ]/g,"n");
+						str = str.replace(/[Ç]/g,"C");
+						str = str.replace(/[ç]/g,"c");
+						return str.replace(/[^a-zA-Z0-9 ]/g, "");
+					}
+					function cleanUpMailSpecialChars(str){
+						str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+						str = str.replace(/[àáâãäå]/g,"a");
+						str = str.replace(/[ÈÉÊË]/g,"E");
+						str = str.replace(/[éèëê]/g,"e");
+						str = str.replace(/[ÍÌÎÏ]/g,"I");
+						str = str.replace(/[íîïì]/g,"i");
+						str = str.replace(/[ÓÖÒÔ]/g,"O");
+						str = str.replace(/[óòôö]/g,"o");
+						str = str.replace(/[ÚÜÛÙ]/g,"U");
+						str = str.replace(/[úùûü]/g,"u");
+						str = str.replace(/[Ñ]/g,"N");
+						str = str.replace(/[ñ]/g,"n");
+						str = str.replace(/[Ç]/g,"C");
+						str = str.replace(/[ç]/g,"c");
+						return str;
+					}
+				</script>
+			{% endblock %}
+
+			{% if locale_language_id != "en" %}
+				{% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
+					<script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
+				{% else %}
+					<script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
+				{% endif %}
+			{% endif %}
+
+			{% block page_scripts %}
+				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+				<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+                <script type="text/javascript">
+                	// cartodb
+                	var cic_table_name = 'nl_public';
+                	var cic_mun_table_name = 'mun_poly';
+                	var gpe_table_name = 'public_reports';
+                	var gpe_mun_table_name = 'mun_poly';
+    				var cic_sql = new cartodb.SQL({ user: 'cicadmin' });
+    				var gpe_sql = new cartodb.SQL({ user: 'gpegobmx' });
+    				var sublayers = [];
+    				var zoned = false;
+    				var sourceurl = "http://www.alcaldeenlinea.com/default/materialize/images/markers/";
+					var gpe_catMarkers = [];
+                    var reportDict;
+					var catMarkers = [
+						['MTYMUYBIEN', 'purple.png'],
+						['AVISOS', 'green.png'],
+						['EVENTO PUBLICO', 'green.png'],
+						['OBSERVADOR CIUDADANO', 'green.png'],
+						['ALCANTARILLAS', 'amber.png'],
+						['ALUMBRADO PUBLICO', 'amber.png'],
+						['FALTA ELECTRICIDAD', 'amber.png'],
+						['FUGA', 'cyan.png'],
+						['PARQUES DESCUIDADOS', 'amber.png'],
+						['RECOLECCION DE BASURA', 'amber.png'],
+						['ACCIDENTE', 'orange.png'],
+						['BACHE O VIA DAÑADA', 'purple.png'],
+						['OBRAS Y/O VIA CERRADA', 'purple.png'],
+						['SEMAFORO DESCOMPUESTO', 'purple.png'],
+						['VIALIDAD', 'teal.png'],
+						['PROPUESTA COMUNIDAD', 'green.png'],
+						['PROPUESTA SEGURIDAD', 'green.png'],
+						['PROPUESTA SERV PUBLICOS', 'green.png'],
+						['PROPUESTA VIALIDAD', 'green.png'],
+						['EMERGENCIAS', 'red.png'],
+						['INCENDIO', 'blue.png'],
+						['ROBO', 'blue.png'],
+						['SITUACION DE RIESGO', 'blue.png'],
+						['DETENCION DE BANDAS', 'blue.png'],
+						['EXTORSION', 'blue.png'],
+						['HOMICIDIO', 'blue.png'],
+						['SECUESTRO', 'blue.png'],
+						['SOSPECHOSO', 'blue.png'],
+						['AUTO ABANDONADO', 'blue.png'],
+						['PERCEPCION DE INSEGURIDAD', 'blue.png'],
+						['OTROS', 'grey.png'],
+						['ROBO AUTO', 'blue.png']];
+
+					function allTrue(arr) {
+                      for(var i = 0, j = arr.length; i<j; i++)
+                          if(!arr[i]) return false;
+                      return true;
+                    }
+					
+                    function singleCheck(arr) {
+                      var cont = 0;
+                      for(var i = 0, j = arr.length; i<j; i++){
+                         if(arr[i].checked) cont++;
+                         if (cont > 1) return 0; 
+                      }
+                      return cont;
+                    }
+                    
+					function catFilter(dict){
+    				    var container = document.getElementById("categoryfilterContainer");
+                        var html='';
+                        for (var x in dict){
+                            if (!allTrue(dict[x].pf)){
+                                html += '<div class="row"><div class="col s12"><div class="card-panel"><span class="card-title"><input class="filterControl filterGroup" type="checkbox" id="'+x+'"><label for="'+x+'"><span style="font-size: 30px;">'+x+'</span></label></span><div class="row">';
+                                for (var i = 0, j = dict[x].categories.length; i<j; i++){
+                                    if (!dict[x].pf[i]){
+                                        html += '<p class="col s12 m4"><input class="filterControl filterCategory" type="checkbox" id="'+dict[x]['categories'][i]+'"><label for="'+dict[x]['categories'][i]+'">'+dict[x]['categories'][i]+'</label></p>';
+                                    }
+                                }
+                                html += '</div></div></div></div>';
+                            }
+                        }     
+                        container.innerHTML = html;
+                        $('#categoryfilterbtn').attr('disabled',false);
+                        $('.filterControl').change(function() { Q(); });
+
+					}
+                    
+					/* MAPS RELATED */
+					var panorama, sv = new google.maps.StreetViewService();
+					var mapCenter = [25.683956577519417,-100.20524472216799],map;
+					google.maps.event.addDomListener(window,'load', init);
+                    var query;                    
+					
+					
+					function init(){
+						var mapOptions = {
+							center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+							zoom: {% if is_mobile %}11{% else %}13{% endif %},
+							minZoom:5,
+							zoomControl: true,
+							zoomControlOptions: {
+								style: google.maps.ZoomControlStyle.SMALL,	
+								position: google.maps.ControlPosition.LEFT_BOTTOM	
+							},
+							mapTypeControl: false,
+							scrollwheel: false,
+							streetViewControl: true,
+							streetViewControlOptions: {
+								position: google.maps.ControlPosition.LEFT_BOTTOM	
+							},
+							panControl:false,
+							backgroundColor: 'rgb(249, 249, 249)',
+							rotateControl:true,
+							overviewMapControl:true
+						};
+						map = new google.maps.Map(document.getElementById('map'), mapOptions);
+						
+    					google.maps.event.addDomListener(window, 'resize', function() {
+                            map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+                        });
+
+                        var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
+    					autocomplete_from.bindTo('bounds', map);
+						google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+						    var place = autocomplete_from.getPlace();
+						    if (place.geometry.viewport) {
+						      map.fitBounds(place.geometry.viewport);
+						    }else{
+						      map.setCenter(place.geometry.location);
+						      map.setZoom(17);
+						    }
+						});	
+
+                        var centerControlDiv = document.createElement('div');
+						var centerControl = new CenterControl(centerControlDiv, map);
+						centerControlDiv.index = 1;
+						map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
+						
+    					// CIC LAYERS
+						var cic_query= "SELECT " + cic_table_name + ".the_geom, " + cic_table_name + ".the_geom_webmercator, " + cic_table_name + ".post_cat, " + cic_table_name + ".post_title, " + cic_table_name + ".channel, to_char(" + cic_table_name + ".last_mod,'DD/MM/YYYY') as last_mod FROM " + cic_table_name + ", mun_poly WHERE ST_Intersects(" + cic_table_name + ".the_geom, mun_poly.the_geom) AND mun_poly.name IN ('GPE') AND ("+ cic_table_name + ".created_at BETWEEN ('2015-11-01') AND now())";	    
+                        var interactivity_ = ["post_cat","post_title","channel","last_mod"];
+						var layerSource = {
+                            user_name: 'cicadmin',
+                            type: 'cartodb',
+                            sublayers: [{
+                                sql: "SELECT " + cic_mun_table_name + ".* FROM " + cic_mun_table_name + " WHERE " + cic_mun_table_name + ".name IN ('GPE')",
+                                cartocss: "#" + cic_mun_table_name + "{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"
+
+                            },{
+                                sql: cic_query,
+                                cartocss: createTileStyle('normal', cic_table_name),
+                                interactivity: interactivity_
+
+                            }]
+                        };                        
+                        cartodb.createLayer(map,layerSource)
+                        .on('done', function(layer) {
+						    map.overlayMapTypes.setAt(0, layer);
+                            for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                               sublayers[i] = layer.getSubLayer(i);
+                               console.log("Congrats, you added sublayer #" + i + "!");
+                            }
+                            
+                            // NO INTERACTION FOR SUBLAYER 0: GUADALUPE POLYGON 
+
+                            sublayers[1].infowindow.set('template', $('#infowindow_'+cic_table_name).html());
+                            cdb.vis.Vis.addInfowindow(map, sublayers[1], interactivity_, {
+                                infowindowTemplate: $('#infowindow_'+cic_table_name).html()
+                            });
+                            sublayers[1].setInteraction(true);                                 
+                            sublayers[1].on('featureClick', function(e, latlng, pos, data) {
+                            	  //populateModalCIC(data);
+						    });  
+                        });    
+
+						// GPE LAYERS
+						var gpe_query= "SELECT * FROM " + gpe_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false";	    
+                        var gpe_interactivity = ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title"];
+						$.ajax({
+			                url: "{{ uri_for('materialize-report-categories') }}",
+			                type: 'GET'
+			            }).done(function(data) {
+			                reportDict = data;
+			                catFilter(reportDict);
+			                for (var x in reportDict){
+			    	            for (var y in reportDict[x].icon_url){
+			    	            	gpe_catMarkers.push([y, reportDict[x].icon_url[y], reportDict[x].color]);
+			    	            }
+			    	        }
+							layerSource = {
+	                            user_name: 'gpegobmx',
+	                            type: 'cartodb',
+	                            sublayers: [{
+	                                sql: gpe_query,
+	                                cartocss: createTileStyle('normal',gpe_table_name),
+	                                interactivity: gpe_interactivity
+	                            }]
+	                        };
+	                        cartodb.createLayer(map,layerSource)
+	                        .on('done', function(layer) {
+							    map.overlayMapTypes.setAt(1, layer);
+	                            for (var i = 0, j=2; i < layer.getSubLayerCount(); i++,j++) {
+	                               sublayers[j] = layer.getSubLayer(i);
+	                               console.log("Congrats, you added sublayer #" + j + "!");
+	                            }
+	                            sublayers[1].hide();
+	                            sublayers[2].infowindow.set('template', $('#infowindow_'+gpe_table_name).html());
+	                            cdb.vis.Vis.addInfowindow(map, sublayers[2], gpe_interactivity, {
+	                                infowindowTemplate: $('#infowindow_'+gpe_table_name).html()
+	                            });
+	                            sublayers[2].setInteraction(true);                                 
+	                            sublayers[2].on('featureClick', function(e, latlng, pos, data) {
+	                            	  populateModal(data, latlng);
+							    });  
+                                
+	                            cic_sql.execute(cic_query).done(function(data) {
+							        var cic_total = data.total_rows;
+							        gpe_sql.execute(gpe_query).done(function(data) {
+								        $('#rep_count').html(addCommas(data.total_rows));
+								        $('#rep_count_M').html(addCommas(data.total_rows));
+								        $('#c_alcalde').html(data.total_rows);
+								        $('#c_alcalde_M').html(data.total_rows);
+								        $('#c_cic').html(cic_total);
+								        $('#c_cic_M').html(cic_total);
+								    }) 
+							    }) 
+
+							    var obj = getUrlVars();
+								if (obj.cdb_id){
+									var query = "select st_y(the_geom) as lat, st_x(the_geom) as lon, cartodb_id, _when, address_from, description, folio, follows, group_category, image_url, rating, status, sub_category, title, via from "+gpe_table_name+" where cartodb_id = " + obj.cdb_id;
+									gpe_sql.execute(query).done(function(data) {
+								        if(data.total_rows >= 1) {
+										     populateModal(data.rows[0], [data.rows[0].lat, data.rows[0].lon]);
+										     map.setZoom(21);
+										}
+								    })
+								}
+	                        }); 
+			            });
+                        
+                        //FILTER RELATED LISTENERS
+                        $('#calendar').change( function() {
+                            $('#from').attr('disabled',!this.checked);
+                            $('#until').attr('disabled',!this.checked);
+                        });
+                                                                    
+                        $('.filterbtn').on('click', function() {
+                            $('#modal'+this.id).openModal();
+                        });
+    
+                        $('.layerControl').change(function() {
+                            var add=0;
+                            if (this.id == 'check_cic') {
+                                if (this.checked) sublayers[1].show();
+                                else sublayers[1].hide();
+                            }
+                            if (this.id == 'check_alcalde'){
+                                if (this.checked) sublayers[2].show();
+                                else sublayers[2].hide();
+                            }
+                            
+					        add += document.getElementById('check_alcalde').checked ? Number($('#c_alcalde').html()) : 0;
+					        add += document.getElementById('check_cic').checked ? Number($('#c_cic').html()) : 0;
+
+					        $('#rep_count').html(addCommas(add));
+					        $('#rep_count_M').html(addCommas(add));                        
+                        });
+                        
+                        $('#removeFilter').on('click', function() {
+                            $('.filterControl').prop('checked',false);
+                            Q();
+                        });
+                        setTimeout(function(){
+                          $('#right-sidebar-nav').hide();
+                        }, 10000);
+					}
+
+					function codeAddress(input) {
+				        var address, obj;	     				        
+
+			            address = document.getElementById(input).value;
+			            obj = { 'address': address };
+				        geocoder.geocode( obj, function(results, status) {
+				            if (status == google.maps.GeocoderStatus.OK) {
+				                
+				                if (typeof(input) === 'string') {
+				                    map.setCenter(results[0].geometry.location);
+				                    switch (results[0].geometry.location_type){
+				                        case 'ROOFTOP': map.setZoom(17); break;
+				                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+				                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+				                        case 'APPROXIMATE': map.setZoom(13); break;
+				                    }
+				                }else{
+				                    if (results[1]) {
+				                        document.getElementById(input).value = results[1].formatted_address;
+				                    } else {
+				                        console.log('No results found');
+				                    }
+				                }
+				            
+				            } else {
+				                console.log('Geocode was not successful for the following reason: ' + status);
+				            }
+				        });
+				    }
+
+					function CenterControl(controlDiv, map) {
+						// Set CSS for the control border.
+						var controlUI = document.createElement('div');
+						controlUI.style.backgroundColor = '#fff';
+						controlUI.style.border = '2px solid #fff';
+						controlUI.style.borderRadius = '3px';
+						controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+						controlUI.style.cursor = 'pointer';
+						controlUI.style.marginBottom = '2px';
+						controlUI.style.marginLeft = '10px';
+						controlUI.style.textAlign = 'center';
+						controlUI.title = 'Click to locate you.';
+						controlDiv.appendChild(controlUI);
+
+						// Set CSS for the control interior.
+						var controlText = document.createElement('div');
+						controlText.style.color = 'rgb(25,25,25)';
+						controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+						controlText.style.fontSize = '16px';
+						controlText.style.lineHeight = '15px';
+						controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+						controlUI.appendChild(controlText);
+
+						// Setup the click event listeners: simply set the map to Chicago.
+						controlUI.addEventListener('click', function() {
+							$('#main-preloader').show();
+							if (navigator.geolocation) {
+						        navigator.geolocation.getCurrentPosition(mapGoPosition);
+						    } else {
+		    	            	Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+								$('#main-preloader').hide();
+						    }
+						});
+					}
+
+					function mapGoPosition(position) {
+					    map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+					    map.setZoom(16);
+						$('#main-preloader').hide();
+					}
+
+					function getUrlVars(){
+					    var vars = [], hash;
+					    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+					    for(var i = 0; i < hashes.length; i++)
+					    {
+					        hash = hashes[i].split('=');
+					        vars.push(hash[0]);
+					        vars[hash[0]] = hash[1];
+					        if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
+					    }
+					    return vars;
+					}
+						
+                    function addCommas(val) {
+					  	while (/(\d+)(\d{3})/.test(val.toString())) {
+					  		var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+					  	}
+					  	return val;
+					}	
+						
+					function createTileStyle(tStyle, table) {
+						var mOverlap;
+						var close;
+						var tileStyle = "#" + table + "{";
+						switch (tStyle) {
+						case 'normal':
+							mOverlap = true;
+							closeStyle = "}";
+							break;
+						case 'cluster':
+							mOverlap = false;
+							closeStyle = "}";
+							break;
+						case 'heat':
+							return "#" + table + "{marker-fill:#4EC8BC;marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
+						case 'intensity':
+							return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";							
+						case 'bubble':
+							mOverlap = false;
+							closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
+							break;
+						default:
+							mOverlap = true;
+							closeStyle = "}";
+							break;
+						}
+						
+						if (table == cic_table_name){
+							for (var i = 0; i < catMarkers.length; i++) {
+								tileStyle += "[post_cat='" + catMarkers[i][0] + "']{marker-file:url('" + sourceurl  + catMarkers[i][1] + "');marker-clip:true;marker-allow-overlap:" + mOverlap + ";marker-width:50;}";
+							}
+						}else{
+							tileStyle += "marker-file: url(http://com.cartodb.users-assets.production.s3.amazonaws.com/maki-icons/marker-18.svg);marker-fill-opacity: 1.0;marker-line-color: #235B63;marker-line-width: 2;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 30;marker-fill: #4EC8BC;marker-allow-overlap:" + mOverlap +";";
+						
+                            for (var x in reportDict){
+                                tileStyle += '[group_category="'+x+'"] {marker-fill: #'+reportDict[x].color+';}';    
+                            }
+						
+						}
+						
+						tileStyle += closeStyle;
+						
+						if (tStyle == "bubble") {
+							for (var j = upperVotes.length - 1; j >= 0; j--) {
+								tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
+							}
+						}
+						//console.log(tileStyle);
+						return tileStyle;
+					}
+
+					function setMapView(mapstyle){
+						sublayers[1].setCartoCSS(createTileStyle(mapstyle, cic_table_name));
+						sublayers[2].setCartoCSS(createTileStyle(mapstyle, gpe_table_name));
+					}
+
+					function populateModal(data, latlng){
+						map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
+						if (data.image_url != 'None'){
+							$('#report_image').attr("src", data.image_url );
+							$('#report_image').show();
+							$('#gSV').addClass('m6');							
+						}else{ 
+							$('#report_image').hide();
+							$('#gSV').removeClass('m6');							
+						}
+						$('#report_ticket').val(data.cartodb_id);
+						$('#report_follows').val(data.follows);
+						$('#commentbox').val('');
+						$('#report_cartodb_id').html(data.cartodb_id);
+						$('#report_followers').html(data.follows);
+						$('#report_group_category').html(data.group_category);
+						$('#report_sub_category').html(data.sub_category);
+						$('#report_description').html(data.description);
+						$('#report_address').html(data.address_from);
+						var qry = "SELECT _when FROM " + gpe_table_name + " WHERE cartodb_id = " + data.cartodb_id;
+						gpe_sql.execute(qry).done(function(data) {
+							$('#report_date').html(data.rows[0]._when.substr(0,10));
+						});
+						$('#report_status').html(getStatus(data.status));
+						$('#report_via').html(getVia(data.via));
+						$('#followBtn').html('Seguir');
+
+						$('#modal3').openModal();
+						loadComments($('#report_ticket').val());
+						getgSV(latlng)
+
+						if (document.getElementById('close-gpe')) document.getElementById('close-gpe').click();
+						if (document.getElementById('close-cic')) document.getElementById('close-cic').click();
+					}
+
+					function getStatus(st){
+						switch(st){
+					        case 'open':
+					            return 'Abierto';   
+					        case 'halted':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+					            return 'En espera <i class="mdi-action-assignment amber-text"></i>';
+					        case 'assigned':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+					            return 'Asignado <i class="mdi-action-assignment-ind amber-text"></i>';
+					        case 'spam':
+					            return 'Spam';
+					        case 'archived':
+					            return 'Archivado';
+					        case 'forgot':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+					            return 'Olvidado <i class="mdi-action-assignment-returned red-text"></i>';
+					        case 'rejected':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+					            return 'Rechazado <i class="mdi-action-assignment-return red-text"></i>';
+					        case 'working':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+					            return 'En proceso <i class="mdi-action-assignment amber-text"></i>';
+					        case 'answered':
+					            return 'Respondido';
+					        case 'solved':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #4CAF50";
+					            return 'Resuelto <i class="mdi-action-assignment-turned-in green-text"></i>';
+					        case 'failed':
+					            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+					            return 'Fallo <i class="mdi-action-assignment-late red-text"></i>';
+					    }
+					}
+
+					function getVia(via){
+						switch(via){
+					        case 'web':
+					            return 'Web'
+					        case 'whatsapp':
+					            return 'Whatsapp'
+					        case 'phone':
+					            return 'Teléfono'
+					        case 'street':
+					            return 'Alcalde en tu calle'
+					        case 'networks':
+					            return 'Redes sociales'
+					        case 'office':
+					            return 'Oficina'
+					        case 'event':
+					            return 'Evento'
+					        case 'letter':
+					            return 'Oficio'
+					    }
+					}
+
+					function loadComments(_id){
+						var url = "/report/comments/ticket/"+_id+"/";
+				         $.ajax({
+				             url: url,
+				             type: 'GET',
+				             success: function(data) { 
+				                 console.log(data)
+				             }
+				         }).done(function(data) {
+				             $('#report_comments').html(data.logs.html);
+				         });
+					}
+
+					{% if user_id %}
+
+						document.querySelector('#submit_report_form_comment').addEventListener('click', function() { 
+							if (document.getElementById("commentbox").value == '')
+			    	            Materialize.toast('<span class="toast-warning">Oops! Por favor escribe tu comentario primero.</span>',4500);
+			    	        else{
+			    	        	var url = "{{ uri_for('materialize-report-comments-add') }}?ticket="+$('#report_ticket').val()+"&comment=" + document.getElementById("commentbox").value;
+						         $.ajax({
+						             url: url,
+						             type: 'GET',
+						             success: function(data) { 
+						                 console.log(data)
+						             }
+						         }).done(function(data) {
+						         	 if (data.status == 'success'){
+						             	loadComments($('#report_ticket').val());
+										$('#commentbox').val('');
+				    					Materialize.toast('<span class="toast-success">Gracias por tus comentarios.</span>',4500);
+						         	 }else{
+				    					Materialize.toast('<span class="toast-warning">Algo ha sucedido, por favor intenta de nuevo.</span>',4500);
+						         	 }
+						         });
+			    	        }	            	            
+				        });
+
+					{% endif %}
+
+					function getgSV(location) {
+						var loc = new google.maps.LatLng(location[0], location[1]);
+						var _gsv = false;
+						sv.getPanoramaByLocation(loc, 50, function(data, status) {
+							if (status == google.maps.StreetViewStatus.OK) {
+								$('#gSV').show();
+								panorama = new google.maps.StreetViewPanorama(
+									document.getElementById('gSVpanorama'), {
+										position: loc,
+										addressControlOptions: {
+										  position: google.maps.ControlPosition.BOTTOM_CENTER
+										},
+										linksControl: false,
+										panControl: false,
+										enableCloseButton: true,
+										scrollwheel: false,
+										zoomControl: false,
+										fullScreenControl: false
+									}
+								);
+								_gsv = true;
+							}else{
+								$('#gSV').hide();
+								_gsv = false;
+							}
+						});
+						return _gsv;
+					}
+
+					function followReport(elem){
+						var kind;
+						if (elem.innerHTML.indexOf('Seguir') >= 0){
+							kind = 'follow';
+						}
+						else if (elem.innerHTML.indexOf('Dejar de seguir') >= 0){
+							kind = 'unfollow';
+						}
+						else{
+							kind = 'none';
+						}
+
+						$.ajax({
+			                url: "{{ uri_for('materialize-report-follow') }}",
+			                type: 'POST',
+			                data: { 
+						        'report_id': $('#report_ticket').val(),
+						        'user_id': {{user_id}},
+						        '_csrf_token': '{{ csrf_token() }}',
+						        'kind': kind
+						    }
+			            }).done(function(data) {
+			            	console.log(data);
+			            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
+			            		elem.innerHTML = elem.innerHTML.replace('Seguir','Dejar de seguir');
+			            	}
+			            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
+			            		elem.innerHTML = elem.innerHTML.replace('Dejar de seguir', 'Seguir');
+			            	}
+			            	var qry = "SELECT follows FROM " + gpe_table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
+							gpe_sql.execute(qry).done(function(data) {
+								$('#report_followers').html(data.rows[0].follows);
+								$('#report_follows').val(data.rows[0].follows)
+							});
+							if (data.contents == 'user already following')
+			    				Materialize.toast('<span class="toast-warning">Oops! Tú ya seguías este reporte.</span>',4500);
+							else if (data.contents == 'follow request successful')
+			    				Materialize.toast('<span class="toast-success">Estás siguiendo este reporte, ahora podrás verlo en tus reportes.</span>',4500);
+							else if (data.contents == 'unfollow request successful')
+			    				Materialize.toast('<span class="toast-success">Has dejado de seguir este reporte.</span>',4500);
+							else if (data.contents == 'user is creator')
+			    				Materialize.toast('<span class="toast-success">Tú creaste este reporte, ya se encuentra en tus reportes.</span>',4500);
+			            });
+					}
+
+					{% if has_address %}
+						function myZone(){
+							if (zoned){
+							    zoned = false;
+								// var q = "SELECT "+cic_table_name+".* FROM "+cic_table_name+", " + cic_mun_table_name + " WHERE ST_Intersects("+cic_table_name+".the_geom, " + cic_mun_table_name + ".the_geom) AND " + cic_mun_table_name + ".name IN ('GPE') AND ("+ cic_table_name + ".created_at BETWEEN ('2015-11-01') AND now())";
+								// var gpe_query= "SELECT * FROM " + gpe_table_name + "  WHERE status not in ('spam', 'archived', 'forgot')";	    
+							    $('#my-zone').html('<i class="mdi-navigation-fullscreen"></i> Ver mi colonia');
+							    $('#my-zone-m').html('<i class="mdi-navigation-fullscreen"></i> Ver mi colonia');
+							}						
+						    else{
+							    zoned = true;
+								// var coof = "{{address_from_coord}}";
+								// var m1 = coof.split(',').map(Number);           
+								// var q = "SELECT * FROM "+cic_table_name+" WHERE ( ST_Intersects("+cic_table_name+".the_geom,ST_Buffer( ST_SetSRID('POINT("+m1[1]+" "+m1[0]+")'::geometry , 4326),0.007194572847353697)) AND ("+ cic_table_name + ".created_at BETWEEN ('2015-11-01') AND now()))";
+								// var gpe_query= "SELECT * FROM " + gpe_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND ( ST_Intersects("+gpe_table_name+".the_geom,ST_Buffer( ST_SetSRID('POINT("+m1[1]+" "+m1[0]+")'::geometry , 4326),0.007194572847353697)))";	    
+							    $('#my-zone').html('<i class="mdi-navigation-fullscreen"></i> Reestablecer mapa');
+							    $('#my-zone-m').html('<i class="mdi-navigation-fullscreen"></i> Reestablecer mapa');
+						    }
+
+						    Q();
+
+							//    sublayers[1].set({
+							//                       sql: q
+							// });        
+							// sublayers[1].show();
+							// sublayers[2].set({
+							//                       sql: gpe_query
+							// });        
+							// sublayers[2].show();
+
+							// cic_sql.execute(q).done(function(data) {
+							//        var cic_total = data.total_rows;
+							//        gpe_sql.execute(gpe_query).done(function(data) {
+							//         $('#rep_count').html(addCommas(data.total_rows+cic_total));
+							//         $('#rep_count_M').html(addCommas(data.total_rows+cic_total));
+							//         $('#c_alcalde').html(data.total_rows);
+							//         $('#c_alcalde_M').html(data.total_rows);
+							//         $('#c_cic').html(cic_total);
+							//         $('#c_cic_M').html(cic_total);
+							//     }) 
+							//    })
+						}
+					{% endif %}
+                    
+                    function updateCounters(q){
+                        var nq = q.replace('SELECT *', 'SELECT count(*)');
+                        gpe_sql.execute(nq).done(function(data) {
+					        
+					        var add = 0;
+					        $('#c_alcalde').html(data.rows[0].count);
+					        $('#c_alcalde_M').html(data.rows[0].count);
+					        
+					        add += document.getElementById('check_alcalde').checked ? data.rows[0].count : 0;
+					        add += document.getElementById('check_cic').checked ? Number($('#c_cic').html()) : 0;
+					        
+					        $('#rep_count').html(addCommas(add));
+					        $('#rep_count_M').html(addCommas(add));
+                        })                     
+                        
+                    }
+                                        
+    				function Q(){
+                		var cCss;
+                		var auxWhere = true;
+        				var q = "SELECT * FROM " + gpe_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false";
+
+                		//Hide CIC
+	                    if(sublayers[1]) sublayers[1].hide();
+						document.getElementById('check_cic').checked = false;
+        				
+        				
+        				//Zone
+        				if (zoned){
+        					var coof = "{{address_from_coord}}";
+					        var m1 = coof.split(',').map(Number);           
+					        q+= " AND ( ST_Intersects("+gpe_table_name+".the_geom,ST_Buffer( ST_SetSRID('POINT("+m1[1]+" "+m1[0]+")'::geometry , 4326),0.007194572847353697)))";	
+        				}
+
+        				//Dates
+        				if (document.getElementById('calendar').checked){
+                            var from = document.getElementById('from').value;
+                            var until = document.getElementById('until').value;
+                            if (from && until){
+                                if (auxWhere) {
+            						q += " AND ";
+            					} else {
+            						q += " WHERE ";                        
+                                }
+                                q += "_when BETWEEN SYMMETRIC ('"+from+"') AND ('"+until+"')";
+                                auxWhere = true;
+                            }
+        				}
+        				
+        				//Categories
+        				var groupList = document.getElementsByClassName("filterGroup");
+                        var t, groupGrp=[];                        
+                        for (var i = 0, j = groupList.length;i<j;i++){
+                            if(groupList[i].checked){
+                                if (auxWhere) {
+            						t = " AND ";
+            					} else {
+            						t = " WHERE ";                        
+                                }                        
+                                groupGrp.push("'" + groupList[i].id  + "'");
+                            }
+                        }
+                        if (groupGrp.length>0) {
+                            t += "group_category IN (" + groupGrp.join() + ")";
+                            auxWhere = true;
+                            q += t;
+                        }
+
+        				//Subcategories
+        				var categoryList = document.getElementsByClassName("filterCategory");
+                        var t, categoryGrp=[];                        
+                        for (var i = 0, j = categoryList.length;i<j;i++){
+                            if(categoryList[i].checked){
+                                if (auxWhere) {
+            						t = " AND ";
+            					} else {
+            						t = " WHERE ";                        
+                                }                        
+                                categoryGrp.push("'" + categoryList[i].id  + "'");
+                            }
+                        }
+                        if (categoryGrp.length>0) {
+                            t += "sub_category IN (" + categoryGrp.join() + ")";
+                            auxWhere = true;
+                            q += t;
+                        }
+        				
+        				//Status
+                        var statusList = document.getElementsByClassName("filterStatus");
+                        var t, statusGrp=[];                        
+                        for (var i = 0, j = statusList.length;i<j;i++){
+                            if(statusList[i].checked){
+                                if (auxWhere) {
+            						t = " AND ";
+            					} else {
+            						t = " WHERE ";                        
+                                }                        
+                                statusGrp.push("'" + statusList[i].id  + "'");
+                            }
+                        }
+                        if (statusGrp.length>0) {
+                            t += "status IN (" + statusGrp.join() + ")";
+                            auxWhere = true;
+                            q += t;
+                        }
+                        query = q;    
+                        updateCounters(q);
+                        console.log(q);
+                        if (sublayers[2]) sublayers[2].setSQL(q);
+                        
+    				}
+
+					
+				</script>
+				<script type="infowindow/html" id="infowindow_nl_public">
+                    {% raw %}
+                    <div class="cartodb-popup v2"> 
+                        <a id="close-cic" href="#close" class="cartodb-popup-close-button close">x</a> 
+                        <div class="cartodb-popup-header"> 
+                            <img style="width: 40%; padding:10px;" src="http://devcb.gpegobmx.appspot.com/default/materialize/images/logoC.png?v=1"> 
+                            <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-20px">Categoría</p> 
+                            <h3 style="padding:10px;color:#00464F">{{post_cat}}</h3> 
+                            <span class="separator"></span> 
+                        </div> 
+                        <div class="cartodb-popup-content-wrapper"> 
+                            <div class="cartodb-popup-content">                            
+                                <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-10px">Descripción</p> 
+                                <h4 style="padding:10px;color:#00464F">{{post_title}}</h4>
+                                <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-10px">Canal</p> 
+                                <h4 style="padding:10px;color:#00464F">{{channel}}</h4>  
+                                <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-20px">Vía</p> 
+                                <a href="http://developers.cic.mx" target="_blank"> 
+                            	<img style="width: 40%; padding:10px;background: #CDD0D0; border-radius: 40px;margin-top: 15px;" src="http://www.cic.mx/wp-content/themes/cic-theme/media/logo.png"> 
+                            	</a>
+                            </div> 
+                        </div> 
+                        <div class="cartodb-popup-tip-container"> </div> 
+                    </div> 
+                    {% endraw %}  
+                </script>
+				<script type="infowindow/html" id="infowindow_public_reports">
+                    {% raw %}
+                    <div class="cartodb-popup v2" style="display:none;"> 
+                        <a id="close-gpe" href="#close" class="cartodb-popup-close-button close">x</a> 
+                        <div class="cartodb-popup-header"> 
+                            <img style="width: 40%; padding:10px;" src="http://devcb.gpegobmx.appspot.com/default/materialize/images/logoC.png?v=1"> 
+                            <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-20px">Grupo</p> 
+                            <h3 style="padding:10px;color:#00464F">{{group_category}}</h3> 
+                            <span class="separator"></span> 
+                        </div> 
+                        <div class="cartodb-popup-content-wrapper"> 
+                            <div class="cartodb-popup-content">                            
+                                <p style="color:#DDDDDD; padding-left:10px; margin-bottom:-10px">Categoría</p> 
+                                <h4 style="padding:10px;color:#00464F">{{sub_category}}</h4> 
+                            </div> 
+                        </div> 
+                        <div class="cartodb-popup-tip-container"> </div> 
+                    </div> 
+                    {% endraw %}  
+                </script>
+			{% endblock %}			
+		{% endblock %}
+	</body>        
+{% endblock %}
+</html>

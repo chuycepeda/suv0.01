@@ -1,0 +1,477 @@
+{% import '/materialize/users/operations_macros.html' as lib with context %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="{{ locale_language_id }}"> <!--<![endif]-->
+
+
+{% block document_head %}
+    <head>
+        {% block title %}<title>{{app_name}}</title>{% endblock %}
+
+        <!-- All meta tags from config files -->
+        {% block metadata %}
+            {{ meta_tags_code }}
+        {% endblock %}
+
+        {% block favicons %}
+            <link rel="icon" href="{{brand_favicon}}">
+            {% if is_mobile %}
+                <!-- For iPhone -->
+                <link rel="apple-touch-icon-precomposed" href="{{brand_favicon}}">
+                <!-- For Windows Phone -->
+                <meta name="msapplication-TileColor" content="#00bcd4">
+                <meta name="msapplication-TileImage" content="{{brand_favicon}}">
+            {% endif %}
+        {% endblock %}
+
+        <!-- All stylesheets   -->
+        {% block stylesheets %}
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">         
+            <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <style type="text/css">
+                .toast {background-color: white!important;}
+                .toast-success{ color: #00464F!important; line-height: 18px;}
+                .toast-danger{ color: #CE1212!important; line-height: 18px;}
+                .toast-warning{ color: #CEB029!important; line-height: 18px;}
+                .toast-info{ color: #2095CB!important; line-height: 18px;}
+                @-webkit-keyframes pulsate {
+                    0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+                    50% {opacity: 1.0;}
+                    100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+                }
+
+                .icon-block {
+                  padding: 0 15px;
+                }
+                .icon-block .material-icons {
+                  font-size: inherit;
+                }
+                .g-recaptcha{
+                      margin-left: 23%;
+                      -webkit-transform: scale(0.8);
+                      transform: scale(0.8);
+                }
+                .pager{
+                      padding-left: 0;
+                      margin: 20px 0;
+                      text-align: center;
+                      list-style: none;
+                }
+                .pager:before{
+                    display: table;
+                    content: " ";
+                    box-sizing: border-box;
+                }
+                .pager li{
+                    display: inline;
+                }
+                .pager li>a, .pager li>span{
+                    display: inline-block;
+                    padding: 5px 14px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 15px;
+                }
+                .pager:after{
+                    clear: both;
+                    content: " ";
+                    box-sizing: border-box;
+                }
+
+            
+                li .active{
+                    background-color: rgba(0, 0, 0, 0.05)!important;
+                }
+                li .active a{
+                    color:#444!important;
+                }
+                
+                /*BRANDING*/
+                .brand-color{
+                    background-color: {{brand_color}}!important;
+                }
+                .brand-color-text{
+                    color:{{brand_color}}!important;
+                }
+                .brand-secondary-color{
+                    background-color: {{brand_secondary_color}}!important;
+                }
+                .brand-secondary-color-text{
+                    color:{{brand_secondary_color}}!important;
+                }
+                .brand-tertiary-color{
+                    background-color: {{brand_tertiary_color}}!important;
+                }
+                .brand-tertiary-color-text{
+                    color:{{brand_tertiary_color}}!important;
+                }
+                .btn{
+                    background-color: {{brand_color}};
+                }
+                .btn:hover{
+                    background-color: {{brand_secondary_color}}!important;
+                    color:white!important;
+                }
+                .btn-large{
+                    background-color: {{brand_color}};
+                }
+                .btn-large:hover{
+                    background-color: {{brand_secondary_color}}!important;
+                }
+                .btn-floating{
+                    background-color: {{brand_color}};
+                }
+                .btn-floating:hover{
+                    background-color: {{brand_secondary_color}}!important;
+                }
+                #loader {
+                  border-top-color: {{brand_color}}!important;
+                }
+                #loader:before {
+                  border-top-color: {{brand_secondary_color}}!important;
+                }
+                #loader:after {
+                  border-top-color: {{brand_tertiary_color}}!important;
+                }
+                .gpe-green-darken-1{
+                    background-color: #79A63F;
+                }
+                .gpe-green-darken-2{
+                    background-color: #50823B;
+                }
+            </style>
+            {% block page_css %}{% endblock %}
+            {% if user_id %}
+                {{ zendesk_imports }}
+            {% endif %}
+        {% endblock %}
+
+        <!-- All google, mixpanel and analytics tags from config files. -->
+        {% block analytics %}{{ google_analytics_code }}{% endblock %}
+        
+        <!-- All JavaScript at the bottom, except these. -->
+        {% block priority_js %}
+            <script src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>    
+            <script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
+        {% endblock %}
+
+        <!--  POLYMER   -->
+        {% block webcomponents %}
+            {% block page_components %}{% endblock %}
+        {% endblock %} 
+
+    </head>
+{% endblock %}
+
+{% block document_body %}
+    <body>
+        {% block loader %}
+            <!-- Start Page Loading -->
+            <div id="loader-wrapper">
+                <div id="loader"></div>        
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+            </div>
+            <!-- End Page Loading -->
+        {% endblock %}
+
+        {% block header %}
+            <!-- START HEADER -->
+            <header id="header" class="page-topbar">
+                <!-- start header nav-->
+                <div class="navbar-fixed">
+                    <nav class="white">
+                        <div class="nav-wrapper">
+                            <h1 class="logo-wrapper"><a href="{{ uri_for('landing') }}" class="brand-logo darken-1"><img src="{{brand_logo}}" alt="materialize logo" style="height: 60px;margin-top: -2px; margin-left:-14px;"></a></h1>
+                            <ul class="right hide-on-med-and-down">
+                                <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen grey-text text-ligthen-1"><i class="mdi-action-settings-overscan"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+                <!-- end header nav-->
+            </header>
+            <!-- END HEADER -->
+        {% endblock %}
+
+
+        {% block main %}
+            <!-- START MAIN -->
+            <div id="main">
+                {% block wrapper %}
+                    <!-- START WRAPPER -->
+                    <div class="wrapper">                                               
+
+                        {% block sidebar_left %}
+                            <!-- START LEFT SIDEBAR NAV-->
+                            <aside id="left-sidebar-nav">
+                                <ul id="slide-out" class="side-nav fixed leftside-navigation">
+                                    <li class="user-details brand-color">
+                                        <div class="row">
+                                            <div class="col col s12" style="    margin-bottom: 15px;">
+                                                <a class="btn-flat waves-effect waves-light white-text profile-btn truncate">{{email}}</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li {% if path == uri_for('materialize-organization-dashboard') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-dashboard') }}">Resumen estadístico </a></li>
+                                    <li {% if path == uri_for('materialize-organization-users') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-users') }}">Expediente ciudadano </a></li>
+                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
+                                    {% if user_is_callcenter %}
+                                        <li {% if path == uri_for('materialize-callcenter-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-inbox') }}">Bandeja de atención </a></li>
+                                        <!-- <li {% if path == uri_for('materialize-callcenter-facebook') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-facebook') }}" style="color:#5976B1!important;">Bandeja de Facebook </a></li>
+                                        <li {% if path == uri_for('materialize-callcenter-twitter') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-twitter') }}" style="color:#60BAF0!important;">Bandeja de Twitter </a></li> -->
+                                    {% endif %}
+                                    {% if user_is_secretary %}
+                                        <li {% if path == uri_for('materialize-secretary-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-secretary-inbox') }}">Bandeja de secretaría</a></li>
+                                    {% endif %}
+                                    {% if user_is_agent %}
+                                        <li {% if path == uri_for('materialize-agent-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-agent-inbox') }}">Bandeja de dirección</a></li>
+                                    {% endif %}
+                                    {% if user_is_operator %}
+                                        <li {% if path == uri_for('materialize-operator-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-operator-inbox') }}">Bandeja de operador </a></li>
+                                    {% endif %}
+                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
+                                    <li {% if path == uri_for('materialize-organization-manual') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-manual') }}">Manual de operador</a></li>
+                                </ul>
+                                <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating waves-effect waves-light hide-on-large-only darken-2" style="margin-top:-5px;"><i class="mdi-navigation-more-vert" style="color: rgb(62, 193, 251);background-color: white;" ></i></a>
+                            </aside>
+                            <!-- END LEFT SIDEBAR NAV-->
+                        {% endblock %}
+                        
+                        {% block disclaimers %}
+                        {% endblock %}  
+
+                        {% block content %}
+                            <!-- START CONTENT -->
+                            <section id="content">
+
+                                {% block breadcrums %}
+                                {% endblock %}
+                                
+                                <!--start container-->
+                                <div class="container">
+                                    {% block page_content %}
+                                    {% endblock %}
+
+                                    {% block page_floatings %}
+                                    {% endblock %}
+
+                                </div>
+                                <!--end container-->
+                            </section>
+                            <!-- END CONTENT -->
+                        {% endblock %}
+
+
+                        {% block sidebar_right %}
+                        {% endblock %}
+
+                    </div>
+                    <!-- END WRAPPER -->
+                {% endblock %}
+            </div>
+            <!-- END MAIN -->
+        {% endblock %}
+
+
+        {% block footer %}
+            <!-- START FOOTER -->
+            <footer class="page-footer ">
+                {% block page_footer %}{% endblock %}
+                <div class="footer-copyright white grey-text text-lighten-2">
+                    <div class="container">
+                        <div class="container" style="text-align:right;" data-position="top" data-delay="50" data-tooltip="You should try the Konami-code">Made from real<i class="mdi-image-flash-on brand-secondary-color-text" style="font-size: 15px;margin-left: 3px;-webkit-animation: pulsate 3s ease-out; -webkit-animation-iteration-count: infinite;"></i>. Powered by the amazing <a class="brand-secondary-color-text" href="http://mboilerplate.appspot.com" target="_blank">MBoilerplate</a>.
+                    </div>
+                </div>
+            </footer>
+            <!-- END FOOTER -->
+        {% endblock %}
+
+        <!-- All Scripts start here -->
+        {% block scripts %}
+            <!-- jQuery Library -->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
+            <!--materialize js-->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+            <!--scrollbar-->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+            <!--plugins.js - Some Specific JS codes for Plugin Settings-->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js"></script>
+            <!-- GAE Boilerplate -->
+            <script src="/boilerplate/js/plugins.js"></script>
+            <script src="/boilerplate/js/script.js"></script>
+
+
+            <!-- Toast Notification -->
+            {% if messages|safe %}              
+                {% for message in messages %}
+                    <script type="text/javascript">
+                        var resendIndex = 0 ;
+                        var _text = "{{ message[0]|safe }}";
+                        var _textAdditionals = "";
+                        resendIndex = _text.search('resend');
+                        if ( resendIndex > 0 ){
+                            //this is the case when resend-activation-link is sent
+                            // 1: Add this text as html to toast additionals
+                            _textAdditionals = '<a class="toast-warning" href="/'+_text.substr(resendIndex).replace(/ /g,'/')+'/">Clic here if you need us to resend activation link. Previous link will be forgotten.</a>';
+                            // 2: Trim this text from toast
+                            _text = _text.substr(0, resendIndex-1);                         
+                        }
+                        var _msg = '<span class="toast-{{ message[1]|safe }}">'+_text+'</span>';
+                        Materialize.toast(_msg, 4500);
+                        if (_textAdditionals != "") Materialize.toast(_textAdditionals, 10000);
+                    </script>
+                {% endfor %}
+            {% endif %} 
+
+            {%if not is_mobile and path == uri_for('landing') %}
+	            {% block raptor %}
+				<script src="https://hammerjs.github.io/dist/hammer.js"></script>
+				<script src="/{{ theme }}/materialize/js/plugins/raptor/raptor.js?v=5"></script>
+				<script type="text/javascript">
+					$(window).load(function() {
+						$('body').raptorize({
+							'enterOn' : 'konami-code'
+						});
+					});
+				</script>
+                {% endblock %}
+	        {%endif%}
+
+            
+            {% block onload_methods %}
+                <script>
+                    var is_Safari = false, not_Chrome = false;
+
+                    (function(){
+                        var BrowserDetect = {
+                                init: function() {
+                                    this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+                                    this.version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion) || "an unknown version";
+                                    this.OS = this.searchString(this.dataOS) || "an unknown OS";
+                                    console.log("Detected " + this.browser + " v." + this.version + " running {{app_name}} in a " + this.OS);
+                                    if (this.browser != 'Chrome' && this.browser.indexOf('Safari') == -1 && this.browser.indexOf('iPhone') == -1 && this.browser != 'Firefox') {
+                                        alert("Lo sentimos, esta plataforma está diseñada para navegadores distintos al tuyo..");
+                                    }
+                                    else if (this.browser.indexOf("Safari") != -1)
+                                        is_Safari = true;
+                                    else if (this.browser.indexOf("Chrome") == -1)
+                                        not_Chrome = true;
+                                },
+                                searchString: function(data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        var dataString = data[i].string;
+                                        var dataProp = data[i].prop;
+                                        this.versionSearchString = data[i].versionSearch || data[i].identity;
+                                        if (dataString) {
+                                            if (dataString.indexOf(data[i].subString) != -1) return data[i].identity;
+                                        } else if (dataProp) return data[i].identity;
+                                    }
+                                },
+                                searchVersion: function(dataString) {
+                                    var index = dataString.indexOf(this.versionSearchString);
+                                    if (index == -1) return;
+                                    return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+                                },
+                                dataBrowser: [{
+                                    string: navigator.userAgent,
+                                    subString: "Chrome",
+                                    identity: "Chrome"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "OmniWeb",
+                                    versionSearch: "OmniWeb/",
+                                    identity: "OmniWeb"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "Apple",
+                                    identity: "Safari",
+                                    versionSearch: "Version"
+                                }, {
+                                    prop: window.opera,
+                                    identity: "Opera",
+                                    versionSearch: "Version"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "iCab",
+                                    identity: "iCab"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "KDE",
+                                    identity: "Konqueror"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "Firefox",
+                                    identity: "Firefox"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "Camino",
+                                    identity: "Camino"
+                                }, { // for newer Netscapes (6+)
+                                    string: navigator.userAgent,
+                                    subString: "Netscape",
+                                    identity: "Netscape"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "MSIE",
+                                    identity: "Explorer",
+                                    versionSearch: "MSIE"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "Gecko",
+                                    identity: "Mozilla",
+                                    versionSearch: "rv"
+                                }, { // for older Netscapes (4-)
+                                    string: navigator.userAgent,
+                                    subString: "Mozilla",
+                                    identity: "Netscape",
+                                    versionSearch: "Mozilla"
+                                }],
+                                dataOS: [{
+                                    string: navigator.platform,
+                                    subString: "Win",
+                                    identity: "Windows"
+                                }, {
+                                    string: navigator.platform,
+                                    subString: "Mac",
+                                    identity: "Mac"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "iPhone",
+                                    identity: "iPhone/iPod"
+                                }, {
+                                    string: navigator.platform,
+                                    subString: "Linux",
+                                    identity: "Linux"
+                                }]
+                            };
+                        BrowserDetect.init();   
+                     })();
+                </script>
+            {% endblock %}
+
+
+            {% if locale_language_id != "en" %}
+                {% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
+                    <script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
+                {% else %}
+                    <script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
+                {% endif %}
+            {% endif %}
+
+            {% block page_scripts %}{% endblock %}
+            
+
+        {% endblock %}
+
+    </body>        
+{% endblock %}
+
+
+</html>

@@ -1,0 +1,337 @@
+{% extends 'admin_base.html' %}
+
+{% block page_css %}
+    <style type="text/css">
+        #mynetwork {
+            width: 100%;
+            height: 300px;
+            border: 1px solid lightgray;
+            background-color:#dddddd;
+        }
+      td {
+          padding: 3px!important;
+          padding-top:7px!important;
+      }
+      thead {
+          border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+      }
+      .dataTables_length{
+        display: none!important;
+      }
+      .dataTables_paginate {
+        display: none!important;
+      }
+      .paging_simple_numbers{
+        display: none!important;
+      }
+      .material-tooltip{
+        max-width: 80%!important;
+        line-height: 1.2rem!important;
+      }
+      
+  </style>
+  <link href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <link href="http://visjs.org/dist/vis.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active">Resumen de mi organización</li>
+                <a class="btn waves-effect waves-light right brand-color white-text" href="{{uri_for('admin-organization')}}" style="font-size: 18px;">Editar Organización<i class="mdi-editor-mode-edit left"></i></a>
+            </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+
+{% block page_content %}
+  <div class="container">
+    <div class="section">
+       <div class="row" style="margin-top:30px">
+            <div class="row" id="res-table">
+                <div class="cols 12">
+                    <h5 class="col s12 m8">Aquí tienes un resumen del desempeño de tu plantel, has clic en los encabezados de la tabla para ordenar.</h5>
+                    <h6 class="right red-text"><em>*no ha creado cuenta en {{app_name}}</em>.</h6>
+                    <table id="data-table-simple" class="responsive-table hover cell-border centered display compact">
+                        <thead style="font-family:roboto; color:#777777;">
+                          <tr class="brand-color white-text">
+                              <th>Secretaría</th>
+                              <th>Secretario</th>
+                              <th>Dependencia</th>
+                              <th>Director</th>
+                              <th>Operadores</th>
+                              <th>Reportes cerrados</th>
+                              <th>Reportes pendientes</th>
+                          </tr>
+                        </thead>
+                        <tbody id="report_table" style="font-family:roboto-light;">
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="divider" style="margin-top:60px;margin-bottom:60px;"></div>
+            <h5 class="col s12 m8">Esta es una vista jerárquica de tu plantel, has clic las imágenes para ver de quién se trata.</h5>
+            <p class="red-text"> <img src="/default/materialize/images/org_no_account_image.png" alt="" class="responsive-img" style="max-width:30px; margin-right:10px"><em> no ha creado cuenta en {{app_name}}</em>.</p>
+            <p class="grey-text"> <img src="/{{theme}}/materialize/images/org_empty_image.png" alt="" class="responsive-img" style="max-width:30px; margin-right:10px"><em> no ha configurado su perfil en {{app_name}}</em>.</p>
+            <p style="display:none">
+                <input type="button" class="btn" id="btn-UD" value="Hacia abajo">
+                <input type="button" class="btn" id="btn-DU" value="Hacia arriba">
+                <input type="button" class="btn" id="btn-LR" value="A la derecha">
+                <input type="button" class="btn" id="btn-RL" value="A la izquierda">
+                <input type="hidden" id="direction" value="UD">
+                <input id="nodeCount" type="hidden" value="25">
+            </p>
+            <div id="mynetwork"><div class="vis-network" tabindex="900" style="position: relative; overflow: hidden; touch-action: none; -webkit-user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"><canvas width="1200" height="1200" style="position: relative; touch-action: none; -webkit-user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"></canvas></div></div>
+            <p id="selection"></p>
+      </div>
+    </div>
+  </div>
+
+
+
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+    <script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="http://visjs.org/dist/vis.js"></script><style type="text/css"></style>
+    <script>
+        var nodes = null;
+        var edges = null;
+        var network = null;
+        var orgDict = null;
+        var resDict = [];
+        var url = "{{uri_for('materialize-report-categories')}}?q=org";
+        var DIR = "/{{theme}}/materialize/images/";
+        var no_account_image = DIR + 'org_no_account_image.png';
+        var empty_image = DIR + 'org_empty_image.png';
+        var nodeCount = document.getElementById('nodeCount').value;
+
+        function destroy() {
+            if (network !== null) {
+                network.destroy();
+                network = null;
+            }
+        }
+
+        function draw() {
+            destroy();
+            // randomly create some nodes and edges
+            
+            data = {
+                    nodes: nodes,
+                    edges: edges
+                };
+
+
+            // create a network
+            var container = document.getElementById('mynetwork');
+            var directionInput = document.getElementById("direction").value;
+            var options = {
+                layout: {
+                    hierarchical: {
+                        direction: directionInput
+                    }
+                },
+                nodes: {
+                    size: 60,
+                    font: {
+                        size: 12
+                    },
+                    borderWidth: 1,
+                    shadow:true
+                },
+                edges: {
+                    width: 2,
+                    shadow:true
+                }
+            };
+            network = new vis.Network(container, data, options);
+
+            // add event listeners
+            network.on('select', function (params) {
+                document.getElementById('selection').innerHTML = 'Selección: ' + nodes[params.nodes].label;
+            });
+        }
+
+        function tableCreate(){
+            var _table = document.getElementById('report_table');
+            var _html = '', _ops='', img='', _subs='';
+            for (var i=0, j=resDict.length; i <j; i++){
+                _ops= '';
+                _subs='';
+                _html += "<tr>";
+                _html += "<td>"+ resDict[i].secretary +"</td>";
+                if (resDict[i].secretary_admin_image == "") img = 'class="red-text"'; else img = '';
+                _html += "<td " + img + " >" + resDict[i].secretary_admin + "</td>";
+                for (var r=0, s=resDict[i].sub_cats.length; r<s; r++)
+                    _subs+= resDict[i].sub_cats[r] + ", ";
+                _html += '<td class="tooltipped" data-position="top" data-delay="50" data-tooltip="'+_subs.substr(0,_subs.length-2)+'">'+ resDict[i].agency +"</td>";
+                if (resDict[i].agency_admin_image == "") img = 'class="red-text"'; else img = '';
+                _html += "<td " + img + " >" + resDict[i].agency_admin + "</td>";
+                for (x in resDict[i].operators) _ops+= x + ", ";
+                _html += "<td>"+ _ops.substr(0,_ops.length-2) +"</td>";
+                _html += "<td>"+ resDict[i].closed +"</td>";                
+                _html += '<td>' + resDict[i].pending +"</td>";
+                _html += "</tr>";
+            }
+            _table.innerHTML = _html;
+            $('#data-table-simple').DataTable({
+                scrollY: 300,
+                scrollCollapse: true,
+                paging: true,
+                "lengthMenu": [[100], [100]],
+                "language": {
+                  "lengthMenu": "Mostrar _MENU_ elementos por página",
+                  "search": "Buscar en los elementos de esta tabla:",
+                  "zeroRecords": "Ningún elemento encontrado",
+                  "info": "Mostrando _TOTAL_ elementos",
+                  "infoFiltered": "(filtrando sobre _MAX_ elementos)",
+                  "paginate": {
+                      "first":      "Inicio",
+                      "last":       "Final",
+                      "next":       "Siguiente",
+                      "previous":   "Previo"
+                  }
+                }
+            });
+            $('.tooltipped').tooltip({delay: 50});
+        }
+
+        var directionInput = document.getElementById("direction");
+        var btnUD = document.getElementById("btn-UD");
+        btnUD.onclick = function () {
+            directionInput.value = "UD";
+            draw();
+        }
+        var btnDU = document.getElementById("btn-DU");
+        btnDU.onclick = function () {
+            directionInput.value = "DU";
+            draw();
+        };
+        var btnLR = document.getElementById("btn-LR");
+        btnLR.onclick = function () {
+            directionInput.value = "LR";
+            draw();
+        };
+        var btnRL = document.getElementById("btn-RL");
+        btnRL.onclick = function () {
+            directionInput.value = "RL";
+            draw();
+        };
+
+
+        $('#main-preloader').show();
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) { 
+                console.log(data)
+            }
+        }).done(function(data) {
+            nodes = [{id: 0, label: "Presidente municipal", shape: 'circularImage', image: no_account_image, brokenImage: empty_image}];
+            edges = [];
+            var parent,child, sec_parent, age_parent;
+            var counter = 1;
+            var label = "", image = "";
+
+            orgDict = data;
+            for (var x in orgDict){
+              parent = 0;
+              child = counter;
+
+              label = orgDict[x].admin_name;// + " - " + x;
+              image = orgDict[x].admin_image;
+              if (image == "") image = no_account_image;
+              if (image.toString() == "-1") image = empty_image;
+              
+              //secretary insertion
+              nodes.push({id: counter++, label: label, group: "black", shape: 'circularImage', image: image, brokenImage: empty_image});
+              edges.push({from: parent, to: child});
+
+              //directors insertion
+              sec_parent = child;
+              if (orgDict[x].agency)
+                for (var i = 0, j = orgDict[x].agency.length; i<j; i++){
+
+                resDict.push({secretary: x, secretary_admin: orgDict[x].admin_name, secretary_admin_image: orgDict[x].admin_image, agency: orgDict[x].agency[i].name, agency_admin: orgDict[x].agency[i].admin_name, agency_admin_image: orgDict[x].agency[i].admin_image, group_cat: orgDict[x].agency[i].group_cat.name, sub_cats: orgDict[x].agency[i].group_cat.subcats, operators: orgDict[x].agency[i].operators, pending: 0, closed: 0});
+
+                  label = orgDict[x].agency[i].admin_name;// + " - " + orgDict[x].agency[i].name;
+                  image = orgDict[x].agency[i].admin_image;
+                  if (image == "") image = no_account_image;
+                  if (image.toString() == "-1") image = empty_image;
+                  child = counter;
+                  nodes.push({id: counter++, label: label, group: "black", shape: 'circularImage', image: image, brokenImage: empty_image});
+                  edges.push({from: sec_parent, to: child});
+                  age_parent = child;
+                  if (orgDict[x].agency[i].operators)
+                      for (var y in orgDict[x].agency[i].operators){
+                        label = y;
+                        image = orgDict[x].agency[i].operators[y];
+                        if (image == "") image = no_account_image;
+                        if (image.toString() == "-1") image = empty_image;
+                        child = counter;
+                        nodes.push({id: counter++, label: label, group: "black", shape: 'circularImage', image: image, brokenImage: empty_image});
+                        edges.push({from: age_parent, to: child});
+                      }
+                }
+            }
+            document.getElementById('nodeCount').value = counter;
+            nodeCount = document.getElementById('nodeCount').value;
+            console.log('nodes',nodes);
+            console.log('edges',edges);
+            console.log('resDict',resDict);
+            draw();
+
+            var qs, _i;
+            for (var i=0, j=resDict.length; i <j; i++){
+                _i = i;
+                qs = "http://gpegobmx.cartodb.com/api/v2/sql?q=SELECT count(*) FROM public_reports where group_category ilike '"+resDict[i].group_cat+"' and status in ('halted', 'answered', 'assigned', 'working')";            
+                $.ajax({
+                    url: qs,
+                    async: false,
+                    success: function(response) {
+                        if (response && !response.error) {
+                          resDict[_i].pending = response.rows[0].count;
+                        }
+                    }
+                });
+                qs = "http://gpegobmx.cartodb.com/api/v2/sql?q=SELECT count(*) FROM public_reports where group_category ilike '"+resDict[i].group_cat+"' and status not in ('halted', 'answered', 'assigned', 'working')";            
+                $.ajax({
+                    url: qs,
+                    async: false,
+                    success: function(response) {
+                        if (response && !response.error) {
+                          resDict[_i].closed = response.rows[0].count;
+                        }
+                    }
+                });
+            }
+            console.log('resDict rep data',resDict);
+            tableCreate();
+            $('#main-preloader').hide();
+        }); 
+
+    </script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{
+  "name": "square-element",
+  "version": "0.0.0",
+  "authors": [
+    "chuycepeda <chuycepeda@gmail.com>"
+  ],
+  "description": "Element providing a didactic explanation of possibilities using polymer elements.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "seed"
+  ],
+  "main": "square-element.html",
+  "license": "MIT",
+  "homepage": "https://github.com/chuycepeda/polymer-elements/tree/master/my_elements/square-element",
+  "ignore": [
+    "/.*",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  }
+}

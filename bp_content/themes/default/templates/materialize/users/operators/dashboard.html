@@ -1,0 +1,1013 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block page_css %}
+  <style type="text/css">
+  [type=checkbox].filled-in:checked+label:after{
+        border: 2px solid {{brand_secondary_color}}!important;
+        background-color: {{brand_secondary_color}}!important;
+      }
+      td {
+          padding: 3px!important;
+          padding-top:7px!important;
+      }
+      thead {
+          border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+      }
+      .btn{
+        margin-right: 10px;
+      }
+      
+  </style>
+{% endblock %}
+
+{% block breadcrums %}
+  <!--breadcrumbs start-->
+  <div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+      <div class="container">
+          <div class="row">
+            <div class="col s12 m12 l12">
+              <h5 class="breadcrumbs-title">Resumen estadístico </h5>
+            </div>
+          </div>
+      </div>
+  </div>
+  <!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+  <div class="row center" style="border-top: 1px dashed rgb(216, 216, 216);padding-top: 20px;">
+      <div class="row brand-color center" style="margin-top: -20px;padding: 40px;margin-bottom: 22px;"><h5 class="white-text" style="line-height: 0px;">Números globales</h5>
+            <span class="col s12 m6 indicator flow-text white-text" style="text-align:center; font-size:40px;"><h6>Usuarios registrados</h6>{{sum_users}}</span>
+            <span class="col s12 m6 indicator flow-text white-text" style="text-align:center; font-size:40px;"><h6>Reportes recibidos</h6>{{sum_reports}}</span>
+        </div>
+      <div class="col s12 m3 card brand-color-text valign-wrapper" style="text-align:center; font-size:40px; min-height:256px;">
+            <div class="col s12">
+               <h5>Reportes validados:</h5>
+                <span class="indicator flow-text" id="totalReports" style="text-align:center; font-size:50px;">
+                    <div class="preloader-wrapper small active" style="margin-top: 5px;">
+                        <div class="spinner-layer spinner-red-only">
+                          <div class="circle-clipper left">
+                            <div class="circle"></div>
+                          </div><div class="gap-patch">
+                            <div class="circle"></div>
+                          </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                          </div>
+                        </div>
+                    </div>
+                </span>
+            </div>
+        </div>
+        <div class="col s12 m9">
+            <div id="statuses" class="card-panel">
+                <div class="row">
+                    <div class="col s12">
+                        <span class="card-title left">
+                            <span style=" font-size: 25px; font-family: roboto-light;">Selecciona una fecha</span>
+                        </span>
+                    </div>                
+                    <div class="input-field col s6">
+                        <input id="from" type="date" class="datepicker filterDate">
+                        <label for="from">Desde</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="until" type="date" class="datepicker filterDate">
+                        <label for="until">Hasta</label>
+                    </div> 
+                </div>
+                <div class="row" style="text-align: left;">
+                    <div class="col s12">
+                        <ul class="collapsible collapsible-accordion" data-collapsible="accordion" style="border: none;box-shadow: none;">
+                            <li class="">
+                                <div class="collapsible-header">Selecciona un estado de reporte.</div>
+                                <div class="collapsible-body">
+                                    <div class="section">                            
+                                        <div class="row">
+                                            <div class="container" style="text-align: left;">
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="halted"><label for="halted">En espera</label></p>
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="answered"><label for="answered">Respondido</label></p>
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="assigned"><label for="assigned">Asignado</label></p>
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="solved"><label for="solved">Resuelto</label></p>
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="rejected"><label for="rejected">Rechazado</label></p>
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="archived"><label for="archived">Archivado</label></p>
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="working"><label for="working">En proceso</label></p>
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="failed "><label for="failed ">Fallo</label></p>         
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="spam"><label for="spam">Spam</label></p>            
+                                                <p class="col s12 m3"><input class="filterStatus" type="checkbox" id="forgot"><label for="forgot">Olvidado</label></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <button class="waves-effect waves-light btn filterControl right" id="calendar"><i class="mdi-content-send right"></i>Filtrar</button>                
+                    <button class="waves-effect waves-light btn filterControl right" id="clean">Limpiar</button>                
+                </div>
+            </div>                    
+        </div>
+        
+  </div>
+  <div class="row section">
+      <div class="card col s12 l6">
+          <div class="row">
+              <div class="container">
+                  <div class="col s12">
+                      <p class="caption center">Reportes por vía.</p>
+                      <div id="container-pie-via"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="card col s12 l6">
+          <div class="row">
+              <div class="container">
+                  <div class="col s12">
+                      <p class="caption center">Reportes por estado.</p>
+                      <div id="container-pie-status"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="divider"></div>
+  <div class="section">
+      <div class="card">
+          <a class="waves-effect waves-light btn right" id ="pieornot">Ver como pay</a>
+          <div class="row">
+              <div class="container">
+                  <div class="col s12">
+                      <p class="caption center">Reportes por Secretaría.</p>
+                      <div id="container-drilldown" style="height: 600px"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+    <div class="section">
+        <div class="card">
+            <a class="waves-effect waves-light btn right" id ="perf_pieornot">Ver como pay</a>
+            <div class="row">
+                <div class="container">
+                    <div class="col s12">
+                        <p class="caption center" id ="perf_title">Días promedio en cerrar reportes por Secretaría en los últimos 90 días.</p>
+                        <div id="perf_container-drilldown" style="height: 600px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+{% block page_scripts %}
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://github.highcharts.com/master/modules/drilldown.js"></script>
+    <script>
+                        
+        function createDrilldown(data,container,chartType){
+            
+            var seriesData = [];
+            var seriesDdAg = [];
+                        
+            for (var x in data){
+                if (data[x].totalReports > 0){
+                    //main series
+                    seriesData.push({
+                       name: x,
+                       y: data[x].totalReports,
+                       drilldown: x
+                    });
+                    
+                    //Drilldown fun
+                    seriesDdAg.push({
+                        id: x,
+                        name: x,
+                    });
+                    tdata = [];
+                    
+                    for (var ag in data[x]){
+                        if (ag!='totalReports'){
+                            tdata.push({
+                                name: ag,
+                                y: data[x][ag]['totalReports'],
+                                drilldown: ag
+                            });
+                        }
+                    }    
+                    seriesDdAg[seriesDdAg.length-1]['data']=tdata;
+                
+                    for (var ag in data[x]){
+                        seriesDdAg.push({
+                            id: ag,
+                            name: ag
+                        });
+                        tdata2=[];
+                        for (var cat in data[x][ag]){
+                            if (cat!='totalReports'){
+                                tdata2.push({
+                                    name: cat,
+                                    y: data[x][ag][cat],
+                                });
+                            }
+                        }
+                        seriesDdAg[seriesDdAg.length-1]['data']=tdata2;
+                    }
+                }    
+            }
+            
+            $('#'+container).highcharts({
+                chart: {
+                    type: chartType,
+                },
+                title: {
+                    text: null
+                },
+                subtitle: {
+                    text: 'Haz clic sobre los elementos de la gráfica para entrar en detalle.'
+                },
+                tooltip: {
+                    formatter: function() {
+                        return this.point.name + '<br>Reportes: <b>' + this.y + '</b>';
+                    }
+                },                
+                xAxis: {
+                    type: 'category',
+                    labels: {
+                          style: {
+                            "textOverflow": "none"
+                          },
+                    } 
+                },
+                yAxis: {
+                    title: {
+                        text: 'Reportes',
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Secretarias',
+                    colorByPoint: true,
+                    data: seriesData
+                }],
+                drilldown: {
+                    
+                    drillUpButton: {
+                        relativeTo: 'spacingBox',
+                        position: {
+                            y: 0,
+                            x: 0
+                        },
+                        theme: {
+                            fill: 'white',
+                            'stroke-width': 1,
+                            stroke: 'silver',
+                            r: 0,
+                            states: {
+                                hover: {
+                                    fill: '{{brand_secondary_color}}'
+                                },
+                                select: {
+                                    stroke: '#039',
+                                    fill: '{{brand_secondary_color}}'
+                                }
+                            }
+                        }
+        
+                    },                    
+                    series: seriesDdAg
+                }
+            }, function (chart) {
+                //After chart is done set flag
+                allDone[container] = true;
+                //console.log("Chart "+container+" done");
+            });
+            
+        }
+        
+        function createPerfDrilldown(data,container,chartType){
+            
+            var seriesData = [];
+            var seriesDdAg = [];
+                        
+            for (var x in data){
+                if (data[x].avgReports > 0){
+                    //main series
+                    seriesData.push({
+                       name: x,
+                       y: data[x].avgReports,
+                       drilldown: x
+                    });
+                    
+                    //Drilldown fun
+                    seriesDdAg.push({
+                        id: x,
+                        name: x,
+                    });
+                    tdata = [];
+                    
+                    for (var ag in data[x]){
+                        if (ag!='avgReports'){
+                            tdata.push({
+                                name: ag,
+                                y: data[x][ag]['avgReports'],
+                                drilldown: ag
+                            });
+                        }
+                    }    
+                    seriesDdAg[seriesDdAg.length-1]['data']=tdata;
+                
+                    for (var ag in data[x]){
+                        seriesDdAg.push({
+                            id: ag,
+                            name: ag
+                        });
+                        tdata2=[];
+                        for (var cat in data[x][ag]){
+                            if (cat!='avgReports'){
+                                tdata2.push({
+                                    name: cat,
+                                    y: data[x][ag][cat],
+                                });
+                            }
+                        }
+                        seriesDdAg[seriesDdAg.length-1]['data']=tdata2;
+                    }
+                }    
+            }
+            
+            $('#'+container).highcharts({
+                chart: {
+                    type: chartType,
+                },
+                title: {
+                    text: null
+                },
+                subtitle: {
+                    text: 'Haz clic sobre los elementos de la gráfica para entrar en detalle.'
+                },
+                tooltip: {
+                    formatter: function() {
+                        return this.point.name + '<br>Tiempo promedio en cerrar: <b>' + this.y + '</b> días';
+                    }
+                },                
+                xAxis: {
+                    type: 'category',
+                    labels: {
+                          style: {
+                            "textOverflow": "none"
+                          },
+                    } 
+                },
+                yAxis: {
+                    title: {
+                        text: 'Dias',
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Secretarias',
+                    colorByPoint: true,
+                    data: seriesData
+                }],
+                drilldown: {
+                    
+                    drillUpButton: {
+                        relativeTo: 'spacingBox',
+                        position: {
+                            y: 0,
+                            x: 0
+                        },
+                        theme: {
+                            fill: 'white',
+                            'stroke-width': 1,
+                            stroke: 'silver',
+                            r: 0,
+                            states: {
+                                hover: {
+                                    fill: '{{brand_secondary_color}}'
+                                },
+                                select: {
+                                    stroke: '#039',
+                                    fill: '{{brand_secondary_color}}'
+                                }
+                            }
+                        }
+        
+                    },                    
+                    series: seriesDdAg
+                }
+            }, function (chart) {
+                //After chart is done set flag
+                allDone[container] = true;
+                //console.log("Chart "+container+" done");
+            });
+            
+        }
+        
+        function createBar(dataBar,container){
+            dataBar = dataBar||{};
+            var dataSeries=[];
+            var catSeries=[];
+            for (var x in dataBar){
+                dataSeries.push(dataBar[x]);
+                catSeries.push(x);
+            }
+            
+            // Build the chart
+            $('#'+container).highcharts({
+                chart: {
+                    type: 'bar',
+                },
+                title: {
+                    text: null
+                },
+                xAxis: {
+                    categories: catSeries,
+                    title: {
+                        text: null
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: null
+                    },
+                },
+                tooltip: {
+                },
+                plotOptions: {
+                    bar: {
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                credits: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Reportes',
+                    data: dataSeries
+                }]
+            }, function (chart) {
+                //After chart is done set flag
+                allDone[container] = true;
+                //console.log("Chart "+container+" done");
+            });
+        }
+
+        function createPie(dataPie,container){
+            dataPie = dataPie||{};
+            var dataSeries=[];
+            for (var x in dataPie){
+                dataSeries.push({name:x,y:dataPie[x]})
+            }
+            
+            // Build the chart
+            $('#'+container).highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie',
+                    events: {
+                        load: function(event) {
+                            allDone[container] = true;
+
+                            }
+                    }  
+                },
+                title: {
+                    text: null
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.y}',
+                        },
+                        showInLegend: true
+                    }
+                },
+                series: [{
+                    name: 'Porcentaje',
+                    colorByPoint: true,
+                    data: dataSeries
+                }]
+            }, function (chart) {
+                //After chart is done set flag
+                allDone[container] = true;
+                //console.log("Chart "+container+" done");
+            });
+        }
+        
+        function sumProp(obj) {
+            var sum = 0;
+            for( var x in obj ) {
+                if( obj.hasOwnProperty(x) ) {
+                    sum += parseFloat( obj[x] );
+                }
+            }
+            return sum;
+        }        
+        
+        function countProp(obj) {
+            var count = 0;
+            for( var x in obj ) {
+                if( obj.hasOwnProperty(x) ) {
+                    count += 1;
+                }
+            }
+            return count;
+        }        
+        
+        function getVia(via){
+            var ds;
+            switch (via) {
+                case 'web':
+                    ds = "Web";
+                    break;
+                case 'whatsapp':
+                    ds = "Whatsapp";
+                    break;
+                case 'phone':
+                    ds = "Teléfono";
+                    break;
+                case 'street':
+                    ds = "Alcalde en tu calle";
+                    break;
+                case 'networks':
+                    ds = "Redes sociales";
+                    break;
+                case 'office':
+                    ds = "Oficina";
+                    break;
+                case 'event':
+                    ds = "Evento";
+                    break;
+                case 'letter':
+                    ds = "Oficio";
+                    break;
+                default: ds="";
+                    break
+            }
+            return ds;
+        }    
+        
+        function getStatus(status){
+            var ds;
+            switch (status) {
+                case 'open':
+                    ds = "Abierto";
+                    break;
+                case 'answered':
+                    ds = "Respondido";
+                    break;
+                case 'spam':
+                    ds = "Spam";
+                    break;
+                case 'halted':
+                    ds = "En espera";
+                    break;
+                case 'assigned':
+                    ds = "Asignado";
+                    break;
+                case 'rejected':
+                    ds = "Rechazado";
+                    break;
+                case 'solved':
+                    ds = "Resuelto";
+                    break;
+                case 'failed':
+                    ds = "Fallo";
+                    break;
+                case 'archived':
+                    ds = "Archivado";
+                    break;
+                case 'forgot':
+                    ds = "Olvidado";
+                    break;
+                case 'working':
+                    ds = "En proceso";
+                    break;
+                default: ds="";
+                    break
+            }
+            return ds;
+        }    
+        
+        function getData(source, when){
+            
+            var qs = 'SELECT '+source+' as prop, count(*) FROM public_reports ';            
+            if (when) qs += when; 
+            qs += 'GROUP BY prop';
+            gpe_sql.execute(qs).done(function(data) {
+                
+                var trans = {};
+                for (var x = 0; x < data.total_rows;x++){
+                    trans[data.rows[x]['prop']] = data.rows[x]['count'];
+                }
+                var pieData=[];
+                var barData=[];
+                var barCats=[];
+                
+                var data = trans;
+                
+                if (source == 'via') document.getElementById('totalReports').innerHTML = sumProp(trans);
+
+                for (var x in data){
+                    if (source=='via' || source == null) {
+                        pieData.push({name:getVia(x),y:data[x]});
+                        barCats.push(getVia(x));
+                    }else if (source=='status') {
+                        pieData.push({name:getStatus(x),y:data[x]})
+                        barCats.push(getStatus(x));
+                    }else{
+                        barCats.push(x);
+                    }
+                    barData.push(data[x]);                
+                }
+                                
+                if (source=='via' || source == null) {
+                    chartPieVia.series[0].setData(pieData);
+                    chartPieVia.hideLoading();  
+                }else if (source=='status') {
+                    chartPieStatus.series[0].setData(pieData);
+                    chartPieStatus.hideLoading();            
+                }else if (source=='sub_category') {
+                    chartBarSubcat.xAxis[0].setCategories(barCats);
+                    chartBarSubcat.series[0].setData(barData);
+                    chartBarSubcat.hideLoading();            
+                }else if (source=='group_category') {
+                    chartBarGroup.xAxis[0].setCategories(barCats);
+                    chartBarGroup.series[0].setData(barData);
+                    chartBarGroup.hideLoading();            
+                }
+                
+            }).error(function(errors) {
+                // errors contains a list of errors
+                //console.log("errors:" + errors);
+            })            
+    
+        }
+        
+        function getDict(){
+            
+            var url = "http://devcb.gpegobmx.appspot.com/report/categories/";
+            $.ajax({
+                url: url,
+                type: 'GET',
+            }).done(function(data) {
+                //console.log('Dict from DS');
+                //console.log(data);
+                dict = data;
+                getDrillData();
+                getPerfDrillData();            
+            });             
+            
+        }
+        
+        function parseDate(str) {
+            var mdy = str.split('-')
+            return new Date(mdy[0], mdy[1]-1, mdy[2]);
+        }
+        
+        function daydiff(first, second) {
+            return Math.round((second-first)/(1000*60*60*24));
+        }        
+        
+        function getPerfDrillData(when){
+            perf_sec = {};
+            var s = "SELECT ceil(avg(date_part('days', (terminated - created)))) AS count, group_category, sub_category FROM public_reports WHERE status IN ('solved', 'failed', 'archived') AND terminated is not null ";
+            if (when){ 
+                s+= when.replace('WHERE', 'AND');
+                var days = daydiff(parseDate($('#from').val()), parseDate($('#until').val()));
+                document.getElementById("perf_title").innerHTML = "Días promedio en cerrar reportes por Secretaría en los últimos "+days+" días.";
+            }
+            else{ 
+                s+= "AND ( (now() - created) < interval '90 day')";
+                document.getElementById("perf_title").innerHTML = "Días promedio en cerrar reportes por Secretaría en los últimos 90 días.";
+            }
+            s += " GROUP BY group_category, sub_category ORDER BY group_category ASC";
+                        
+            //console.log('s for performance: ', s);
+            
+            gpe_sql.execute(s).done(function(data) {
+                //console.log('Data from CartoDB');
+                //console.log(data);
+                var grps = {};
+                for (var x = 0; x < data.total_rows; x++){
+                    grps[data.rows[x]['group_category']] = grps[data.rows[x]['group_category']] || {};
+                    grps[data.rows[x]['group_category']][data.rows[x]['sub_category']] = data.rows[x]['count'];
+                }
+                //console.log('Groups from CartoDB');
+                //console.log(grps);
+                
+                for (var y in dict){
+                    perf_sec[dict[y]['secretaries'][0]] = perf_sec[dict[y]['secretaries'][0]] || {};
+                    perf_sec[dict[y]['secretaries'][0]][dict[y]['agencies'][0]] = perf_sec[dict[y]['secretaries'][0]][dict[y]['agencies'][0]] || {};
+                    perf_sec[dict[y]['secretaries'][0]][dict[y]['agencies'][0]] = grps[y]||{};
+                }            
+                //console.log('Secretaries Perf');
+                //console.log(perf_sec);
+                
+                //Add for total report count
+                for (var n in perf_sec){
+                    var sumSec = 0;
+                    if (perf_sec.hasOwnProperty(n)){
+                       for (var m in perf_sec[n]){
+                           var sumAg = 0;
+                           var countAg = 0;
+                           if (perf_sec[n].hasOwnProperty(m)){
+                              sumAg = sumProp(perf_sec[n][m]);
+                              countAg = countProp(perf_sec[n][m]);
+                              //console.log(m);
+                              //console.log(perf_sec[n][m]);
+                              //console.log(countAg);
+                              var avgRepAg = Math.round((sumAg/countAg) * 100) / 100;
+                              perf_sec[n][m]['avgReports'] = isNaN(avgRepAg) ? 0 : avgRepAg;
+                              //console.log('sumAg');
+                              //console.log(sumAg);
+                              sumSec += (sumAg/countAg);
+                              //console.log('sumSec');
+                              //console.log(sumSec);
+                           }
+                       }
+                       countSec = countProp(perf_sec[n]);
+                       //console.log('countSec');
+                       //console.log(perf_sec[n]);
+                       //console.log(countSec); 
+                       var avgRepSec = Math.round((sumSec/countSec) * 100) / 100;
+                       perf_sec[n]['avgReports'] = isNaN(avgRepSec) ? 0 : avgRepSec; 
+                    }
+                }
+                if (perf_sec.hasOwnProperty('undefined')) {
+                    if (perf_sec['undefined'].hasOwnProperty('undefined')) {
+                        perf_sec['undefined']['Sin asignar'] = perf_sec['undefined']['undefined'];
+                        delete perf_sec['undefined']['undefined'];
+                    }
+                    perf_sec['Sin Secretaria'] = perf_sec['undefined'];
+                    delete perf_sec['undefined'];
+                }
+                createPerfDrilldown(perf_sec,'perf_container-drilldown',chartType);            
+   
+            
+            }).error(function(errors) {
+                // errors contains a list of errors
+                //console.log("errors:" + errors);
+            })            
+            
+        }
+        
+        function getDrillData(when){
+            sec = {};
+            var s = "SELECT group_category, sub_category, count(*) FROM public_reports ";
+            if (when) s+= when;
+            s += "GROUP BY group_category, sub_category ORDER BY group_category asc";
+            
+            gpe_sql.execute(s).done(function(data) {
+                //console.log('Data from CartoDB');
+                //console.log(data);
+                var grps = {};
+                for (var x = 0; x < data.total_rows; x++){
+                    grps[data.rows[x]['group_category']] = grps[data.rows[x]['group_category']] || {};
+                    grps[data.rows[x]['group_category']][data.rows[x]['sub_category']] = data.rows[x]['count'];
+                }
+                //console.log('Groups from CartoDB');
+                //console.log(grps);
+                
+                for (var y in dict){
+                    sec[dict[y]['secretaries'][0]] = sec[dict[y]['secretaries'][0]] || {};
+                    sec[dict[y]['secretaries'][0]][dict[y]['agencies'][0]] = sec[dict[y]['secretaries'][0]][dict[y]['agencies'][0]] || {};
+                    sec[dict[y]['secretaries'][0]][dict[y]['agencies'][0]] = grps[y]||{};
+                }            
+                //console.log('Secretaries');
+                //console.log(sec);
+                
+                //Add for total report count
+                for (var n in sec){
+                    var sumSec = 0;
+                    if (sec.hasOwnProperty(n)){
+                       for (var m in sec[n]){
+                           var sumAg = 0;
+                           if (sec[n].hasOwnProperty(m)){
+                              sumAg = sumProp(sec[n][m]);
+                              sec[n][m]['totalReports'] = sumAg;
+                              sumSec += sumAg;
+                           }
+                       } 
+                       sec[n]['totalReports'] = sumSec;
+                    }
+                }
+                if (sec.hasOwnProperty('undefined')) {
+                    if (sec['undefined'].hasOwnProperty('undefined')) {
+                        sec['undefined']['Sin Direccion'] = sec['undefined']['undefined'];
+                        delete sec['undefined']['undefined'];
+                    }
+                    sec['Sin Secretaria'] = sec['undefined'];
+                    delete sec['undefined'];
+                }
+                createDrilldown(sec,'container-drilldown',chartType);            
+   
+            
+            }).error(function(errors) {
+                // errors contains a list of errors
+                //console.log("errors:" + errors);
+            })            
+            
+        }
+        
+        function allTrue(obj) {
+             for(var o in obj){
+               if( obj.hasOwnProperty(o) ) {
+                 if(!obj[o]) return false;
+               }
+             }
+             return true;
+        }
+        
+        function pollforall(){
+        
+            var poll = setInterval(function() {
+                if( allTrue(allDone) ) {
+                    $('#calendar').attr('disabled',false);
+                    $('#clean').attr('disabled',false);
+                    window.clearInterval(poll);
+                }
+            }, 100);            
+            
+        }
+        
+        function destroyAndCreate(source){
+            var when;
+            var perf_when;
+            $('#calendar').attr('disabled',true);
+            $('#clean').attr('disabled',true);
+            pollforall();
+            if (source=='calendar'){
+                var from = document.getElementById('from').value;
+                var until = document.getElementById('until').value;
+                if (from && until){
+                    when = "WHERE _when BETWEEN SYMMETRIC ('"+from+"') AND ('"+until+"')";
+                    perf_when = when;
+                    if (statuses != ''){
+                      when += " AND status IN (" + statuses.join() + ")";
+                    }
+                }  
+            }else if (source == 'clean'){
+                $('#from').val("");
+                $('#until').val("");
+            }
+            
+            chartPieVia = $('#container-pie-via').highcharts();
+            chartPieStatus = $('#container-pie-status').highcharts();
+            chartDdown = $('#container-drilldown').highcharts();
+            
+            chartPieVia.destroy();
+            chartPieStatus.destroy();
+            chartDdown.destroy();
+            
+            for (var x in allDone){
+                allDone[x]=false;
+            }
+            
+            createPie(null,'container-pie-via');
+            chartPieVia = $('#container-pie-via').highcharts();
+            chartPieVia.showLoading('Cargando datos...');
+            getData('via',when);
+
+            createPie(null,'container-pie-status');
+            chartPieStatus = $('#container-pie-status').highcharts();
+            chartPieStatus.showLoading('Cargando datos...');
+            getData('status',when);
+                        
+            getDrillData(when);
+            getPerfDrillData(perf_when);
+        }
+        
+        
+        //GLOBALS        
+        var gpe_sql = new cartodb.SQL({ user: 'gpegobmx' });
+        var statuses = "";
+        var sec = {};
+        var perf_sec = {};
+        var dict;
+        var chartType = 'bar';
+        var allDone = {
+            'container-pie-via' : false,
+            'container-pie-status': false,
+            'container-drilldown': false,
+            'perf_container-drilldown': false,
+        }
+        
+        //Initial setup on DOM ready
+        $(document).ready(function(){   
+            
+            Highcharts.setOptions({
+                lang: {
+                    drillUpText: '◁ Regresar a {series.name}'
+                }
+            });            
+            
+            getDict();
+            
+            createPie(null,'container-pie-via');
+            chartPieVia = $('#container-pie-via').highcharts();
+            chartPieVia.showLoading('Cargando datos...');
+            getData('via');
+
+            createPie(null,'container-pie-status');
+            chartPieStatus = $('#container-pie-status').highcharts();
+            chartPieStatus.showLoading('Cargando datos...');
+            getData('status');
+                                    
+            $('#pieornot').click(function(){
+                chartDdown = $('#container-drilldown').highcharts();
+                chartDdown.destroy();
+                if (chartType == 'bar'){
+                    chartType = 'pie';
+                    createDrilldown(sec,'container-drilldown',chartType);
+                    this.innerHTML = 'Ver como barras';
+                   
+                }else{
+                    chartType = 'bar';
+                    createDrilldown(sec,'container-drilldown',chartType);
+                    this.innerHTML = 'Ver como pay';
+                }
+            });
+            
+            $('#perf_pieornot').click(function(){
+                chartDdown = $('#perf_container-drilldown').highcharts();
+                chartDdown.destroy();
+                if (chartType == 'bar'){
+                    chartType = 'pie';
+                    createPerfDrilldown(perf_sec,'perf_container-drilldown',chartType);
+                    this.innerHTML = 'Ver como barras';
+                   
+                }else{
+                    chartType = 'bar';
+                    createPerfDrilldown(perf_sec,'perf_container-drilldown',chartType);
+                    this.innerHTML = 'Ver como pay';
+                }
+            });
+            
+            $('.filterControl').on('click', function() {
+                  var from = document.getElementById('from').value;
+                  var until = document.getElementById('until').value;
+                  statuses = [];     
+    
+                  if (!from) {
+                      Materialize.toast('<span class="toast-warning">Oops! Selecciona una fecha inicial.</span>',3500);
+                      return false;
+                  }
+                  if (!until) {
+                      Materialize.toast('<span class="toast-warning">Oops! Selecciona una fecha final.</span>',3500);
+                      return false;
+                  }
+                  
+                  var statusList = document.getElementsByClassName("filterStatus");
+                  for (var i = 0, j = statusList.length;i<j;i++){
+                      if(statusList[i].checked){
+                        statuses.push("'" + statusList[i].id + "'");
+                      }
+                  }
+                  destroyAndCreate(this.id);
+            });
+            
+        });
+    </script>
+{% endblock %}

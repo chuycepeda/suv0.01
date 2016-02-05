@@ -1,0 +1,192 @@
+<!--
+Element providing a didactic explanation of possibilities using polymer elements. It was brought and edited from [polymer api page](https://www.polymer-project.org/docs/polymer/polymer.html). This element is an example of how-to create elements with **binded data attributes**, **computed objects**, and using **lifecycle methods** for a polymer element. Its main purpose is templating and knowing what can be done with a polymer based web component.
+
+##### Example
+
+    <tip-element></tip-element>
+
+@element tip-element
+@blurb Element providing a reusable template for invictus energy saving tips.
+@status alpha
+@homepage https://github.com/chuycepeda/polymer-elements/tree/master/my_elements/tip-element
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link href="/boilerplate/webcomponents/bower_components/core-icons/core-icons.html" rel="import">
+<link href="/boilerplate/webcomponents/bower_components/core-icons/invictus-icons.html" rel="import">
+<link href="/boilerplate/webcomponents/bower_components/core-tooltip/core-tooltip.html" rel="import">
+
+<polymer-element name="tip-element" attributes="category bills header content impact effort doers identifier status" >
+    <template>
+    <link rel="stylesheet" href="tip-element.css">
+    <link rel="stylesheet" href="bootstrap.css">
+      <div class="row pad" style="margin-top: -50px;">
+        <div class="col-xs-6 col-xs-offset-1 col-sm-3 col-sm-offset-3 col-md-3 col-md-offset-3">
+          <div class="tip-details" data-id="2" data-path="/tips/load_incentives_label">
+            <h3 class="tip-title">
+            <a style="color:#ff6623; text-decoration:none!important; cursor:normal;">{{header}}</a>
+            </h3>
+            <p class="desc">{{content}}</p>
+            
+          </div>
+        </div>
+        <div class="col-sm-5 col-md-4">
+          <ul class="tip-scales-charts-sm" style="margin-bottom: -40px;">
+            <li> <core-tooltip label='Tu gasto en {{category}}' position="top"> <core-icon icon="invictus:{{category}}" style="margin-right:5px;"></core-icon>${{bills}}</core-tooltip></li>
+            <li> <core-tooltip label='Personas hacen este esfuerzo' position="top"> <core-icon icon="perm-identity"></core-icon>{{doers}}</core-tooltip></li>
+          </ul>
+          <ul class="tip-scales-charts-sm" style="border:none">
+            <li>
+              Impacto
+              <div class="scale-sm scale-impact-sm">
+                <span class="rating">
+                  <strong style="width:{{impact}}%;"></strong>
+                </span>
+              </div>
+            </li>
+            <li>
+              Esfuerzo
+              <div class="scale-sm scale-effort-sm">
+                <span class="rating">
+                  <strong style="width:{{effort}}%;"></strong>
+                </span>
+              </div>
+            </li>
+          </ul>
+          <div class="row">
+            
+          </div>
+        </div>
+        <div class="col-xs-8 col-xs-offset-1 col-sm-4 col-sm-offset-3 col-md-4 col-md-offset-3" style="margin-top:5px;">         
+          <div class="row">
+            <div class="tip-action-buttons">
+              <a class="btn primary flat small tip-state-completed toggle-completed-tip" style="display:{{completed_display}}">
+                ✔ Completo
+              </a>
+              <a class="btn dark flat small tip-state-todo toggle-todo-tip" style="display:{{added_display}}">
+                + Agregar
+              </a>
+              <a class="btn light-dark flat small tip-state-remove toggle-remove-tip" style="display:{{removed_display}}">
+                × No gracias
+              </a>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </template>
+   <script> 
+
+    Polymer({
+      /**
+       * The `author` property sets an initial author
+       *
+       * @property author
+       * @type string
+       * @default '@chuycepeda'
+       */
+      author: '@chuycepeda',
+      /**
+       * `category` is a attribute that defines the tip category from: iluminacion, electrodomesticos, entretenimiento, calefaccion, clima and otros
+       *
+       * @attribute category
+       * @type string
+       * @default iluminacion
+       */
+      category: 'iluminacion',
+      /**
+       * `bills` is a attribute that defines the money paid by the user in the referred category
+       *
+       * @attribute bills
+       * @type number
+       * @default 0
+       */
+      bills: 0,
+      /**
+       * `header` is a attribute that defines the tip title
+       *
+       * @attribute header
+       * @type string
+       * @default Title
+       */
+      header: 'Title',
+      /**
+       * `content` is a attribute that defines the tip content
+       *
+       * @attribute content
+       * @type string
+       * @default Content
+       */
+      content: 'Content',
+      /**
+       * `impact` is a attribute that defines the tip impact
+       *
+       * @attribute impact
+       * @type number
+       * @default 3
+       */
+      impact: 3,
+      /**
+       * `effort` is a attribute that defines the tip effort
+       *
+       * @attribute effort
+       * @type number
+       * @default 3
+       */
+      effort: 3,
+      /**
+       * `doers` is a attribute that defines the tip doers
+       *
+       * @attribute doers
+       * @type number
+       * @default 3
+       */
+      doers: 3,
+      /**
+       * `identifier` is a attribute that defines the tip identifier
+       *
+       * @attribute identifier
+       * @type number
+       * @default 3
+       */
+      identifier: 3,
+      /**
+       * `status` is a attribute that defines the tip status from: none, completed, added, removed
+       *
+       * @attribute status
+       * @type string
+       * @default none
+       */
+      status: 'none',
+      completed_display: 'inline-block',
+      added_display: 'inline-block',
+      removed_display: 'inline-block',
+      /**
+       *  LIFECYCLE CALLBACK METHODS, more info: http://www.polymer-project.org/docs/polymer/polymer.html#lifecyclemethods
+       */
+      created: function() {
+          // Called when: An instance of the element is created.
+      },
+      ready: function( ) {
+          // Called when: The <polymer-element> has been fully prepared (e.g. shadow DOM created, property observers setup, event listeners attached, etc).
+          switch (this.status){
+            case 'completed':   this.completed_display = 'none';  break;
+            case 'added':       this.added_display = 'none';      break;
+            case 'removed':     this.removed_display = 'none';    break;
+            default: break;
+          }
+      },
+      attached: function () { 
+          // Called when: An instance of the element was inserted into the DOM.
+      },
+      domReady: function() {
+          // Called when: Called when the element’s initial set of children are guaranteed to exist. This is an appropriate time to poke at the element’s parent or light DOM children. Another use is when you have sibling custom elements (e.g. they’re .innerHTML‘d together, at the same time). Before element A can use B’s API/properties, element B needs to be upgraded. The domReady callback ensures both elements exist.
+      },
+      detached: function() {
+          // Called when: An instance was removed from the DOM.
+      }
+
+    });
+
+  </script>
+</polymer-element>

@@ -1,0 +1,81 @@
+{% extends landing_layout %}
+
+{% block title %}
+	<title>{{app_name}} » Register</title>
+{% endblock %}
+
+{% block page_css %}
+	<style type="text/css">
+		#nav-register{
+			display: none!important;
+		}
+	</style>
+{% endblock %}
+
+
+{% block header_content %}
+	<!-- START CONTENT -->
+	<div class="parallax-container z-depth-3" style="height:auto; background-color:#235B63;">
+		<div class="section no-pad-bot" style="padding-bottom: 40px;">
+		  <div class="container center row" style="margin-top: 80px;opacity: 0.9;">
+		    <div class="white brand-color-text center col s10 m6 offset-m3 offset-s1" style="opacity: 1; top: 0px;">
+		      <div class="modal-content">
+	        	{% if is_referral %}									          
+              		<form id="form_register" action="/referral/" method="post">				          	
+		        {% else %}
+              		<form id="form_register" action="/register/" method="post">				          	
+		        {% endif %} 
+				        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+				        <div class="row">
+				          <div class="input-field col s12 center">
+				            {% if is_referral %}<p class="center login-form-text">Haz como {{_username}} ({{_email}}) y transforma Ciudad Guadalupe !</p>
+				            {% else %}<p class="center login-form-text">¡ÚNETE A LA COMUNIDAD QUE TRANSFORMA CIUDAD GUADALUPE!</p>{% endif %} 
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				            <i class="mdi-social-person-outline prefix brand-color-text brand-color-text"></i>
+				            <input id="r_name" name="name" type="text">
+				            <label for="name" class="center-align">Nombre</label>
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				            <i class="mdi-communication-email prefix brand-color-text brand-color-text"></i>
+				            <input id="r_email" name="email" type="email" class="validate">
+				            <label for="email" class="center-align">Correo</label>
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				            <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+				            <input id="r_password" name="password" type="password">
+				            <label for="password">Contraseña</label>
+				          </div>
+				        </div>
+				        <div class="row margin">
+				          <div class="input-field col s12">
+				        	{{captchahtml | safe}}
+				          </div>
+				        </div>
+				        <div class="row">
+				          <div class="input-field col s12">
+				            <a class="btn-large brand-color white-text waves-effect waves-light col s12" style="cursor:pointer;" onclick="sendForm('form_register')">Registrarme</a>
+				          </div>
+				        </div>
+				        <div class="row" style="padding:15px;">
+				        	<p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("tou")}}">Términos de uso</a></p>
+					        <p class="margin right-align medium-small right"><a target="_blank" href="{{uri_for("privacy")}}">Aviso de privacidad</a></p>
+				        </div>
+				      </form>
+			      </div>
+			    </div>
+		  </div>
+		</div>
+		<div class="parallax"><img src="/{{theme}}/materialize/images/landing/gpemap.png" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 351px, 0px);    -webkit-filter: blur(2px);"></div>
+	</div>
+{% endblock %}
+
+{% block body_content %}
+{% endblock %}
+

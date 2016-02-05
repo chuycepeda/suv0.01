@@ -1,0 +1,259 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block page_css %}
+  <style type="text/css">
+      td {
+          padding: 3px!important;
+          padding-top:7px!important;
+      }
+      thead {
+          border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+      }
+      .dataTables_length{
+        display: none!important;
+      }
+      .dataTables_paginate {
+        display: none!important;
+      }
+      .paging_simple_numbers{
+        display: none!important;
+      }
+      .material-tooltip{
+        max-width: 80%!important;
+        line-height: 1.2rem!important;
+      }
+      
+  </style>
+  <link href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Reportes {% if path == uri_for('materialize-organization-urgents') %}urgentes{% endif %} ({{count}})               
+              <button onclick="window.open('{{uri_for('materialize-organization-export-reports')}}','_blank');" class="btn light-blue darken-2 waves-effect waves-light right" style="font-size: 14px;">Exportar en CSV<i class="mdi-file-file-download right"></i></button> 
+              <a href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;">Crear reporte<i class="mdi-content-add right"></i></a>
+              {% if path != uri_for('materialize-organization-urgents') %}
+              <a href="{{uri_for('materialize-organization-urgents')}}" class="btn deep-orange darken-2 right" style="font-size:14px;margin-right: 20px;">Ver urgentes <i class="mdi-av-new-releases right"></i></a>
+              {% endif %} 
+            </h5>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+    <div class="container">
+        <div class="section">
+            <input type="hidden" id="catGroup" value="{{catGroup}}">
+            <input type="hidden" id="status" value="{{statusval}}">
+            <div class="row">
+                <div class="input-field col s12 l6">
+                    <!-- Dropdown Trigger -->
+                    <p><i class="mdi-action-group-work brand-color-text left"></i>Grupo de Categoria:</p>                                                
+                    <a data-hover="false" id='catGroupbtn' class='dropdown-button btn brand-color truncate {% if ddfill == '---' %}disabled{% endif %}' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{ddfill}}</a>                    
+                    <!-- Dropdown Structure -->
+                    <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                    {% if ddfill != '---' %} 
+                        {% for category in cats %}
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value = (this.innerHTML).trim(); return false;">{{category}}</a></li>
+                        {% endfor %}
+                    {% endif %} 
+                    </ul>                                   
+                </div>
+              
+                <div id="status_container" class="input-field col s12 l6">
+                    <!-- Dropdown Trigger -->
+                    <p><i class="mdi-action-book brand-color-text left"></i>Estado:</p>
+                    <a data-hover="false" id='statusbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='statusdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{ddfillstat}}</a>
+                    <!-- Dropdown Structure -->
+                    <ul id='statusdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Pendientes</a></li>
+                        {% if user_is_callcenter %}
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Todos</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Abierto</a></li>
+                        {% endif %}
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En espera</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Asignado</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Rechazado</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En proceso</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Resuelto</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Fallo</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Respondido</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Spam</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Archivado</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Olvidado</a></li>
+                       </ul>                
+                </div>
+            </div>
+        
+            <div class="row" style="margin-top: 25px;">
+                <div class="input-field col s12 l4">                                
+                    <i class="mdi-action-receipt prefix brand-color-text brand-color-text active"></i>
+                    <input id="ticket" name="title" type="text" value="{{ticketval}}">
+                    <label for="ticket" class="active">Ticket</label>
+                </div>
+                    <div class="input-field col s12 l2 hide-on-med-and-down">                                
+                </div>
+                <div class="input-field col s12 l4">                                
+                    <i class="mdi-action-receipt prefix brand-color-text brand-color-text active"></i>
+                    <input id="folio" name="folio" type="text" value="{{folioval}}">
+                    <label for="folio" class="active">Folio interno</label>
+                </div>
+            </div>
+        
+            <div class="row">
+               <div class="col s12" style="margin-top:40px;margin-bottom:-40px">
+                    <a class="waves-effect waves-light light-blue white-text btn-large" href="#" onclick="filter();return false;">Filtrar<i class="mdi-content-send right"></i></a>
+               </div>
+            </div>
+        
+        </div>
+        <div class="section">
+           <div class="row" style="margin-top:30px;">
+                <table id="data-table-simple" class="responsive-table hover cell-border centered display compact">
+                <thead style="font-family:roboto; color:#777777;">
+                  <tr class="brand-color white-text">
+                      <th>✎</th>
+                      <th>Ticket</th>
+                      <th>Prioridad</th>
+                      <th>Creado</th>
+                      <th>Estado</th>
+                      <th>Descripción</th>
+                      <th>Categoría</th>
+                      <th>Usuario</th>
+                      <th>Última modificación</th>
+                      <th><i class="mdi-social-notifications white-text"></i></th>
+                  </tr>
+                </thead>
+                <tbody id="report_table" style="font-family:roboto-light;">
+                    {% for report in reports %}
+                      <tr>
+                          <td>
+                            <div><a class="icon" href="{{ uri_for(level, report_id=report.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Editar</a></div>
+                          </td>
+
+                          <td>{% if report.cdb_id != -1 %} {{report.cdb_id}} {% else %} Sin publicar {% endif %}</td>
+
+                          <td class="tooltipped" style="background-color:{{report.get_priority_color()}}" data-position="top" data-delay="50" data-tooltip="{{report.get_benchmark()}}">{{report.get_priority() }}</td>
+
+                          <td>{{report.get_created_date()}}</td>
+                          
+                          <td>{{report.get_status()}}</td>
+
+                          <td class="truncate tooltipped" style="max-width:300px" data-position="right" data-delay="50" data-tooltip="{{report.description}}">{{report.description}}</td>
+                          
+                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.group_category}}: {{report.sub_category}}">{{report.sub_category}}</td>
+                          
+                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.get_user_email()}}">{{report.get_user_email()}}</td>
+                          
+                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.get_last_log()}}">{{report.get_last_log()}}</td>
+                          
+                          <td>{% if report.req_deletion %}<i class="mdi-action-delete {% if report.status == 'archived' %}grey{% else %}red{% endif %}-text"></i>
+                          {% elif report.status == 'spam' %}<i class="mdi-action-bug-report red-text"></i>
+                          {% elif report.urgent %}<i class="mdi-av-new-releases red-text"></i>{% endif %}</td>
+                      </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                {{ lib.render_pager() }}
+            </div>
+          </div>
+    </div>
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+    <script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        function getStatus(status){
+            var ds;
+            switch (status) {
+                case 'Abierto':
+                    ds = "open";
+                    break;
+                case 'Respondido':
+                    ds = "answered";
+                    break;
+                case 'Spam':
+                    ds = "spam";
+                    break;
+                case 'En espera':
+                    ds = "halted";
+                    break;
+                case 'Asignado':
+                    ds = "assigned";
+                    break;
+                case 'Rechazado':
+                    ds = "rejected";
+                    break;
+                case 'Resuelto':
+                    ds = "solved";
+                    break;
+                case 'Fallo':
+                    ds = "failed";
+                    break;
+                case 'Archivado':
+                    ds = "archived";
+                    break;
+                case 'Olvidado':
+                    ds = "forgot";
+                    break;
+                case 'En proceso':
+                    ds = "working";
+                    break;
+                case 'Pendientes':
+                    ds = "pending";
+                    break;
+                default: ds="";
+                    break
+            }
+            return ds;
+        }    
+        
+        function filter(){
+            var cat = 'cat='+document.getElementById('catGroup').value+'&';
+            var status = 'status='+getStatus(document.getElementById('status').value)+'&';
+            var folio = 'folio='+document.getElementById('folio').value+'&';
+            var ticket = 'ticket='+document.getElementById('ticket').value;
+            {% if rep_user_id %}
+            var href="{{ uri_for(inbox, user_id=rep_user_id) }}?"+cat+status+folio+ticket;
+            {% else %}
+            var href="{{ uri_for(inbox) }}?"+cat+status+folio+ticket;
+            {% endif %}
+            if (isNaN(document.getElementById('ticket').value))
+              Materialize.toast('<span class="toast-warning">Por favor revisa que el ticket sean solo números o usa el folio interno.</span>', 4500);
+            else
+              window.location.href = href;
+        }
+
+        $('#data-table-simple').DataTable({
+            scrollY: 300,
+            scrollCollapse: true,
+            paging: true,
+            "lengthMenu": [[100], [100]],
+            "language": {
+              "lengthMenu": "Mostrar _MENU_ reportes por página",
+              "search": "Buscar en los reportes de esta tabla:",
+              "zeroRecords": "Ningún reporte encontrado",
+              "info": "Mostrando _TOTAL_ reportes",
+              "infoFiltered": "(filtrando sobre _MAX_ reportes)",
+              "paginate": {
+                  "first":      "Inicio",
+                  "last":       "Final",
+                  "next":       "Siguiente",
+                  "previous":   "Previo"
+              }
+            }
+        });
+
+    </script>
+{% endblock %}

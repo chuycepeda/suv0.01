@@ -1,0 +1,72 @@
+{% extends landing_layout %}
+
+{% block title %}
+  <title>{{app_name}} » Contact</title>
+{% endblock %}
+
+{% block page_css %}
+{% endblock %}
+
+{% block header_content %}
+  <!-- START CONTENT -->
+  <div class="parallax-container z-depth-3" style="height:auto;">
+    <div class="section no-pad-bot" style="padding-bottom: 40px;">
+      <div class="container center row" style="margin-top: 80px;opacity: 0.9;">
+        <div class="white light-blue-text center col s10 m6 offset-m3 offset-s1" style="opacity: 1; top: 0px;">
+          <div class="modal-content">
+            <form id="form_contact" action="{{ url|safe }}" method="post">
+            <input type="hidden" name="exception" value="{{ exception|e }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <div class="col s12">
+                    <div class="">
+                      <div class="row">
+                        <form class="col s12">
+                          <div class="row">
+                            <div class="input-field col s12 center">
+                              <p class="center login-form-text">Hey! Déjanos un mensaje y con gusto te atenderemos.</p>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s12">
+                              <i class="mdi-action-account-circle prefix brand-color-text brand-color-text"></i>
+                              <input id="name" name="name" type="text" class="validate" value="">
+                              <label for="first_name">Nombre</label>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s12">
+                              <i class="mdi-communication-email prefix brand-color-text brand-color-text"></i>
+                              <input id="email" name="email" type="email" class="validate" value="">
+                              <label for="email">Correo</label>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s12">
+                              <i class="mdi-action-question-answer prefix brand-color-text brand-color-text"></i>
+                              <textarea id="message" name="message" class="materialize-textarea validate" length="120"></textarea>
+                              <label for="message">Mensaje</label>
+                            </div>
+                            <div class="row">
+                              <div class="input-field col s12">
+                                <button class="btn brand-color waves-effect waves-light right" style="margin-right:20px;" type="submit" name="action">Enviar
+                                  <i class="mdi-content-send right"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="parallax"><img src="/default/materialize/images/landing/gpemap.png" alt="Unsplashed background img 1" style="display: block; transform: translate3d(-50%, 172px, 0px);    -webkit-filter: blur(2px);"></div>
+  </div>
+{% endblock %}
+
+
+{% block body_content %}
+{% endblock %}

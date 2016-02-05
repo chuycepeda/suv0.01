@@ -1,0 +1,118 @@
+{% extends landing_layout %}
+
+{% block title %}
+  <title>{{app_name}} » API</title>
+{% endblock %}
+
+{% block page_css %}
+  <link href="/{{theme}}/materialize/css/prism_o.css" type="text/css" rel="stylesheet" media="screen,projection">   
+  <style>
+  :not(pre) > code[class*="language-"], pre[class*="language-"]{
+    background: #235B63!important;
+    border-radius: 10px;
+  }
+  code[class*="language-"], pre[class*="language-"]{
+    color:white!important;
+  }
+  .string { color: #4EC8BC; }
+  .number { color: orange; }
+  .boolean { color: blue; }
+  .null { color: purple; }
+  .key { color: white; }
+
+  </style>    
+{% endblock %}
+
+{% block header_content %}
+  <div class="row">
+    <div class="container">
+      <div class="section" >
+        <h3 style="margin-top: 100px;">Bienvenido a la documentación del API de {{app_name}}</h3>
+        <p>En cada sección se explica como consultar las ligas que te permiten hacer HTTP GET al API y te demuestran la respuesta que recibirás.</p>
+        <h5>Categorías</h5>
+        <h6>Listado de categorías</h6>
+        <div class="col s12">
+          <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}</code><a class="btn white brand-color-text right" onclick="getCats()">¡Pruébalo Ahora!</a></pre></div>
+          <div class="row">
+            <pre style="height:300px;overflow-y:scroll">JSON response<code id="catresponse" class="language-javascript">
+              {
+                Ayuntamiento (Permisos): {
+                color: "5EA6FF",
+                icon_url: {
+                Licencia para venta de alcohol: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=beer|5EA6FF",
+                Permismo de comercio ambulante: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|5EA6FF",
+                Permiso de comercio establecido: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|5EA6FF"
+                },
+                categories: [
+                "Permismo de comercio ambulante",
+                "Permiso de comercio establecido",
+                "Licencia para venta de alcohol"
+                ]
+                },
+                Educación en línea: {
+                color: "FFFFFF",
+                icon_url: {
+                Maestría en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF",
+                Prepa en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF",
+                Licenciatura en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF"
+                },
+                categories: [
+                "Maestría en línea",
+                "Prepa en línea",
+                "Licenciatura en línea"
+                ]
+                }
+                ...
+              }
+            </code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block body_content %}
+{% endblock %}
+
+{% block page_scripts %}
+  <script type="text/javascript" src="/{{theme}}/materialize/js/prism_o.js"></script>
+  <script>
+    function getCats(){
+      var url = "/report/categories/";
+      $.ajax({
+          url: url,
+          type: 'GET',
+          success: function(data) { 
+              console.log(data)
+          }
+      }).done(function(data) {
+         document.getElementById('catresponse').innerHTML = '<br>' + syntaxHighlight(data);
+      }); 
+
+    }
+
+    function syntaxHighlight(json) {
+        if (typeof json != 'string') {
+             json = JSON.stringify(json, null, 2);
+        }
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+  </script>
+{% endblock %}

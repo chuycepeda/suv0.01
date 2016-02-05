@@ -1,0 +1,247 @@
+<!--
+Element providing solution to easy creation of AsterPlot visualization using d3.js library.
+
+##### Example
+
+    <d3asterplot-element></d3asterplot-element>
+
+@element d3asterplot-element
+@blurb Element providing solution to easy creation of AsterPlot visualization using d3.js library.
+@status alpha
+@homepage https://github.com/chuycepeda/polymer-elements/tree/master/my_elements/d3asterplot-element
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<style>
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.bar {
+  fill: orange;
+}
+
+.solidArc:hover {
+  fill: orangered ;
+}
+
+.solidArc {
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.aster-score { 
+  line-height: 1;
+  font-weight: bold;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+</style>
+<polymer-element name="d3asterplot-element" attributes="__title __radius __values __showAvg __proportion">
+    <template>
+        <center><h1 style="color:#bab5b5; font-family:roboto-thin;">{{__title}}</h1></center>
+        <div id="holder" style="margin-bottom:20px;"></div>
+        <input id="proportion" value="{{__proportion}}" hidden>
+    </template>
+
+<script>
+(function() {
+    
+    Polymer('d3asterplot-element', {
+          /**
+           * The `title` attribute sets the title for the chart.
+           *
+           * @attribute __title
+           * @type string
+           * @default 'd3.js AsterPlot'
+           */
+          __title: "d3.js AsterPlot",
+          /**
+           * The `values` attribute sets an array of values for chart.
+           *
+           * @attribute __values
+           * @type array of objects
+           * Example:
+             * <pre>[{"score":59,"weight":0.5,"color":"#9E0041","label":"Fisheries"},
+                 {"score":24,"weight":0.5,"color":"#C32F4B","label":"Mariculture"},...]</pre>
+           */
+          __values: [{"score":59,"weight":0.5,"color":"#9E0041","label":"Fisheries"},
+                 {"score":24,"weight":0.5,"color":"#C32F4B","label":"Mariculture"},
+                 {"score":98,"weight":1,"color":"#E1514B","label":"Artisanal fishing"},
+                 {"score":60,"weight":1,"color":"#F47245","label":"Natural products"},
+                 {"score":74,"weight":1,"color":"#FB9F59","label":"Carbon storage"},
+                 {"score":70,"weight":1,"color":"#FEC574","label":"Coastal protection"},
+                 {"score":42,"weight":1,"color":"#FAE38C","label":"Tourism"},
+                 {"score":77,"weight":0.5,"color":"#EAF195","label":"Livelihoods"},
+                 {"score":88,"weight":0.5,"color":"#C7E89E","label":"Economies"},
+                 {"score":60,"weight":0.5,"color":"#9CD6A4","label":"Iconic species"},
+                 {"score":65,"weight":1,"color":"#6CC4A4","label":"Lasting places"},
+                 {"score":71,"weight":1,"color":"#4D9DB4","label":"Clean waters"},
+                 {"score":88,"weight":0.5,"color":"#4776B4","label":"Habitats"},
+                 {"score":83,"weight":0.5,"color":"#5E4EA1","label":"Species"}],
+          /**
+           * The `radius` attribute sets the radius of the chart.
+           *
+           * @attribute __radius
+           * @type integer
+           * @default '300'
+           */
+          __radius:300,
+          /**
+           * The `showAvg` attribute sets the option for showing or removing the weighted average.
+           *
+           * @attribute __showAvg
+           * @type bool
+           * @default 'true'
+           */
+          __showAvg:true,
+          /**
+           * The `proportion` attribute is used to detect a width change in the screen. If this value is used you can ensure a responsive chart.
+           *
+           * @attribute __proportion
+           * @type number
+           * @default '1'
+           */
+          __proportion:1,
+      ready: function() {
+        this.loadChart();
+      },
+      /**
+       * The `loadChart` method create the AsterPlot.
+       *
+       * @method loadChart
+       * @param {} no paratemer needed.
+       * @return {} no return given.
+       */
+      loadChart: function(){
+            var width = this.__radius*this.__proportion,
+                height = this.__radius*this.__proportion,
+                radius = Math.min(width, height) / 2,
+                innerRadius = 0.3 * radius;
+
+            var pie = d3.layout.pie()
+                .sort(null)
+                .value(function(d) { return d.width; });
+
+            var tip = d3.tip()
+              .attr('class', 'd3-tip')
+              .offset([0, 0])
+              .html(function(d) {
+                return d.data.label + ": <span style='color:orangered'>" + d.data.score + "</span>";
+              });
+
+            var arc = d3.svg.arc()
+              .innerRadius(innerRadius)
+              .outerRadius(function (d) { 
+                return (radius - innerRadius) * (d.data.score / 100.0) + innerRadius; 
+              });
+
+            var outlineArc = d3.svg.arc()
+                    .innerRadius(innerRadius)
+                    .outerRadius(radius);
+            this.$.holder.innerHTML ="";
+            svg = d3.select(this.$.holder).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+            svg.call(tip);
+          
+              var data = this.__values;
+              data.forEach(function(d) {
+                //d.id     =  d.id;
+                //d.order  = +d.order;
+                d.color  =  d.color;
+                d.weight = +d.weight;
+                d.score  = +d.score;
+                d.width  = +d.weight;
+                d.label  =  d.label;
+              });
+          
+              var path = svg.selectAll(".solidArc")
+                  .data(pie(data))
+                .enter().append("path")
+                  .attr("fill", function(d) { return d.data.color; })
+                  .attr("class", "solidArc")
+                  .attr("stroke", "gray")
+                  .attr("d", arc)
+                  .on('mouseover', tip.show)
+                  .on('mouseout', tip.hide);
+
+              var outerPath = svg.selectAll(".outlineArc")
+                  .data(pie(data))
+                .enter().append("path")
+                  .attr("fill", "none")
+                  .attr("stroke", "gray")
+                  .attr("class", "outlineArc")
+                  .attr("d", outlineArc);  
+
+              var score = 
+                data.reduce(function(a, b) {
+                   return a + (b.score * b.weight); 
+                }, 0) / 
+                data.reduce(function(a, b) { 
+                  return a + b.weight; 
+                }, 0);
+              
+              var text;
+              if (this.__showAvg)
+                  svg.append("svg:text")
+                    .attr("class", "aster-score")
+                    .attr("dy", ".35em")
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "32px")
+                    .text(Math.round(score));
+
+            //});
+      },
+      /**
+       * The `proportionChanged` method reloads the chart according to the initial and current screen width.
+       *
+       * @method proportionChanged
+       * @param {} no paratemer needed.
+       * @return {} no return given.
+       */
+      __proportionChanged: function(){ this.loadChart();}
+    });
+    })();
+</script>
+
+</polymer-element>

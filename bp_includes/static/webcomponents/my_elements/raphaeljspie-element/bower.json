@@ -1,0 +1,27 @@
+{
+  "name": "raphaeljspie-element",
+  "version": "0.0.0",
+  "authors": [
+    "chuycepeda <chuycepeda@gmail.com>"
+  ],
+  "description": "Element providing solution to easy creation of SVG pie charts using RaphaelJS library.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "seed"
+  ],
+  "main": "raphaeljspie-element.html",
+  "license": "MIT",
+  "homepage": "https://github.com/chuycepeda/polymer-elements/tree/master/my_elements/raphaeljspie-element",
+  "ignore": [
+    "/.*",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  }
+}

@@ -1,0 +1,247 @@
+/*
+ * @license
+ * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
+ * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+ * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+ * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+ * Code distributed by Google as part of the polymer project is also
+ * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+ */
+
+:host {
+  display: block;
+}
+
+/* To ensure your styling works under the Shadow DOM polyfill, see
+   www.polymer-project.org/docs/polymer/styling.html#directives */
+polyfill-next-selector { content: ':host > h2'; }
+::content h2 {
+  color: blue;
+}
+
+
+.tip-image-holder {
+  float: left;
+  width: 75px;
+  height: 75px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+  display: none;
+}
+
+a {
+  color: #ff6623;
+  text-decoration: none;
+}
+
+.pad .tip-details {
+  float: left;
+  width: 350px;
+  margin-left: 0px;
+  margin-top: 40px;
+  /*border-top: 1px solid #EAEAEA;*/
+  padding-top: 15px;
+
+}
+
+.pad .tip-details h3.tip-title {
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  font-size: 15px;
+  text-align: left;
+  margin-bottom:12px;
+}
+
+p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  text-align: left;
+  margin-bottom:15px;
+}
+
+.desc{
+  font-size: 11px;
+  color: rgb(89, 89, 89);
+  letter-spacing: 0.2px;
+  max-width: 280px;
+}
+
+.tip-action-buttons {
+  bottom: 25px;
+  float: left;
+  margin-left: 15px;
+}
+
+.tip-action-buttons a{
+	opacity: 0.9;
+}
+
+
+.tip-action-buttons a:hover{
+	color: white;
+	text-decoration: none;
+	opacity: 1;
+}
+
+.btn {
+  border-color: #c5c5c5;
+  border-color: rgba(0,0,0,0.15) rgba(0,0,0,0.15) rgba(0,0,0,0.25);
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+  background-color: #0087b0;
+  background-image: -moz-linear-gradient(top, #0092be, #00779b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0092be), to(#00779b));
+  background-image: -webkit-linear-gradient(top, #0092be, #00779b);
+  background-image: -o-linear-gradient(top, #0092be, #00779b);
+  background-image: linear-gradient(to bottom, #0092be,#00779b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0092be', endColorstr='#ff00779b', GradientType=0);
+  border-color: #00779b #00779b #003c4e;
+  border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.btn.primary.flat {
+  background: #ff6623;
+  text-shadow: none;
+}
+
+.btn-primary {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+  background-color: #ff6623;
+  background-image: -moz-linear-gradient(top, #0092be, #00779b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0092be), to(#00779b));
+  background-image: -webkit-linear-gradient(top, #0092be, #00779b);
+  background-image: -o-linear-gradient(top, #0092be, #00779b);
+  background-image: linear-gradient(to bottom, #0092be,#00779b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0092be', endColorstr='#ff00779b', GradientType=0);
+  border-color: #00779b #00779b #003c4e;
+  border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.btn.small {
+  padding: 3px 9px;
+  font-size: 11px;
+  line-height: 18px;
+}
+
+.btn.flat {
+  border: 0px;
+  box-shadow: none;
+  color: #fff;
+  text-shadow: none;
+  font-weight: 500;
+}
+
+.btn.dark.flat {
+  background: #253238;
+  text-shadow: none;
+}
+
+.btn.dark {
+  background: #253238;
+  background: -moz-linear-gradient(top, #253238 0%, #4b595d 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #253238), color-stop(100%, #4b595d));
+  background: -webkit-linear-gradient(top, #253238 0%, #4b595d 100%);
+  background: -o-linear-gradient(top, #253238 0%, #4b595d 100%);
+  background: -ms-linear-gradient(top, #253238 0%, #4b595d 100%);
+  background: linear-gradient(to bottom, #253238 0%,#4b595d 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#253238', endColorstr='#4b595d',GradientType=0 );
+}
+
+.btn.light-dark.flat {
+  background: #8E8E8E;
+  text-shadow: none;
+}
+
+.btn.light-dark {
+  background: #8E8E8E;
+  background: -moz-linear-gradient(top, #626262 0%, #5B6B71 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #626262), color-stop(100%, #5B6B71));
+  background: -webkit-linear-gradient(top, #626262 0%, #5B6B71 100%);
+  background: -o-linear-gradient(top, #626262 0%, #5B6B71 100%);
+  background: -ms-linear-gradient(top, #626262 0%, #5B6B71 100%);
+  background: linear-gradient(to bottom, #626262 0%,#5B6B71 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#626262', endColorstr='#5B6B71',GradientType=0 );
+}
+
+.tip-scales-charts-sm {
+  margin: 0;
+  list-style: none;
+  float: left;
+  margin-top: 40px;
+  /*border-top: 1px solid #EAEAEA;*/
+  padding-top: 15px;
+
+}
+
+li {
+  line-height: 20px;
+}
+
+.tip-scales-charts-sm li {
+  float: left;
+  width: 100px;
+  font-size: 11px;
+  color: #000;
+  text-shadow: 0 1px #fff;
+}
+
+.scale-sm {
+  margin-top: 5px;
+  display: inline-block;
+  clear: both;
+  font-weight: bold;
+  color: #888c8f;
+}
+
+.tip-scales-charts-sm li {
+  float: left;
+  width: 100px;
+  font-size: 11px;
+  color: #000;
+  text-shadow: 0 1px #fff;
+}
+
+.scale-sm .rating {
+  display: block;
+  width: 84px;
+  height: 14px;
+  background: url("https://www.myenergyresources.com/tip_scales_bg_sm.png") 0 0 no-repeat;
+  text-indent: -9999px;
+}
+
+.scale-sm span {
+  display: block;
+  float: left;
+}
+
+.scale-sm {
+  margin-top: 5px;
+  display: inline-block;
+  clear: both;
+  font-weight: bold;
+  color: #888c8f;
+}
+
+.scale-impact-sm .rating strong {
+  display: block;
+  width: 100%;
+  height: 22px;
+  background: url("https://www.myenergyresources.com/tip_scales_blue_sm.png") 0 0 no-repeat;
+}
+
+.scale-effort-sm .rating strong {
+  display: block;
+  width: 100%;
+  height: 22px;
+  background: url("https://www.myenergyresources.com/tip_scales_green_sm.png") 0 0 no-repeat;
+}

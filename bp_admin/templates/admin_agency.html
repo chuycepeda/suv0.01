@@ -1,0 +1,332 @@
+{% extends 'admin_base.html' %}
+
+{% block page_css %}
+<style type="text/css">
+    td {
+        padding: 3px!important;
+        padding-top:7px!important;
+    }
+
+    thead {
+        border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+    }
+    select {
+        display: block!important;
+    }
+    .dataTables_length{
+        display: none!important;
+      }
+</style>
+  <link href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active"><a href="{{ uri_for('admin-organization') }}">Organización</a> | <a href="{{ uri_for('admin-secretary-edit', secretary_id=agency.secretary_id) }}">Secretaría</a> | Dependencia</li>
+                <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a>
+            </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+
+{% block page_content %}
+<div class="container">
+      <div class="section">
+       <div class="row" style="margin-top:30px">
+            {% if _user %}
+            <div class="card-panel">
+              <h5 class="brand-color-text">Perfil del director de la dependencia</h5>
+              <div class="row">
+                  <div class="col s12 m3 center" style="margin-top:8px;">
+                      <div class="form-group">
+                          <label class="controls">
+                              {% if _user.picture %}
+                                <img id="blah" src="/media/serve/profile/{{_user.key.id()}}/" alt="your image" class="circle responsive-img valign z-depth-1" style="max-height:150px; border: 1px solid #00464F;"/>
+                              {% else %}
+                                <img id="blah" src="" alt="your image" class="circle responsive-img valign valign z-depth-1" style="max-height:150px; cursor:pointer;display:none;"/>
+                                <div id="initial" class="circle red lighten-1" style="width: 110px;   height: 110px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; position: relative;"><span style="position: absolute;top: 25px;left: 42px;font-size: 40px;">{{_user.name[0]}}</span></div>
+                              {% endif %}
+                              <input class="btn btn-success" type='file' id="picture" name="picture" style="display:none;" disabled="" />
+                          </label>
+                      </div>                      
+                  </div>
+                  <div class="col s12 m9">
+                      <div class="row">
+                          <div class="row">
+                            <div class="input-field col s6">
+                              <input id="name" name="name" type="text" value="{{_user.name}}" disabled="" style="color: #00464F;">
+                              <label for="name">Name</label>
+                            </div>
+                          
+                            <div class="input-field col s6">
+                              <input id="last_name" name="last_name" type="text" value="{{_user.last_name}}" disabled="" style="color: #00464F;">
+                              <label for="last_name">Lastname</label>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="input-field col s6 m4">
+                              <input id="phone" name="phone" type="tel" value="{{_user.phone}}" disabled="" style="color: #00464F;">
+                              <label for="phone">Phone</label>
+                            </div>                       
+                            <div class="input-field col s6 m4">
+                              <input id="birth" name="birth" type="date" class="datepicker" value="{{_user.birth}}" disabled="" style="color: #00464F;">
+                              <label for="birth">Birthday</label>
+                            </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            {% else %}
+             <div class="card-panel red lighten-2">
+              <h5 class="white-text">El director no ha creado su cuenta.</h5>
+             </div>
+            {% endif %}
+            <div class="card-panel" style="margin-bottom:30px;">
+                <form id="form_agency" action="{{ url|safe }}" method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="delete" id="delete" value="no">
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-action-account-balance-wallet prefix brand-color-text"></i>
+                      <input id="agename" name="agename" type="text" value="{{agency.name}}">
+                      <label for="agename" class="center-align">Nombre de la Dependencia</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-action-description prefix brand-color-text"></i>
+                      <input id="agedescription" name="agedescription" type="text" value="{{agency.description}}">
+                      <label for="agedescription" class="center-align">Descripción</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-social-person prefix brand-color-text"></i>
+                      <input id="ageadminname" name="ageadminname" type="text" value="{{agency.admin_name}}">
+                      <label for="ageadminname" class="center-align">Nombre del Director</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-communication-email prefix brand-color-text"></i>
+                      <input id="ageadminemail" name="ageadminemail" type="email" value="{{agency.admin_email}}">
+                      <label for="ageadminemail" class="center-align">Email del Director</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12 l6">
+                        <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;"></i>
+                        <input type="hidden" id="agegroupcat" name="agegroupcat" value="{{agency.get_group_name()}}">
+                        <label for="agegroupcat" class="center-align" style="margin-left:45px;">Grupo de categorías:</label><br><br>
+                        <!-- Dropdown Trigger -->
+                        <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;margin-left:45px;">
+                            {{agency.get_group_name()}}
+                        </a>
+                        <blockquote id="subcats" class="grey-text text-lighten-1" style="margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};"></blockquote>
+                        <!-- Dropdown Structure -->
+                        <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
+                    </div>
+                  </div>
+                  <div class="row container" style="padding:25px;     padding-left: 55px!important;">
+                    <a class="waves-effect waves-light light-blue white-text btn right" id="submit_age_form" >Guardar Cambios
+                      <i class="mdi-content-send right"></i>
+                    </a>  
+                    <a class="waves-effect waves-light grey white-text btn left modal-trigger" href="#modal_delete" >Eliminar Dependencia
+                      <i class="mdi-action-delete right"></i>
+                    </a>                           
+                  </div>
+                </form>
+            </div>
+            <div class="divider" style="margin-top:30px;margin-bottom:30px;"></div>
+            <table id="data-table-simple" class="responsive-table hoverable centered display">
+                <thead style="font-family:roboto; color:#777777;">
+                  <tr class="brand-color white-text">
+                      <th>✎</th>
+                      <th>Operador de enlace</th>
+                      <th>Email del operador</th>
+                      <th>Cuenta activa</th>
+                  </tr>
+                </thead>
+                <tbody id="report_table" style="font-family:roboto-light;">
+                    {% for operator in operators %}
+                      <tr>
+                          <td>
+                              <div>    
+                                  <a class="icon" href="{{ uri_for('admin-operator-edit', operator_id=operator.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Editar operador</a>
+                              </div>                          
+                          </td>
+                          <td>{{operator.name}}</td>
+                          <td>{{operator.email}}</td>
+                          <td>{{operator.is_active()}}</td>
+                      </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+        </div>
+      </div>
+    </div>
+
+<div id="modal1" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
+  <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+  <div class="modal-content">
+    <form id="form_add" action="{{ url|safe }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <div class="row">
+          <div class="input-field col s12 center">
+            <p class="center login-form-text">Agrega un nuevo Operador de Enlace llenando la siguiente forma</p>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-social-person prefix brand-color-text"></i>
+            <input id="opsadminname" name="opsadminname" type="text">
+            <label for="opsadminname" class="center-align">Nombre del Operador</label>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-communication-email prefix brand-color-text"></i>
+            <input id="opsadminemail" name="opsadminemail" type="email">
+            <label for="opsadminemail" class="center-align">Email del Operador</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <a class="btn-large waves-effect waves-light col s12 brand-color white-text" style="cursor:pointer;" id="submit_ops_form">Agregar</a>
+          </div>
+        </div>
+    </form>
+  </div>
+</div>
+ <div id="modal_delete" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
+          <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+          <div class="modal-content">
+              <div class="row">
+                <div class="input-field col s12 center">
+                  <p class="center login-form-text">¿Seguro que deseas eliminar la Dependencia? <br> <span class="red-text">Eliminarás el acceso a sus operadores también</span>.</p>
+                </div>
+              <div class="row">
+                <div class="input-field col s12">
+                  <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
+                  <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" id="submit_age_form_delete">Sí, seguro</a>
+                </div>
+              </div>
+          </div>
+        </div>
+  </div>
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+<script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  var url = "{{ uri_for('materialize-report-categories') }}";
+  var reportDict;
+
+  $.ajax({
+      url: url,
+      type: 'GET',
+      success: function(data) { 
+          console.log(data)
+      }
+  }).done(function(data) {
+      reportDict = data;
+      var html='';
+      var abcList = [];
+      for (var x in reportDict){
+        abcList.push(x);
+    }
+    abcList.sort();
+      for (var i=0,j=abcList.length;i<j;i++){
+        html += '<li> <a class="brand-color-text" href="#" onclick="document.getElementById(\'catGroupbtn\').innerHTML=this.innerHTML; document.getElementById(\'agegroupcat\').value=(this.innerHTML).trim(); fillDd(this.innerHTML); return false;">'+ abcList[i] +'</a></li>';
+    }
+    document.getElementById('catGroupdd').innerHTML = html;
+    if ($('#catGroupbtn').hasClass('disabled')) $('#catGroupbtn').removeClass('disabled');
+    fillDd('{{agency.get_group_name()}}');    
+  });
+
+  function fillDd(pKey){
+          pKey = (pKey).trim();
+          var html='Las subcategorías de este grupo:';
+          var selectObj = reportDict[pKey]['categories'];
+          for (var i=0,j=selectObj.length;i<j;i++){
+              html += '   ' + selectObj[i] + ", ";
+          }
+          document.getElementById('subcats').innerHTML = html.slice(0,-2);        
+    }
+
+
+
+</script>
+<script type="text/javascript">
+    document.querySelector('#submit_age_form').addEventListener('click', function() { 
+      if (document.getElementById('ageadminname').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre del secretario por favor.</span>',4500);
+
+      }else if(document.getElementById('ageadminemail').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de email por favor.</span>',4500);
+
+      }else if(document.getElementById('agename').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre por favor.</span>',4500);
+      
+      }else if(document.getElementById('agegroupcat').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Selecciona un grupo de categorías por favor.</span>',4500);
+
+      }else{
+        document.getElementById("delete").value = "agency_edition";
+        document.getElementById("form_agency").submit();
+      }
+    });
+
+    document.querySelector('#submit_age_form_delete').addEventListener('click', function() { 
+            document.getElementById("delete").value = "confirmed_deletion";
+            document.getElementById("form_agency").submit();
+    });
+
+    document.querySelector('#submit_ops_form').addEventListener('click', function() { 
+      if (document.getElementById('opsadminname').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre del director por favor.</span>',4500);
+
+      }else if(document.getElementById('opsadminemail').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de email por favor.</span>',4500);
+
+      }else{
+        document.getElementById("form_add").submit();
+      }
+    });
+
+    $('#data-table-simple').DataTable({
+            scrollY: 300,
+            scrollCollapse: true,
+            paging: true,
+            "lengthMenu": [[250], [250]],
+            "language": {
+              "lengthMenu": "Mostrar _MENU_ operadores por página",
+              "search": "Buscar:",
+              "zeroRecords": "Ningún reporte encontrado",
+              "info": "Mostrando _START_ a _END_ de _TOTAL_ operadores",
+              "infoFiltered": "(filtrando sobre _MAX_ operadores)",
+              "paginate": {
+                  "first":      "Inicio",
+                  "last":       "Final",
+                  "next":       "Siguiente",
+                  "previous":   "Previo"
+              }
+            }
+        } );
+</script>
+{% endblock %}

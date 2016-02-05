@@ -1,0 +1,302 @@
+{% extends 'admin_base.html' %}
+
+{% block breadcrums %}
+{% endblock %}
+
+{% block page_css %}
+<link href="/{{theme}}/materialize/css/prism_o.css" type="text/css" rel="stylesheet" media="screen,projection">    
+  <style>
+      .topic{
+          letter-spacing: 2px;
+          margin-left: 5px;
+          font-family: roboto-light;
+      }
+      p{
+          letter-spacing: 1.2pt;
+          font-family: roboto-light;
+      }
+      .collapsible-body{
+          overflow: scroll;
+      }
+      img{
+          -webkit-filter: grayscale(100%);
+      }
+  </style>{% endblock %}
+
+{% block page_content %}
+    <div class="row">
+        <div class="container">
+          <div class="section" >
+            <h3 class="brand-color white-text" style="padding:15px; border-radius:4px">Bienvenido a la documentación del Administrador de {{app_name}}</h3>
+            <br>
+            <h5 class="brand-color-text">Empezando</h5>
+            <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Cómo empezar ...</div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>Usar tu plataforma es muy sencillo. Luego de crear tu cuenta ciudadana con acceso universal y que tu administrador te brinde la invitación por email del acceso a tu plataforma en Google Cloud, entonces puedes ingresar a tu sección de administrador. Este manual se encuentra aquí dentro al igual que tu logo <a href="{{ uri_for('landing') }}" class="brand-logo darken-1"><img src="{{brand_logo}}" alt="materialize logo" style="height: 25px;"></a> y un menú a la izquierda con tu email ({{nickname}}) y las secciones de resumen estadístico, bandeja, mapa, uso de plataforma, configuración de tu organización y el manual. Asimismo, en la parte superior derecha encontrarás un botón que te permite ver tu navegador en pantalla completa <i class="mdi-action-settings-overscan"></i>.</p>
+                </div>
+              </li>
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Mapa del sitio y ligas importantes</div>
+                <div class="collapsible-body brand-color-text white" style="display: none;">
+                  <p>Generales</p>
+                  <ul class="col s12 m11 offset-m1" style="line-height:18pt">
+                    <li>Página de aterrizaje - <span class="brand-secondary-color-text">{{ uri_for('landing', _full=True) }}</span></li>
+                    <li>Página de mapa - <span class="brand-secondary-color-text">{{ uri_for('landing-map', _full=True) }}</span></li>
+                    <li>Página de preguntas frecuentes - <span class="brand-secondary-color-text">{{ uri_for('faq', _full=True) }}</span></li>
+                    <li>Página de aviso de privacidad - <span class="brand-secondary-color-text">{{ uri_for('privacy', _full=True) }}</span></li>
+                    <li>Página de registro - <span class="brand-secondary-color-text">{{ uri_for('register', _full=True) }}</span></li>
+                    <li>Página de ingreso - <span class="brand-secondary-color-text">{{ uri_for('login', _full=True) }}</span></li>
+                    <li>Página de reestablecimiento de contraseña - <span class="brand-secondary-color-text">{{ uri_for('password-reset', _full=True) }}</span></li>
+                  </ul>
+                  <br>
+                  <p>Administrador</p>
+                  <ul class="col s12 m11 offset-m1" style="line-height:18pt">
+                    <li>Página de resumen estadístico - <span class="brand-secondary-color-text">{{ uri_for('admin-summary', _full=True) }}</span></li>
+                    <li>Página de bandeja de reportes - <span class="brand-secondary-color-text">{{ uri_for('admin-inbox', _full=True) }}</span></li>
+                    <li>Página de mapa de reportes - <span class="brand-secondary-color-text">{{ uri_for('admin-map', _full=True) }}</span></li>
+                    <li>Página de lista de usuarios - <span class="brand-secondary-color-text">{{ uri_for('admin-users-list', _full=True) }}</span></li>
+                    <li>Página de correos enviados - <span class="brand-secondary-color-text">{{ uri_for('admin-logs-emails', _full=True) }}</span></li>
+                    <li>Página de enviar un correo - <span class="brand-secondary-color-text">{{ uri_for('admin-send-email', _full=True) }}</span></li>
+                    <li>Página de lista de visitas - <span class="brand-secondary-color-text">{{ uri_for('admin-logs-visits', _full=True) }}</span></li>
+                    <li>Página de configuración de categorías - <span class="brand-secondary-color-text">{{ uri_for('admin-categories', _full=True) }}</span></li>
+                    <li>Página de configuración de secretarías - <span class="brand-secondary-color-text">{{ uri_for('admin-organization', _full=True) }}</span></li>
+                    <li>Página de configuración de atención ciudadana - <span class="brand-secondary-color-text">{{ uri_for('admin-callcenter', _full=True) }}</span></li>
+                  </ul>
+                  <br>
+                  <p>Operador</p>
+                  <ul class="col s12 m11 offset-m1" style="line-height:18pt">
+                    <li>Página de resumen estadístico - <span class="brand-secondary-color-text">{{ uri_for('materialize-organization-dashboard', _full=True) }}</span></li>
+                    <li>Página de bandeja de operador - <span class="brand-secondary-color-text">{{ uri_for('materialize-operator-inbox', _full=True) }}</span></li>
+                    <li>Página de bandeja de director - <span class="brand-secondary-color-text">{{ uri_for('materialize-agent-inbox', _full=True) }}</span></li>
+                    <li>Página de bandeja de secretario - <span class="brand-secondary-color-text">{{ uri_for('materialize-secretary-inbox', _full=True) }}</span></li>
+                    <li>Página de bandeja de atención - <span class="brand-secondary-color-text">{{ uri_for('materialize-callcenter-inbox', _full=True) }}</span></li>
+                    <li>Página de bandeja de urgentes - <span class="brand-secondary-color-text">{{ uri_for('materialize-organization-urgents', _full=True) }}</span></li>
+                    <li>Página de crear reporte - <span class="brand-secondary-color-text">{{ uri_for('materialize-organization-report', _full=True) }}</span></li>
+                  </ul>
+                  <br>
+                  <p>Ciudadano</p>
+                  <ul class="col s12 m11 offset-m1" style="line-height:18pt">
+                    <li>Página de crear reporte - <span class="brand-secondary-color-text">{{ uri_for('materialize-report-new', _full=True) }}</span></li>
+                    <li>Página de mis reportes - <span class="brand-secondary-color-text">{{ uri_for('materialize-reports', _full=True) }}</span></li>
+                    <li>Página de mi perfil - <span class="brand-secondary-color-text">{{ uri_for('materialize-settings-profile', _full=True) }}</span></li>
+                    <li>Página de mis invitados - <span class="brand-secondary-color-text">{{ uri_for('materialize-settings-referrals', _full=True) }}</span></li>
+                    <li>Página de mi cuenta - <span class="brand-secondary-color-text">{{ uri_for('materialize-settings-account', _full=True) }}</span></li>
+                    <li>Página de recomendar - <span class="brand-secondary-color-text">{{ uri_for('materialize-referrals', _full=True) }}</span></li>
+                  </ul>
+                  <br>  
+                </div>
+              </li>
+            </ul>
+            <h5 class="brand-color-text">Reportes</h5>
+            <ul class="collapsible collapsible-accordion" data-collapsible="expandable">   
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Ciclo de vida de un reporte</div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <img src="/{{theme}}/materialize/images/doc_report_lifecycle.png" alt="materialize logo" class="responsive-img col s12" style="-webkit-filter: none!important;">
+                </div>
+              </li>           
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Resumen estadístico</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>La sección de Resumen Estadístico es una vista rápida por los indicadores más importantes de tu organización. En la parte superior podrás ver números globales refiriendo en total de usuarios que se han registrado en tu plataforma y en la parte derecha la cantidad de reportes que se han recibido.</p>
+                  <img src="/{{theme}}/materialize/images/doc_globals.png" alt="materialize logo" class="responsive-img">
+                  <p>Inmediatamente después aparece un segundo número con la cantidad de reportes validados, es decir, sobre los que se estarán desplegando las gráficas. A la derecha podemos ver una sección que sirve de control de filtrado para que puedas hacer cortes mensuales y ver la comparativa por estado de reporte entre las diferentes direcciones en tu organización. Para filtrar es muy simple, solo da clic en "Desde" y "Hasta" y selecciona las fechas deseadas y en la parte inferior puedes seleccionar los estados de reporte si deseas. Recuerda que cuando aplicas un nuevo filtro es importante dar clic en <span class="btn">Filtrar<i class="mdi-content-send right"></i></span> y estos filtros aplican en todos los gráficos.</p>
+                  <img src="/{{theme}}/materialize/images/doc_statfilters.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>Posteriormente, vienen dos gráficos de pay mostrando el análisis de reportes de acuerdo a la vía de entrada y el estado actual del reporte. Dando clic en las leyendas de cada gráfico puedes encender o apagar las rebanadas a tu gusto.</p>
+                  <img src="/{{theme}}/materialize/images/doc_pays.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>En la parte inferior verás dos gráficos de barras. Lo más interesante de estos gráficos es que te permiten dar clic en alguna barra y entrar hasta en dos niveles de profundidad logrando entender la composición de los reportes de acuerdo a la jerarquía de tu organización.</p>
+                  <img src="/{{theme}}/materialize/images/doc_bars1.png" alt="materialize logo" class="responsive-img col s12 m6">
+                  <img src="/{{theme}}/materialize/images/doc_bars2.png" alt="materialize logo" class="responsive-img col s12 m6">
+                </div>
+              </li>
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Bandeja de reportes</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>Tu Bandeja de Administrador es equivalente a la Bandeja de Operador, Bandeja de Director, Bandeja de Secretario y Bandeja de Atención. Todas estas bandejas están compuestas de los mismos elementos y solo cambia el nivel de acceso de grupos de categorías, siendo un operador el de menor permiso para ver otras categorías. El centro de la sección de bandejas está compuesto por dos bloques principales. El primero es una sección de filtros donde se permite disminuir el total de reportes cargados. Podrás filtrar los reportes por cualquiera de estos 4 elementos o la combinación de ellos. Adicionalmente, en el filtro de Estado se ha agregado la opción de 'PENDIENTES', para poder cargar rápidamente la combinación de estados de reportes que implican un reporte no concluido.</p>
+                  <img src="/{{theme}}/materialize/images/doc_inboxfilters.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>El segundo bloque corresponde a la primera página de reportes a desplegar. Por simpleza en el uso de memoria y comodidad de los operadores, se despliegan un máximo de 100 reportes por página. Usando el campo de texto 'Buscar en los reportes de esta tabla' se puede filtrar sobre los 100 reportes desplegados, o bien, usando los botones de paginación en la parte inferior se puede avanzar o regresar a una página previa. Ahora bien, algunas de las columnas en este bloque tiene una opción de desplegar información adicional cuando se pasa el mouse, puedes intentar pasarlo por la columna de descripción y podrás ver la descripción completa aparecer sobre tu cursor. Adicionalmente, cabe decir que la columna de Prioridad se calcula en base a los días meta para solcionar un reporte de acuerdo a su categoría, tu administrador al dar de alta las categorías debió poner este número. Finalmente, es importante mencionar que se cuenta con una columna de notificación rápida la cual sirve para marcar los reportes que los ciudadanos han solicitado eliminar <i class="mdi-action-delete red-text"></i>, los reportes marcados como spam <i class="mdi-action-bug-report red-text"></i>, los reportes urgentes <i class="mdi-av-new-releases red-text"></i>, y los reportes que ya han sido archivados <i class="mdi-action-delete grey-text"></i>.</p>
+                  <img src="/{{theme}}/materialize/images/doc_inbox.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>También dependiendo del tipo de plataforma que tu organización haya adquirido, podrás ver Bandeja de Facebook y hacer inicio de sesión mediante <span class="btn" style="font-size: 14px;">Inicia sesión con Facebook </span>. Esta bandeja es especialmente interesante para ponerte en marcha más rápido con la manera en la que tu organización atiende los medios sociales digitales como Facebook. Una vez cargado el muro de tu organización, podrás dar clic en <span class="btn blue darken-2 " >Ver conversación <i class="mdi-editor-mode-comment right"></i></span> para ver las conversaciones más recientes en tu página de Facebook y los comentarios más relevantes en ellas. A partir de cualquier comentario podrás <span class="btn">Crear reporte<i class="mdi-content-send right"></i></span> ahorrándote tiempo en el llenado de la forma de creación de reporte, o bien, comentar directamente hacia Facebook con la cuenta con la que iniciaste sesión.</p>
+                  <p class="col s12"><img src="/{{theme}}/materialize/images/doc_fbconversation.png" alt="materialize logo" class="responsive-img col s12 m6 offset-m3"></p>
+                  <p>Finalmente, otro agregado importante en tu Bandeja de Facebook es la de procesamiento de lenguaje natural. En ella podrás analizar rápidamente con el uso de inteligencia artificial qué tan positivos son los comentarios que recibes y cuál es su principal inclinación política. ¿Interesante no?</p>
+                  <img src="/{{theme}}/materialize/images/doc_fbsentiment.png" alt="materialize logo" class="responsive-img col s12">
+                </div>
+              </li>
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Edición de reporte</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>La edición de un reporte se caracteriza por 5 subsecciones. La primera de ellas es la de controles de interacción con el reporte. Como se muestra a continuación, cualquier operador puede marcar un reporte como urgente, ver su ficha rápida de reporte, responder (o enviar mensaje) a un ciudadano, dejar una nota interna, o bien, publicar el reporte. Es importante mencionar que cualquiera de estos últimos 3 botones guarda también los cambios hechos a cualqueir campo en la información de un reporte, sin embargo, el registrod de cambios no registrará esta diferencia. Por ende, si se desea cambiar la información del reporte es preciso dar en publicar para guardar estos cambios.</p>
+                  <img src="/{{theme}}/materialize/images/doc_repcontrols.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>La segunda parte incluye una tarjeta de rápida identificación con la información elemental de la vía del reporte. Asimismo, a la derecha se cuenta con un espacio que puede contenes 3 diferentes cosas: (1) foto del reporte subida por el ciudadano, (2) vista de google street view si está disponible, o (3) un espacio blanco por falta de media para este reporte.</p>
+                  <img src="/{{theme}}/materialize/images/doc_repmedia.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>Seguido de la información rápida, la siguiente subsección contiene los datos del reporte incluyendo su estado actual, el grupo de categorías al que pertenece, la subcategoría, la fecha del incidente, un título tentativo, un número de folio interno para manejo exclusivo de tu organización y una descripción de la situación.</p>
+                  <img src="/{{theme}}/materialize/images/doc_repdata.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>El cuarto bloque es simplemente para ver o corregir la dirección del reporte y se compone de dos elementos: (1) la dirección textual y (2) la dirección en un mapa. Es importante referir que estos elementos están ligados uno a otro y por ende modificar uno es posible que afecte el otro.</p>
+                  <img src="/{{theme}}/materialize/images/doc_repmap.png" alt="materialize logo" class="responsive-img col s12">
+                  <p>Por último, en la parte inferior de la edición de un reporte se cuenta con un registro de cambios. Aquí se podrá ver el historial de interacciones de tu organización y del ciudadano en atención a la solución del reporte. Como se puede ver en la siguiente imagen, es una oportunidad excelente para que tu organización rompa el lazo uno-a-uno y el ciudadano tenga total transparencia de cómo se está trabajando para servirle.</p>
+                  <img src="/{{theme}}/materialize/images/doc_replog.png" alt="materialize logo" class="responsive-img col s12">
+                </div>
+              </li>
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Mapa de reportes</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>El mapa de reportes es una replica exacta del mapa público de ciudadanos. Simplemente se ha traido dentro del administrador para que no tengas que salir si quieres ubicar algún reporte. Tienes los mismos controles para apagar o encender capas, cambiar la forma en que se hace el despliegue de marcadores en el mapa y filtrar por estado de reportes, fechas y categorías.</p>
+                  <img src="/{{theme}}/materialize/images/doc_map.png" alt="materialize logo" class="responsive-img col s12">
+                </div>
+              </li>              
+            </ul>
+            
+            
+            <h5 class="brand-color-text">Uso de la plataforma</h5>
+            <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+              
+              
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Lista de usuarios</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>La sección de 'Uso de la plataforma' muestra información de interés para los super-administradores y desarrolladores de la plataforma, por lo que los campos mostrados son de mas alto nivel técnico.</p>
+                  <p>Dentro del menu de 'Lista de usuarios' podrás encontrar a los usuarios registrados en la plataforma (menos a los super-administradores) a través de su dirección completa de email o en su defecto a través de la llave de identificación única en el sistema denominada 'User ID', con la cual se puede accesar directamente al a base de datos y modificar propiedades mediante la consola del Google App Engine Datastore o a través del código.</p>
+                  <p>Una vez que haya usuarios registrados se mostrara una tabla con distintos campos para cada uno, cabe mencionar que esta tabla esta paginada pero el campo de búsqueda se realiza sobre toda la base de datos. En el renglón correspondiente para cada usuario puedes observar datos como la información del perfil del usuario (nombre y correo), su 'User ID' en la base de datos, su enlace único (usado en para mandar invitaciones para crecer la base usuarios), puntos acumulados por distintas acciones que el usuario lleve a cabo y tanto la fecha de creación de su cuenta como la ultima vez que el usuario ingreso a la plataforma.</p>
+                  <img src="/{{theme}}/materialize/images/doc_userlist_table.png" class="responsive-img col s12">
+                  <p>Podemos usar el campo de texto para buscar por email completo o por 'User ID' en donde al presionar el botón 'Search' se nos deben presentar los resultados con el renglón del usuario que nos interesa, podemos usar el botón de 'Remove' para regresar a la pagina principal de la lista de usuarios.</p>
+                  <img src="/{{theme}}/materialize/images/doc_usersearch.png" class="responsive-img col s12">
+                  <p>Cada usuario en la lista puede ser editado en sus campos básicos al seleccionar el enlace de 'Edit' desde el renglón correspondiente; estos incluyen foto de perfil, nombre y apellido, teléfono, sexo, fecha de nacimiento y si su cuenta esta activada o no</p>
+                  <img src="/{{theme}}/materialize/images/doc_userprofile_edit.png" class="responsive-img col s12">
+                  <p>También podemos acceder al sistema para enviar un correo al presionar el enlace de 'Write' y escribirle directamente al usuario desde la plataforma, hay que tener en mente que este correo es del sistema y el usuario no debe dar respuesta al mismo, por lo cual se recomienda sea meramente informativo o que incentive un 'Call to Action' como activar su cuenta, entrar a una liga especifica, etc.</p>
+                </div>
+              </li>
+              
+            
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Correos enviados</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>La sección de correos enviados muestra todos los correos enviados por la plataforma, ya sea de manera automática o través del menu de 'Enviar un correo' el cual también se encuentra en la sección 'Uso de la plataforma'.</p>
+                  <p>Igual que con la lista de usuarios, al tener correos enviados, podemos buscar por dirección de correo completa usando el cuadro de texto y presionando el botón de 'Search', en la lista de resultados podemos regresar a la pagina principal de correos usando 'Remove'. Los resultados de los correos se muestran en una tabla, donde se puede observar el titulo del mensaje enviado('Subject'), el destinatario ('Recipent') y cuando fue enviado el mensaje ('When').</p>
+                  <img src="/{{theme}}/materialize/images/doc_email_table.png" class="responsive-img col s12">
+                  <p>Dentro de la misma tabla podemos observar el correo enviado al seleccionar el enlace de 'View', aquí vemos el contenido del mensaje tal y como lo ve el destinatario (los 'Call to Action' son enlaces funcionales). Al presionar 'Back to emails' regresamos a la lista principal de correos enviados.</p>
+                  <img src="/{{theme}}/materialize/images/doc_view_email.png" class="responsive-img col s12">
+                  <p>Sobre la tabla de correos también podemos escribirle un nuevo correo al destinatario ('Recipent') al presionar 'Write', igual que con la lista de usuarios somos llevados al apartado de 'Enviar un correo' con el destinatario prellenado.</p>
+                </div>
+              </li>
+              
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Enviar un correo</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>Esta sección nos permite enviar un correo desde la plataforma con el servidor y la cuenta de correo del proyecto. Esta dirección de correo no es monitoreada por lo que es preferente que los correos enviados a través de este sistema inciten al destinatario a llevar a cabo una acción (Call to Action) o simplemente sean informativos.</p>
+                  <p>Puedes mandar correos a un destinatario en especifico o introducir varios destinatarios separados por comas, inclusive escribir la palabra 'ALLUSERS' para un correo masivo a toda la base de usuarios del sistema. Hay que hacer énfasis en que esta sección es un medio de comunicación con tu audiencia y no una herramienta de email marketing, no tiene capacidades de rastreo y estadística automática, sirve para comunicar mensajes de importancia a tu publico en caso de ser necesario.</p>
+                  <p>La pantalla se divide en dos secciones, en la primera llenas campos como destinatario(s) y el titulo del mensaje, puedes incluir la liga a imágenes y personalizar el texto del cuerpo del mensaje (si no deseas incluir alguna parte como el saludo o 'Greeting' simplemente déjalo en blanco), por default todos los correos incluyen un 'Call to Action', puedes personalizar el texto del botón del 'CTA' así como la liga a la que apunta tu acción. La segunda parte de esta sección te muestra en tiempo real una vista previa de como luce tu correo para que estés seguro de transmitir el mensaje correcto. </p>
+                  <img src="/{{theme}}/materialize/images/doc_sendemail.png" class="responsive-img col s12">
+                <p>Al presionar el botón 'Send' enviaras el mensaje configurado a los destinatarios seleccionados, así que asegurate de revisar bien la vista previa para detectar errores. Puedes usar el botón de 'Back' para volver a la pagina principal del administrador.</p> 
+               </div>
+              </li>
+              
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Lista de visitas</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>La lista de visitas nos muestra datos técnicos sobre las sesiones en el sistema. En la tabla paginada podemos observar el numero único de identificación de usuario 'User ID', la hora de la ultima visita, la dirección IP desde la que realizo dicha visita, el navegador que estaba usando y el total de visitas al sistema. Al igual que en las otras secciones podemos buscar por dirección IP o 'User ID' al usar el campo de texto y presionar 'Search'.</p>
+                  <img src="/{{theme}}/materialize/images/doc_uservisits.png" class="responsive-img col s12">
+                  <p>Para cada vista podemos presionar sobre el enlace de 'User ID' y nos llevara a la pagina para edición básica del perfil en cuestión. </p>
+                  <img src="/{{theme}}/materialize/images/doc_userprofile_edit.png" class="responsive-img col s12">
+                  <p>Debajo de la tabla de visitas podrás encontrar un histograma, mostrando la frecuencia de accesos al sistema después de activación de cuenta, es decir la cantidad de usuarios que han entrado al sistema determinadas veces.</p>
+                  <img src="/{{theme}}/materialize/images/doc_visit_histogram.png" class="responsive-img col s12">
+                  <p>La información de esta sección es de valor técnico para el super-administrador y los desarrolladores del sistema.</p>
+                
+                </div>
+              </li>
+            
+            
+            </ul>
+            
+            
+            
+            <h5 class="brand-color-text">Configurar mi organización</h5>
+            <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">I. Categorías</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>Para configurar tu organización es recomendable seguir el orden propuesto por los números dentro del menu, empezando por el alta de grupos de categorías en donde también configuras las subcategorías de cada grupo, seguido por el alta de secretarías en donde también configuras dependencias o direcciones y asignas Operadores a cada dirección y por ultimo el alta del area de enlace de atención ciudadana de tu organización.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_org_menu.png"></p>
+                  <p>En esta sección podrás dar de alta las distintas categorías que tu organización atiende. Basta con seleccionar el botón de <a class="btn waves-effect waves-light brand-color white-text" href="#!" style="font-size: 18px;">Agregar<i class="mdi-action-note-add left"></i></a> en la esquina superior.</p>
+                  <p>Se muestra el dialogo para agregar un nuevo grupo de categorías o categoría padre, la cual contendrá los temas o subcategorías que las distintas secciones de tu organización atiende. El nombre debe ser único dentro de toda la base de datos y el color seleccionado sera heredado a todas las subcategorías que dependan del grupo. Al finalizar solo oprime agregar.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_cat_cuadro.png"></p>
+                  <p>El sistema te informara del éxito de tu registro y podrás observar la información agregada en la tabla inferior de la pagina de categorías, en donde puedes buscar u ordenar por las columnas mostradas entre todos los registros que tengas.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_cat_table.png"></p>
+                  <p>No te preocupes también te diremos si llega a haber cualquier problema para guardar tus datos.</p>
+                  <p>Una vez que tengas registros de grupos de categorías, puedes seleccionar "Editar o agregar subcategorías" en donde el sistema te permite editar los detalles como el nombre y color de la categoría seleccionada, así como agregar subcategorías al grupo. Aquí también puedes borrar el grupo que estas editando, pero es importante recordar que al eliminarlo tanto la categoría padre como todas las subcategorías asociadas serán eliminadas de la base de datos, no obstante dejando los reportes ya hechos intactos.</p>
+                  
+                  <p>Para agregar una subcategoría al grupo de categorías actual selecciona el botón de <a class="btn waves-effect waves-light brand-color white-text" href="#!" style="font-size: 18px;">Agregar Subcategoría<i class="mdi-action-note-add left"></i></a> en la esquina superior.</p>
+                  <p>Se abre el dialogo para agregar una nueva subcategoría a la base de datos. El nombre debe ser único y el color es heredado de la categoría padre. Se puede configurar el icono del marcador de la subcategoría para su representación en el mapa (funcionalidad limitada dependiendo del total de categorías y subcategorías de tu organización almacenadas), el numero de días ideales o meta para resolver reportes, si dichos reportes requieren imagen para poder ser admitidos y si la subcategoría debe aparecer en el mapa interactivo o ser privada (pero si almacenarse en las bases de datos). Al terminar de configurar simplemente presiona el botón de agregar.</p>
+                  <p>El sistema te informara del éxito de tu registro y podrás observar la información agregada en la tabla inferior de la pagina, en donde puedes ordenar y buscar por las distintas columnas entre todos los registros que tengas.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_subcat_table.png"></p>
+                  <p>Igual que con los grupos de categorías te diremos si llega a haber cualquier problema para agregar tu subcategoría.</p>
+                  <p>Así mismo, en la tabla puedes presionar sobre "Editar subcategoría" y acceder al dialogo para editar las propiedades que definimos en el paso anterior, en este dialogo también puedes eliminar la subcategoría, borrándola permanentemente de la base de datos. Es importante que recuerdes que los reportes que se hicieron con esta subcategoría permanecerán en el sistema.</p>
+                </div>
+              </li>
+              
+              
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">II. Secretarías</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>Aqui podrás definir la estructura jerárquica de tu organización, empezando por dar de alta las diferentes secretarías que la conforman. Esto se logra agregando una a una cada secretaría oprimiendo el botón de <a class="btn waves-effect waves-light brand-color white-text" href="#!" style="font-size: 18px;">Agregar Secretaría<i class="mdi-action-note-add left"></i></a> en la esquina superior.</p>
+                  <p>Aparece el dialogo para agregar una nueva secretaría, la cual estará compuesta por dependencias o direcciones en donde habra Directores encargados y a su vez abajo de estas direcciones Operadores designados para atender y resolver problemas. Al capturar la información en este cuadro, es en este momento que se utiliza el correo y nombre del Secretario para hacerle llegar un acceso directo, indicándole que genere una cuenta en el sistema en donde automáticamente obtendrá el rol de Secretario para la secretaría capturada. Algunos de los datos capturados son mostrados al frente al momento de generar un reporte como información contextual para incentivar la confianza. Al finalizar solo oprime agregar.</p>
+                  <p>Cabe destacar que aquí depende de las decisiones que se tomen dentro de tu organización, lo ideal es que tanto el rol del Secretario lo asuma precisamente el Secretario a cargo al igual que el rol de Director, pero este puede ser delegado y en su lugar se puede poner a alguien de confianza de su plantel, solo recordemos que al frente se muestra información la cual es afectada por la información capturada campos.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_secre_cuadro.png"></p>
+                  <p>El sistema te informara del éxito de tu registro y podrás observar la información agregada en la tabla inferior de la pagina de secretarías, en donde puedes buscar u ordenar por las columnas mostradas entre todos los registros que tengas.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_secre_table.png"></p>
+                  <p>No te preocupes también te diremos si llega a haber cualquier inconveniente para guardar tus datos.</p>
+                  <p>Una vez que tengas registros de secretarías, puedes seleccionar "Editar o agregar dependencia" en donde el sistema te permite editar los detalles de la secretaría capturados al momento del alta de la misma. En el caso de que el Secretario no haya creado su cuenta mediante la invitación que se le manda a su correo, el sistema te lo hará saber, así mismo si el Secretario ya tiene cuenta podrás observar la configuración de su perfil. Aquí también puedes borrar la secretaría que estas editando, es importante recordar que al eliminarla todas sus dependencias, Directores y Operadores asociados perderán sus privilegios en la base de datos.</p>  
+                 
+                    <p>Para agregar una dependencia a la secretaría actual selecciona el botón de <a class="btn waves-effect waves-light brand-color white-text" href="#!" style="font-size: 18px;">Agregar Dependencia<i class="mdi-action-note-add left"></i></a> en la esquina superior.</p>
+                  <p>Se abre el dialogo para agregar una nueva dependencia a la base de datos. Llena los campos pertinentes y no olvides escoger del cuadro de selección el grupo de categorías que estará atendiendo tu dirección (solo puedes escoger un grupo por dependencia, si requieres manejar varios grupos es sugerido generar varias dependencias y hacer la distinción semánticamente), ya que esta es la manera en la que se canalizan oportunamente todos los reportes capturados. Al terminar con la información solicitada, tal y como sucede con el Secretario, se utiliza el correo y nombre del Director para hacerle llegar un acceso directo, indicándole que genere una cuenta en el sistema en donde automáticamente obtendrá el rol de Director para la dependencia o dirección recién capturada. Oprime agregar.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_agency_cuadro.png"></p>
+                  <p>El sistema te informara del éxito de tu registro y podrás observar la información agregada en la tabla inferior de la pagina, en donde puedes ordenar y buscar por las distintas columnas entre todos los registros que tengas.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_agency_table.png"></p>
+                  <p>Te diremos si llega a haber cualquier problema para guardar la información capturada.</p>
+                  <p>Una vez que haya dependencias guardadas, sobre la tabla puedes presionar "Editar o agregar Operador" y acceder al dialogo para editar las propiedades que definiste para la dependencia seleccionada, En el caso de que el Director no haya creado su cuenta mediante la invitación que se le manda a su correo, el sistema te lo hará saber, así mismo si el Director ya tiene cuenta podrás observar la configuración de su perfil. Aquí también puedes borrar la dirección que estas editando, es importante recordar que al eliminarla todos los Operadores asociados perderán sus privilegios.</p>
+
+                    <p>Para agregar una Operador de enlace final a la dependencia actual presiona el botón de <a class="btn waves-effect waves-light brand-color white-text" href="#!" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a> en la esquina superior.</p>
+                  <p>Se abre el dialogo para asignar un nuevo Operador de la dependencia en la base de datos. Al terminar con la información solicitada, tal y como sucede con el Secretario y Director, se utiliza el correo y nombre del Operador para hacerle llegar un acceso directo, indicándole que genere una cuenta en el sistema en donde automáticamente obtendrá el rol de Operador para la dependencia o dirección en cuestión. Oprime agregar.</p>
+                  <p>Una dependencia puede tener uno o mas Operadores, los Operadores ven todos los reportes de las subcategorías que la dependencia tiene asignadas a través del grupo de categorías configurado, esto con la intención de reducir al mínimo la intervención del super administrador de sistema cada que haya ausencias o sea necesario cubrir turnos, fomentando la coordinación interna de los Operadores y agilizando el trabajo al no dejar reportes sin visibilidad para el nivel mas operativo de tu organización.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_oper_cuadro.png"></p>
+                  <p>El sistema te informara del éxito de tu registro y podrás observar la información agregada en la tabla inferior de la pagina, en donde puedes ordenar y buscar por las distintas columnas entre todos los registros que tengas.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_oper_table.png"></p>
+                  <p>Te diremos si llega a haber cualquier eventualidad para guardar la información capturada.</p>
+                  <p>Una vez que haya Operadores registraos, sobre la tabla puedes presionar "Editar Operador" y acceder al dialogo para editar las propiedades del Operador, tal como su nombre y correo. En el caso de que el Operador no haya creado su cuenta mediante la invitación que se le manda a su correo, el sistema te lo hará saber, así mismo si el Operador ya tiene cuenta podrás observar la configuración de su perfil. Aquí también puedes eliminar al Operador que estas editando, es importante recordar que al hacer esto el Operador tendrá revocados todos sus privilegios y su cuenta se convierte en una cuenta sencilla como la de cualquier usuario.</p>
+
+                </div>
+              </li>
+              
+              
+              
+              <li style="background-color:{{brand_secondary_color}}!important">
+                <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">III. Atención ciudadana</span></div>
+                <div class="collapsible-body brand-color-text white" style="">
+                  <p>El grupo de atención ciudadana funciona como un enlace entre los diferentes niveles de tu organización para la canalización, atención y resolución de reportes. Los operadores de atención ciudadana tienen un permiso especial para observar todas las categorías de reportes, ya que usualmente son el personal con mayor experiencia en el trato de los mismos. Para agregar una Operador al grupo de atención ciudadana presiona el botón de <a class="btn waves-effect waves-light brand-color white-text" href="#!" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a> en la esquina superior.</p>
+                  <p>Se abre el dialogo para asignar un nuevo Operador de atención ciudadana en la base de datos. Al terminar con la información solicitada, tal y como sucede con el con los otros perfiles, se utiliza el correo y nombre del Operador para hacerle llegar un acceso directo, indicándole que genere una cuenta en el sistema en donde automáticamente obtendrá el rol de Operador de atención ciudadana. Oprime agregar.</p>
+<p>Atención ciudadana típicamente tendrá multiples Operadores quienes se encargaran de dar guía y servicio a las diferentes areas dentro de tu organización.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_callcenter_cuadro.png"></p>
+                  <p>El sistema te informara del éxito de tu registro y podrás observar los Operadores agregadas en la tabla inferior de la pagina, en donde puedes ordenar y buscar por las distintas columnas entre todos los registros que tengas.</p>
+                  <p class="center"><img class = "responsive-img" src="/default/materialize/images/doc_callcenter_table.png"></p>
+                  <p>Te diremos si llega a haber cualquier eventualidad para guardar la información capturada.</p>
+                  <p>Una vez que haya Operadores registraos, sobre la tabla puedes presionar "Editar o Eliminar" y acceder al dialogo para editar las propiedades del Operador como su nombre y correo. En el caso de que el Operador no haya creado su cuenta mediante la invitación que se le manda a su correo, el sistema te lo hará saber, así mismo si el Operador ya tiene cuenta podrás observar la configuración de su perfil. Aquí también puedes eliminar al Operador que estas editando, es importante recordar que al hacer esto el Operador tendrá revocados todos sus privilegios y su cuenta se convierte en una cuenta sencilla como la de cualquier usuario.</p>
+                </div>
+              </li>
+            
+            
+            
+            </ul>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+{% block page_scripts %}
+<script type="text/javascript">
+     Materialize.toast('<span class="toast-success">Hola! Has clic en cada tema para ver su documentación.</span>',4500);
+</script>
+{% endblock %}  

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>square-element Demo</title>
+        <script src="../../bower_components/webcomponentsjs/webcomponents.js"></script>
+        <link rel="import" href="square-element.html">
+        <style>
+            code {
+              color: #007000;
+            }
+            body:before {
+            content: "";
+            position: fixed;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            -webkit-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+            -moz-box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+            box-shadow: 0px 0px 10px rgba(0,0,0,.8);
+            z-index: 100;
+            }
+            body{
+                background: #bbbfbf;
+                font-family: Roboto;
+                text-align: center;
+            }
+            .card.full {
+                background: white;
+                min-width: 280px;
+                max-width: 1300px;
+                min-height: 300px;
+                height: auto;
+                position: relative;
+                margin: 16px;
+                margin-right: 16px!important;
+                border-radius: 2px;
+                width: 99%;
+                display: inline-block;
+            }
+        </style> 
+	</head>
+	<body>
+        <img src="https://www.polymer-project.org/images/logos/p-logo.svg" style="max-width:100%;height:auto;"><br>
+        <p>This is the <code>square-element</code>, a didactic element to show you how to use Polymer properties such as: attrChanged, computed properties, lifecycle methods, and data binding.</p>
+        <square-element class="card full" num="4"></square-element>
+	</body>
+</html>

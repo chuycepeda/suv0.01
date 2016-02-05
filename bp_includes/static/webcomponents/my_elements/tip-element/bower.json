@@ -1,0 +1,27 @@
+{
+  "name": "tip-element",
+  "version": "0.0.0",
+  "authors": [
+    "chuycepeda <chuycepeda@gmail.com>"
+  ],
+  "description": "Element providing a reusable template for invictus Energy saving tips.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "seed"
+  ],
+  "main": "tip-element.html",
+  "license": "MIT",
+  "homepage": "https://github.com/chuycepeda/polymer-elements/tree/master/my_elements/tip-element",
+  "ignore": [
+    "/.*",
+    "/tests/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5.1"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+  }
+}

@@ -1,0 +1,132 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block page_css %}
+  <style type="text/css">
+      td {
+          padding: 3px!important;
+          padding-top:7px!important;
+      }
+      thead {
+          border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+      }
+  </style>
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <h5 class="breadcrumbs-title">Tweets a la cuenta oficial @{{twitter_handle}}<a href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;" target="_blank">Crear reporte<i class="mdi-content-add right"></i></a>
+            </h5>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+    <div class="container">
+      <div class="section">
+       <div class="row" style="margin-top:30px">
+            <div class="row">
+              <div class="col s12 m6 offset-m3">
+                <a class="twitter-timeline" href="https://twitter.com/search?q=ciudadguadalupe" data-widget-id="678306982604894208">Tweets about ciudadguadalupe</a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <input type="text" id="object_id" value="" hidden>
+    <div id="modalReport" class="modal" style="display: none; opacity: 1; font-family: roboto-medium;">
+      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+      <div class="modal-content grey-text row" style="overflow-y:scroll; font-family:roboto-medium">
+        <div class="row">
+          <div class="row">
+              <p class="center">Llena la siguiente forma para crear un reporte.</p>
+          </div>
+          <div class="divider"></div>
+          <h1 class="center">INSERTAR FORMA AQUÍ</h1>
+        </div>
+      </div>
+      <div class="modal-footer" style="background-color:#E4E4E4;">
+        <a href="#" class="menu-item waves-effect waves-white btn brand-color modal-action" onclick="ticket();">Crear</a>
+        <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close" style="margin-right:20px;">Cerrar</a>
+      </div>
+    </div>
+    <div id="modalConversation" class="modal" style="display: none; opacity: 1; font-family: roboto-medium;">
+      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+      <div class="modal-content grey-text row" style="overflow-y:scroll; font-family:roboto-medium">
+        <div class="row">
+          <div class="row">
+            <div class="input-field col s12 center">
+              <p class="center">Esta es la conversación asociada al tweet, si quieres responder llena la casilla y has clic en responder.</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="col s12">
+            <ul class="collection with-header" id="conversation">       
+            </ul>
+          </div>
+          <div class="row">
+              <div class="input-field col s12 l6 right">
+                  <i class="mdi-editor-mode-comment prefix brand-color-text brand-color-text"></i>
+                  <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="120" style="height: 22px;" type="text" ></textarea>
+                  <label for="commentbox">Escribe aquí tu tweet</label>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="background-color:#E4E4E4;">
+        <a href="#" class="menu-item waves-effect waves-white btn brand-color modal-action" onclick="respond();">Responder</a>
+        <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close" style="margin-right:20px;">Cerrar</a>
+      </div>
+    </div>
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  <script>
+    //Linked in dev at https://apps.twitter.com/app/9262779
+    //API DOC at https://dev.twitter.com/overview/api
+    function myTwitterLogin() {
+
+
+    }
+
+    function createReport(id){
+      document.getElementById('object_id').value = id;
+      
+
+    }
+
+    function openConversation(id){
+      $('#modalConversation').openModal();
+      document.getElementById('commentbox').value = "";
+      document.getElementById('object_id').value = id;
+      var html='', url = "/"+id;
+      console.log('url', url);
+          
+    }
+
+    function respond(){
+      var commentval = document.getElementById('commentbox').value;
+      if (commentval != ""){
+        
+
+      }else{
+        Materialize.toast('<span class="toast-warning">Oops! Nos encontramos un comentario vacío, llena tu comentario y luego da clic en responder.</span>', 4500);
+      }
+    }
+
+    function ticket(){
+      console.log('nothing to do here');
+    }
+  </script>
+{% endblock %}

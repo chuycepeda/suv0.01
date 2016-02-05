@@ -1,0 +1,197 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block title %}
+  <title>{{app_name}} » Manual de Operador</title>
+{% endblock %}
+
+{% block page_css %}
+  <link href="/{{theme}}/materialize/css/prism_o.css" type="text/css" rel="stylesheet" media="screen,projection">    
+  <style>
+      .topic{
+          letter-spacing: 2px;
+          margin-left: 5px;
+          font-family: roboto-light;
+      }
+      p{
+          letter-spacing: 1.2pt;
+          font-family: roboto-light;
+      }
+      .collapsible-body{
+          overflow: scroll;
+      }
+      img{
+          -webkit-filter: grayscale(100%);
+      }
+      .btn{
+        font-size: 14px!important;
+      }
+  </style>  
+{% endblock %}
+
+{% block page_content %}
+  <div class="row">
+    <div class="container">
+      <div class="section" >
+        <h3 class="brand-color white-text" style="padding:15px; border-radius:4px">Bienvenido a la documentación del Operador de {{app_name}}</h3>
+        <br>
+        <h5 class="brand-color-text">Empezando</h5>
+        <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+          <li style="background-color:{{brand_secondary_color}}!important">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Cómo empezar ...</div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>Usar tu plataforma es muy sencillo. Luego de crear tu cuenta ciudadana con acceso universal y que tu administrador te brinde la invitación por email del acceso especial, entonces puedes ingresar a tu sección de gestión de reportes. Este manual se encuentra dentro de tu sección de reportes la cual se caracteriza por tu logo <a href="{{ uri_for('landing') }}" class="brand-logo darken-1"><img src="{{brand_logo}}" alt="materialize logo" style="height: 25px;"></a> y un menú a la izquierda con tu email ({{email}}) y las secciones de resumen estadístico, bandeja y manual. Asimismo, en la parte superior derecha encontrarás un botón que te permite ver tu navegador en pantalla completa <i class="mdi-action-settings-overscan"></i>.</p>
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Mapa del sitio y ligas importantes</div>
+            <div class="collapsible-body brand-color-text white" style="display: none;">
+              <p>Generales</p>
+              <ul class="col s12 m11 offset-m1" style="line-height:18pt">
+                <li>Página de aterrizaje - <span class="brand-secondary-color-text">{{ uri_for('landing', _full=True) }}</span></li>
+                <li>Página de mapa - <span class="brand-secondary-color-text">{{ uri_for('landing-map', _full=True) }}</span></li>
+                <li>Página de preguntas frecuentes - <span class="brand-secondary-color-text">{{ uri_for('faq', _full=True) }}</span></li>
+                <li>Página de aviso de privacidad - <span class="brand-secondary-color-text">{{ uri_for('privacy', _full=True) }}</span></li>
+                <li>Página de registro - <span class="brand-secondary-color-text">{{ uri_for('register', _full=True) }}</span></li>
+                <li>Página de ingreso - <span class="brand-secondary-color-text">{{ uri_for('login', _full=True) }}</span></li>
+                <li>Página de reestablecimiento de contraseña - <span class="brand-secondary-color-text">{{ uri_for('password-reset', _full=True) }}</span></li>
+              </ul>
+              <br>
+              <p>Operador</p>
+              <ul class="col s12 m11 offset-m1" style="line-height:18pt">
+                <li>Página de resumen estadístico - <span class="brand-secondary-color-text">{{ uri_for('materialize-organization-dashboard', _full=True) }}</span></li>
+                <li>Página de bandeja de operador - <span class="brand-secondary-color-text">{{ uri_for('materialize-operator-inbox', _full=True) }}</span></li>
+                <li>Página de bandeja de director - <span class="brand-secondary-color-text">{{ uri_for('materialize-agent-inbox', _full=True) }}</span></li>
+                <li>Página de bandeja de secretario - <span class="brand-secondary-color-text">{{ uri_for('materialize-secretary-inbox', _full=True) }}</span></li>
+                <li>Página de bandeja de atención - <span class="brand-secondary-color-text">{{ uri_for('materialize-callcenter-inbox', _full=True) }}</span></li>
+                <li>Página de bandeja de urgentes - <span class="brand-secondary-color-text">{{ uri_for('materialize-organization-urgents', _full=True) }}</span></li>
+                <li>Página de crear reporte - <span class="brand-secondary-color-text">{{ uri_for('materialize-organization-report', _full=True) }}</span></li>
+              </ul>
+              <br>
+              <p>Ciudadano</p>
+              <ul class="col s12 m11 offset-m1" style="line-height:18pt">
+                <li>Página de crear reporte - <span class="brand-secondary-color-text">{{ uri_for('materialize-report-new', _full=True) }}</span></li>
+                <li>Página de mis reportes - <span class="brand-secondary-color-text">{{ uri_for('materialize-reports', _full=True) }}</span></li>
+                <li>Página de mi perfil - <span class="brand-secondary-color-text">{{ uri_for('materialize-settings-profile', _full=True) }}</span></li>
+                <li>Página de mis invitados - <span class="brand-secondary-color-text">{{ uri_for('materialize-settings-referrals', _full=True) }}</span></li>
+                <li>Página de mi cuenta - <span class="brand-secondary-color-text">{{ uri_for('materialize-settings-account', _full=True) }}</span></li>
+                <li>Página de recomendar - <span class="brand-secondary-color-text">{{ uri_for('materialize-referrals', _full=True) }}</span></li>
+              </ul>
+              <br>              
+            </div>
+          </li>
+        </ul>  
+        <h5 class="brand-color-text">Reportes</h5>
+        <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+          <li style="background-color:{{brand_secondary_color}}!important">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Ciclo de vida de un reporte</div>
+            <div class="collapsible-body brand-color-text white center" style="">
+              <img src="/{{theme}}/materialize/images/doc_report_lifecycle.png" alt="materialize logo" class="responsive-img col s12" style="-webkit-filter: none!important;">
+            </div>
+          </li>          
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Resumen estadístico</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>La sección de Resumen Estadístico es una vista rápida por los indicadores más importantes de tu organización. En la parte superior podrás ver números globales refiriendo en total de usuarios que se han registrado en tu plataforma y en la parte derecha la cantidad de reportes que se han recibido.</p>
+              <img src="/{{theme}}/materialize/images/doc_globals.png" alt="materialize logo" class="responsive-img">
+              <p>Inmediatamente después aparece un segundo número con la cantidad de reportes validados, es decir, sobre los que se estarán desplegando las gráficas. A la derecha podemos ver una sección que sirve de control de filtrado para que puedas hacer cortes mensuales y ver la comparativa por estado de reporte entre las diferentes direcciones en tu organización. Para filtrar es muy simple, solo da clic en "Desde" y "Hasta" y selecciona las fechas deseadas y en la parte inferior puedes seleccionar los estados de reporte si deseas. Recuerda que cuando aplicas un nuevo filtro es importante dar clic en <span class="btn">Filtrar<i class="mdi-content-send right"></i></span> y estos filtros aplican en todos los gráficos.</p>
+              <img src="/{{theme}}/materialize/images/doc_statfilters.png" alt="materialize logo" class="responsive-img col s12">
+              <p>Posteriormente, vienen dos gráficos de pay mostrando el análisis de reportes de acuerdo a la vía de entrada y el estado actual del reporte. Dando clic en las leyendas de cada gráfico puedes encender o apagar las rebanadas a tu gusto.</p>
+              <img src="/{{theme}}/materialize/images/doc_pays.png" alt="materialize logo" class="responsive-img col s12">
+              <p>En la parte inferior verás dos gráficos de barras. Lo más interesante de estos gráficos es que te permiten dar clic en alguna barra y entrar hasta en dos niveles de profundidad logrando entender la composición de los reportes de acuerdo a la jerarquía de tu organización.</p>
+              <img src="/{{theme}}/materialize/images/doc_bars1.png" alt="materialize logo" class="responsive-img col s12 m6">
+              <img src="/{{theme}}/materialize/images/doc_bars2.png" alt="materialize logo" class="responsive-img col s12 m6">
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Bandeja de ...</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>Dependiendo de tu nivel de acceso especial en tu cuenta ciudadana universal, podrás ver Bandeja de Operador, Bandeja de Director, Bandeja de Secretario y Bandeja de Atención. Todas estas bandejas están compuestas de los mismos elementos y solo cambia el nivel de acceso de grupos de categorías, siendo un operador el de menor permiso para ver otras categorías. Uno de los elementos más importantes es el botón <a href="{{uri_for('materialize-organization-urgents')}}" class="btn deep-orange darken-2" target="_blank">Ver urgentes <i class="mdi-av-new-releases right"></i></a> a través del cual se pueden ver rápidamente los reportes que los usuarios hayan decidido marcar con cierta urgencia. Asimismo, se cuenta con la opción de <a href="{{uri_for('materialize-organization-report')}}" class="btn" target="_blank">Crear reporte<i class="mdi-content-add right"></i></a> para que en cualquier momento se pueda dar paso a la captura manual de un reporte que ha llegado por alguna vía tradicional como por ejemplo el teléfono. Más adelante en la documentación de profundiza en este elemento.</p>
+              <p>Ahora bien, el centro de la sección de bandejas está compuesto por dos bloques principales. El primero es una sección de filtros donde se permite disminuir el total de reportes cargados. Podrás filtrar los reportes por cualquiera de estos 4 elementos o la combinación de ellos. Adicionalmente, en el filtro de Estado se ha agregado la opción de 'PENDIENTES', para poder cargar rápidamente la combinación de estados de reportes que implican un reporte no concluido.</p>
+              <img src="/{{theme}}/materialize/images/doc_inboxfilters.png" alt="materialize logo" class="responsive-img col s12">
+              <p>El segundo bloque corresponde a la primera página de reportes a desplegar. Por simpleza en el uso de memoria y comodidad de los operadores, se despliegan un máximo de 100 reportes por página. Usando el campo de texto 'Buscar en los reportes de esta tabla' se puede filtrar sobre los 100 reportes desplegados, o bien, usando los botones de paginación en la parte inferior se puede avanzar o regresar a una página previa. Ahora bien, algunas de las columnas en este bloque tiene una opción de desplegar información adicional cuando se pasa el mouse, puedes intentar pasarlo por la columna de descripción y podrás ver la descripción completa aparecer sobre tu cursor. Adicionalmente, cabe decir que la columna de Prioridad se calcula en base a los días meta para solcionar un reporte de acuerdo a su categoría, tu administrador al dar de alta las categorías debió poner este número. Finalmente, es importante mencionar que se cuenta con una columna de notificación rápida la cual sirve para marcar los reportes que los ciudadanos han solicitado eliminar <i class="mdi-action-delete red-text"></i>, los reportes marcados como spam <i class="mdi-action-bug-report red-text"></i>, los reportes urgentes <i class="mdi-av-new-releases red-text"></i>, y los reportes que ya han sido archivados <i class="mdi-action-delete grey-text"></i>.</p>
+              <img src="/{{theme}}/materialize/images/doc_inbox.png" alt="materialize logo" class="responsive-img col s12">
+              <p>También dependiendo del tipo de plataforma que tu organización haya adquirido, podrás ver Bandeja de Facebook y hacer inicio de sesión mediante <span class="btn" style="font-size: 14px;">Inicia sesión con Facebook </span>. Esta bandeja es especialmente interesante para ponerte en marcha más rápido con la manera en la que tu organización atiende los medios sociales digitales como Facebook. Una vez cargado el muro de tu organización, podrás dar clic en <span class="btn blue darken-2 " >Ver conversación <i class="mdi-editor-mode-comment right"></i></span> para ver las conversaciones más recientes en tu página de Facebook y los comentarios más relevantes en ellas. A partir de cualquier comentario podrás <span class="btn">Crear reporte<i class="mdi-content-send right"></i></span> ahorrándote tiempo en el llenado de la forma de creación de reporte, o bien, comentar directamente hacia Facebook con la cuenta con la que iniciaste sesión.</p>
+              <p class="col s12"><img src="/{{theme}}/materialize/images/doc_fbconversation.png" alt="materialize logo" class="responsive-img col s12 m6 offset-m3"></p>
+              <p>Finalmente, otro agregado importante en tu Bandeja de Facebook es la de procesamiento de lenguaje natural. En ella podrás analizar rápidamente con el uso de inteligencia artificial qué tan positivos son los comentarios que recibes y cuál es su principal inclinación política. ¿Interesante no?</p>
+              <img src="/{{theme}}/materialize/images/doc_fbsentiment.png" alt="materialize logo" class="responsive-img col s12">
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Crear reporte</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>Esta sección de tu plataforma ha sido agregada para que puedas capturar reportes de forma manual. Si bien el ideal es que todos los ciudadanos tengan su propia cuenta activa, muchas veces el período de transición implica un vaciado de los medios tradicionales a los medios digitales. Para esto creamos la creación de reporte manual. A diferencia de la forma de reporte regular de cualquier ciudadano, la forma de reporte de operador permite cosas adicionales como Filtrar por Secretaría y un desgloce de la información del usuario para dejar una evidencia de quién ha hecho el reporte. Así se ven algunos de los campos en esta sección:</p>
+              <img src="/{{theme}}/materialize/images/doc_opreport.png" alt="materialize logo" class="responsive-img col s12">
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Edición de reporte</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>La edición de un reporte se caracteriza por 5 subsecciones. La primera de ellas es la de controles de interacción con el reporte. Como se muestra a continuación, cualquier operador puede marcar un reporte como urgente, ver su ficha rápida de reporte, responder (o enviar mensaje) a un ciudadano, dejar una nota interna, o bien, publicar el reporte. Es importante mencionar que cualquiera de estos últimos 3 botones guarda también los cambios hechos a cualqueir campo en la información de un reporte, sin embargo, el registrod de cambios no registrará esta diferencia. Por ende, si se desea cambiar la información del reporte es preciso dar en publicar para guardar estos cambios.</p>
+              <img src="/{{theme}}/materialize/images/doc_repcontrols.png" alt="materialize logo" class="responsive-img col s12">
+              <p>La segunda parte incluye una tarjeta de rápida identificación con la información elemental de la vía del reporte. Asimismo, a la derecha se cuenta con un espacio que puede contenes 3 diferentes cosas: (1) foto del reporte subida por el ciudadano, (2) vista de google street view si está disponible, o (3) un espacio blanco por falta de media para este reporte.</p>
+              <img src="/{{theme}}/materialize/images/doc_repmedia.png" alt="materialize logo" class="responsive-img col s12">
+              <p>Seguido de la información rápida, la siguiente subsección contiene los datos del reporte incluyendo su estado actual, el grupo de categorías al que pertenece, la subcategoría, la fecha del incidente, un título tentativo, un número de folio interno para manejo exclusivo de tu organización y una descripción de la situación.</p>
+              <img src="/{{theme}}/materialize/images/doc_repdata.png" alt="materialize logo" class="responsive-img col s12">
+              <p>El cuarto bloque es simplemente para ver o corregir la dirección del reporte y se compone de dos elementos: (1) la dirección textual y (2) la dirección en un mapa. Es importante referir que estos elementos están ligados uno a otro y por ende modificar uno es posible que afecte el otro.</p>
+              <img src="/{{theme}}/materialize/images/doc_repmap.png" alt="materialize logo" class="responsive-img col s12">
+              <p>Por último, en la parte inferior de la edición de un reporte se cuenta con un registro de cambios. Aquí se podrá ver el historial de interacciones de tu organización y del ciudadano en atención a la solución del reporte. Como se puede ver en la siguiente imagen, es una oportunidad excelente para que tu organización rompa el lazo uno-a-uno y el ciudadano tenga total transparencia de cómo se está trabajando para servirle.</p>
+              <img src="/{{theme}}/materialize/images/doc_replog.png" alt="materialize logo" class="responsive-img col s12">
+            </div>
+          </li>
+        </ul> 
+        <h5 class="brand-color-text">Ciudadanos</h5>
+        <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Mapa</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>El mapa de reportes es un despliegue georeferenciado de los problemas que se han reportado en la ciudad. Tiene controles para apagar o encender capas, cambiar la forma en que se hace el despliegue de marcadores en el mapa y filtrar por estado de reportes, fechas y categorías. Es verdaderamente simple de usar.</p>
+              <img src="/{{theme}}/materialize/images/doc_map.png" alt="materialize logo" class="responsive-img col s12">
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Reportar</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>En esta sección el ciudadano podrá encontrar una forma de captura que le permitirá contactar al servidor público de acuerdo con la categoría y subcategoría del problema. Asimismo, con una breve descripción, fecha y ubicación el ciudadano puede detallar la situación que desea reportar, además de tener la posibilidad de agregar una imagen para enriquecer el reporte. En cualquier momento que el ciudadano presione <span class="btn">Enviar reporte<i class="mdi-content-send right"></i></span>, si la forma está correcta le permitirá enviar su reporte, por el contrario le aparecerá un mensaje explicando cuál ha sido el inconveniente. Otra cosa importante es que el ciudadano debe haber llenado su perfil con teléfono y dirección para poder reportar.</p>
+              <img src="/{{theme}}/materialize/images/doc_reportar.png" alt="materialize logo" class="responsive-img col s12">
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Mis reportes</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>En la sección de Mis reportes, los ciudadanos podrán tener un acceso rápido a los reportes creados por ellos mismos, o bien, aquellos que han dado 'seguir'. Un reporte propio que ha sido resuelto permite la opción de ver 5 <i class="rating mdi-action-star-rate amber-text" style="font-size: 30px;transform: scale(1.5);-webkit-transform: scale(1.5);"></i> para ser calificado, tal y como se muestra en la imagen en el reporte del lado izquierdo. Asimismo, los reportes que aparecen por estarlos siguiendo se destacan por el icono de <i class="mdi-social-notifications-none"></i>. En cualquier tarjeta de reporte se puede interactuar para ver el detalle del reporte, los comentarios y cambios al mismo y además se puede ir a verlo al mapa dando clic en <a class="grey-text" href="#"><i class="mdi-maps-place"></i>Ver mapa</a>, o compartir en tus redes sociales mediante el botón de <a class="grey-text modal-trigger" href="#"><i class="mdi-social-share"></i>Compartir</a>.</p>
+              <p class="col s12"><img src="/{{theme}}/materialize/images/doc_myreports.png" alt="materialize logo" class="responsive-img col s12 m6 offset-m3"></p>
+              <p>Cuando se da clic en ver comentarios aparece una ventana como la que se muestra abajo. Aquí se puede ver el log de cambios del reporte y además el ciudadano tiene la posibilidad de escribir un comentario y enviarlo dando clic en <a class="btn">Comentar</a>.</p>
+              <p class="col s12"><img src="/{{theme}}/materialize/images/doc_comm.png" alt="materialize logo" class="responsive-img col s12 m6 offset-m3"></p>
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Mi perfil</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>Este apartado está hecho para obtener información demográfica de tus usuarios. Elementalmente se divide en 3: perfil, recomendaciones y cuenta. En lo que concierne al perfil, el usuario puede ver o subir una foto, cambiar su nombre y apellidos, dar de alta su teléfono, género, fecha de nacimiento y dirección.</p>
+              <img src="/{{theme}}/materialize/images/doc_profile.png" alt="materialize logo" class="responsive-img col s12">
+              <p>En la segunda parte, el usuario puede ver la lista de invitados y el estado actual de la invitación, permitiéndole invitar de nuevo si selecciona la casilla de volver a invitar. Esta sección está ligada a la sección de recomendar que se describe más adelante en la documentación.</p>
+              <img src="/{{theme}}/materialize/images/doc_invites.png" alt="materialize logo" class="responsive-img col s12">
+              <p>Finalmente, si el usuario quiere cambiar su correo o su contraseña, o bien, eliminar su cuenta por completo, entonces puede llegar aquí y actualizar lo que crea necesario.</p>
+              <p class="col s12"><img src="/{{theme}}/materialize/images/doc_account.png" alt="materialize logo" class="responsive-img col s12 m6 offset-m3"></p>
+            </div>
+          </li>
+          <li style="background-color:{{brand_secondary_color}}!important;">
+            <div class="collapsible-header brand-secondary-color white-text"><i class="mdi-navigation-menu"></i> Sección: <span class="topic">Recomendar</span></div>
+            <div class="collapsible-body brand-color-text white" style="">
+              <p>La sección de recomendar sirve para ayudar a tu organización a generar masa crítica rápidamente. Es decir, si tus usuarios están convencidos e invitan a otros, entonces más rápido puedes conseguir una importante base de ciudadanos registrados. Esta parte es muy sencilla, el usuario puede importar sus contactos de su correo @gmail, escribir las direcciones de email directamente e invitarlos haciendo clic en <span class="btn">Invitar ahora<i class="mdi-content-send right"></i></span>, o bien, compartir su link único en las principales redes sociales. Todos tus usuarios tienen un link único que les permite rastrear sus invitaciones y registrados.</p>
+              <p class="col s12"><img src="/{{theme}}/materialize/images/doc_recommend.png" alt="materialize logo" class="responsive-img col s12 m6 offset-m3"></p>
+              <p>Si el usuario da clic en importar de google, al dar clic en <span class="btn">Seleccionar<i class="mdi-content-send right"></i></span> podrá ver una lista de usuarios lo cuales puede marcar para invitar y finalmente enviarles un correo dando clic en <span class="btn">Enviar<i class="mdi-content-send right"></i></span>.</p>
+              <p class="col s12"><img src="/{{theme}}/materialize/images/doc_imports.png" alt="materialize logo" class="responsive-img col s12 m6 offset-m3"></p>
+            </div>
+          </li>
+        </ul>    
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+     Materialize.toast('<span class="toast-success">Hola! Has clic en cada tema para ver su documentación.</span>',4500);
+    </script>
+{% endblock %}
