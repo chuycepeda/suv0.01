@@ -23,7 +23,7 @@
 	  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
 		    <link href="/{{theme}}/materialize/css/style.css?v=1" type="text/css" rel="stylesheet" media="screen,projection">
-		    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css">
+		    <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
 		    <style type="text/css">
 		    	#lean-overlay{
 		    		    background: transparent!important;
@@ -470,16 +470,16 @@
                   <i class="large mdi-content-add"></i>
                 </a>
                 <ul>
-                  {% if user_id %}<li><a id="chatout-btn" href="#" data-activates="chat-out" class="btn-floating brand-secondary-color chat-collapse" onclick="$('#right-sidebar-nav').show()"><i class="large mdi-communication-live-help"></i></a></li>
+                  {% if user_id %}<li><a id="chatout-btn" href="#" data-activates="chat-out" class="btn-floating brand-color chat-collapse" onclick="$('#right-sidebar-nav').show()"><i class="large mdi-communication-live-help"></i></a></li>
                   {% endif %}
-                  {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="btn-floating brand-secondary-color"><i class="large mdi-communication-email"></i></a></li>{% endif %}
-                  {% if path != uri_for('landing-map') %}<li><a href="{{ uri_for('landing-map') }}" class="btn-floating brand-secondary-color"><i class="large mdi-social-public"></i></a></li>{% endif %}
+                  {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="btn-floating brand-color"><i class="large mdi-communication-email"></i></a></li>{% endif %}
+                  {% if path != uri_for('landing-map') %}<li><a href="{{ uri_for('landing-map') }}" class="btn-floating brand-color"><i class="large mdi-social-public"></i></a></li>{% endif %}
                   <li><a href="{{ uri_for('materialize-report-new') }}" class="btn-floating brand-color"><i class="large mdi-maps-place"></i></a></li>
                 </ul>
             </div>
             <!-- Floating Action Button -->
             {% else %}
-            <a id="chatout-btn" href="#" data-activates="chat-out" class="btn-floating brand-secondary-color chat-collapse" onclick="$('#right-sidebar-nav').show()" style="display:none;"></a>
+            <a id="chatout-btn" href="#" data-activates="chat-out" class="btn-floating brand-color chat-collapse" onclick="$('#right-sidebar-nav').show()" style="display:none;"></a>
 			{% endif %}
 		{% endblock %}
 
@@ -968,7 +968,7 @@
 
 			{% block page_scripts %}
 				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
-				<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+				<script src="/{{theme}}/materialize/js/cartodb.js"></script>
 
 				{% if not cartodb_has_cic %}
 	                <script type="text/javascript">

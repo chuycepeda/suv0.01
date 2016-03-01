@@ -23,7 +23,7 @@
             background-color: {{brand_secondary_color}};
         }
     </style>
-    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css">
+    <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
 {% endblock %}
 
 {% block page_content %}
@@ -192,7 +192,7 @@
 
 {% block page_scripts %}
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
-    <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+    <script src="/{{theme}}/materialize/js/cartodb.js"></script>
     {% if not cartodb_has_cic %}
                     <script type="text/javascript">
                         // cartodb

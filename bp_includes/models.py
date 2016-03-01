@@ -563,6 +563,173 @@ class Followers(ndb.Model):
 
 
 
+#--------------------------------------- P E T I T I O N    M O D E L ---------------------------------------------------------------     
+
+class Petition(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add = True)                                                                             #: Creation date on ndb
+    updated = ndb.DateTimeProperty(auto_now = True)                                                                                 #: Modification date on ndb
+    title =  ndb.StringProperty()                                                                                                   #: Petition title
+    description = ndb.TextProperty()                                                                                                #: Petition description
+    kind = ndb.StringProperty(required = True, default = 'citizen', choices = ['citizen', 'official'])                              #: Petition kind for citizen or official
+    status = ndb.StringProperty(required = True, default = 'open', choices = ['open', 'triggered', 'expired', 'responded'])         #: Petition status
+    contact_info = ndb.StringProperty()                                                                                             #: User contact information for flexibility
+    contact_name = ndb.ComputedProperty(lambda self: self.get_contact_name())                                                       #: Contact additionals as computed props    
+    contact_lastname = ndb.ComputedProperty(lambda self: self.get_contact_lastname())                                               #: Contact additionals as computed props
+    user_id = ndb.IntegerProperty(required = True, default = -1)                                                                    #: Author user ID
+    url = ndb.StringProperty(required = True, default = '')                                                                         #: Petition url 
+    image_url = ndb.StringProperty()                                                                                                #: Petition media 
+    topic  = ndb.StringProperty(repeated = True)                                                                                    #: Petition topic
+    votes = ndb.ComputedProperty(lambda self: self.get_petition_votes())                                                            #: Petition votes in favor                                                             
+    flags = ndb.ComputedProperty(lambda self: self.get_petition_flags())                                                            #: Petition flags as inappropriate                                                             
+    expiration = ndb.ComputedProperty(lambda self: self.get_petition_expiration())                                                  #: Petition expiration date according to topic                                                              
+    
+    def get_id(self):
+        return self._key.id()
+
+    def get_user_email(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.email
+        else:
+            return ''
+
+    def get_user_name(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.name
+        else:
+            return ''
+
+    def get_user_lastname(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.last_name
+        else:
+            return ''
+
+    def get_user_address(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            if user.address:
+                return user.address.address_from
+        else:
+            return ''
+
+    def get_user_phone(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.phone
+        else:
+            return ''
+
+    def get_human_date(self):
+        d1 = datetime.datetime(self.created.year,self.created.month,self.created.day)
+        d2 = datetime.datetime(datetime.date.today().year,datetime.date.today().month,datetime.date.today().day)
+        diff = (d2-d1).days
+        return "Hace " + str(diff) + " dias"
+
+    def get_human_updated_date(self):
+        d1 = datetime.datetime(self.updated.year,self.updated.month,self.updated.day)
+        d2 = datetime.datetime(datetime.date.today().year,datetime.date.today().month,datetime.date.today().day)
+        diff = (d2-d1).days
+        return "Hace " + str(diff) + " dias"
+
+    def get_created_date(self):
+        return datetime.date(self.created.year,self.created.month,self.created.day).strftime("%Y-%m-%d")
+
+    def get_updated_date(self):
+        return datetime.date(self.updated.year,self.updated.month,self.updated.day).strftime("%Y-%m-%d")
+
+    def get_formatted_date(self):
+        return datetime.date(self.when.year,self.when.month,self.when.day).strftime("%Y-%m-%d")
+
+    def get_status(self):
+        if self.status == 'open':
+            return 'Abierta'        
+        if self.status == 'triggered':
+            return 'En espera'
+        if self.status == 'expired':
+            return 'Expirada'
+        if self.status == 'responded':
+            return 'Atendida'
+    
+    def get_contact_info(self):
+        if self.contact_info:
+            if len(self.contact_info) > 3:
+                return self.contact_info
+        return u"%s, %s" % (self.get_user_name(), self.get_user_email())
+
+    def get_contact_name(self):
+        if self.contact_info:
+            if len(self.contact_info.split(',')) > 1:
+                return self.contact_info.split(',')[0].strip()
+        return u"%s" % (self.get_user_name())
+
+    def get_contact_lastname(self):
+        if self.contact_info:
+            if len(self.contact_info.split(',')) > 2:
+                return self.contact_info.split(',')[1].strip()
+        return u"%s" % (self.get_user_lastname())
+
+    def get_petition_votes(self):
+        _votes = Votes.query(Votes.petition_id == int(self.key.id()))
+        return _votes.count()
+
+    def get_petition_flags(self):
+        _flags = Flags.query(Flags.petition_id == int(self.key.id()))
+        return _flags.count()
+
+    def get_petition_expiration(self):
+        if self.status == 'open' or self.status == 'expired':
+            d1 = datetime.datetime(self.created.year,self.created.month,self.created.day)
+            d2 = datetime.datetime(datetime.date.today().year,datetime.date.today().month,datetime.date.today().day)
+            diff = (d2-d1).days
+            
+            min_benchmark = self.topic[0].benchmark
+            for x in self.topic:
+                _topic = Topic.get_by_name(x)
+                if _topic.benchmark < min_benchmark:
+                    min_benchmark = _topic.benchmark
+
+            runway = min_benchmark - diff
+            if runway > 0:
+                return u"A esta petición le restan %s días para expirar." % runway
+            else:
+                return u"Esta petición expiró hace %s días." % abs(runway)
+        elif self.status == 'triggered':
+            return u"Esta petición está en espera de ser respondida." % runway
+        elif self.status == 'responded':
+            return u"Esta petición ya ha sido respondida." % runway
+
+class Topic(ndb.Model):
+    name = ndb.StringProperty()
+    color = ndb.StringProperty(required = True, default = "AEAEAE")
+    icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         
+    requires_image = ndb.BooleanProperty(default = False)                                                                               
+    benchmark = ndb.IntegerProperty(default = 90)
+    trigger = ndb.IntegerProperty(default = 1000)
+
+    @classmethod
+    def get_by_name(cls, name):
+        return cls.query(cls.name == name).get()                                                                            
+
+    def get_id(self):
+        return self._key.id()
+
+class Votes(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add = True)                                                                             
+    petition_id = ndb.IntegerProperty(required = True, default = -1)
+    user_id = ndb.IntegerProperty(required = True, default = -1)
+
+class Flags(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add = True)                                                                             
+    petition_id = ndb.IntegerProperty(required = True, default = -1)
+    user_id = ndb.IntegerProperty(required = True, default = -1)
+
+#--------------------------------------- ENDOF   P E T I T I O N   M O D E L --------------------------------------------------------          
+
+
+
 #--------------------------------------- H E L P E R S    M O D E L S -----------------------------------------------------------          
 
 class Media(ndb.Model):
