@@ -21,19 +21,34 @@ config = {
                               'environment_args': {'extensions': ['jinja2.ext.i18n']}},
 
     # application name
-    'app_name':  unicode('Demo One Smart City','utf-8'),
-    'city_name':  unicode('Ciudad Demo','utf-8'),
+    'app_name':  unicode('Mi Ciudad en Línea','utf-8'),
+    'city_name':  unicode('Mi Ciudad','utf-8'),
     'city_url':  'http://onesmart.city',
-    'city_slogan':  'Slogan de Ciudad Demo',
-    'city_splash':  '/default/materialize/images/landing/splash.png',
-    'city_splash_secondary':  '/default/materialize/images/landing/splash_secondary.png',
+    'city_slogan':  'Slogan de Mi Ciudad',
+    'city_splash':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/city.jpeg',
+    'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
     'app_id': 'one-smart-city-demo',
     # application branding 
-    'brand_logo': '/default/materialize/images/favicon/fav-light-blue.png',
-    'brand_favicon': '/default/materialize/images/favicon/fav-light-blue.png',
-    'brand_color' : '#03A9F4',
-    'brand_secondary_color' : '#DD3DA1',
-    'brand_tertiary_color' : '#EAEAEA',
+    'brand_logo': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png',
+    'brand_favicon': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png',
+    'brand_color' : '#DD3DA1',
+    'brand_secondary_color' : '#4254A0',
+    'brand_tertiary_color' : '#A5AFDC',
+    'landing_skin': '',
+    'video_url':  'https://www.youtube.com/embed/RX7JMnsI7K0',
+    'video_playlist':  'https://www.youtube.com/watch?v=FxozM2hAHXE',
+    'right_sidenav_msg': unicode("""
+        <p class="center"><img src="/default/materialize/images/favicon/rhexlogo.png" style="margin-top:3px; margin-left:5px; height:60px; "></p>
+        <p>
+            A través de tu portal de atención, puedes contribuir a transformar Mi Ciudad en la ciudad que todos queremos. 
+        </p>
+        <p>
+            Reportando, administrando y dando seguimiento a las necesidades que aquejan a nuestra comunidad, juntos cuidadanos y gobierno podremos ser más eficientes y demostrar que estamos para servir.
+        </p>
+        <p>
+            ¡Felicidades por ser parte! Comienza a contribuir hacia la mejora de nuestra ciudad Mi Ciudad.
+        </p>
+    """,'utf-8'),
     # application on social media
     'twitter_url': 'https://twitter.com/ciudadguadalupe',
     'twitter_appID': '201422020200516',
@@ -44,13 +59,20 @@ config = {
     'google_clientID': '470636988216-hlgtlpo9rj85k27c5cm8r7abjceatndo.apps.googleusercontent.com',
     'indicoio_apikey': 'bfb2bd9d8307bc472297287bac8f68c9',  
     #cartodb integration
-    'cartodb_user': 'gpegobmx',
-    'cartodb_apikey': '20e7cc2f28b52459219afb0247f215fe5192ce6b',
+    'map_center_lat': 25.683956577519417, 
+    'map_center_lng': -100.20524472216799,
+    'cartodb_user': 'onesmartcity',
+    'cartodb_apikey': '2dd2b08fe09c23bc977b051a85b2d6d725a58a54',
     'cartodb_reports_table': 'public_reports',
     'cartodb_category_dict_table': 'cat_dict',
+    'cartodb_polygon_table': 'mun_poly',
+    'cartodb_polygon_name': 'GPE',
+    'cartodb_has_cic': False,
+    'cartodb_cic_user': 'cicadmin',
+    'cartodb_cic_reports_table': 'nl_public',
     # contact page email settings
     'contact_sender': '',
-    'contact_recipient': "onesmartcitydemo@gmail.com",  
+    'contact_recipient': "uno@onesmart.city",  
     # application on the web
     'meta_tags_code': """
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -71,7 +93,9 @@ config = {
             <meta property="twitter:url" content="http://demo.onesmart.city"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",
-
+    #application endpoints
+    'users_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/one-smart-city-demo/v1/users?fields=items",
+    'reports_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/one-smart-city-demo/v1/reports?fields=items",
     # the default language code for the application.
     # should match whatever language the site uses when i18n is disabled
     'app_lang': 'en',

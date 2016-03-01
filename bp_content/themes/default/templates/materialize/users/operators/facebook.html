@@ -281,7 +281,8 @@
                 if (response && !response.error) {
                   total = response.summary.total_count;    
                   for(var v=0,w=response.data.length;v<w;v++){
-                    conv_array.push(cleanUpSpecialChars(response.data[v].message));
+                    if (cleanUpSpecialChars(response.data[v].message) != "")
+                      conv_array.push(cleanUpSpecialChars(response.data[v].message));
                   }
                 }
             }

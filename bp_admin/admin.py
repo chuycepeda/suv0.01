@@ -65,5 +65,13 @@ class AdminSummaryHandler(BaseHandler):
         params['sum_users'] = users.count()
         params['sum_reports'] = reports.count()
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_has_cic'] = self.app.config.get('cartodb_has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         return self.render_template('admin_summary.html', **params)
 

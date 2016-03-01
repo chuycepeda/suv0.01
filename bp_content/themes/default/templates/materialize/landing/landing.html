@@ -26,7 +26,7 @@
 		    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css">
 		    <style type="text/css">
 	    		.toast {background-color: white!important;}
-	    		.toast-success{ color: #00464F!important; line-height: 18px;}
+	    		.toast-success{ color: {{brand_color}}!important; line-height: 18px;}
 	    		.toast-danger{ color: #CE1212!important; line-height: 18px;}
 	    		.toast-warning{ color: #CEB029!important; line-height: 18px;}
 	    		.toast-info{ color: #2095CB!important; line-height: 18px;}
@@ -100,16 +100,91 @@
 				#loader:after {
 				  border-top-color: {{brand_tertiary_color}}!important;
 				}
-		    	.gpe-green-darken-1{
-		    		background-color: #79A63F;
-		    	}
-		    	.gpe-green-darken-2{
-		    		background-color: #50823B;
-		    	}
 
 
 	    	</style>
-		    {% block page_css %}{% endblock %}
+		    {% block page_css %}
+			<style>
+
+				.slider .slides li img {
+				    height: 120%!important;
+				    width: 120%!important;
+				}
+				
+				.slider .indicators{
+					display: none!important;
+				}
+				.plans-container .collection {
+                  border: none;
+                }
+                
+                .plans-container .collection .collection-item {
+                  border-bottom: none;
+                  text-align: center;
+                  font-size: 1.07rem;
+                  line-height: 1.6em;
+                }
+                
+                .plans-container .collection .collection-item:before {
+                  font-size: 1.28rem;
+                  line-height: 1.6em;
+                  color: #009315;
+                  speak: none;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-variant: normal;
+                  text-transform: none;
+                  -webkit-font-smoothing: antialiased;
+                  content: "\e623";
+                  margin-right: 10px;
+                }
+                
+                .plans-container .card .card-image {
+                  position: relative;
+                  width: 100%;
+                }
+                
+                .plans-container .card .card-image .card-title {
+                  position: relative;
+                  font-size: 1.28rem;
+                  line-height: 1.6em;
+                  text-align: center;
+                  width: 100%;
+                  padding: 10px 15px;
+                  text-transform: uppercase;
+                  background: rgba(0, 0, 0, 0.1);
+                }
+                
+                .plans-container .card .card-image .price {
+                  position: relative;
+                  font-size: 4rem;
+                  line-height: 1.6em;
+                  color: #fff;
+                  font-weight: 300;
+                  text-align: center;
+                }
+                
+                .plans-container .card .card-image .price-desc {
+                  text-align: center;
+                  color: #fff;
+                  padding-bottom: 10px;
+                }
+                
+                .plans-container .card .card-content {
+                  padding: 0;
+                }
+
+                .hoverable:hover{
+                	box-shadow: #A9A6A6 0px 8px 23px 6px;
+                	transition: all .3s ease-out;
+                }
+
+                .hoverable{
+                	transition: all .3s ease-out;
+				}
+			</style>
+
+		    {% endblock %}
 		{% endblock %}
 		
 		<!-- All google, mixpanel and analytics tags from config files. -->
@@ -137,7 +212,7 @@
 
 		{% block navbar %}
 			<!-- START NAVBAR -->
-			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-2">
+			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-1">
 				<div class="nav-wrapper" style="background:white;">
 				  <a href="{{uri_for("landing")}}" class="brand-logo"><img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:60px; {% endif %}"></a>
 				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert brand-color-text"></i></a>
@@ -156,8 +231,8 @@
 					{% elif user_is_operator %}
 			    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 					{% endif %}
-				    <li id="nav-report" {% if path == uri_for('landing-map') %}style="border-bottom: 5px solid #4EC8BC;"{% endif %}><a href="{{uri_for("landing-map")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
-				    <li id="nav-report-new" {% if path == uri_for('materialize-report-new') %}style="border-bottom: 5px solid #4EC8BC;"{% endif %}><a href="{{uri_for("materialize-report-new")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
+				    <li id="nav-report" {% if path == uri_for('landing-map') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}><a href="{{uri_for("landing-map")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
+				    <li id="nav-report-new" {% if path == uri_for('materialize-report-new') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}><a href="{{uri_for("materialize-report-new")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
 				    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 		                  <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-reports") }}">Mis reportes</a>
 	                        </li>
@@ -168,7 +243,7 @@
 	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
 	                        </li>
 		            </ul>
-				    <li class="nav-user" {% if path == uri_for('materialize-reports') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-referrals') %}style="border-bottom: 5px solid #4EC8BC;"{% endif %}>
+				    <li class="nav-user" {% if path == uri_for('materialize-reports') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-referrals') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
                         	{% if has_picture %}
 								<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
 										<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
@@ -202,8 +277,7 @@
 			    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 					{% endif %}
 				    <li id="nav-report"><a href="{{uri_for("landing-map")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
-				    <li id="nav-report-new"><a href="{{uri_for("materialize-report-new")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
-				    <!-- {% if not is_mobile %}<li id="nav-blog"><a href="{{uri_for("trends")}}" class="modal-trigger menu-item">Tendencias</a></li>{% endif %} -->
+				    <li id="nav-report-new"><a href="{{uri_for("materialize-report-new")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>				   
 				    <li class="no-padding">
                         <ul class="collapsible collapsible-accordion">
                             <li class="bold">
@@ -234,14 +308,14 @@
 		{% endblock %}
 
 		{% block header_content %}
-			<div class="parallax-container z-depth-3">
+			<div class="parallax-container z-depth-2" style="height: 600px;">
 				<div class="section no-pad-bot">
 				  <div class="container">
 				    <br><br><br>
-				    <br>
+				    <br><br><br>
 				    <div class="row center">
 				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a la plataforma de</h3>
-				      <h1 class="header col s12 brand-color-text" style="font-family:Novecentowide-Bold;    text-shadow: rgb(255, 255, 255) 1px 1px 1px;">{{app_name}}</h1>
+				      <h1 class="header col s12 white-text" style="font-family:Novecentowide-Bold;">{{app_name}}</h1>
 					  {% if not is_mobile %}<h3 class="col s10 offset-s1 light center header white-text" style="font-size:2.2rem;">Un espacio en el que podrás mandar peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.</h3>{% endif %}
 				    </div>
 				    <div class="row center">
@@ -250,22 +324,22 @@
 				    <br>
 				  </div>
 				</div>
-				<div class="parallax"><img src="{{city_splash}}" alt="Unsplashed background img 1" style="display: block; -webkit-filter: brightness(65%);"></div>
+				<div class="parallax"><img src="{{city_splash}}" alt="Unsplashed background img 1" style="display: block; -webkit-filter: brightness(45%);"></div>
 			</div>
 		{% endblock %}
 
 		{% block body_content %}
 			<div class="container">
-				<div class="section">
+				<div class="section" style="padding-top:60px; padding-bottom: 60px;">
 
 				  <div class="row">
-				  	{% if is_mobile %}<h3 class="col s12 light center header grey-text">Un espacio en el que podrás mandar peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.</h3>{% endif %}
+				   	<h3 class="grey-text col s12 m10 offset-m1 center" style="font-family: Roboto-thin;">Se parte de quienes transforman <span style="font-family: roboto-black;" class="text-darken-4">{{city_name}}</span> en una <em>smart city</em>.</h3>
 				    <div class="col s12 m4">
 				      <div class="icon-block">
 				        <h2 class="center brand-color-text"><i class="mdi-editor-insert-emoticon" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">¿Cómo funciona?</h5>
 
-				        <p class="center light" style="font-size: 18px;">Regístrate para enviar tu petición al alcalde. Al crear una cuenta podrás enviar la solicitud que será registrada en tu historial. Recibirás notificaciones de cómo va tu petición.</p>
+				        <p class="center light" style="font-size: 18px;">{{app_name}} es un mecanismo de reporte digital de {{city_name}}. Al crear una cuenta podrás enviar reportes sobre las necesidades de {{city_name}} que serán registradas en tu historial, y te enviaremos notificaciones de avance hasta dar solución.</p>
 				      </div>
 				    </div>
 
@@ -274,7 +348,7 @@
 				        <h2 class="center brand-color-text"><i class="mdi-action-receipt" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Reporta y Participa</h5>
 
-				        <p class="center light" style="font-size: 18px;">Al reportar una solicitud estarás colaborando como ciudadano para hacer de {{city_name}} una mejor ciudad. Ayúdanos con tu participación para dar atención a las necesidades de nuestro municipio.</p>
+				        <p class="center light" style="font-size: 18px;">Al reportar colaboras para hacer de {{city_name}} una mejor ciudad. Con tu partipación se habilita el flujo de conocimiento para la entrega eficaz de servicios y la notificación oportuna al gobierno de lo que nuestra ciudad necesita.</p>
 				      </div>
 				    </div>
 
@@ -283,14 +357,14 @@
 				        <h2 class="center brand-color-text"><i class="mdi-action-favorite-outline" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Sé parte del cambio</h5>
 
-				        <p class="center light" style="font-size: 18px;">Ayúdanos a conocer las necesidades de nuestra {{city_name}}. Juntos lograremos el cambio que estas esperando. En tus manos está transformar {{city_name}}.</p>
+				        <p class="center light" style="font-size: 18px;">Ayúdanos a conocer las necesidades de nuestra {{city_name}}, juntos lograremos el cambio que estas esperando. En tus manos tienes la herramienta digital que está por transformar {{city_name}} en una ciudad inteligente.</p>
 				      </div>
 				    </div>
 				  </div>
 				</div>
 			</div>
-			<div class="parallax-container z-depth-3">
-				<div class="section no-pad-bot" style="margin-top:7%">
+			<div class="parallax-container z-depth-2" style="height: 400px;">
+				<div class="section no-pad-bot" style="margin-top:3%">
 				  <div class="container">
 				    <div class="row center">
 				      <h1 class="header col s12 " style="color:#FFF!important; font-family: Agenda-Bold;">{{city_slogan}}</h1>
@@ -299,7 +373,7 @@
 				    </div>
 				  </div>
 				</div>
-				<div class="parallax"><img src="{{city_splash_secondary}}" alt="Unsplashed background img seal" style="display: block; transform: translate3d(-50%, 386px, 0px);"></div>
+				<div class="parallax"><img src="{{city_splash_secondary}}" alt="Unsplashed background img seal" style="display: block; -webkit-filter:brightness(45%);"></div>
 			</div>
 		{% endblock %}
 
@@ -340,8 +414,8 @@
 			          </div>
 			        </div>
 			        <div class="row">
-			        	<!-- <p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("faq")}}">Preguntas frecuentes</a></p> -->
-				        <p class="margin right-align medium-small right"><a target="_blank" href="{{ uri_for("password-reset") }}">¿Olvidaste tu contraseña?</a></p>
+				        <p class="margin right-align medium-small left"><a class="brand-secondary-color-text" href="{{ uri_for("register") }}">¿No tienes cuenta?</a></p>
+				        <p class="margin right-align medium-small right"><a class="brand-secondary-color-text" href="{{ uri_for("password-reset") }}">¿Olvidaste tu contraseña?</a></p>
 			        </div>
 			      </form>
 		      </div>
@@ -388,8 +462,8 @@
 			          </div>
 			        </div>
 			        <div class="row">
-			        	<p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("login")}}">¿Ya tienes cuenta?</a></p>
-				        <p class="margin right-align medium-small right"><a target="_blank" href="{{uri_for("privacy")}}">Aviso de privacidad</a></p>
+			        	<p class="margin right-align medium-small left"><a class="brand-secondary-color-text" href="{{uri_for("login")}}">¿Ya tienes cuenta?</a></p>
+				        <p class="margin right-align medium-small right"><a class="brand-secondary-color-text" href="{{uri_for("privacy")}}">Aviso de privacidad</a></p>
 			        </div>
 			      </form>
 		      </div>
@@ -414,9 +488,10 @@
 		{% block footer %}
 			{% block footer_content %}
 			<div class="container">
-				<div class="section" id="download">
+				<div class="section" id="download" style="padding-top:60px; padding-bottom: 60px;">
 
 				  <div class="row">
+				  <h3 class="grey-text col s12 m10 offset-m1 center" style="font-family: Roboto-thin;">Las ciudades inteligentes, requieren ciudadanos inteligentes.</h3>
 				    <div class="col s12 center">
 				      <h4 style="line-height: 3;font-family: Agenda-Bold;">¡Comienza HOY a transformar {{city_name}}!</h4>
 				      
@@ -442,14 +517,14 @@
 			{% endblock %}
 
 			<!-- START FOOTER -->
-			<footer class="page-footer brand-color darken-1" style="padding-left: 40px;">
+			<footer class="page-footer brand-color" style="padding-left: 40px;">
 				<a href="#"><i class="mdi-navigation-expand-less white-text right" style="padding: 10px;"></i></a>
 				<div class="container">
 				  <div class="row">
 				    <div class="col s12 m9">
 				      <h5 class="white-text">Acerca de</h5>
 				      <p class="grey-text text-lighten-4" style="    margin-top: 3%;">
-				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.
+				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde. En este espacio esperamos compartir, dialogar y cooperar para juntos producir el gobierno y la ciudad inteligente que deseas.
 				      </p>
 				    </div>
 				    <div class="col s12 m2 offset-m1" style="margin-top:12px;">

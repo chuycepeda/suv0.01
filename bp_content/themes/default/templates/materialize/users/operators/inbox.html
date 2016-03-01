@@ -111,6 +111,41 @@
                <div class="col s12" style="margin-top:40px;margin-bottom:-40px">
                     <a class="waves-effect waves-light light-blue white-text btn-large" href="#" onclick="filter();return false;">Filtrar<i class="mdi-content-send right"></i></a>
                </div>
+               {% if path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-callcenter-inbox') %}
+                 <div class="col s12 m4" style="margin-top:60px;margin-bottom:-40px">
+                      <a class="brand-secondary-color-text modal-trigger" href="#modalQ">O busca por información de contacto haciendo clic aquí.</a>
+                 </div>
+                 <div id="modalQ" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
+                    <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+                    <div class="modal-content">
+                        <div class="row">
+                            <div class="input-field col s12 center">
+                              <p class="center login-form-text">Busca por nombre y apellido.</p>
+                            </div>
+                            <div class="row">
+                              <div class="container">
+                                  <div class="row">
+                                    <div class="col s12 m8 offset-m2 center">
+                                      <div class="input-field col s12 m6" style="margin-top:30px;">
+                                        <input id="u_name" name="u_name" type="text" value="">
+                                        <label id="unameLabel" for="u_name">Nombre</label>
+                                      </div>
+                                      <div class="input-field col s12 m6" style="margin-top:30px;">
+                                        <input id="u_last_name" name="u_last_name" type="text" value="">
+                                        <label id="ulastnameLabel" for="u_last_name">Apellido</label>
+                                      </div>
+                                    </div>
+                                    <div class="input-field col s12">
+                                      <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
+                                      <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" onclick="do_Q();return false;">Buscar</a>
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+               {% endif %}
             </div>
         
         </div>
@@ -234,6 +269,24 @@
             else
               window.location.href = href;
         }
+
+        {% if path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-callcenter-inbox') %}
+          function do_Q(){
+              var _do =true;
+              if (document.getElementById('u_name').value.length > 0 && document.getElementById('u_last_name').value.length > 0)
+                var href="{{ uri_for(inbox) }}?q="+document.getElementById('u_name').value+','+document.getElementById('u_last_name').value;
+              else if (document.getElementById('u_name').value.length == 0 && document.getElementById('u_last_name').value.length > 0)
+                var href="{{ uri_for(inbox) }}?q="+document.getElementById('u_last_name').value;
+              else if (document.getElementById('u_last_name').value.length == 0 && document.getElementById('u_name').value.length > 0)
+                var href="{{ uri_for(inbox) }}?q="+document.getElementById('u_name').value;
+              else{
+                _do = false;              
+                Materialize.toast('<span class="toast-warning">¡Oops! Por favor llena al menos un campo.</span>',4500);
+              }
+              if (_do)
+                window.location.href = href;
+          }
+        {% endif %}
 
         $('#data-table-simple').DataTable({
             scrollY: 300,

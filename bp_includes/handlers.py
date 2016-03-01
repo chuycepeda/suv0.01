@@ -905,7 +905,7 @@ class MaterializeAccountActivationHandler(BaseHandler):
             # Slack Incoming WebHooks
             try:
                 from google.appengine.api import urlfetch            
-                urlfetch.fetch(self.app.config.get('slack_webhook_url'), payload='{"channel": "#general", "username": "webhookbot", "text": "just got a new user at gpegobmx! Go surprise him at '+user.email+'", "icon_emoji": ":bowtie:"}', method='POST')
+                urlfetch.fetch(self.app.config.get('slack_webhook_url'), payload='{"channel": "#general", "username": "webhookbot", "text": "just got a new user at '+self.app.config.get('app_id')+'! Go surprise him at '+user.email+'", "icon_emoji": ":bowtie:"}', method='POST')
             except Exception as e:
                 pass
 
@@ -1119,11 +1119,24 @@ class MaterializeLandingRequestHandler(BaseHandler):
         params = {}
         if not self.user:
             params['captchahtml'] = captchaBase(self)
-            return self.render_template('materialize/landing/landing.html', **params)
         else:
             params, user_info = disclaim(self)    
             message = _(messages.welcome_message)
-            self.add_message(message, 'success')        
+            self.add_message(message, 'success')     
+        params['video_url'] = self.app.config.get('video_url')
+        params['video_playlist'] = self.app.config.get('video_playlist')
+        users = models.User.query()
+        params['total_users'] = users.count()
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+        if self.app.config.get('landing_skin') == 'a' or self.request.get('skin') == 'a':
+            return self.render_template('materialize/landing/landing_a.html', **params)
+        else:
             return self.render_template('materialize/landing/landing.html', **params)
 
 class MaterializeLandingMapRequestHandler(BaseHandler):
@@ -1133,27 +1146,24 @@ class MaterializeLandingMapRequestHandler(BaseHandler):
     def get(self):
         """ Returns a simple HTML form for landing """
         params = {}
-        if not self.user:
-            params['captchahtml'] = captchaBase(self)
-            return self.render_template('materialize/landing/base.html', **params)
-        else:
-            params = {}
-            params, user_info = disclaim(self)            
-            return self.render_template('materialize/landing/base.html', **params)
-
-class MaterializeLandingTrendsRequestHandler(BaseHandler):
-    """
-        Handler for materialized privacy policy
-    """
-    @user_required    
-    def get(self):
-        """ returns simple html for a get request """
-        if self.user_id:
-            params, user_info = disclaim(self)
-        else:
-            params = {}        
+        if self.user:
+            params, user_info = disclaim(self)   
+        
         params['captchahtml'] = captchaBase(self)
-        return self.render_template('materialize/landing/trends.html', **params)
+
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')  
+        params['right_sidenav_msg'] = self.app.config.get('right_sidenav_msg')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_has_cic'] = self.app.config.get('cartodb_has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        return self.render_template('materialize/landing/base.html', **params)
 
 class MaterializeLandingBlogRequestHandler(BaseHandler):
     """
@@ -1473,6 +1483,15 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
     def get(self):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
         return self.render_template('materialize/users/settings/profile.html', **params)
 
     def post(self):
@@ -2030,30 +2049,30 @@ class MaterializeTutorialsRequestHandler(BaseHandler):
 
 #USER SPECIAL ACCESS
 def get_status(_stat):
-        if _stat == 'open':
-            return 'Abierto'        
-        if _stat == 'halted':
-            return 'En espera'
-        if _stat == 'assigned':
-            return 'Asignado'
-        if _stat == 'spam':
-            return 'Spam'
-        if _stat == 'archived':
-            return 'Archivado'
-        if _stat == 'forgot':
-            return 'Olvidado'
-        if _stat == 'rejected':
-            return 'Rechazado'
-        if _stat == 'working':
-            return 'En proceso'
-        if _stat == 'answered':
-            return 'Respondido'
-        if _stat == 'solved':
-            return 'Resuelto'
-        if _stat == 'failed':
-            return 'Fallo'
-        if _stat == 'pending':
-            return 'Pendientes'
+    if _stat == 'open':
+        return 'Abierto'        
+    if _stat == 'halted':
+        return 'En espera'
+    if _stat == 'assigned':
+        return 'Asignado'
+    if _stat == 'spam':
+        return 'Spam'
+    if _stat == 'archived':
+        return 'Archivado'
+    if _stat == 'forgot':
+        return 'Olvidado'
+    if _stat == 'rejected':
+        return 'Rechazado'
+    if _stat == 'working':
+        return 'En proceso'
+    if _stat == 'answered':
+        return 'Respondido'
+    if _stat == 'solved':
+        return 'Resuelto'
+    if _stat == 'failed':
+        return 'Fallo'
+    if _stat == 'pending':
+        return 'Pendientes'
 
 class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
     @user_required
@@ -2064,6 +2083,10 @@ class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
             users = self.user_model.query()
             params['sum_users'] = users.count()
             params['sum_reports'] = reports.count()
+            params['cartodb_user'] = self.app.config.get('cartodb_user')
+            params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+            params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+            params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
             return self.render_template('materialize/users/operators/dashboard.html', **params)
         self.abort(403)
 
@@ -2115,7 +2138,16 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
                             break
            
         params['secs']= names[0]
-        
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+
         if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
             return self.render_template('materialize/users/operators/new_report.html', **params)
         self.abort(403)
@@ -2123,6 +2155,11 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
 
     @user_required
     def post(self):
+
+        def properRedirect(report_info):
+            message = _(messages.report_success)
+            self.add_message(message, 'success')
+            return self.redirect_to("materialize-organization-report-success", ticket = report_info.cdb_id, report_key = report_info.key.id())
 
         def cartoInsert(report_id):
             #PUSH TO CARTODB
@@ -2149,8 +2186,10 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
                     response = cl.sql('select cartodb_id from %s order by cartodb_id desc limit 1' % cartodb_table)
                     report_info.cdb_id = response['rows'][0]['cartodb_id']
                     report_info.put()
+                    properRedirect(report_info)
                 except Exception as e:
                     logging.info('error in cartodb INSERT request: %s' % e)
+                    properRedirect(report_info)
                     pass
     
 
@@ -2164,6 +2203,7 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
         when = self.request.get('when')
         via = self.request.get('via')
         contact_info = self.request.get('usercontact')
+        folio = self.request.get('folio') if self.request.get('folio') != "" else "-1"
         
         try:
             user_report = models.Report()
@@ -2178,6 +2218,7 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             user_report.via  = via
             user_report.contact_info  = contact_info
             user_report.status = 'assigned'
+            user_report.folio = folio
             user_report.put()
             
             if hasattr(self.request.POST['file'], 'filename'):
@@ -2200,24 +2241,51 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
                 
                 if t.content == 'success':
                     cartoInsert(user_report.key.id())
-                    message = _(messages.report_success)
-                    self.add_message(message, 'success')
-                    return self.get()
                 else:
                     message = _(messages.attach_error)
                     self.add_message(message, 'danger')            
                     return self.get()                    
             else:
                 cartoInsert(user_report.key.id())
-                message = _(messages.report_success)
-                self.add_message(message, 'success')
-                return self.get()
 
         except Exception as e:
             logging.info('error in post: %s' % e)
             message = _(messages.saving_error)
             self.add_message(message, 'danger')
             return self.get()
+
+class MaterializeOrganizationNewReportSuccessHandler(BaseHandler):
+    """
+    Handler for materialized home
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML form for materialize home """
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+
+        params['ticket'] = self.request.get('ticket')
+        params['report_key'] = self.request.get('report_key')
+
+        if self.user_is_secretary:
+            params['level'] = 'materialize-secretary-report'
+            params['inbox'] = 'materialize-secretary-inbox'
+        if self.user_is_agent:
+            params['level'] = 'materialize-agent-report'
+            params['inbox'] = 'materialize-agent-inbox'
+        if self.user_is_operator:
+            params['level'] = 'materialize-operator-report'
+            params['inbox'] = 'materialize-operator-inbox'
+        if self.user_is_callcenter:
+            params['level'] = 'materialize-callcenter-report'
+            params['inbox'] = 'materialize-callcenter-inbox'
+        
+        
+        return self.render_template('materialize/users/operators/new_report_success.html', **params)
 
 class MaterializeOrganizationUrgentsHandler(BaseHandler):
     @user_required
@@ -2628,7 +2696,7 @@ class MaterializeOrganizationExportUsersHandler(BaseHandler):
             import csv, json
             from google.appengine.api import urlfetch
             urlfetch.set_default_fetch_deadline(45)
-            url = "https://devcb-dot-gpegobmx.appspot.com/_ah/api/gpegobmx/v1/users?fields=items"
+            url = self.app.config.get('users_export_url')
             result = urlfetch.fetch(url)
             if result.status_code == 200:
                 data = json.loads(result.content)                
@@ -2653,7 +2721,7 @@ class MaterializeOrganizationExportReportsHandler(BaseHandler):
             import csv, json
             from google.appengine.api import urlfetch
             urlfetch.set_default_fetch_deadline(45)
-            url = "https://devcb-dot-gpegobmx.appspot.com/_ah/api/gpegobmx/v1/reports?fields=items"
+            url = self.app.config.get('reports_export_url')
             result = urlfetch.fetch(url)
             if result.status_code == 200:
                 data = json.loads(result.content)                
@@ -2667,7 +2735,6 @@ class MaterializeOrganizationExportReportsHandler(BaseHandler):
             writer = csv.writer(self.response.out)
         else:
             self.abort(403)
-
 
 #USER SECRETARY
 class MaterializeSecretaryInboxRequestHandler(BaseHandler):
@@ -2705,8 +2772,25 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
             cursor = Cursor(urlsafe=c)
 
             if q:
-                reports = models.Report.query(models.Report.group_category == names[0])            
+                reports = models.Report.query()            
+                if len(q.split(',')) >= 2:
+                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                else:
+                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
                 count = reports.count()
+                PAGE_SIZE = 50
+                if forward:
+                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    if next_cursor and more:
+                        self.view.next_cursor = next_cursor
+                    if c:
+                        self.view.prev_cursor = cursor.reversed()
+                else:
+                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    reports = list(reversed(reports))
+                    if next_cursor and more:
+                        self.view.prev_cursor = next_cursor
+                    self.view.next_cursor = cursor.reversed()
             else:
                 if groupCat:
                     reports = models.Report.query(models.Report.group_category == groupCat)
@@ -2722,7 +2806,7 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
                     params['ddfillstat'] = get_status(status)
                 else:
                     reports = reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status('')
+                    params['ddfillstat'] = get_status('pending')
                 if ticket:    
                     reports = reports.filter(models.Report.cdb_id == ticket)
                 if folio:     
@@ -3099,6 +3183,15 @@ class MaterializeSecretaryReportRequestHandler(BaseHandler):
             params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
         return self.render_template('materialize/users/operators/report_edit.html', **params)
 
 #USER AGENT
@@ -3135,8 +3228,25 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
             cursor = Cursor(urlsafe=c)
 
             if q:
-                reports = models.Report.query(models.Report.group_category == names[0])            
+                reports = models.Report.query()            
+                if len(q.split(',')) >= 2:
+                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                else:
+                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
                 count = reports.count()
+                PAGE_SIZE = 50
+                if forward:
+                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    if next_cursor and more:
+                        self.view.next_cursor = next_cursor
+                    if c:
+                        self.view.prev_cursor = cursor.reversed()
+                else:
+                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    reports = list(reversed(reports))
+                    if next_cursor and more:
+                        self.view.prev_cursor = next_cursor
+                    self.view.next_cursor = cursor.reversed()
             else:
                 if groupCat:
                     reports = models.Report.query(models.Report.group_category == groupCat)
@@ -3152,7 +3262,7 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
                     params['ddfillstat'] = get_status(status)
                 else:
                     reports = reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status('')
+                    params['ddfillstat'] = get_status('pending')
                 if ticket:    
                     reports = reports.filter(models.Report.cdb_id == ticket)
                 if folio:     
@@ -3530,6 +3640,15 @@ class MaterializeAgentReportRequestHandler(BaseHandler):
             params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
         return self.render_template('materialize/users/operators/report_edit.html', **params)
 
 #USER OPERATOR
@@ -3570,8 +3689,25 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
             cursor = Cursor(urlsafe=c)
 
             if q:
-                reports = models.Report.query(models.Report.group_category == names[0])            
+                reports = models.Report.query()            
+                if len(q.split(',')) >= 2:
+                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                else:
+                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
                 count = reports.count()
+                PAGE_SIZE = 50
+                if forward:
+                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    if next_cursor and more:
+                        self.view.next_cursor = next_cursor
+                    if c:
+                        self.view.prev_cursor = cursor.reversed()
+                else:
+                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    reports = list(reversed(reports))
+                    if next_cursor and more:
+                        self.view.prev_cursor = next_cursor
+                    self.view.next_cursor = cursor.reversed()
             else:
                 if groupCat:
                     reports = models.Report.query(models.Report.group_category == groupCat)
@@ -3963,6 +4099,15 @@ class MaterializeOperatorReportRequestHandler(BaseHandler):
             params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
         return self.render_template('materialize/users/operators/report_edit.html', **params)
 
 #USER CALL CENTER
@@ -3988,8 +4133,25 @@ class MaterializeCallCenterInboxRequestHandler(BaseHandler):
             cursor = Cursor(urlsafe=c)
 
             if q:
-                reports = models.Report.query(models.Report.group_category == names[0])            
+                reports = models.Report.query()            
+                if len(q.split(',')) >= 2:
+                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                else:
+                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
                 count = reports.count()
+                PAGE_SIZE = 50
+                if forward:
+                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    if next_cursor and more:
+                        self.view.next_cursor = next_cursor
+                    if c:
+                        self.view.prev_cursor = cursor.reversed()
+                else:
+                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    reports = list(reversed(reports))
+                    if next_cursor and more:
+                        self.view.prev_cursor = next_cursor
+                    self.view.next_cursor = cursor.reversed()
             else:
                 if groupCat:
                     reports = models.Report.query(models.Report.group_category == groupCat)
@@ -4378,6 +4540,15 @@ class MaterializeCallCenterReportRequestHandler(BaseHandler):
             params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
         return self.render_template('materialize/users/operators/report_edit.html', **params)
 
 class MaterializeCallCenterFacebookRequestHandler(BaseHandler):
@@ -4509,6 +4680,14 @@ class MaterializeNewReportHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
         
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
         return self.render_template('materialize/landing/new_report.html', **params)
 
     @user_required

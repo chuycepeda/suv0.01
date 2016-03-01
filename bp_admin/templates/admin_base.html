@@ -8,7 +8,7 @@
 
 {% block document_head %}
     <head>
-        {% block title %}<title>{{app_name}}</title>{% endblock %}
+        {% block title %}<title>Admin - {{app_name}}</title>{% endblock %}
 
         <!-- All meta tags from config files -->
         {% block metadata %}
@@ -34,7 +34,7 @@
             <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
             <style type="text/css">
                 .toast {background-color: white!important;}
-                .toast-success{ color: #00464F!important; line-height: 18px;}
+                .toast-success{ color: {{brand_color}}!important; line-height: 18px;}
                 .toast-danger{ color: #CE1212!important; line-height: 18px;}
                 .toast-warning{ color: #CEB029!important; line-height: 18px;}
                 .toast-info{ color: #2095CB!important; line-height: 18px;}
@@ -128,6 +128,14 @@
                 .btn-floating:hover{
                     background-color: {{brand_secondary_color}}!important;
                 }
+                {% if is_mobile %}
+                .btn{
+                    margin-top:15px;
+                }
+                .btn-large{
+                    margin-top:15px;
+                }
+                {% endif %} 
                 #loader {
                   border-top-color: {{brand_color}}!important;
                 }
@@ -137,11 +145,9 @@
                 #loader:after {
                   border-top-color: {{brand_tertiary_color}}!important;
                 }
-                .gpe-green-darken-1{
-                    background-color: #79A63F;
-                }
-                .gpe-green-darken-2{
-                    background-color: #50823B;
+                [type=checkbox].filled-in:checked+label:after{
+                    border: 2px solid {{brand_secondary_color}}!important;
+                    background-color: {{brand_secondary_color}}!important;
                 }
 
              
@@ -189,7 +195,7 @@
                 <div class="navbar-fixed">
                     <nav class="white">
                         <div class="nav-wrapper">
-                            <h1 class="logo-wrapper"><a href="{{ uri_for('admin-inbox') }}" class="brand-logo darken-1"><img src="{{brand_logo}}" alt="materialize logo" style="height: 45px;margin-top: 3px">
+                            <h1 class="logo-wrapper"><a href="{{ uri_for('admin-summary') }}" class="brand-logo darken-1"><img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" alt="materialize logo" style="{% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-top:-2px; margin-left:-5px; height:60px; {% endif %}">
                             <div id="main-preloader" class="preloader-wrapper small active right" style="display: none;margin-top:8px;margin-left:12px;">
                                   <div class="spinner-layer spinner-blue">
                                     <div class="circle-clipper left">
@@ -273,11 +279,25 @@
                                             </div>
                                         </div>
                                     </li>
-                                    <li {% if path == uri_for('admin-summary') %}class="active"{% endif %}><a href="{{ uri_for('admin-summary') }}">{% trans %}Resumen estadístico{% endtrans %}</a></li>
+                                    <li {% if path == uri_for('admin-summary') %}class="active"{% endif %}><a href="{{ uri_for('admin-summary') }}">{% trans %}Estadísticas{% endtrans %}</a></li>
                                     <li {% if path == uri_for('admin-organization-view') %}class="active"{% endif %}><a href="{{ uri_for('admin-organization-view') }}">{% trans %}Resumen de mi organización{% endtrans %}</a></li>
+                                    <li class="no-padding">
+                                        <ul class="collapsible collapsible-accordion">
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan">Configurar mi organización</a>
+                                               <div class="collapsible-body">
+                                                    <ul>
+                                                        <li {% if path == uri_for('admin-categories') %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">{% trans %}I. Categorías{% endtrans %}</a></li>
+                                                        <li {% if path == uri_for('admin-organization') %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">{% trans %}II. Secretarías{% endtrans %}</a></li>
+                                                        <li {% if path == uri_for('admin-callcenter') %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">{% trans %}III. Atención ciudadana{% endtrans %}</a></li>
+                                                    </ul>
+                                               </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>                                    
                                     <li {% if path == uri_for('admin-inbox') %}class="active"{% endif %}><a href="{{ uri_for('admin-inbox') }}">{% trans %}Bandeja de reportes{% endtrans %}</a></li>
                                     <li {% if path == uri_for('admin-map') %}class="active"{% endif %}><a href="{{ uri_for('admin-map') }}">{% trans %}Mapa de reportes{% endtrans %}</a></li>
-                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
+                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>                                                                         
                                     <li class="no-padding">
                                         <ul class="collapsible collapsible-accordion">
                                             
@@ -288,19 +308,6 @@
                                                         <li {% if path == uri_for('admin-logs-emails') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-emails') }}">{% trans %}Correos enviados{% endtrans %}</a></li>
                                                         <li {% if path == uri_for('admin-send-email') %}class="active"{% endif %}><a href="{{ uri_for('admin-send-email') }}">{% trans %}Enviar un correo{% endtrans %}</a></li>
                                                         <li {% if path == uri_for('admin-logs-visits') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-visits') }}">{% trans %}Lista de visitas{% endtrans %}</a></li>
-                                                    </ul>
-                                               </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                     <li class="no-padding">
-                                        <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan">Configurar mi organización</a>
-                                               <div class="collapsible-body">
-                                                    <ul>
-                                                        <li {% if path == uri_for('admin-categories') %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">{% trans %}I. Categorías{% endtrans %}</a></li>
-                                                        <li {% if path == uri_for('admin-organization') %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">{% trans %}II. Secretarías{% endtrans %}</a></li>
-                                                        <li {% if path == uri_for('admin-callcenter') %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">{% trans %}III. Atención ciudadana{% endtrans %}</a></li>
                                                     </ul>
                                                </div>
                                             </li>
@@ -327,7 +334,9 @@
                                     <li><a href="/" target="_blank">{% trans %}Ir al sitio{% endtrans %}</a></li>
                                     <li><a href="{{ uri_for('admin-logout') }}">{% trans %}Salir{% endtrans %}</a></li>
                                 </ul>
-                                <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating waves-effect waves-light hide-on-large-only darken-2" style="margin-top:-5px;"><i class="mdi-navigation-more-vert" style="color: rgb(62, 193, 251);background-color: white;" ></i></a>
+                                <!-- <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating waves-effect waves-light hide-on-large-only darken-2" style="margin-top:-5px;"><i class="mdi-navigation-more-vert" style="color: rgb(62, 193, 251);background-color: white;" ></i></a> -->
+
+                                <a href="#" data-activates="slide-out" class="sidebar-collapse hide-on-large-only waves-effect waves-light" style="top:-40px;float:right!important"><i class="mdi-navigation-more-vert brand-color-text"></i></a>
                             </aside>
                             <!-- END LEFT SIDEBAR NAV-->
                         {% endblock %}

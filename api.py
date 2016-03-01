@@ -23,7 +23,7 @@ from protorpc import remote
 
 package = 'Hello'
 
-api = endpoints.api(name='gpegobmx', version='v1')
+api = endpoints.api(name='onesmartcity', version='v1')
 
 """
 
@@ -146,7 +146,7 @@ def getReports():
 """
 @api.api_class(resource_name='main')
 class MainApi(remote.Service):
-    """Main GPEGOBMX API v1."""
+    """Main onesmartcity API v1."""
 
     #USERS INFO METHOD
     @endpoints.method(message_types.VoidMessage, UsersCollection,

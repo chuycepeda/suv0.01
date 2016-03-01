@@ -692,6 +692,25 @@ indexes:
   - name: created
     direction: desc
 
+- kind: Report
+  properties:
+  - name: contact_lastname
+  - name: contact_name
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_name
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_lastname
+  - name: created
+    direction: desc
+
 - kind: LogChange
   properties:
   - name: report_id
@@ -702,4 +721,3 @@ indexes:
   - name: report_id
   - name: created
     direction: desc
-

@@ -23,30 +23,30 @@ from bp_includes.lib.decorators import taskqueue_method
 
 """
 def get_status(_stat):
-        if _stat == 'open':
-            return 'Abierto'        
-        if _stat == 'halted':
-            return 'En espera'
-        if _stat == 'assigned':
-            return 'Asignado'
-        if _stat == 'spam':
-            return 'Spam'
-        if _stat == 'archived':
-            return 'Archivado'
-        if _stat == 'forgot':
-            return 'Olvidado'
-        if _stat == 'rejected':
-            return 'Rechazado'
-        if _stat == 'working':
-            return 'En proceso'
-        if _stat == 'answered':
-            return 'Respondido'
-        if _stat == 'solved':
-            return 'Resuelto'
-        if _stat == 'failed':
-            return 'Fallo'
-        if _stat == 'pending':
-            return 'Pendientes'
+    if _stat == 'open':
+        return 'Abierto'        
+    if _stat == 'halted':
+        return 'En espera'
+    if _stat == 'assigned':
+        return 'Asignado'
+    if _stat == 'spam':
+        return 'Spam'
+    if _stat == 'archived':
+        return 'Archivado'
+    if _stat == 'forgot':
+        return 'Olvidado'
+    if _stat == 'rejected':
+        return 'Rechazado'
+    if _stat == 'working':
+        return 'En proceso'
+    if _stat == 'answered':
+        return 'Respondido'
+    if _stat == 'solved':
+        return 'Resuelto'
+    if _stat == 'failed':
+        return 'Fallo'
+    if _stat == 'pending':
+        return 'Pendientes'
 
 class AdminInboxHandler(BaseHandler):
     def get(self):
@@ -149,6 +149,18 @@ class AdminMapHandler(BaseHandler):
         """ Returns a simple HTML form for landing """
         params = {}
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')  
+        params['right_sidenav_msg'] = self.app.config.get('right_sidenav_msg')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_has_cic'] = self.app.config.get('cartodb_has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         return self.render_template('admin_map.html', **params)
 
 class AdminManualHandler(BaseHandler):
@@ -472,6 +484,13 @@ class AdminReportEditHandler(BaseHandler):
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         return self.render_template('admin_report_edit.html', **params)
 
 class AdminOrganizationViewHandler(BaseHandler):
@@ -481,6 +500,8 @@ class AdminOrganizationViewHandler(BaseHandler):
     def get(self):
         params = {}
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')        
         return self.render_template('admin_orgview.html', **params)
 
 """
@@ -1325,7 +1346,7 @@ class AdminBulkCategoriesHandler(BaseHandler):
 #             import csv, json
 #             from google.appengine.api import urlfetch
 #             urlfetch.set_default_fetch_deadline(45)
-#             url = "https://devcb-dot-gpegobmx.appspot.com/_ah/api/gpegobmx/v1/reports?fields=items"
+#             url = self.app.config.get('reports_export_url')
 #             result = urlfetch.fetch(url)
 #             if result.status_code == 200:
 #                 data = json.loads(result.content)                
@@ -1342,7 +1363,7 @@ class AdminBulkCategoriesHandler(BaseHandler):
             import csv, json
             from google.appengine.api import urlfetch
             urlfetch.set_default_fetch_deadline(45)
-            url = "https://devcb-dot-gpegobmx.appspot.com/_ah/api/gpegobmx/v1/users?fields=items"
+            url = self.app.config.get('users_export_url')
             result = urlfetch.fetch(url)
             if result.status_code == 200:
                 data = json.loads(result.content)                

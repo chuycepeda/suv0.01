@@ -169,6 +169,24 @@
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://github.highcharts.com/master/modules/drilldown.js"></script>
     <script>
+
+        //GLOBALS        
+        var statuses = "";
+        var sec = {};
+        var perf_sec = {};
+        var dict;
+        var chartType = 'bar';
+        var allDone = {
+            'container-pie-via' : false,
+            'container-pie-status': false,
+            'container-drilldown': false,
+            'perf_container-drilldown': false,
+        }
+        var city_user = '{{cartodb_user}}';
+        var city_table_name = '{{cartodb_reports_table}}';
+        var city_mun_table_name = '{{cartodb_polygon_table}}';
+        var city_polygon_name = '{{cartodb_polygon_name}}'
+        var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
                         
         function createDrilldown(data,container,chartType){
             
@@ -296,8 +314,7 @@
                 //After chart is done set flag
                 allDone[container] = true;
                 //console.log("Chart "+container+" done");
-            });
-            
+            });            
         }
         
         function createPerfDrilldown(data,container,chartType){
@@ -426,8 +443,7 @@
                 //After chart is done set flag
                 allDone[container] = true;
                 //console.log("Chart "+container+" done");
-            });
-            
+            });            
         }
         
         function createBar(dataBar,container){
@@ -582,6 +598,9 @@
                 case 'letter':
                     ds = "Oficio";
                     break;
+                case 'media':
+                    ds = "Medios";
+                    break;
                 default: ds="";
                     break
             }
@@ -632,10 +651,10 @@
         
         function getData(source, when){
             
-            var qs = 'SELECT '+source+' as prop, count(*) FROM public_reports ';            
+            var qs = 'SELECT '+source+' as prop, count(*) FROM '+city_table_name+ ' ';            
             if (when) qs += when; 
             qs += 'GROUP BY prop';
-            gpe_sql.execute(qs).done(function(data) {
+            city_sql.execute(qs).done(function(data) {
                 
                 var trans = {};
                 for (var x = 0; x < data.total_rows;x++){
@@ -687,7 +706,7 @@
         
         function getDict(){
             
-            var url = "http://devcb.gpegobmx.appspot.com/report/categories/";
+            var url = "{{uri_for('materialize-report-categories')}}";
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -712,7 +731,7 @@
         
         function getPerfDrillData(when){
             perf_sec = {};
-            var s = "SELECT ceil(avg(date_part('days', (terminated - created)))) AS count, group_category, sub_category FROM public_reports WHERE status IN ('solved', 'failed', 'archived') AND terminated is not null ";
+            var s = "SELECT ceil(avg(date_part('days', (terminated - created)))) AS count, group_category, sub_category FROM "+city_table_name+" WHERE status IN ('solved', 'failed', 'archived') AND terminated is not null ";
             if (when){ 
                 s+= when.replace('WHERE', 'AND');
                 var days = daydiff(parseDate($('#from').val()), parseDate($('#until').val()));
@@ -726,7 +745,7 @@
                         
             //console.log('s for performance: ', s);
             
-            gpe_sql.execute(s).done(function(data) {
+            city_sql.execute(s).done(function(data) {
                 //console.log('Data from CartoDB');
                 //console.log(data);
                 var grps = {};
@@ -795,11 +814,11 @@
         
         function getDrillData(when){
             sec = {};
-            var s = "SELECT group_category, sub_category, count(*) FROM public_reports ";
+            var s = "SELECT group_category, sub_category, count(*) FROM " + city_table_name +" ";
             if (when) s+= when;
             s += "GROUP BY group_category, sub_category ORDER BY group_category asc";
             
-            gpe_sql.execute(s).done(function(data) {
+            city_sql.execute(s).done(function(data) {
                 //console.log('Data from CartoDB');
                 //console.log(data);
                 var grps = {};
@@ -920,19 +939,7 @@
         }
         
         
-        //GLOBALS        
-        var gpe_sql = new cartodb.SQL({ user: 'gpegobmx' });
-        var statuses = "";
-        var sec = {};
-        var perf_sec = {};
-        var dict;
-        var chartType = 'bar';
-        var allDone = {
-            'container-pie-via' : false,
-            'container-pie-status': false,
-            'container-drilldown': false,
-            'perf_container-drilldown': false,
-        }
+        
         
         //Initial setup on DOM ready
         $(document).ready(function(){   

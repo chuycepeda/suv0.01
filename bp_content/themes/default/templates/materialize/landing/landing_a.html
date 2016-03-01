@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="{{ locale_language_id }}"> <!--<![endif]-->
+
+
+{% block document_head %}
+	<head>
+  		{% block title %}<title>{{app_name}}</title>{% endblock %}
+
+		<!-- All meta tags from config files -->
+	    {% block metadata %}
+			{{ meta_tags_code }}
+	    {% endblock %}
+
+		{% block favicons %}
+		    <link rel="icon" href="{{brand_favicon}}" sizes="32x32">
+		{% endblock %}
+
+	  	<!-- CSS  -->
+	  	{% block stylesheets %}
+	  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
+		    <link href="/{{theme}}/materialize/css/style.css?v=25" type="text/css" rel="stylesheet" media="screen,projection">
+		    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css">
+		    <style type="text/css">		    	
+	    		.toast {background-color: white!important;}
+	    		.toast-success{ color: #00464F!important; line-height: 18px;}
+	    		.toast-danger{ color: #CE1212!important; line-height: 18px;}
+	    		.toast-warning{ color: #CEB029!important; line-height: 18px;}
+	    		.toast-info{ color: #2095CB!important; line-height: 18px;}
+	    		@-webkit-keyframes pulsate {
+				    0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+				    50% {opacity: 1.0;}
+				    100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+				}
+
+				.icon-block {
+				  padding: 0 15px;
+				}
+				.icon-block .material-icons {
+				  font-size: inherit;
+				}
+				ul li{
+					font-family: roboto-thin!important;
+				}
+				.g-recaptcha{
+					  margin-left: 23%;
+  					  -webkit-transform: scale(0.8);
+  					  transform: scale(0.8);
+				}
+				html, body { height: 100%; margin: 0; padding: 0; }
+				#map {height: 95%}
+				.spacer{margin-bottom: 35px;}
+
+				/*BRANDING*/
+				.brand-color{
+					background-color: {{brand_color}}!important;
+				}
+				.brand-color-text{
+					color:{{brand_color}}!important;
+				}
+				.brand-secondary-color{
+					background-color: {{brand_secondary_color}}!important;
+				}
+				.brand-secondary-color-text{
+					color:{{brand_secondary_color}}!important;
+				}
+				.brand-tertiary-color{
+					background-color: {{brand_tertiary_color}}!important;
+				}
+				.brand-tertiary-color-text{
+					color:{{brand_tertiary_color}}!important;
+				}
+				.btn{
+					background-color: {{brand_color}};
+				}
+				.btn:hover{
+					background-color: {{brand_secondary_color}}!important;
+				}
+				.btn-large{
+					background-color: {{brand_color}};
+				}
+				.btn-large:hover{
+					background-color: {{brand_secondary_color}}!important;
+				}
+				.btn-floating{
+					background-color: {{brand_color}};
+				}
+				.btn-floating:hover{
+					background-color: {{brand_secondary_color}}!important;
+				}
+				#loader {
+				  border-top-color: {{brand_color}}!important;
+				}
+				#loader:before {
+				  border-top-color: {{brand_secondary_color}}!important;
+				}
+				#loader:after {
+				  border-top-color: {{brand_tertiary_color}}!important;
+				}
+
+	    	</style>
+		    {% block page_css %}
+			<style>
+
+				.slider .slides li img {
+				    height: 120%!important;
+				    width: 120%!important;
+				}
+				
+				.slider .indicators{
+					display: none!important;
+				}
+				.plans-container .collection {
+                  border: none;
+                }
+                
+                .plans-container .collection .collection-item {
+                  border-bottom: none;
+                  text-align: center;
+                  font-size: 1.07rem;
+                  line-height: 1.6em;
+                }
+                
+                .plans-container .collection .collection-item:before {
+                  font-size: 1.28rem;
+                  line-height: 1.6em;
+                  color: #009315;
+                  speak: none;
+                  font-style: normal;
+                  font-weight: normal;
+                  font-variant: normal;
+                  text-transform: none;
+                  -webkit-font-smoothing: antialiased;
+                  content: "\e623";
+                  margin-right: 10px;
+                }
+                
+                .plans-container .card .card-image {
+                  position: relative;
+                  width: 100%;
+                }
+                
+                .plans-container .card .card-image .card-title {
+                  position: relative;
+                  font-size: 1.28rem;
+                  line-height: 1.6em;
+                  text-align: center;
+                  width: 100%;
+                  padding: 10px 15px;
+                  text-transform: uppercase;
+                  background: rgba(0, 0, 0, 0.1);
+                }
+                
+                .plans-container .card .card-image .price {
+                  position: relative;
+                  font-size: 4rem;
+                  line-height: 1.6em;
+                  color: #fff;
+                  font-weight: 300;
+                  text-align: center;
+                }
+                
+                .plans-container .card .card-image .price-desc {
+                  text-align: center;
+                  color: #fff;
+                  padding-bottom: 10px;
+                }
+                
+                .plans-container .card .card-content {
+                  padding: 0;
+                }
+
+                .hoverable:hover{
+                	box-shadow: #A9A6A6 0px 8px 23px 6px;
+                	transition: all .3s ease-out;
+                }
+
+                .hoverable{
+                	transition: all .3s ease-out;
+				}
+			</style>
+		    {% endblock %}
+		{% endblock %}
+		
+		<!-- All google, mixpanel and analytics tags from config files. -->
+		{% block analytics %}
+			{{ google_analytics_code }}
+		{% endblock %}
+	    
+	    <!-- All JavaScript at the bottom, except these. -->
+		{% block priority_js %}
+			<script type="text/javascript" src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>	
+    		<script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
+   		 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
+		{% endblock %}
+
+		<!--  POLYMER   -->
+		{% block webcomponents %}
+			{% block page_components %}{% endblock %}
+		{% endblock %} 
+
+	</head>
+{% endblock %}
+
+{% block document_body %}
+	<body>
+
+		{% block navbar %}
+			<!-- START NAVBAR -->
+			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-2">
+				<div class="nav-wrapper" style="background:white;">
+				  <a href="{{uri_for("landing")}}" class="brand-logo"><img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:60px; {% endif %}"></a>
+				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert brand-color-text"></i></a>
+				  <ul id="nav-mobile" class="right hide-on-med-and-down">
+				    {% if not user_id %}
+				    <li id="nav-map"><a href="{{ uri_for('landing-map') }}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
+				    <li id="nav-indicadores"><a href="#indicadores" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Indicadores</a></li>
+				    <li id="nav-informes"><a href="#informes" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Cómo funciona</a></li>
+				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Ingresar</a></li>
+				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn brand-color" style="color:white; margin-left: 20px;margin-right: 20px;">Crear Cuenta</a></li>
+				    {% else %}
+				    {% if user_is_callcenter %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% elif user_is_secretary %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% elif user_is_agent %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% elif user_is_operator %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% endif %}
+				    <li id="nav-report"><a href="{{uri_for("landing-map")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>				    
+				    <li id="nav-indicadores"><a href="#indicadores" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Indicadores</a></li>
+				    <li id="nav-informes"><a href="#informes" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Cómo funciona</a></li>
+				    <li id="nav-report-new"><a href="{{uri_for("materialize-report-new")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
+				    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+		                  <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-reports") }}">Mis reportes</a>
+	                        </li>
+	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
+	                        </li>
+	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
+	                        </li>
+	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
+	                        </li>
+		            </ul>
+				    <li class="nav-user">
+                        	{% if has_picture %}
+								<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+										<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
+										<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+		                        </a>
+							{% else %}
+								<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+										<div style="position: absolute;left: 0px;">
+											<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
+										</div>
+										<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+		                        </a>
+							{% endif %}
+                     </li>	
+				    {% endif %}
+
+				  </ul>
+				  <ul class="side-nav hide-on-large-only" id="mobile-demo">
+				    {% if not user_id %}
+				    <li id="nav-map"><a href="{{ uri_for('landing-map') }}" class="menu-item">Mapa</a></li>
+				    <li id="nav-indicadores"><a href="#indicadores" class="menu-item">Indicadores</a></li>
+				    <li id="nav-informes"><a href="#informes" class="menu-item">Cómo funciona</a></li>
+				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingresar</a></li>
+				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white-text brand-color">Crear Cuenta</a></li>
+				    {% else %}
+				    {% if user_is_callcenter %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% elif user_is_secretary %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% elif user_is_agent %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% elif user_is_operator %}
+			    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					{% endif %}
+				    <li id="nav-report"><a href="{{uri_for("landing-map")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
+				    <li id="nav-indicadores"><a href="#indicadores" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Indicadores</a></li>
+				    <li id="nav-informes"><a href="#informes" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Cómo funciona</a></li>
+				    <li id="nav-report-new"><a href="{{uri_for("materialize-report-new")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
+				    <li class="no-padding">
+                        <ul class="collapsible collapsible-accordion">
+                            <li class="bold">
+                            	<a class="collapsible-header waves-effect waves-cyan">
+						    	{% if has_picture %}
+									<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:45px">
+								{% else %}
+		                        	<span class="circle red lighten-1" style="width: 45px;   height: 45px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; margin-top: 10px;margin-left: 10px;">{{ name_i }}</span>
+								{% endif %}
+									<i class="material-icons right" style="line-height: 1.25;margin-left: -38px; font-size:50px;">arrow_drop_down</i>
+                            	<div class="collapsible-body">
+                                    <ul>
+									  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
+				                      <li><a href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a></li>
+				                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
+				                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                     </li>
+				     <li class="divider"></li>
+				    {% endif %}
+				  </ul>
+				</div>
+			</nav>
+			<!-- END NAVBAR -->
+		{% endblock %}
+
+		{% block header_content %}
+			<div class="parallax-container z-depth-3" style="height:585px!important;">
+				<div class="section no-pad-bot">
+				  <div class="container">
+				    <br><br><br>
+				    <br>
+				    <div class="row center">
+				      <div class="col s12 m12 l6 offset-l1" style="padding: 40px;">
+				      	  <h3 class="header col s12 white-text" style="font-family:Novecentowide-Bold;text-align: left">{{app_name}}</h3>
+						  {% if not is_mobile %}<h6 class="col s12 center flow-text white-text" style="line-height: 32px;text-align: left;margin: 35px 2px;">Usa la plataforma para reportar las necesidades de {{city_name}}. Asimismo, podrás mandar peticiones, sugerencias o solicitudes a tu alcalde.</h6>{% endif %}
+						  {% if not user_id %}
+	                      <a style="margin-bottom:30px;" href="#modal2" class="left modal-trigger menu-item  waves-effect waves-light brand-secondary-color white-text btn-large">Regístrate gratis</a>
+	                      {% else %}
+                  		  <a style="margin-bottom:30px;" href="{{uri_for("materialize-report-new")}}" class="left menu-item  waves-effect waves-light brand-secondary-color white-text btn-large ">Reportar</a>
+						  {% endif %}
+						  <p class="right valign-wrapper grey-text hide-on-med-and-down">Conoce el funcionamiento de la plataforma <i class="mdi-navigation-arrow-forward brand-secondary-color-text"></i></p>
+				      </div>
+				      <div class="col l5 hide-on-med-and-down" style="height:585px;margin-top:-22px;">
+				      	<div class="slider" style="margin-left: -25%; margin-top: -125px;">
+			                  <ul class="slides" style="background-color:transparent;    height: 610px;">
+									<li>
+					                  	<img class="img-responsive z-depth-2" src="/{{theme}}/materialize/images/landing/step1.png?v=25" alt="office">
+					                </li>
+					                <li>
+					                  <img class="img-responsive z-depth-2"  src="/{{theme}}/materialize/images/landing/step2.png?v=25" alt="office">
+					                </li>
+					                <li>
+					                  <img class="img-responsive z-depth-2"  src="/{{theme}}/materialize/images/landing/step3.png?v=25" alt="office">
+					                </li>
+					                <li>
+					                  <img class="img-responsive z-depth-2"  src="/{{theme}}/materialize/images/landing/step4.png?v=25" alt="office">
+					                </li>
+			                  </ul>
+			              </div>
+				      </div>
+				    </div>
+				    <br>
+				    <br>
+				  </div>
+				</div>
+				<div class="parallax"><img src="/{{theme}}/materialize/images/landing/landingredesign.png?v=1" alt="Unsplashed background img 1" style="display: block; -webkit-filter: brightness(60%);"></div>
+			</div>
+		{% endblock %}
+
+		{% block body_content %}
+			<div id="indicadores" class="container">
+				<section class="plans-container row" id="plans" style="margin-top: 60px;margin-bottom: 60px;">
+				{% if not is_mobile %}<div class="row center"><h4 class="grey-text col s12 m6 offset-m3" style="font-family: Roboto-thin;">Se parte de quienes transforman <span style="font-family: roboto-black;" class="text-darken-4">{{city_name}}</span> en la ciudad que todos queremos</h4></div>{% endif %}
+				<div class="col s12 m10 offset-m1">
+	                <article class="col s12 m4">
+	                  <div class="card hoverable">
+	                    <div class="card-image waves-effect brand-color">
+	                      <div class="card-title"><i class="mdi-social-people" style="font-size: 3rem;"></i></div>
+	                      <div class="price" id="total_users"></div>
+	                      <div class="price-desc">Total de usuarios registrados</div>
+	                    </div>
+	                    <div class="card-content">
+	                      
+	                    </div>
+	                    
+	                  </div>
+	                </article>
+	                <article class="col s12 m4">
+	                  <div class="card z-depth-1 hoverable">
+	                    <div class="card-image brand-secondary-color waves-effect">
+	                      <div class="card-title"><i class="mdi-action-assignment" style="font-size: 3rem;"></i></div>
+	                      <div class="price" id="total_rep"></div>
+	                      <div class="price-desc">Total de reportes recibidos</div>
+	                    </div>
+	                    <div class="card-content">
+	                      
+	                    </div>
+	                    
+	                  </div>
+	                </article>
+	                <article class="col s12 m4">
+	                  <div class="card hoverable">
+	                    <div class="card-image waves-effect green">
+	                      <div class="card-title"><i class="mdi-action-assignment-turned-in" style="font-size: 3rem;"></i></div>
+	                      <div class="price" id="done_rep"></div>
+	                      <div class="price-desc">Total de reportes resueltos y en proceso</div>
+	                    </div>
+	                    <div class="card-content">
+	                      
+	                    </div>
+	                    
+	                  </div>
+	                </article>
+	            </div>
+	            <div class="row center"><p class="col s12 grey-text" style="font-family: roboto-light;">Reportes resueltos de las categorías más populares.</p></div>
+	            <div class="col s12 m10 offset-m1">
+	                <article class="col s12 m4">
+	                  <div class="card hoverable">
+	                    <div class="card-image waves-effect">
+	                      <div class="card-title brand-color"><i class="mdi-image-wb-incandescent" style="font-size: 3rem;"></i></div>
+	                      <div class="price brand-color-text" id="total_cat_1"></div>
+	                      <div class="price-desc brand-color-text"  id="cat_1"></div>
+	                    </div>
+	                    <div class="card-content">
+	                    
+	                    </div>
+	                    
+	                  </div>
+	                </article>
+	                <article class="col s12 m4">
+	                  <div class="card z-depth-1 hoverable">
+	                    <div class="card-image waves-effect">
+	                      <div class="card-title brand-secondary-color" ><i class="mdi-maps-directions-car" style="font-size: 3rem;"></i></div>
+	                      <div class="price brand-secondary-color-text" id="total_cat_2"></div>
+	                      <div class="price-desc brand-secondary-color-text" id="cat_2"></div>
+	                    </div>
+	                    <div class="card-content">
+	                      
+	                    </div>
+	                    
+	                  </div>
+	                </article>
+	                <article class="col s12 m4">
+	                  <div class="card hoverable">
+	                    <div class="card-image waves-effect">
+	                      <div class="card-title green"><i class="mdi-image-nature-people" style="font-size: 3rem;"></i></div>
+	                      <div class="price green-text" id="total_cat_3"></div>
+	                      <div class="price-desc green-text" id="cat_3"></div>
+	                    </div>
+	                    <div class="card-content">
+	                      
+	                    </div>
+	                    
+	                  </div>
+	                </article>
+	            </div>
+                </section>
+			</div>
+
+			<div class="parallax-container center valign-wrapper">
+			    <div class="section no-pad-bot" style="padding-top: 0px;">
+			      <div class="container center valign-wrapper">
+						<div class="row center valign-wrapper">
+							<div class="col s12 l5 offset-m1 hide-on-med-and-down" style="    margin-top: 25px;">
+								<div class="box">
+									<img src="/{{theme}}/materialize/images/landing/landingsmartphone.png">	
+								</div>
+							</div>	
+							<div class="col s12 l5">
+								<div class="box">
+									<h4 class="white-text " style="font-weight: 400; font-family: roboto; text-align:left;">Ahora puedes seguir tus <b>reportes</b>, <b>comentar</b> y <b>reportar</b> incidencias desde tu móvil.</h4>
+								</div>
+							</div>
+						</div>
+			      </div>
+			    </div>
+			    <div class="parallax"><img src="/{{theme}}/materialize/images/landing/bg1.jpg"></div>
+			</div>
+
+			<div id="informes" class="container">
+				<div class="section" style="margin-top: 60px;margin-bottom: 60px;">
+
+				  <div class="row">
+				  	<div class="col s12 m6 l4 offset-l2">
+				  		<h4 class="grey-text"><img style="max-width:70%;" class="responsive-img" src="/{{theme}}/materialize/images/landing/voluntad.png"></h4>
+						<div class="col s12" {% if is_mobile %}style="margin-bottom: 22px;"{% endif %}>
+							<p class=" light" style="font-size: 18px;text-align: justify;">A través de {{app_name}}, puedes contribuir para transformar nuestra ciudad. Reporta, participa y entérate de las necesidades que tenemos en nuestra comunidad. Con tu ayuda podremos ser más eficientes y lograr la transformación que {{city_name}} necesita.</p>
+							<a href="{{video_playlist}}" target="_blank" class="waves-effect waves-light brand-color white-text btn-large">Ver otros videos</a>
+						</div>
+				  	</div>
+
+				  	<div class="col s12 m6 l4 offset-l1" {% if not is_mobile %}style="margin-top: 50px;"{% endif %}>
+				  		<div class="videoWrapper z-depth-1">
+						    <!-- Copy & Pasted from YouTube -->
+						    <iframe width="560" height="315" src="{{video_url}}" frameborder="0" allowfullscreen></iframe>
+						</div>
+				  	</div>
+				    
+				  </div>
+				</div>
+			</div>
+
+			<div class="parallax-container" style="margin-bottom:-20px;">
+			    <div class="section no-pad-bot" style="padding-top: 0px;">
+			      <div class="container">
+						<div class="row center valign-wrapper">
+							<div class="col s12 m4 offset-m7" style="background: rgba(0, 0, 0, 0.63); border-radius: 2px;">
+								<div class="box">
+									<h3 class="white-text " style="font-weight: 400; font-family: Roboto-black; text-align:left;">Miles de casos atendidos cada mes.</h3>
+									<h5 class="grey-text text-lighten-2" style="font-weight: 400; font-family: Roboto; text-align:left;">Todos para que vivas mejor.</h5>
+				      	  			{% if not user_id %}
+									<a style="margin-bottom:30px;" href="#modal2" class="modal-trigger menu-item left waves-effect waves-light brand-secondary-color white-text btn-large">Regístrate gratis</a>
+									{% else %}
+	                      			<a style="margin-bottom:30px;" href="{{uri_for("materialize-report-new")}}" class="menu-item  waves-effect waves-light brand-secondary-color white-text btn-large ">Reportar</a>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+			      </div>
+			    </div>
+			    <div class="parallax"><img src="/{{theme}}/materialize/images/landing/bg2.jpg"></div>
+			</div>
+		{% endblock %}
+
+		{% block modals_content %}
+			<div id="modal1" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
+		      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+		      <div class="modal-content">
+	        	<form id="form_login_user" action="/login/" method="post">
+		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+			        <div class="row">
+			          <div class="input-field col s12 center">
+			            <p class="center login-form-text">Usa tu correo y contraseña para ingresar</p>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-social-person-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="login_email" name="email" type="email" class="validate">
+			            <label for="email" class="center-align">Correo</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="login_password" name="password" type="password">
+			            <label for="password">Contraseña</label>
+			          </div>
+			        </div>
+			        <div class="row">          
+			          <div class="input-field col s12 m12 l12  login-text" style="display:none;">
+			              <input id="login_remember-me" name="remember_me" type="checkbox" />
+			              <label for="remember-me">Recordarme</label>
+			          </div>
+			        </div>
+			        <div class="row">
+			          <div class="input-field col s12">
+			            <a class="btn-large waves-effect waves-light col s12 brand-color white-text" style="cursor:pointer;" onclick="sendForm('form_login_user')">Ingresar</a>
+			          </div>
+			        </div>
+			        <div class="row">
+			        	<!-- <p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("faq")}}">Preguntas frecuentes</a></p> -->
+				        <p class="margin right-align medium-small right"><a target="_blank" href="{{ uri_for("password-reset") }}">¿Olvidaste tu contraseña?</a></p>
+			        </div>
+			      </form>
+		      </div>
+		    </div>
+		    <div id="modal2" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px; max-height:80%;">
+		      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+		      <div class="modal-content">
+	        	<form id="form_register_user" action="/register/" method="post">
+		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+			        <div class="row">
+			          <div class="input-field col s12 center">
+			            <p class="center login-form-text">¡Únete a la comunidad que transforma {{city_name}}!</p>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-social-person-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="register_name" name="name" type="text">
+			            <label for="name" class="center-align">Nombre</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-communication-email prefix brand-color-text brand-color-text"></i>
+			            <input id="register_email" name="email" type="email" class="validate">
+			            <label for="email" class="center-align">Correo</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			            <i class="mdi-action-lock-outline prefix brand-color-text brand-color-text"></i>
+			            <input id="register_password" name="password" type="password">
+			            <label for="password">Contraseña</label>
+			          </div>
+			        </div>
+			        <div class="row margin">
+			          <div class="input-field col s12">
+			        	{{captchahtml | safe}}
+			          </div>
+			        </div>
+			        <div class="row">
+			          <div class="input-field col s12">
+			            <a class="btn-large waves-effect waves-light col s12 brand-color white-text" style="cursor:pointer;" onclick="sendForm('form_register_user')">Registrarme</a>
+			          </div>
+			        </div>
+			        <div class="row">
+			        	<p class="margin right-align medium-small left"><a target="_blank" href="{{uri_for("login")}}">¿Ya tienes cuenta?</a></p>
+				        <p class="margin right-align medium-small right"><a target="_blank" href="{{uri_for("privacy")}}">Aviso de privacidad</a></p>
+			        </div>
+			      </form>
+		      </div>
+		    </div>
+            <style>
+				.videoWrapper {
+					position: relative;
+					padding-bottom: 56.25%; 
+					padding-top: 25px;
+					height: 0;
+				}
+				.videoWrapper iframe {
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+				}
+			</style>
+		{% endblock %}
+
+		{% block footer %}
+			{% block footer_content %}
+			{% endblock %}
+
+			<!-- START FOOTER -->
+			<footer class="page-footer brand-color darken-1" style="padding-left: 40px;">
+				<a href="#"><i class="mdi-navigation-expand-less white-text right" style="padding: 10px;"></i></a>
+				<div class="container">
+				  <div class="row">
+				    <div class="col s12 m9">
+				      <h5 class="white-text">Acerca de</h5>
+				      <p class="grey-text text-lighten-4" style="    margin-top: 3%;">
+				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.
+				      </p>
+				    </div>
+				    <div class="col s12 m2 offset-m1" style="margin-top:12px;">
+				      <ul>
+				        <!-- <li><a class="white-text" href="{{uri_for("faq")}}">Preguntas frecuentes</a></li> -->
+				        <!-- <li><a class="white-text" href="{{uri_for("tou")}}">Términos de uso</a></li> -->
+				        <li><a class="white-text" href="{{uri_for("privacy")}}">Aviso de privacidad</a></li>
+				        <!-- <li><a class="white-text" href="{{uri_for("contact")}}">Contacto</a></li> -->
+				        <li><a class="white-text" href="{{city_url}}">Gobierno de {{city_name}}</a></li>
+				      </ul>
+				    </div>
+				  </div>
+				</div>
+				<div class="footer-copyright " style="text-align:right;">
+				  <div class="container">
+				  	© 2015 Gobierno de {{city_name}}.
+				  </div>
+				</div>
+			</footer>
+			<!-- END FOOTER -->
+		{% endblock %}
+
+	  	<!-- All Scripts start here -->
+		{% block scripts %}
+			<!-- jQuery Library -->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
+		    <!--materialize js-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+		    <!--scrollbar-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js?v=25"></script>
+		  	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.color-2.1.0.js"></script>
+            <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+			<script src="http://mboilerplate.appspot.com/default/materialize/js/plugins/jquery/countUp.js"></script>
+		  	<!-- Toast Notification -->
+		    {% if messages|safe %}		    	
+			    {% for message in messages %}
+		    		<script type="text/javascript">
+		            	var resendIndex = 0 ;
+		            	var _text = "{{ message[0]|safe }}";
+		            	var _textAdditionals = "";
+						resendIndex = _text.search('resend');
+						if ( resendIndex > 0 ){
+							//this is the case when resend-activation-link is sent
+							// 1: Add this text as html to toast additionals
+							_textAdditionals = '<a class="toast-warning" href="/'+_text.substr(resendIndex).replace(/ /g,'/')+'/">Clic here if you need us to resend activation link. Previous link will be forgotten.</a>';
+							// 2: Trim this text from toast
+							_text = _text.substr(0, resendIndex-1);							
+						}
+						var _msg = '<span class="toast-{{ message[1]|safe }}">'+_text+'</span>';
+		            	Materialize.toast(_msg, 4500);
+		            	if (_textAdditionals != "") Materialize.toast(_textAdditionals, 10000);
+		            </script>
+			    {% endfor %}
+			{% endif %}	
+
+            {%if not is_mobile and path == uri_for('landing') %}
+	            {% block raptor %}
+				<script src="https://hammerjs.github.io/dist/hammer.js"></script>
+				<script src="/{{ theme }}/materialize/js/plugins/raptor/raptor.js?v=5"></script>
+				<script type="text/javascript">
+					$(window).load(function() {
+						$('body').raptorize({
+							'enterOn' : 'konami-code'
+						});
+					});
+				</script>
+                {% endblock %}
+	        {%endif%}
+	        
+	        {% block onload_methods %}
+				<script type="text/javascript">
+	    			var is_Safari = false, not_Chrome = false;
+					$(function(){						
+
+						$('a[href*=#]:not([href=#])').click(function() {
+						    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+						      var target = $(this.hash);
+						      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+						      if (target.length) {
+						        $('html,body').animate({
+						          scrollTop: target.offset().top
+						        }, 2000);
+						        return false;
+						      }
+						    }
+						});
+					    $('.button-collapse').sideNav({
+					      edge: 'right'
+					    });
+						$('.modal-trigger').leanModal();
+						$('.tooltipped').tooltip({delay: 50});
+					    $('.parallax').parallax();
+						$(".menu-item").click(function(){
+							$('.button-collapse').sideNav('hide');
+						});
+
+						var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+	                	var city_table_name = '{{cartodb_reports_table}}';
+	                    var q= "SELECT count(*) FROM " + city_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false";	
+	                    var options = {
+						  useEasing : true, 
+						  useGrouping : true, 
+						  separator : ',', 
+						  decimal : '.', 
+						  prefix : '', 
+						  suffix : '' 
+						};    
+						var _demo = new CountUp("total_users", 0, {{total_users}}, 0, 4, options);
+						_demo.start();
+	                    city_sql.execute(q).done(function(data) {
+					        console.log(data)
+					        var total_rep = data.rows[0].count;
+					        var demo = new CountUp("total_rep", 0, total_rep, 0, 4, options);
+							demo.start();
+					    });
+	                    q= "SELECT count(*) FROM " + city_table_name + "  WHERE status in ('solved','working','halted','answered') AND pvt = false";	    
+	                    city_sql.execute(q).done(function(data) {
+					        console.log(data)
+					        var done_rep = data.rows[0].count;
+					        var demo = new CountUp("done_rep", 0, done_rep, 0, 4, options);
+							demo.start();
+					    });
+						
+                        var cats = ['Luminaria','Bache','Parque'];
+						    q = "SELECT count(*) FROM  " + city_table_name + "  WHERE (sub_category ilike '%"+cats[0]+"%' or group_category ilike '%"+cats[0]+"%') and status in ('solved')";
+    						city_sql.execute(q).done(function(data) {
+    						    console.log(data)
+    						        document.getElementById("cat_1").innerHTML = cats[0]+'s';
+		                            var demo =  new CountUp("total_cat_1", 0, data.rows[0].count, 0, 4, options);
+		                            demo.start();
+    						});
+										
+						    q = "SELECT count(*) FROM  " + city_table_name + "  WHERE (sub_category ilike '%"+cats[1]+"%' or group_category ilike '%"+cats[1]+"%') and status in ('solved')";
+    						city_sql.execute(q).done(function(data) {
+    						    console.log(data)
+    						        document.getElementById("cat_2").innerHTML = cats[1]+'s';
+		                            var demo =  new CountUp("total_cat_2", 0, data.rows[0].count, 0, 4, options);
+		                            demo.start();
+    						});
+						    q = "SELECT count(*) FROM  " + city_table_name + "  WHERE (sub_category ilike '%"+cats[2]+"%' or group_category ilike '%"+cats[2]+"%') and status in ('solved')";
+    						city_sql.execute(q).done(function(data) {
+    						    console.log(data)
+    						        document.getElementById("cat_3").innerHTML = cats[2]+'s';
+		                            var demo =  new CountUp("total_cat_3", 0, data.rows[0].count, 0, 4, options);
+		                            demo.start();
+    						});
+						
+
+						var BrowserDetect = {
+							init: function() {
+								this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+								this.version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion) || "an unknown version";
+								this.OS = this.searchString(this.dataOS) || "an unknown OS";
+								console.log("Detected " + this.browser + " v." + this.version + " running {{app_name}} in a " + this.OS);
+								if (this.browser != 'Chrome' && this.browser.indexOf('Safari') == -1 && this.browser.indexOf('iPhone') == -1 && this.browser != 'Firefox') {
+									alert("Lo sentimos, esta plataforma está diseñada para navegadores distintos al tuyo..");
+								}
+								else if (this.browser.indexOf("Safari") != -1)
+									is_Safari = true;
+								else if (this.browser.indexOf("Chrome") == -1)
+									not_Chrome = true;
+							},
+							searchString: function(data) {
+								for (var i = 0; i < data.length; i++) {
+									var dataString = data[i].string;
+									var dataProp = data[i].prop;
+									this.versionSearchString = data[i].versionSearch || data[i].identity;
+									if (dataString) {
+										if (dataString.indexOf(data[i].subString) != -1) return data[i].identity;
+									} else if (dataProp) return data[i].identity;
+								}
+							},
+							searchVersion: function(dataString) {
+								var index = dataString.indexOf(this.versionSearchString);
+								if (index == -1) return;
+								return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+							},
+							dataBrowser: [{
+								string: navigator.userAgent,
+								subString: "Chrome",
+								identity: "Chrome"
+							}, {
+								string: navigator.userAgent,
+								subString: "OmniWeb",
+								versionSearch: "OmniWeb/",
+								identity: "OmniWeb"
+							}, {
+								string: navigator.vendor,
+								subString: "Apple",
+								identity: "Safari",
+								versionSearch: "Version"
+							}, {
+								prop: window.opera,
+								identity: "Opera",
+								versionSearch: "Version"
+							}, {
+								string: navigator.vendor,
+								subString: "iCab",
+								identity: "iCab"
+							}, {
+								string: navigator.vendor,
+								subString: "KDE",
+								identity: "Konqueror"
+							}, {
+								string: navigator.userAgent,
+								subString: "Firefox",
+								identity: "Firefox"
+							}, {
+								string: navigator.vendor,
+								subString: "Camino",
+								identity: "Camino"
+							}, { // for newer Netscapes (6+)
+								string: navigator.userAgent,
+								subString: "Netscape",
+								identity: "Netscape"
+							}, {
+								string: navigator.userAgent,
+								subString: "MSIE",
+								identity: "Explorer",
+								versionSearch: "MSIE"
+							}, {
+								string: navigator.userAgent,
+								subString: "Gecko",
+								identity: "Mozilla",
+								versionSearch: "rv"
+							}, { // for older Netscapes (4-)
+								string: navigator.userAgent,
+								subString: "Mozilla",
+								identity: "Netscape",
+								versionSearch: "Mozilla"
+							}],
+							dataOS: [{
+								string: navigator.platform,
+								subString: "Win",
+								identity: "Windows"
+							}, {
+								string: navigator.platform,
+								subString: "Mac",
+								identity: "Mac"
+							}, {
+								string: navigator.userAgent,
+								subString: "iPhone",
+								identity: "iPhone/iPod"
+							}, {
+								string: navigator.platform,
+								subString: "Linux",
+								identity: "Linux"
+							}]
+						};
+						BrowserDetect.init();
+
+						{% if user_is_secretary %}
+						 console.log("he's a secretary!!")
+						{% else %}
+						 console.log("he's not a secretary!!")
+						{% endif %}
+						{% if user_is_agent %}
+						 console.log("he's an agent!!")
+						{% else %}
+						 console.log("he's not an agent!!")
+						{% endif %}
+						{% if user_is_operator %}
+						 console.log("he's an operator!!")
+						{% else %}
+						 console.log("he's not an operator!!")
+						{% endif %}
+						{% if user_is_callcenter %}
+						 console.log("he's from callcenter!!")
+						{% else %}
+						 console.log("he's not from callcenter!!")
+						{% endif %}
+
+					}); 
+
+					function sendForm(formID){
+			    		if (formID == "form_login_user"){
+			    			if (document.getElementById('login_email').value != "" && document.getElementById('login_password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_login"){
+			    			if (document.getElementById('email').value != "" && document.getElementById('password') != ""){
+			    				document.getElementById(formID).submit();
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_register_user"){
+			    			if (document.getElementById('register_name').value != "" && document.getElementById('register_email').value != "" && document.getElementById('register_password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('register_password').value) == document.getElementById('register_password').value && cleanUpMailSpecialChars(document.getElementById('register_email').value) == document.getElementById('register_email').value)
+			    					document.getElementById(formID).submit();
+			    				else
+			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}else if (formID == "form_register"){
+			    			if (document.getElementById('r_name').value != "" && document.getElementById('r_email').value != "" && document.getElementById('r_password').value != ""){
+			    				if (cleanUpSpecialChars(document.getElementById('r_password').value) == document.getElementById('r_password').value && cleanUpMailSpecialChars(document.getElementById('r_email').value) == document.getElementById('r_email').value)
+			    					document.getElementById(formID).submit();
+			    				else
+			    					Materialize.toast('<span class="toast-warning">Oops! Por favor evita caracteres especiales en email y contraseña</span>',4500);
+
+			    			}else{
+			    				Materialize.toast('<span class="toast-warning">Oops! ¿ Te faltó algún campo ?</span>',4500);
+			    			}
+			    		}
+
+					}
+
+					function cleanUpSpecialChars(str){
+						str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+						str = str.replace(/[àáâãäå]/g,"a");
+						str = str.replace(/[ÈÉÊË]/g,"E");
+						str = str.replace(/[éèëê]/g,"e");
+						str = str.replace(/[ÍÌÎÏ]/g,"I");
+						str = str.replace(/[íîïì]/g,"i");
+						str = str.replace(/[ÓÖÒÔ]/g,"O");
+						str = str.replace(/[óòôö]/g,"o");
+						str = str.replace(/[ÚÜÛÙ]/g,"U");
+						str = str.replace(/[úùûü]/g,"u");
+						str = str.replace(/[Ñ]/g,"N");
+						str = str.replace(/[ñ]/g,"n");
+						str = str.replace(/[Ç]/g,"C");
+						str = str.replace(/[ç]/g,"c");
+						return str.replace(/[^a-zA-Z0-9 ]/g, "");
+					}
+					function cleanUpMailSpecialChars(str){
+						str = str.replace(/[ÀÁÂÃÄÅ]/g,"A");
+						str = str.replace(/[àáâãäå]/g,"a");
+						str = str.replace(/[ÈÉÊË]/g,"E");
+						str = str.replace(/[éèëê]/g,"e");
+						str = str.replace(/[ÍÌÎÏ]/g,"I");
+						str = str.replace(/[íîïì]/g,"i");
+						str = str.replace(/[ÓÖÒÔ]/g,"O");
+						str = str.replace(/[óòôö]/g,"o");
+						str = str.replace(/[ÚÜÛÙ]/g,"U");
+						str = str.replace(/[úùûü]/g,"u");
+						str = str.replace(/[Ñ]/g,"N");
+						str = str.replace(/[ñ]/g,"n");
+						str = str.replace(/[Ç]/g,"C");
+						str = str.replace(/[ç]/g,"c");
+						return str;
+					}
+				</script>
+			{% endblock %}
+
+			{% if locale_language_id != "en" %}
+				{% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
+					<script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
+				{% else %}
+					<script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
+				{% endif %}
+			{% endif %}
+
+			{% block page_scripts %}
+			{% endblock %}			
+		{% endblock %}
+
+	</body>        
+{% endblock %}
+</html>

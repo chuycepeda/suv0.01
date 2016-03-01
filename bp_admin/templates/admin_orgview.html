@@ -307,7 +307,7 @@
             var qs, _i;
             for (var i=0, j=resDict.length; i <j; i++){
                 _i = i;
-                qs = "http://gpegobmx.cartodb.com/api/v2/sql?q=SELECT count(*) FROM public_reports where group_category ilike '"+resDict[i].group_cat+"' and status in ('halted', 'answered', 'assigned', 'working')";            
+                qs = "http://{{cartodb_user}}.cartodb.com/api/v2/sql?q=SELECT count(*) FROM {{cartodb_reports_table}} where group_category ilike '"+resDict[i].group_cat+"' and status in ('halted', 'answered', 'assigned', 'working')";            
                 $.ajax({
                     url: qs,
                     async: false,
@@ -317,7 +317,7 @@
                         }
                     }
                 });
-                qs = "http://gpegobmx.cartodb.com/api/v2/sql?q=SELECT count(*) FROM public_reports where group_category ilike '"+resDict[i].group_cat+"' and status not in ('halted', 'answered', 'assigned', 'working')";            
+                qs = "http://{{cartodb_user}}.cartodb.com/api/v2/sql?q=SELECT count(*) FROM {{cartodb_reports_table}} where group_category ilike '"+resDict[i].group_cat+"' and status not in ('halted', 'answered', 'assigned', 'working')";            
                 $.ajax({
                     url: qs,
                     async: false,

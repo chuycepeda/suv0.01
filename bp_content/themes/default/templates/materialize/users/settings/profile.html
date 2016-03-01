@@ -34,12 +34,10 @@
 {% endblock %}
 
 {% block header_content %}
-  <div class="parallax-container z-depth-3" style="max-height:200px;overflow:hidden;">
+  <div class="parallax-container z-depth-2" style="max-height:200px;overflow:hidden;">
     <div class="section no-pad-bot">
       <div class="container">
-        <br><br>
-        <h2 class="header center white-text">Configurar mi perfil</h2>        
-        <br><br>
+        <h2 class="header center white-text" style="    margin-top: 85px;">Configurar mi perfil</h2>        
       </div>
     </div>
     <div class="parallax brand-color"></div>
@@ -49,10 +47,10 @@
 {% block body_content %}
 	<div class="section">
 		<div class="container">
-    		<h3 class="col s12 m10 offset-m1 grey-text" style="font-weight: 200">Llena los siguientes datos, con ellos podremos brindarte el seguimiento a tus reportes.</h3>
+    		<h3 class="col s12 m8 offset-m2 grey-text" style="font-weight: 200; padding-bottom: 40px; padding-top: 40px;">Llena los siguientes datos, con ellos podremos brindarte el seguimiento a tus reportes.</h3>
     		<!--breadcrumbs start-->
-    	    <div id="breadcrumbs-wrapper" class=" grey lighten-3">
-    	      <div class="container">
+    	    <div id="breadcrumbs-wrapper" class="">
+    	      <div class="container" style="overflow: hidden;">
     	        <paper-tabs id="scrollableTabs" selected="0" class="brand-color" scrollable style="margin-left: -20px; width: 110%;   margin-top: 5px;">
     	          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')">Perfil</paper-tab>
     	          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-referrals") }}', '_top')">Recomendaciones</paper-tab>
@@ -172,7 +170,7 @@
 	    });
 
 	    /* MAPS RELATED */
-		var mapCenter = [25.683956577519417,-100.20524472216799];
+		var mapCenter = [{{lat}},{{lng}}];
 		var map;
 		var sublayers = [];
 		google.maps.event.addDomListener(window,'load', init);
@@ -190,12 +188,13 @@
 	        
 	    function dropMarker (loc) {	                
 	        if (gmarker == null){
+	        	var color = "{{brand_color}}";
 	            gmarker = new google.maps.Marker({
 	        			animation: google.maps.Animation.DROP,
 	        			position: loc,
 	        			map: map,
 	        			draggable: true,
-	        			icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|4BAF50'
+	        			icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+color.substr(1)
 	            });
 	            google.maps.event.addListener(gmarker,'dragend',function(event) {
 	                    codeAddress(event.latLng);
@@ -318,11 +317,11 @@
 
 	    	// cartodb
 	    	var layerSource = {
-	            user_name: 'cicadmin',
+	            user_name: '{{cartodb_user}}',
 	            type: 'cartodb',
 	            sublayers: [{
-	                sql: "SELECT mun_poly.* FROM mun_poly WHERE mun_poly.name IN ('GPE')",
-	                cartocss: "#mun_poly{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+	                sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+	                cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
 	            }]
 	        };
 	        cartodb.createLayer(map,layerSource)

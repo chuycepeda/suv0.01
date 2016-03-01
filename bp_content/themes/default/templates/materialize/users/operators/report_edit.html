@@ -674,12 +674,14 @@
   </script>
   <script type="text/javascript">
     google.maps.event.addDomListener(window,'load', init);
-    var map, center = [25.683956577519417, -100.20524472216799];
+    var map, center = [{{lat}},{{lng}}];
     var sublayers = [];
     var geocoder = new google.maps.Geocoder();
     var marker = null;
     var markers = [];
     var reportDict;    
+    var marker_color = "{{brand_color}}";
+    var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);    
 
     function getStatus(status){
         //status = (status.innerHTML).trim();
@@ -738,7 +740,7 @@
               position: loc,
               map: map,
               draggable: true,
-              icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|4BAF50'
+              icon: marker_icon
             });
             google.maps.event.addListener(marker,'dragend',function(event) {
                   geocode(event.latLng);
@@ -847,12 +849,12 @@
       map = new google.maps.Map(document.getElementById('map'), mapOptions);
                             
         var layerSource = {
-              user_name: 'gpegobmx',
-              type: 'cartodb',
-              sublayers: [{
-                  sql: "SELECT mun_poly.* FROM mun_poly WHERE mun_poly.name IN ('GPE')",
-                  cartocss: "#mun_poly{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
-              }]
+            user_name: '{{cartodb_user}}',
+            type: 'cartodb',
+            sublayers: [{
+                sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+                cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+            }]
           };
           cartodb.createLayer(map,layerSource)
           .on('done', function(layer) {

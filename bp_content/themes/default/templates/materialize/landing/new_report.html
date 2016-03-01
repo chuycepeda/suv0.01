@@ -152,15 +152,16 @@
 	<script type="text/javascript">
 				
 		google.maps.event.addDomListener(window,'load', init);
-		var map, center = [25.683956577519417, -100.20524472216799];
+		var map, center = [{{lat}},{{lng}}];
 		var sublayers = [];
 		var geocoder = new google.maps.Geocoder();
 	    var marker = null;
 	    var markers = [];
 	    var reportDict;
-	    var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|4BAF50';
-	    var gpe_table_name = 'public_reports';
-		var gpe_sql = new cartodb.SQL({ user: 'gpegobmx' });
+	    var marker_color = "{{brand_color}}";
+	    var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);
+	    var gpe_table_name = '{{cartodb_reports_table}}';
+		var gpe_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
 		var requires_image = false;
 
 	    function markerFitBounds() {
@@ -322,11 +323,11 @@
 			
 				                		
 	    	var layerSource = {
-	            user_name: 'gpegobmx',
+	            user_name: '{{cartodb_user}}',
 	            type: 'cartodb',
 	            sublayers: [{
-	                sql: "SELECT mun_poly.* FROM mun_poly WHERE mun_poly.name IN ('GPE')",
-	                cartocss: "#mun_poly{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+	                sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+	                cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
 	            }]
 	        };
 	        cartodb.createLayer(map,layerSource)

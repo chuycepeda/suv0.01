@@ -87,7 +87,7 @@ class User(User):
 
     def get_image_url(self):
         if self.picture:
-            return "http://gpegobmx.appspot.com/media/serve/profile/%s/" % self._key.id()
+            return "/media/serve/profile/%s/" % self._key.id()
         else:
             return -1
 
@@ -125,13 +125,15 @@ class Report(ndb.Model):
     cdb_id = ndb.IntegerProperty(default = -1)                                                                                      #: ID in CartoDB PostGIS DB
     folio = ndb.StringProperty(default = '-1')                                                                                      #: ID in Government database
     contact_info = ndb.StringProperty()                                                                                             #: User contact information
+    contact_name = ndb.ComputedProperty(lambda self: self.get_contact_name())
+    contact_lastname = ndb.ComputedProperty(lambda self: self.get_contact_lastname())
     user_id = ndb.IntegerProperty(required = True, default = -1)                                                                    #: Reporting user ID
     image_url = ndb.StringProperty()                                                                                                #: Report media 
     group_category = ndb.StringProperty()                                                                                           #: Parent category
     sub_category  = ndb.StringProperty()                                                                                            #: Child category
     follows = ndb.IntegerProperty(default = 0)                                                                                      #: Followers as votes/relevance for this report
     rating = ndb.IntegerProperty(choices = [1,2,3,4,5], default = 3)                                                                #: Report satisfaction
-    via = ndb.StringProperty(choices = ['web','whatsapp','phone','street','networks','office','event','letter'], default = 'web')   #: Report via
+    via = ndb.StringProperty(choices = ['web','whatsapp','phone','street','networks','office','event','letter', 'media'], default = 'web')   #: Report via
     req_deletion = ndb.BooleanProperty(default = False)                                                                             #: Raised flag for user requesting deletion
     emailed_72 = ndb.BooleanProperty(default = False)                                                                               #: Raised flag for detecting if user has been emailed at most 72 hours.
     urgent = ndb.BooleanProperty(default = False)                                                                                   #: Raised flag for urgent reports
@@ -306,6 +308,8 @@ class Report(ndb.Model):
             return 'Evento'
         if self.via == 'letter':
             return 'Oficio'
+        if self.via == 'media':
+            return 'Medios'
 
     def get_group_color(self):
         group = GroupCategory.get_by_name(self.group_category)
@@ -324,12 +328,24 @@ class Report(ndb.Model):
             return log.user_email
             break
         return '---'
-
+    
     def get_contact_info(self):
         if self.contact_info:
             if len(self.contact_info) > 3:
                 return self.contact_info
         return u"%s, %s" % (self.get_user_name(), self.get_user_email())
+
+    def get_contact_name(self):
+        if self.contact_info:
+            if len(self.contact_info.split(',')) > 1:
+                return self.contact_info.split(',')[0].strip()
+        return u"%s" % (self.get_user_name())
+
+    def get_contact_lastname(self):
+        if self.contact_info:
+            if len(self.contact_info.split(',')) > 2:
+                return self.contact_info.split(',')[1].strip()
+        return u"%s" % (self.get_user_lastname())
 
     @classmethod
     def get_by_cdb(cls, cdb_id):
@@ -489,8 +505,8 @@ class GroupCategory(ndb.Model):
 class SubCategory(ndb.Model):
     group_category_id = ndb.IntegerProperty(required = True)
     name = ndb.StringProperty()
-    icon = ndb.StringProperty(required = True, default="http://gpegobmx.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         #duplicated
-    icon_url = ndb.StringProperty(required = True, default="http://gpegobmx.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         
+    icon = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         #duplicated
+    icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         
     requires_image = ndb.BooleanProperty(default = False)                                                                               
     benchmark = ndb.IntegerProperty(default = 3)
     cdb_id = ndb.IntegerProperty(default = -1)                                                                                      #: ID in CartoDB PostGIS DB

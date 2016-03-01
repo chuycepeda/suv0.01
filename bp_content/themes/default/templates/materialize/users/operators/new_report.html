@@ -101,6 +101,7 @@
 						                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('viabtn').innerHTML=this.innerHTML; document.getElementById('via').value = getVia((this.innerHTML).trim()); return false;">Oficina</a></li>
 						                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('viabtn').innerHTML=this.innerHTML; document.getElementById('via').value = getVia((this.innerHTML).trim()); return false;">Evento</a></li>
 						                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('viabtn').innerHTML=this.innerHTML; document.getElementById('via').value = getVia((this.innerHTML).trim()); return false;">Oficio</a></li>
+						                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('viabtn').innerHTML=this.innerHTML; document.getElementById('via').value = getVia((this.innerHTML).trim()); return false;">Medios</a></li>
 						                       </ul>                
 						                </div>
 
@@ -153,6 +154,14 @@
 		                                    <label id="whenLabel" for="when">¿Cuándo sucedió?</label>
 		                                </div>
 		                            </div>
+
+		                            <div class="row">
+    	                                <div class="input-field col s12 l6">                                
+                                            <i class="mdi-action-receipt prefix brand-color-text brand-color-text "></i>
+                                            <input id="folio" name="folio" type="text" >
+                                            <label for="folio" class="active">Folio interno</label>
+                                        </div>
+	                                </div>
 		                            
 		                            <div class="row">
 		                                <div class="container">
@@ -225,14 +234,16 @@
 	<script type="text/javascript">
 				
 		google.maps.event.addDomListener(window,'load', init);
-		var map, center = [25.683956577519417, -100.20524472216799];
+		var map, center = [{{lat}},{{lng}}];
 		var sublayers = [];
 		var geocoder = new google.maps.Geocoder();
 	    var marker = null;
 	    var markers = [];
 	    var reportDict, secretaries = [];
-	    var gpe_table_name = 'public_reports';
-		var gpe_sql = new cartodb.SQL({ user: 'gpegobmx' });
+	    var marker_color = "{{brand_color}}";
+	    var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);
+	    var city_table_name = '{{cartodb_reports_table}}';
+		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
 		var requires_image = false;
 
 	    function markerFitBounds() {
@@ -251,7 +262,7 @@
 	        			position: loc,
 	        			map: map,
 	        			draggable: true,
-	        			icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|4BAF50'
+	        			icon: marker_icon
 	            });
 	            google.maps.event.addListener(marker,'dragend',function(event) {
                     geocode(event.latLng);
@@ -479,11 +490,11 @@
 			map = new google.maps.Map(document.getElementById('map'), mapOptions);
 				                		
 	    	var layerSource = {
-	            user_name: 'gpegobmx',
+	            user_name: '{{cartodb_user}}',
 	            type: 'cartodb',
 	            sublayers: [{
-	                sql: "SELECT mun_poly.* FROM mun_poly WHERE mun_poly.name IN ('GPE')",
-	                cartocss: "#mun_poly{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+	                sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+	                cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
 	            }]
 	        };
 	        cartodb.createLayer(map,layerSource)
@@ -573,8 +584,8 @@
     	        document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
     	        //CHECK IF BEST TO FOLLOW OR COMMENT - - -
 	            var m1 = marker.getPosition().toString().slice(1,-1).split(',').map(Number);           
-	            var gpe_query= "SELECT * FROM " + gpe_table_name + "  WHERE status not in ('spam', 'archived', 'forgot', 'solved', 'failed') AND ( ST_Intersects("+gpe_table_name+".the_geom,ST_Buffer( ST_SetSRID('POINT("+m1[1]+" "+m1[0]+")'::geometry , 4326), 0.00044966080296049427))) AND (group_category ilike '%"+document.getElementById('catGroup').value+"%') AND (sub_category ilike '%"+document.getElementById('subCat').value+"%')";
-	            gpe_sql.execute(gpe_query).done(function(data) {
+	            var city_query= "SELECT * FROM " + city_table_name + "  WHERE status not in ('spam', 'archived', 'forgot', 'solved', 'failed') AND ( ST_Intersects("+city_table_name+".the_geom,ST_Buffer( ST_SetSRID('POINT("+m1[1]+" "+m1[0]+")'::geometry , 4326), 0.00044966080296049427))) AND (group_category ilike '%"+document.getElementById('catGroup').value+"%') AND (sub_category ilike '%"+document.getElementById('subCat').value+"%')";
+	            city_sql.execute(city_query).done(function(data) {
 			        if(data.total_rows >= 1) {
 			        	console.log(data);
 						console.log('suggesting follow');
@@ -625,6 +636,9 @@
                     break;
                 case 'Oficio':
                     ds = "letter";
+                    break;
+                case 'Medios':
+                    ds = "media";
                     break;
                 default: ds="";
                     break

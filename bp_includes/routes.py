@@ -15,7 +15,6 @@ _routes = [
     RedirectRoute('/', handlers.MaterializeLandingRequestHandler, name='landing', strict_slash=True),   
     RedirectRoute('/map/', handlers.MaterializeLandingMapRequestHandler, name='landing-map', strict_slash=True),   
     RedirectRoute('/blog/', handlers.MaterializeLandingBlogRequestHandler, name='blog', strict_slash=True),
-    RedirectRoute('/trending/', handlers.MaterializeLandingTrendsRequestHandler, name='trends', strict_slash=True),
     RedirectRoute('/blog/<post_id>/', handlers.MaterializeLandingBlogPostRequestHandler, name='blog-post', strict_slash=True),
     RedirectRoute('/contact/', handlers.MaterializeLandingContactRequestHandler, name='contact', strict_slash=True),
     RedirectRoute('/faq/', handlers.MaterializeLandingFaqRequestHandler, name='faq', strict_slash=True),
@@ -58,6 +57,7 @@ _routes = [
     # User: all special access
     RedirectRoute('/user/organization/dashboard/', handlers.MaterializeOrganizationDashboardRequestHandler, name='materialize-organization-dashboard', strict_slash=True),
     RedirectRoute('/user/organization/report/', handlers.MaterializeOrganizationNewReportHandler, name='materialize-organization-report', strict_slash=True),
+    RedirectRoute('/user/organization/report/success/', handlers.MaterializeOrganizationNewReportSuccessHandler, name='materialize-organization-report-success', strict_slash=True),
     RedirectRoute('/user/organization/urgents/', handlers.MaterializeOrganizationUrgentsHandler, name='materialize-organization-urgents', strict_slash=True),
     RedirectRoute('/user/organization/manual/', handlers.MaterializeOrganizationManualHandler, name='materialize-organization-manual', strict_slash=True),
     RedirectRoute('/user/organization/users/', handlers.MaterializeOrganizationUsersHandler, name='materialize-organization-users', strict_slash=True),
