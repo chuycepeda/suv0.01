@@ -9,6 +9,13 @@
 {% endblock %}
 
 {% block header_content %}
+<div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
+	<div class="section no-pad-bot">
+	  <div class="container">
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Crear un reporte</h2>        
+	  </div>
+	</div>
+</div>
 {% if phone == "" or not address_from %}
 <div class="row disclaimer" onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')"> 
      <span class="glyphicon-exclamation-sign glyphicon"></span>

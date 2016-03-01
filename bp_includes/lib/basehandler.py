@@ -297,6 +297,10 @@ class BaseHandler(webapp2.RequestHandler):
         """
         return self.landing_layout if hasattr(self, 'landing_layout') else self.app.config.get('landing_layout')
 
+    @webapp2.cached_property
+    def right_sidenav_msg(self):
+        return self.app.config.get('right_sidenav_msg')
+
     def set_landing_layout(self, layout):
         """
         Set the landing_layout variable, thereby overwriting the default layout template name in config.py.
@@ -353,6 +357,7 @@ class BaseHandler(webapp2.RequestHandler):
             'query_string': self.request.query_string,
             'path_for_language': self.path_for_language,
             'is_mobile': self.is_mobile,
+            'right_sidenav_msg': self.right_sidenav_msg,
             'locale_iso': locale_iso, # babel locale object
             'locale_language': language.capitalize() + " (" + territory.capitalize() + ")", # babel locale object
             'locale_language_id': language_id, # babel locale object

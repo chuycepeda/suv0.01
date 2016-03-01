@@ -21,7 +21,7 @@ config = {
                               'environment_args': {'extensions': ['jinja2.ext.i18n']}},
 
     # application name
-    'app_name':  unicode('Mi Ciudad en Línea','utf-8'),
+    'app_name':  unicode('Mi Ciudad Digital','utf-8'),
     'city_name':  unicode('Mi Ciudad','utf-8'),
     'city_url':  'http://onesmart.city',
     'city_slogan':  'Slogan de Mi Ciudad',
@@ -46,7 +46,7 @@ config = {
             Reportando, administrando y dando seguimiento a las necesidades que aquejan a nuestra comunidad, juntos cuidadanos y gobierno podremos ser más eficientes y demostrar que estamos para servir.
         </p>
         <p>
-            ¡Felicidades por ser parte! Comienza a contribuir hacia la mejora de nuestra ciudad Mi Ciudad.
+            ¡Felicidades por ser parte! Comienza a contribuir hacia la mejora de Mi Ciudad.
         </p>
     """,'utf-8'),
     # application on social media

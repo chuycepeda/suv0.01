@@ -32,6 +32,7 @@ _routes = [
     RedirectRoute('/password-reset/<user_id>/<token>', handlers.PasswordResetCompleteHandler, name='password-reset-check', strict_slash=True),
 
     # Reports
+    RedirectRoute('/report/list/', handlers.MaterializeReportCardlistHandler, name='materialize-report-cardlist', strict_slash=True),
     RedirectRoute('/report/new/', handlers.MaterializeNewReportHandler, name='materialize-report-new', strict_slash=True),
     RedirectRoute('/report/image/upload/<report_id>', handlers.MaterializeReportUploadImageHandler, name='report-image-upload', strict_slash=True),
     RedirectRoute('/report/success/', handlers.MaterializeNewReportSuccessHandler, name='materialize-report-success', strict_slash=True),
@@ -44,9 +45,16 @@ _routes = [
     RedirectRoute('/report/urgent/', handlers.MaterializeUrgentRequestHandler, name='materialize-report-urgent', strict_slash=True),   
     RedirectRoute('/report/log/delete/<log_id>/', handlers.MaterializeLogChangeDeleteHandler, name='materialize-log-delete', strict_slash=True, handler_method='edit'),
     
+    # Reports
+    RedirectRoute('/petition/list/', handlers.MaterializePetitionCardlistHandler, name='materialize-petition-cardlist', strict_slash=True),
+    RedirectRoute('/petition/new/', handlers.MaterializeNewPetitionHandler, name='materialize-petition-new', strict_slash=True),
+    RedirectRoute('/petition/image/upload/<petition_id>', handlers.MaterializePetitionUploadImageHandler, name='petition-image-upload', strict_slash=True),
+    RedirectRoute('/petition/success/', handlers.MaterializeNewPetitionSuccessHandler, name='materialize-petition-success', strict_slash=True),
+
     # User: All
     RedirectRoute('/user/referrals/', handlers.MaterializeReferralsRequestHandler, name='materialize-referrals', strict_slash=True),
     RedirectRoute('/user/reports/', handlers.MaterializeReportsRequestHandler, name='materialize-reports', strict_slash=True),
+    RedirectRoute('/user/petitions/', handlers.MaterializePetitionsRequestHandler, name='materialize-petitions', strict_slash=True),
     RedirectRoute('/user/settings/profile/', handlers.MaterializeSettingsProfileRequestHandler, name='materialize-settings-profile', strict_slash=True),
     RedirectRoute('/user/settings/email/', handlers.MaterializeSettingsEmailRequestHandler, name='materialize-settings-email', strict_slash=True),
     RedirectRoute('/user/settings/password/', handlers.MaterializeSettingsPasswordRequestHandler, name='materialize-settings-password', strict_slash=True),

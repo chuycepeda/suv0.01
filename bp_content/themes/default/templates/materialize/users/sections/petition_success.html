@@ -1,0 +1,41 @@
+{% extends landing_layout %}
+{% block title %}<title>Nuevo Reporte</title>{% endblock %}
+
+{% block page_css %}
+	<link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
+{% endblock %}
+
+{% block body_content %}
+	<div class="section">
+	    <div class="container" style="margin-top:80px">
+	    	<div class="row">
+		        <h3 class="center col s12 m10 offset-m1 grey-text" style="font-weight: 200">¡Gracias! Ya hemos recibido tu petición.</h3>
+		        <h5 class="center col s12 m10 offset-m1 grey-text" style="font-weight: 300;letter-spacing: 0.5pt;line-height: 30pt;">Tu petición se ha vuelto pública por lo que podrás verla en el <span class="brand-color-text">listado de peticiones</span>. Asimismo, desde este momento tu petición ya está disponible en tu sección de <span class="brand-color-text">mis peticiones</span>, ahí podrás ver su estado más reciente y cada cambio que reciba, el cual también te será notificado por correo electrónico. Finalmente, no dudes en <span class="brand-color-text">enviar más peticiones</span>, juntos transformaremos {{city_name}}.</h5>
+	    	</div>
+	        <div class="row">
+		        <h3 class="center col s12 m10 offset-m1 grey-text" style="font-weight: 200">¿Qué puedes hacer ahora?</h3>
+	        	<div class="input-field col s10 offset-s1 m3 offset-m1 center">
+	                <button class="waves-effect waves-light brand-color white-text btn-large right" onclick="window.open('{{ uri_for("materialize-petition-cardlist") }}', '_top')" >Ir al listado
+	                    <i class="mdi-social-public right"></i>
+	                </button>	                          
+	            </div>
+	            <div class="input-field col s10 offset-s1 m3 center">
+	                <button class="waves-effect waves-light brand-color white-text btn-large right" onclick="window.open('{{ uri_for("materialize-petitions") }}', '_top')" >Ver mis peticiones
+	                    <i class="mdi-action-receipt right"></i>
+	                </button>	                          
+	            </div>
+	            <div class="input-field col s10 offset-s1 m3 center">
+	                <button class="waves-effect waves-light brand-color white-text btn-large right" onclick="window.open('{{ uri_for("materialize-petition-new") }}', '_top')" >Crear nueva petición
+	                    <i class="mdi-maps-place right"></i>
+	                </button>	                          
+	            </div>
+	        </div>
+	    </div>
+	</div>
+{% endblock %}
+
+{% block page_scripts %} 
+{% endblock %}
+
+
+

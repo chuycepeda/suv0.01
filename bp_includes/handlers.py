@@ -1153,7 +1153,6 @@ class MaterializeLandingMapRequestHandler(BaseHandler):
 
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')  
-        params['right_sidenav_msg'] = self.app.config.get('right_sidenav_msg')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
@@ -4666,6 +4665,17 @@ class MaterializeReportsRequestHandler(BaseHandler):
             self.add_message(messages.saving_error, 'danger')
             return self.get()
 
+class MaterializeReportCardlistHandler(BaseHandler):
+    """
+        Handler for materialized reports cardlists
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        params, user_info = disclaim(self)
+
+        return self.render_template('materialize/users/sections/reports_list.html', **params)
+
 class MaterializeNewReportHandler(BaseHandler):
     """
     Handler for materialized home
@@ -4688,7 +4698,7 @@ class MaterializeNewReportHandler(BaseHandler):
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
 
-        return self.render_template('materialize/landing/new_report.html', **params)
+        return self.render_template('materialize/users/sections/report_new.html', **params)
 
     @user_required
     def post(self):
@@ -4788,7 +4798,7 @@ class MaterializeNewReportSuccessHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
         
-        return self.render_template('materialize/landing/new_report_success.html', **params)
+        return self.render_template('materialize/users/sections/report_success.html', **params)
 
 class MaterializeFollowRequestHandler(BaseHandler):
     @user_required
@@ -4945,6 +4955,235 @@ class MaterializeRateRequestHandler(BaseHandler):
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))
+
+"""
+        PETITION HANDLERS
+
+"""
+class MaterializePetitionsRequestHandler(BaseHandler):
+    """
+        Handler for materialized petitions
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        params, user_info = disclaim(self)
+
+        user_reports = models.Report.query(models.Report.user_id == int(user_info.key.id()))
+        user_reports = user_reports.order(-models.Report.created)
+        user_reports = user_reports.fetch(50)
+        if user_reports is not None:
+            try:
+                params['reports'] = []
+                for report in user_reports:
+                    if report.status != 'archived' and report.status != 'spam':
+                        params['reports'].append((report.key.id(), report.title, report.when, report.address_from_coord, report.address_from, report.description, report.get_status(), report.image_url, report.group_category, report.sub_category, report.cdb_id, report.req_deletion, report.get_group_color(), report.rating, report.follows, report.get_log_count(), 'own'))
+                try:
+                    follows = models.Followers.query(models.Followers.user_id == int(user_info.key.id()))
+                    for follow in follows:
+                        report = models.Report.get_by_cdb(int(follow.report_id))
+                        if report:
+                            params['reports'].append((report.key.id(), report.title, report.when, report.address_from_coord, report.address_from, report.description, report.get_status(), report.image_url, report.group_category, report.sub_category, report.cdb_id, report.req_deletion, report.get_group_color(), report.rating, report.follows, report.get_log_count(), 'follow'))
+                except:
+                    pass
+            except (AttributeError, TypeError), e:
+                login_error_message = _(messages.expired_session)
+                logging.error('Error updating profile: %s' % e)
+                self.add_message(login_error_message, 'danger')
+                self.redirect_to('login')
+
+        return self.render_template('materialize/users/sections/petitions.html', **params)
+
+    @user_required
+    def post(self):
+        delete = self.request.get('delete')
+        report_id = self.request.get('report_id')
+        
+        try:
+            report_info = models.Report.get_by_id(long(report_id))
+            if delete == 'confirmed_deletion':
+                if report_info:
+                    report_info.req_deletion = True
+            if delete == 'confirmed_cancelation':
+                if report_info:
+                    report_info.req_deletion = False
+            if delete == 'confirmed_comment':
+                user_info = self.user_model.get_by_id(long(self.user_id))
+                if report_info:
+                    report_info.status = 'answered'
+                    log_info = models.LogChange()
+                    log_info.user_email = user_info.email.lower()
+                    log_info.report_id = int(report_id)
+                    log_info.kind =  'comment'
+                    log_info.title = "Ha hecho un comentario en su reporte."
+                    log_info.contents = self.request.get('comment')
+                    log_info.put()
+                    private = models.SubCategory.query(models.SubCategory.name == report_info.sub_category).get()
+                    if private is not None:
+                        private = private.private
+                    else:
+                        private = False
+                    
+                    #PUSH TO CARTODB
+                    from google.appengine.api import urlfetch
+                    import urllib
+                    api_key = self.app.config.get('cartodb_apikey')
+                    cartodb_domain = self.app.config.get('cartodb_user')
+                    cartodb_table = self.app.config.get('cartodb_reports_table')
+                    if report_info.cdb_id != -1:
+                        #UPDATE                        
+                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET pvt = %s ,the_geom = ST_GeomFromText('POINT(%s %s)', 4326), _when = '%s', title = '%s', description = '%s', status = '%s', address_from = '%s', folio = '%s', image_url = '%s', group_category = '%s', sub_category = '%s', follows = %s, rating = %s, via = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,report_info.cdb_id,api_key)).encode('utf8')
+                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+                        try:
+                            t = urlfetch.fetch(url)
+                            logging.info("t: %s" % t.content)
+                        except Exception as e:
+                            logging.info('error in cartodb UPDATE request: %s' % e)
+                            pass
+                        
+            report_info.put()
+            self.add_message(messages.inquiry_success, 'success')
+            return self.get()
+
+        except (AttributeError, KeyError, ValueError), e:
+            logging.error('Error updating report: %s ' % e)
+            self.add_message(messages.saving_error, 'danger')
+            return self.get()
+
+class MaterializePetitionCardlistHandler(BaseHandler):
+    """
+        Handler for materialized reports cardlists
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        params, user_info = disclaim(self)
+
+        return self.render_template('materialize/users/sections/petitions_list.html', **params)
+
+class MaterializeNewPetitionHandler(BaseHandler):
+    """
+    Handler for materialized home
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML form for materialize home """
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+        return self.render_template('materialize/users/sections/petition_new.html', **params)
+
+    @user_required
+    def post(self):
+        """ Get fields from POST dict """
+                        
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord')
+        catGroup = self.request.get('catGroup')
+        subCat = self.request.get('subCat')
+        description = self.request.get('description')
+        when = self.request.get('when')
+        
+        try:
+            user_info = self.user_model.get_by_id(long(self.user_id))   
+
+            user_report = models.Report()
+            user_report.user_id = int(self.user_id) if int(self.user_id) is not None else -1
+            user_report.address_from_coord = ndb.GeoPt(address_from_coord)
+            user_report.address_from = address_from
+            user_report.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
+            user_report.title = u'Reporte de %s' % (subCat)
+            user_report.description = description
+            user_report.group_category = catGroup
+            user_report.sub_category  = subCat
+            user_report.contact_info = u'%s, %s, %s, %s, %s' % (user_info.name, user_info.last_name, user_info.address.address_from, user_info.phone, user_info.email)
+            if user_info.credibility <= 0:
+                user_report.status = 'spam'
+            
+            user_report.put()
+            
+
+            if hasattr(self.request.POST['file'], 'filename'):
+                #create attachment
+                from google.appengine.api import urlfetch
+                from poster.encode import multipart_encode, MultipartParam
+                
+                urlfetch.set_default_fetch_deadline(45)
+
+                payload = {}
+                upload_url = blobstore.create_upload_url('/petition/image/upload/%s' %(user_report.key.id()))
+                file_data = self.request.POST['file']
+                payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                         filetype=file_data.type,
+                                                         fileobj=file_data.file)
+                data,headers= multipart_encode(payload)
+                t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                
+                logging.info('t.content: %s' % t.content)
+                
+                if t.content == 'success':
+                    message = _(messages.report_success)
+                    self.add_message(message, 'success')
+                    return self.redirect_to('materialize-petition-success')
+                else:
+                    message = _(messages.attach_error)
+                    self.add_message(message, 'danger')            
+                    return self.get()                    
+            else:
+                message = _(messages.report_success)
+                self.add_message(message, 'success')
+                return self.redirect_to('materialize-petition-success')
+
+        except Exception as e:
+            logging.info('error in post: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            return self.get()
+
+class MaterializePetitionUploadImageHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self, petition_id):
+        try:
+            logging.info(self.get_uploads()[0])
+            logging.info('attaching file to petition_id: %s' %petition_id)
+            upload = self.get_uploads()[0]
+            petition = models.Petition.get_by_id(long(petition_id))
+            petition.image_url = self.uri_for('blob-serve', photo_key = upload.key(), _full=True)
+            petition.put()
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('success')
+        except Exception as e:
+            logging.error('something went wrong: %s' % e)
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('error')
+
+class MaterializeNewPetitionSuccessHandler(BaseHandler):
+    """
+    Handler for materialized petition success
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML form for materialize petition success """
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        return self.render_template('materialize/users/sections/petition_success.html', **params)
+
 
 """ JSON API HANDLERS
 

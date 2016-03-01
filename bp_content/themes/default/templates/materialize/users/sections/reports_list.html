@@ -27,10 +27,10 @@
 
 
 {% block header_content %}
-<div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -30px;">
+<div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
 	<div class="section no-pad-bot">
 	  <div class="container">
-	    <h2 class="header center brand-color-text" style="margin-top:85px;">Mis reportes</h2>        
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Lista de reportes</h2>        
 	  </div>
 	</div>
 </div>
@@ -47,7 +47,7 @@
 		                        <div class="card-image waves-effect waves-block waves-light">
 		                            <div id="map-canvas_{{idx}}" style="height: 342px; width: 100%"></div>
 		                        </div>
-		                        <div class="card-content">                    
+		                        <div class="card-content" style="border-left: 5px solid #{{color}};">                    
 		                            <a class="btn-floating activator btn-move-up waves-effect waves-light right" style="background-color:#{{color}}; width: 60px;height: 60px;top: -50px;">
 		                                <i class="{% if kind == 'follow' %}mdi-social-notifications-none{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
 		                            </a>

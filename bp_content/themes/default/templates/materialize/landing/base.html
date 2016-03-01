@@ -121,6 +121,27 @@
     				background-color: {{brand_secondary_color}}!important;
 		    	}
 
+		    	footer {
+		    		position: fixed!important;
+    				bottom: 0px!important;
+    				width: 100%!important;
+    				z-index: 1!important;
+    				opacity: 0.95!important;
+		    	}
+
+		    	.section{
+		    		padding-bottom: 80px;
+		    	}
+
+		    	.side-nav .collapsible-body li a {
+				    text-align: right;
+				    background: rgba(221, 221, 221, 0.15);
+				}
+
+				.side-nav .collapsible-body li a:hover {
+				    background: rgba(221, 221, 221, 0.35);
+				}
+
 	    	</style>
 		    {% block page_css %}
 		    <style type="text/css">
@@ -224,119 +245,176 @@
 						{% elif user_is_operator %}
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 						{% endif %}
-					    <li id="nav-report" {% if path == uri_for('landing-map') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}><a href="{{uri_for("landing-map")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
-					    <li id="nav-report-new" {% if path == uri_for('materialize-report-new') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}><a href="{{uri_for("materialize-report-new")}}" class=" menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
-					    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-			                  <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-reports") }}">Mis reportes</a>
-		                        </li>
-		                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
-		                        </li>
-		                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
-		                        </li>
-		                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
-		                        </li>
-			            </ul>
-					    <li class="nav-user" {% if path == uri_for('materialize-reports') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-referrals') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
-	                        	{% if has_picture %}
-									<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
-											<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
-											<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
-			                        </a>
-								{% else %}
-									<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
-											<div style="position: absolute;left: 0px;">
-												<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
-											</div>
-											<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
-			                        </a>
-								{% endif %}
-	                     </li>	
+
+						<!-- REPORTS DROPDOWN -->
+							<ul id="reports-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Mapa</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Crear reporte</a>
+			                        </li>
+				            </ul>
+				            <li class="nav-reports" {% if path == uri_for('materialize-report-new') or path == uri_for('landing-map') or path == uri_for('materialize-report-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
+		                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+		                    </li>
+
+	                    <!-- PETITIONS DROPDOWN -->
+							<ul id="petitions-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Crear petición</a>
+			                        </li>
+			                      
+				            </ul>
+				            <li class="nav-petitions" {% if path == uri_for('materialize-petition-new') or path == uri_for('materialize-petition-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
+		                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="petitions-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Peticiones<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+		                    </li>	
+
+						<!-- USER DROPDOWN -->
+						    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-reports") }}">Mis reportes</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
+			                        </li>
+				            </ul>
+						    <li class="nav-user" style="padding-left: 30px;{% if path == uri_for('materialize-reports') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-settings-referrals') or path == uri_for('materialize-settings-account') or path == uri_for('materialize-referrals') %}border-bottom: 5px solid {{brand_secondary_color}};{% endif %}">
+		                        	{% if has_picture %}
+										<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+												<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
+												<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+				                        </a>
+									{% else %}
+										<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
+												<div style="position: absolute;left: 0px;">
+													<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
+												</div>
+												<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+				                        </a>
+									{% endif %}
+		                     </li>	
+
 				    {% endif %}
 				  </ul>
-				  <ul class="side-nav hide-on-large-only" id="mobile-demo">
+				  <ul class="side-nav hide-on-large-only" id="mobile-demo" style="margin-top:65px;">
 				    {% if not user_id %}
 					    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingresar</a></li>
 					    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white-text brand-color">Crear cuenta</a></li>
 				    {% else %}
 					    {% if user_is_callcenter %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
-						{% elif user_is_secretary %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
-						{% elif user_is_agent %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
-						{% elif user_is_operator %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
-						{% endif %}
-					    <li id="nav-report"><a href="{{uri_for("landing-map")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
-					    <li id="nav-report-new"><a href="{{uri_for("materialize-report-new")}}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Reportar</a></li>
-					    <li class="no-padding">
-	                        <ul class="collapsible collapsible-accordion">
-	                            <li class="bold">
-	                            	<a class="collapsible-header waves-effect waves-cyan">
-							    	{% if has_picture %}
-										<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:45px">
-									{% else %}
-			                        	<span class="circle red lighten-1" style="width: 45px;   height: 45px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; margin-top: 10px;margin-left: 10px;">{{ name_i }}</span>
-									{% endif %}
-										<i class="material-icons right" style="line-height: 1.25;margin-left: -38px; font-size:50px;">arrow_drop_down</i>
-	                            	<div class="collapsible-body">
-	                                    <ul>
-										  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
-					                      <li><a href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a></li>
-					                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
-					                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
-	                                    </ul>
-	                                </div>
-	                            </li>
-	                        </ul>
-	                     </li>
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 					     <li class="divider"></li>
+						{% elif user_is_secretary %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					     <li class="divider"></li>
+						{% elif user_is_agent %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					     <li class="divider"></li>
+						{% elif user_is_operator %}
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+					     <li class="divider"></li>
+						{% endif %}
+							<!-- USER DROPDOWN -->
+							    <li class="no-padding">
+			                        <ul class="collapsible collapsible-accordion">
+			                            <li class="bold">
+			                            	<a class="collapsible-header waves-effect waves-light">{{name}}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+			                            	<div class="collapsible-body">
+			                                    <ul>
+							                      <li><a href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a></li>
+												  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
+												  <li><a href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a></li>
+							                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
+							                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
+			                                    </ul>
+			                                </div>
+			                            </li>
+			                        </ul>
+			                    </li>
+							    <li class="divider"></li>
+						    <!-- REPORTS DROPDOWN -->
+			                    <li class="no-padding">
+			                        <ul class="collapsible collapsible-accordion">
+			                            <li class="bold">
+									    	<a class="collapsible-header waves-effect waves-light">Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+			                            	<div class="collapsible-body">
+			                                    <ul>
+												  <li><a href="{{ uri_for("landing-map") }}">Mapa</a></li>
+												  <li><a href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a></li>
+							                      <li><a href="{{ uri_for("materialize-report-new") }}">Crear reporte</a></li>
+			                                    </ul>
+			                                </div>
+			                            </li>
+			                        </ul>
+			                    </li>
+							    <li class="divider"></li>
+						    <!-- PETITIONS DROPDOWN -->
+			                    <li class="no-padding">
+			                        <ul class="collapsible collapsible-accordion">
+			                            <li class="bold">
+									    	<a class="collapsible-header waves-effect waves-light">Peticiones<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+			                            	<div class="collapsible-body">
+			                                    <ul>
+												  <li><a href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a></li>
+							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Crear petición</a></li>
+			                                    </ul>
+			                                </div>
+			                            </li>
+			                        </ul>
+			                    </li>
+							    <li class="divider"></li>
 				    {% endif %}
 				    {% if path == uri_for('landing-map') %}
-				    <li>
-				    	<div class="hide-on-med-only">
-		                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()">
-		                  <li>
-		                    <div class="collapsible-header white-text truncate brand-color"> Estás viendo <span id="rep_count_M" style="font-family: roboto-regular;">0</span> reportes.</div>
-		                    <div class="collapsible-body white">
-		                    	<p style="padding: 8px;">
-    		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde_M" checked>
-    		                    	<label for="check_alcalde_M">Vía {{app_name}}: <span style="color:{{brand_secondary_color}}" id="c_alcalde_M"></span></label>
-    		                    </p>
-		                    	{% if cartodb_has_cic %}
-		                    	<p style="padding: 8px;">
-    		                    	<input type="checkbox" class="filled-in layerControl" id="check_cic_M">
-    		                    	<label for="check_cic_M">Vía CIC: <span style="color:#43D1EC" id="c_cic_M"></span></label>
-    		                    </p>
-    		                    {% endif %}
-		                    </div>
-		                  </li>
-		                  <li>
-		                  	<div class="collapsible-header white-text truncate brand-color" id="my-zone-m" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
-		                    <div class="collapsible-body brand-color lighten-5"></div>
-		                  </li>
-		                  <li>
-		                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
-		                    <div class="collapsible-body white lighten-5 center">
-		                      <div class="row">
-		                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
-		                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light yellow tooltipped" data-position="top" data-delay="50" data-tooltip="Agrupado" onclick="setMapView('cluster');"><i class="mdi-maps-pin-drop"></i></a></div>
-		                      </div>
-		                      <div class="row">
-		                      	<div class="col s6"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="top" data-delay="50" data-tooltip="Intensidad" onclick="setMapView('heat');"><i class="mdi-social-whatshot"></i></a></div>
-		                      	<div class="col s6"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light light-blue tooltipped" data-position="top" data-delay="50" data-tooltip="Recurrencia" onclick="setMapView('intensity');"><i class="mdi-image-blur-circular"></i></a></div>
-		                      </div>
-		                    </div>
-		                  </li>
-		                  <!-- <li>
-		                    <div class="collapsible-header gpe-green-darken-1 white-text"><i class="mdi-content-filter-list"></i> Filtrar</div>
-		                    <div class="collapsible-body whitelighten-5">
-		                      
-		                    </div>
-		                  </li> -->
-		                </ul>
-		              </div>
-				    </li>
+					    <li>
+					    	<div class="hide-on-med-only">
+			                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()">
+			                  <li>
+			                    <div class="collapsible-header white-text truncate brand-color"> Estás viendo <span id="rep_count_M" style="font-family: roboto-regular;">0</span> reportes.</div>
+			                    <div class="collapsible-body white">
+			                    	<p style="padding: 8px;">
+	    		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde_M" checked>
+	    		                    	<label for="check_alcalde_M">Vía {{app_name}}: <span style="color:{{brand_secondary_color}}" id="c_alcalde_M"></span></label>
+	    		                    </p>
+			                    	{% if cartodb_has_cic %}
+			                    	<p style="padding: 8px;">
+	    		                    	<input type="checkbox" class="filled-in layerControl" id="check_cic_M">
+	    		                    	<label for="check_cic_M">Vía CIC: <span style="color:#43D1EC" id="c_cic_M"></span></label>
+	    		                    </p>
+	    		                    {% endif %}
+			                    </div>
+			                  </li>
+			                  <li>
+			                  	<div class="collapsible-header white-text truncate brand-color" id="my-zone-m" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
+			                    <div class="collapsible-body brand-color lighten-5"></div>
+			                  </li>
+			                  <li>
+			                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
+			                    <div class="collapsible-body white lighten-5 center">
+			                      <div class="row">
+			                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
+			                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light yellow tooltipped" data-position="top" data-delay="50" data-tooltip="Agrupado" onclick="setMapView('cluster');"><i class="mdi-maps-pin-drop"></i></a></div>
+			                      </div>
+			                      <div class="row">
+			                      	<div class="col s6"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="top" data-delay="50" data-tooltip="Intensidad" onclick="setMapView('heat');"><i class="mdi-social-whatshot"></i></a></div>
+			                      	<div class="col s6"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light light-blue tooltipped" data-position="top" data-delay="50" data-tooltip="Recurrencia" onclick="setMapView('intensity');"><i class="mdi-image-blur-circular"></i></a></div>
+			                      </div>
+			                    </div>
+			                  </li>
+			                  <!-- <li>
+			                    <div class="collapsible-header gpe-green-darken-1 white-text"><i class="mdi-content-filter-list"></i> Filtrar</div>
+			                    <div class="collapsible-body whitelighten-5">
+			                      
+			                    </div>
+			                  </li> -->
+			                </ul>
+			              </div>
+					    </li>
 				    {% endif %}
 				  </ul>
 				</div>
@@ -463,18 +541,19 @@
 		{% endblock %}
 
 		{% block page_floatings %}
-			{% if path != uri_for('materialize-report-new') %}
+			{% if path != uri_for('materialize-report-new') and path != uri_for('materialize-petition-new') %}
 			<!-- Floating Action Button -->
             <div class="fixed-action-btn" style="bottom: 65px; right: 60px;">
                 <a class="btn-floating btn-large brand-color">
                   <i class="large mdi-content-add"></i>
                 </a>
                 <ul>
-                  {% if user_id %}<li><a id="chatout-btn" href="#" data-activates="chat-out" class="btn-floating brand-color chat-collapse" onclick="$('#right-sidebar-nav').show()"><i class="large mdi-communication-live-help"></i></a></li>
+                  {% if user_id %}<li><a id="chatout-btn" href="#" data-activates="chat-out" class="tooltipped btn-floating brand-color chat-collapse" data-position="left" data-delay="50" data-tooltip="información" onclick="$('#right-sidebar-nav').show()"><i class="large mdi-communication-live-help"></i></a></li>
                   {% endif %}
-                  {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="btn-floating brand-color"><i class="large mdi-communication-email"></i></a></li>{% endif %}
-                  {% if path != uri_for('landing-map') %}<li><a href="{{ uri_for('landing-map') }}" class="btn-floating brand-color"><i class="large mdi-social-public"></i></a></li>{% endif %}
-                  <li><a href="{{ uri_for('materialize-report-new') }}" class="btn-floating brand-color"><i class="large mdi-maps-place"></i></a></li>
+                  {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="contáctanos"><i class="large mdi-communication-email"></i></a></li>{% endif %}
+                  {% if path != uri_for('landing-map') %}<li><a href="{{ uri_for('landing-map') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver mapa"><i class="large mdi-social-public"></i></a></li>{% endif %}
+                  <li><a href="{{ uri_for('materialize-petition-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear petición"><i class="large mdi-maps-local-parking"></i></a></li>
+                  <li><a href="{{ uri_for('materialize-report-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear reporte"><i class="large mdi-maps-place"></i></a></li>
                 </ul>
             </div>
             <!-- Floating Action Button -->
@@ -739,6 +818,16 @@
 						$(".menu-item").click(function(){
 							$('.button-collapse').sideNav('hide');
 						});
+						$('.dropdown-button').dropdown({
+						      inDuration: 300,
+						      outDuration: 225,
+						      constrain_width: true, // Does not change width of dropdown to that of the activator
+						      hover: false, // Activate on hover
+						      gutter: 0, // Spacing from edge
+						      belowOrigin: true, // Displays dropdown below the button
+						      alignment: 'left' // Displays dropdown with edge aligned to the left of button
+						    }
+						);
 
 
 						var BrowserDetect = {
