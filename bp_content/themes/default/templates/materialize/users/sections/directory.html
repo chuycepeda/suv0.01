@@ -1,0 +1,155 @@
+{% extends landing_layout %}
+{% block title %}<title>Directorio</title>{% endblock %}
+
+{% block page_css %}
+	<style type="text/css">
+		.disclaimer{margin-bottom: 0px;width: 101%;height: auto;left: 0px;text-align: center;z-index: 9999;background: rgb(205, 55, 53);color: white;font-size: 16px;font-family: roboto-thin;letter-spacing: 1.5px; padding:10px;cursor: pointer;border-bottom: 1px solid rgb(240, 240, 240);position: absolute;top: 65px;}
+		input{
+			border: none!important;
+		}	
+		.input-field{
+			margin-top: -16px;
+			height: auto;
+    		overflow-y: auto;
+		}	
+		label{
+			text-align: left!important;
+		}
+	</style>
+{% endblock %}
+
+{% block header_content %}
+<div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
+	<div class="section no-pad-bot">
+	  <div class="container">
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Directorio</h2>        
+	  </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block body_content %}
+	<div class="section">
+	    <div class="container" style="margin-top:80px">
+	    	<div class="row">
+		        <h3 class="col s12 m10 offset-m1 grey-text" style="font-weight: 200">Aquí tienes la lista de nombres y direcciones de quienes operan en el gobierno de {{city_name}}.</h3>
+	    	</div>
+	        <div class="row">
+	        	<div class="col s12 m10 offset-m1" id="secretaries">
+		        	
+			    </div>
+			    <div class="divider col s12" style="margin: 40px!important;"></div>
+	        	<div class="col s12 m10 offset-m1" id="agencies">
+		        	
+			    </div>
+			    <div class="divider col s12" style="margin: 40px!important;"></div>
+	        	<div class="col s12 m10 offset-m1" id="operators">
+				   
+			    </div>
+	        </div>
+	    </div>
+	</div>
+{% endblock %}
+
+{% block page_scripts %} 
+	<script type="text/javascript">
+		var nodes = null;
+        var edges = null;
+        var network = null;
+        var orgDict = null;
+        var resDict = [];
+        var sec_content = '';
+        var age_content = '';
+        var ops_content = '';
+        var url = "{{uri_for('materialize-report-categories')}}?q=org";
+        var DIR = "/{{theme}}/materialize/images/";
+        var no_account_image = DIR + 'org_no_account_image.png';
+        var empty_image = DIR + 'org_empty_image.png';
+		var url = "{{ uri_for('materialize-report-categories') }}?q=org";
+        
+        $('#main-preloader').show();
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) { 
+                console.log(data)
+            }
+        }).done(function(data) {
+            nodes = [{id: 0, label: "Presidente municipal", shape: 'circularImage', image: no_account_image, brokenImage: empty_image}];
+            edges = [];
+            var parent,child, sec_parent, age_parent;
+            var counter = 1;
+            var label = "", image = "";
+
+            orgDict = data;
+            for (var x in orgDict){
+              parent = 0;
+              child = counter;
+
+              label = orgDict[x].admin_name + " ("+ orgDict[x].admin_email +") - " + orgDict[x].name;// + " - " + x;
+              image = orgDict[x].admin_image;
+              if (image == "") image = no_account_image;
+              if (image.toString() == "-1") image = empty_image;
+              sec_content += make_sec_html(image, orgDict[x].name, orgDict[x].description, orgDict[x].admin_name, orgDict[x].admin_email, orgDict[x].phone, orgDict[x].address);
+              
+              //secretary insertion
+              nodes.push({id: counter++, label: label, group: "black", shape: 'circularImage', image: image, brokenImage: empty_image});
+              edges.push({from: parent, to: child});
+
+              //directors insertion
+              sec_parent = child;
+              if (orgDict[x].agency)
+                for (var i = 0, j = orgDict[x].agency.length; i<j; i++){
+
+                resDict.push({secretary: x, secretary_admin: orgDict[x].admin_name, secretary_admin_image: orgDict[x].admin_image, agency: orgDict[x].agency[i].name, agency_admin: orgDict[x].agency[i].admin_name, agency_admin_image: orgDict[x].agency[i].admin_image, group_cat: orgDict[x].agency[i].group_cat.name, sub_cats: orgDict[x].agency[i].group_cat.subcats, operators: orgDict[x].agency[i].operators, pending: 0, closed: 0});
+
+                  label = orgDict[x].agency[i].admin_name + " ("+ orgDict[x].agency[i].admin_email +") - " + orgDict[x].agency[i].name;// + " - " + orgDict[x].agency[i].name;
+                  image = orgDict[x].agency[i].admin_image;
+                  if (image == "") image = no_account_image;
+                  if (image.toString() == "-1") image = empty_image;
+                  age_content += make_age_html(image, orgDict[x].agency[i].name, orgDict[x].agency[i].description, orgDict[x].agency[i].admin_name, orgDict[x].agency[i].admin_email, orgDict[x].agency[i].group_cat.name);
+                  child = counter;
+                  nodes.push({id: counter++, label: label, group: "black", shape: 'circularImage', image: image, brokenImage: empty_image});
+                  edges.push({from: sec_parent, to: child});
+                  age_parent = child;
+                  if (orgDict[x].agency[i].operators)
+                      for (var y in orgDict[x].agency[i].operators){
+                        label = y + " ("+ orgDict[x].agency[i].operators[y][1] +") - " + orgDict[x].agency[i].group_cat.subcats.toString();
+                        image = orgDict[x].agency[i].operators[y][0];
+                        if (image == "") image = no_account_image;
+                        if (image.toString() == "-1") image = empty_image;
+                        ops_content += make_ops_html(image, y, orgDict[x].agency[i].operators[y][1], orgDict[x].agency[i].group_cat.subcats.toString());
+                        child = counter;
+                        nodes.push({id: counter++, label: label, group: "black", shape: 'circularImage', image: image, brokenImage: empty_image});
+                        edges.push({from: age_parent, to: child});
+                      }
+                }
+            }
+
+            document.getElementById('secretaries').innerHTML = sec_content;
+            document.getElementById('agencies').innerHTML = age_content;
+            document.getElementById('operators').innerHTML = ops_content;
+            $('#main-preloader').hide();
+        }); 
+
+        function make_sec_html(_image, _secname, _secdesc, _secadmin, _secemail, _secphone, _secaddress){
+
+          return '<div class="col s12 m3 offset-m1 z-depth-4 card-panel"> <div class="col s12"> <div class="row"> <div class="col s12 center" style="margin-top:10px;"> <img src="'+_image+'" alt="" class="circle responsive-img valign profile-image-login"> <h4 class="header">Secretario</h4> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-social-location-city prefix brand-color-text"></i> <input id="secname" name="secname" type="text" disabled> <label for="secname" class="center-align">'+_secname+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-action-description prefix brand-color-text"></i> <input id="description" name="description" type="text" disabled> <label for="description" class="center-align">'+_secdesc+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-social-person prefix brand-color-text"></i> <input id="adminname" name="adminname" type="text" disabled> <label for="adminname" class="center-align">'+_secadmin+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-communication-email prefix brand-color-text"></i> <input id="adminemail" name="adminemail" type="email" disabled> <label for="adminemail" class="center-align">'+_secemail+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-communication-phone prefix brand-color-text"></i> <input id="phone" name="phone" type="text" disabled> <label for="phone" class="center-align">'+_secphone+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-maps-place prefix brand-color-text"></i> <input id="address" name="address" type="text" disabled> <label for="address" class="center-align">'+_secaddress+'</label> </div></div><div class="row"> <div class="input-field col s12" style="margin-top: 20px;"> <a href="mailto:'+_secemail+'" class="btn waves-effect waves-light col s12">Contactar</a> </div></div></div></div>';
+        }
+
+        function make_age_html(_image, _agename, _agedesc, _ageadmin, _ageemail, _agecats){
+
+          return '<div class="col s12 m3 offset-m1 z-depth-4 card-panel"> <div class="col s12"> <div class="row"> <div class="col s12 center" style="margin-top:10px;"> <img src="'+_image+'" alt="" class="circle responsive-img valign profile-image-login"> <h4 class="header">Director</h4> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-action-account-balance-wallet prefix brand-color-text"></i> <input id="secname" name="secname" type="text" disabled> <label for="secname" class="center-align">'+_agename+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-action-description prefix brand-color-text"></i> <input id="description" name="description" type="text" disabled> <label for="description" class="center-align">'+_agedesc+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-social-person prefix brand-color-text"></i> <input id="adminname" name="adminname" type="text" disabled> <label for="adminname" class="center-align">'+_ageadmin+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-communication-email prefix brand-color-text"></i> <input id="adminemail" name="adminemail" type="email" disabled> <label for="adminemail" class="center-align">'+_ageemail+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-action-group-work prefix brand-color-text"></i> <input id="cats" name="cats" type="text" disabled> <label for="cats" class="center-align">'+_agecats+'</label> </div></div><div class="row"> <div class="input-field col s12" style="margin-top: 20px;"> <a href="mailto:'+_ageemail+'" class="btn waves-effect waves-light col s12">Contactar</a> </div></div></div></div>';
+        }
+
+        function make_ops_html(_image, _opname, _opemail, _opcats){
+
+          return '<div class="col s12 m3 offset-m1 z-depth-4 card-panel"> <div class="col s12"> <div class="row"> <div class="col s12 center" style="margin-top:10px;"> <img src="'+_image+'" alt="" class="circle responsive-img valign profile-image-login"> <h4 class="header">Operador</h4> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-social-person prefix brand-color-text"></i> <input id="secname" name="secname" type="text" disabled> <label for="secname" class="center-align">'+_opname+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-communication-email prefix brand-color-text"></i> <input id="adminemail" name="adminemail" type="email" disabled> <label for="adminemail" class="center-align">'+_opemail+'</label> </div></div><div class="row margin"> <div class="input-field col s12"> <i class="mdi-image-style prefix brand-color-text"></i> <input id="cats" name="cats" type="text" disabled> <label for="cats" class="center-align">'+_opcats+'</label> </div></div><div class="row"> <div class="input-field col s12" style="margin-top: 20px;"> <a href="mailto:'+_opemail+'" class="btn waves-effect waves-light col s12">Contactar</a> </div></div></div></div>';
+        }
+
+
+	</script>
+{% endblock %}
+
+
+

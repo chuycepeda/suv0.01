@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-            <h5 class="breadcrumbs-title">User Details</h5>
+            <h5 class="breadcrumbs-title">Detalle del usuario</h5>
           </div>
         </div>
     </div>
@@ -18,11 +18,11 @@
 
 {% if user %}
     <dl class="dl-horizontal">
-      <dt class="grey-text">{% trans %}Email{% endtrans %}</dt>
+      <dt class="grey-text">Correo</dt>
       <dd class="gey-text text-darken-3">{{ user.email|safe }}</dd>
-      <dt class="grey-text">{% trans %}Created{% endtrans %}</dt>
+      <dt class="grey-text">Registro</dt>
       <dd class="gey-text text-darken-3">{{ user.created|safe }}</dd>
-      <dt class="grey-text">{% trans %}Updated{% endtrans %}</dt>
+      <dt class="grey-text">Última modificación</dt>
       <dd class="gey-text text-darken-3">{{ user.updated|safe }}</dd>
     </dl>
 {% endif %}
@@ -34,7 +34,7 @@
             <div class="col s12 m3 center" style="margin-top:8px;">
                         <div class="form-group">
                             <label class="controls">
-                            <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Click on image to update.</span>
+                            <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Clic para subir imagen.</span>
                                 {% if user.picture %}
                                   <img id="blah" src="/media/serve/profile/{{user.key.id()}}/" alt="your image" class="circle responsive-img valign z-depth-1" style="max-height:150px; cursor:pointer;border: 1px solid rgb(3, 169, 244);"/>
                                 {% else %}
@@ -53,45 +53,45 @@
                       <div class="row">
                         <div class="input-field col s6">
                           <input id="name" name="name" type="text" value="{{user.name}}">
-                          <label for="name">Name</label>
+                          <label for="name">Nombre</label>
                         </div>
                       
                         <div class="input-field col s6">
                           <input id="last_name" name="last_name" type="text" value="{{user.last_name}}">
-                          <label for="last_name">Lastname</label>
+                          <label for="last_name">Apellido</label>
                         </div>
                       </div>
                       <div class="row">
                         <div class="input-field col s6 m4">
                           <input id="phone" name="phone" type="tel" value="{{user.phone}}">
-                          <label for="phone">Phone</label>
+                          <label for="phone">Teléfono</label>
                         </div>
                         <div class="input-field col s6 m4">
                           <select id="gender" name="gender">
                             {% if user.gender == '' or user.gender == 'male' %}
-                              <option value="male" selected>Male</option>
-                              <option value="female">Female</option>
+                              <option value="male" selected>Masculino</option>
+                              <option value="female">Femenino</option>
                             {% else %}
-                              <option value="male">Male</option>
-                              <option value="female" selected>Female</option>
+                              <option value="male">Masculino</option>
+                              <option value="female" selected>Femenino</option>
                             {% endif %}
                           </select>
-                          <label>Gender</label>
+                          <label>Género</label>
                         </div>                        
                         <div class="input-field col s6 m4">
                           <input id="birth" name="birth" type="date" class="datepicker" value="{{user.birth}}">
-                          <label for="birth">Birthday</label>
+                          <label for="birth">Nacimiendo</label>
                         </div>
                         <div class="right">
                           <p>
                             <input type="checkbox" class="filled-in" id="filled-in-box" checked="{{user.activated}}" name="activated">
-                            <label for="filled-in-box">Activated</label>
+                            <label for="filled-in-box">Activado</label>
                           </p>
                         </div>
                       </div>
                       <div class="row">
                           <div class="input-field col s12 center">
-                            <button class="waves-effect waves-light light-blue white-text btn right" id="submit_profile_form" >Save changes
+                            <button class="waves-effect waves-light light-blue white-text btn right" id="submit_profile_form" >Guardar
                               <i class="mdi-content-send right"></i>
                             </button>                           
                           </div>

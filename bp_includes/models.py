@@ -107,6 +107,13 @@ class User(User):
             else:
                 result['unused'].append(v)
         return result
+
+    def get_rewards(self):
+        amount = 0
+        for reward in self.rewards:
+            amount += reward.amount
+
+        return amount
 #--------------------------------------- ENDOF   U S E R    M O D E L -----------------------------------------------------------   
 
 

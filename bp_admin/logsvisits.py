@@ -71,9 +71,9 @@ class AdminLogsVisitsHandler(BaseHandler):
         #         maxValue = temp[t]
         
         params = {
-            "list_columns": [('timestamp', 'Timestamp'),
-                             ('ip', 'IP'),
-                             ('uastring', 'Browser')
+            "list_columns": [('timestamp', 'Fecha'),
+                             ('ip', u'Dirección IP'),
+                             ('uastring', 'Navegador')
             ],
             "visits": _visits,
             "count": qry.count()

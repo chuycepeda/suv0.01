@@ -26,7 +26,6 @@
         left: 5px;
         top: 5px;
     }
-    
     .image{
           -webkit-transform: scale(0.55);
           transform: scale(0.55);
@@ -56,7 +55,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">Categorías </li>
+                <li class="active">Temas </li>
                 <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar<i class="mdi-action-note-add left"></i></a>
             </ol>
           </div>
@@ -76,24 +75,28 @@
                 <thead style="font-family:roboto; color:#777777;">
                   <tr class="brand-color white-text">
                       <th>✎</th>
-                      <th>Categoría</th>
+                      <th>Tema</th>
                       <th>Color</th>
                       <th>Icono</th>
-                      <th>Subcategorías</th>
+                      <th>Vigencia (días)</th>
+                      <th>Firmas necesarias</th>
+                      <th>Requiere imagen</th>
                   </tr>
                 </thead>
                 <tbody id="report_table" style="font-family:roboto-light;">
-                    {% for group in groups %}
+                    {% for topic in topics %}
                       <tr>
                           <td>
                               <div>    
-                                  <a class="icon" href="{{ uri_for('admin-category-edit', group_id=group.get_id()) }}" >Editar o agregar subcategorías</a>
+                                  <a class="icon" href="{{ uri_for('admin-topic-edit', topic_id=topic.get_id()) }}" >Editar</a>
                               </div>
                           </td>
-                          <td>{{group.name}}</td>
-                          <td><div class="color-box" style="background-color: #{{group.color}};"></div>#{{group.color}}</td>
-                          <td><a class="image" style="background-color: #{{group.color}};  -webkit-mask: url({{group.icon_url}}) no-repeat 50% 50%;"></a></td>
-                          <td>{{group.get_subcategories_count()}}</td>
+                          <td>{{topic.name}}</td>
+                          <td><div class="color-box" style="background-color: #{{topic.color}};"></div>#{{topic.color}}</td>
+                          <td><a class="image" style="background-color: #{{topic.color}};  -webkit-mask: url({{topic.icon_url}}) no-repeat 50% 50%;"></a></td>
+                          <td>{{topic.benchmark}}</td>
+                          <td>{{topic.trigger}}</td>
+                          <td>{% if topic.requires_image %}Sí{% else %}No{% endif %}</td>
                       </tr>
                     {% endfor %}
                 </tbody>
@@ -111,22 +114,21 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <div class="row">
           <div class="input-field col s12 center">
-            <p class="center login-form-text">Agrega un nuevo grupo de categorías llenando la siguiente forma</p>
+            <p class="center login-form-text">Agrega un nuevo tema de peticiones llenando la siguiente forma</p>
           </div>
         </div>
         <div class="row margin">
           <div class="input-field col s12">
-            <i class="mdi-action-group-work prefix brand-color-text"></i>
+            <i class="mdi-action-class prefix brand-color-text"></i>
             <input id="name" name="name" type="text">
-            <label for="name" class="center-align">Nombre del grupo de categorías</label>
+            <label for="name" class="center-align">Nombre del tema</label>
           </div>
         </div>
         <div class="row margin">
             <i class="mdi-image-colorize left brand-color-text" style="margin-left: 22px;"></i>
             <p class="grey-text">Haz clic en el recuadro y selecciona un color</p>
-            <input id="color" name="color" type="color" style="    height: 45px;" value="{{group_color}}">
+            <input id="color" name="color" type="color" style="height: 45px;" value="{{brand_secondary_color}}">
         </div>
-
         <div class="row margin">
             <div class="input-field col s12">
               <i class="mdi-communication-live-help prefix brand-color-text"></i>
@@ -458,6 +460,25 @@
                 </div>
               </div>
             </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="mdi-av-timer prefix brand-color-text"></i>
+            <input id="subbenchmark" name="subbenchmark" type="number" value="">
+            <label for="subbenchmark" class="center-align">Días de vigencia</label>
+          </div>
+          <div class="input-field col s12">
+            <i class="mdi-social-group-add prefix brand-color-text"></i>
+            <input id="subtrigger" name="subtrigger" type="number" value="">
+            <label for="subtrigger" class="center-align">Firmas necesarias</label>
+          </div>
+        </div>
+        <div class="row margin" style="text-align: left;margin-left: -2px;">
+          <div class="input-field col s12">
+            <i class="mdi-image-camera-alt prefix brand-color-text"></i>
+            <input name="subimagereq" type="checkbox" class="filled-in" id="filled-in-box">
+            <label for="filled-in-box">Requiere imagen</label>
+          </div>
         </div>  
         <div class="row">
           <div class="input-field col s12">
@@ -484,6 +505,10 @@
          Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre por favor.</span>',4500);
       }else if(document.getElementById('color').value==""){
          Materialize.toast('<span class="toast-warning">Oops! Llena el campo de color por favor.</span>',4500);
+      }else if(document.getElementById('subbenchmark').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de días por favor.</span>',4500);
+      }else if(document.getElementById('subtrigger').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de firmas por favor.</span>',4500);
       }else if(document.getElementById('subicon').value==""){
         Materialize.toast('<span class="toast-warning">Oops! Selecciona un icono por favor.</span>',4500);
       }else{
@@ -511,11 +536,11 @@
             paging: true,
             "lengthMenu": [[250], [250]],
             "language": {
-              "lengthMenu": "Mostrar _MENU_ categorías por página",
+              "lengthMenu": "Mostrar _MENU_ temas por página",
               "search": "Buscar:",
-              "zeroRecords": "Ninguna categoría encontrado",
-              "info": "Mostrando _START_ a _END_ de _TOTAL_ categorías",
-              "infoFiltered": "(filtrando sobre _MAX_ categorías)",
+              "zeroRecords": "Ningún tema encontrado",
+              "info": "Mostrando _START_ a _END_ de _TOTAL_ temas",
+              "infoFiltered": "(filtrando sobre _MAX_ temas)",
               "paginate": {
                   "first":      "Inicio",
                   "last":       "Final",

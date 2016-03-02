@@ -63,6 +63,7 @@ _routes = [
     RedirectRoute('/user/settings/account/', handlers.MaterializeSettingsAccountRequestHandler, name='materialize-settings-account', strict_slash=True),
     RedirectRoute('/user/change-email/<user_id>/<encoded_email>/<token>', handlers.MaterializeEmailChangedCompleteHandler, name='materialize-email-changed-check', strict_slash=True),
     # User: all special access
+    RedirectRoute('/user/organization/directory/', handlers.MaterializeOrganizationDirectoryRequestHandler, name='materialize-organization-directory', strict_slash=True),
     RedirectRoute('/user/organization/dashboard/', handlers.MaterializeOrganizationDashboardRequestHandler, name='materialize-organization-dashboard', strict_slash=True),
     RedirectRoute('/user/organization/report/', handlers.MaterializeOrganizationNewReportHandler, name='materialize-organization-report', strict_slash=True),
     RedirectRoute('/user/organization/report/success/', handlers.MaterializeOrganizationNewReportSuccessHandler, name='materialize-organization-report-success', strict_slash=True),

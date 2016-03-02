@@ -21,6 +21,7 @@ config = {
                               'environment_args': {'extensions': ['jinja2.ext.i18n']}},
 
     # application name
+    'app_domain':  'http://demo.onesmart.city',
     'app_name':  unicode('Mi Ciudad Digital','utf-8'),
     'city_name':  unicode('Mi Ciudad','utf-8'),
     'city_url':  'http://onesmart.city',

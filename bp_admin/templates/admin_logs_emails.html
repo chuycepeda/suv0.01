@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-            <h5 class="breadcrumbs-title">Emails</h5>
+            <h5 class="breadcrumbs-title">Correos ({{count}})</h5>
           </div>
         </div>
     </div>
@@ -19,17 +19,17 @@
 <div class="row" style="margin-top:60px;">
     <form method="get" class="col s12" role="search">
         <div class="input-field col s12 m6">
-          <input placeholder="Search emails by Recipient" id="q" name="q" type="text" class="validate">
-          <label for="q" class="active">Total Emails {{count}}</label>
+          <input placeholder="Busca correos por Destinatario" id="q" name="q" type="text" class="validate">
+          <label for="q" class="active">Total de correos enviados: {{count}}</label>
         </div>
-        <button type="submit" class="btn waves-effect waves-light light-blue" style="margin-top:20px;">Search<i class="mdi-action-search right"></i></button><a id="remove" href="/admin/logs/emails/" class="btn red lighten-1 white-text" style="font-size: 15px;margin-top:20px;margin-left:20px;">Remove<i class="mdi-navigation-close right"></i></a>
+        <button type="submit" class="btn waves-effect waves-light light-blue" style="margin-top:20px;">Buscar<i class="mdi-action-search right"></i></button><a id="remove" href="/admin/logs/emails/" class="btn red lighten-1 white-text" style="font-size: 15px;margin-top:20px;margin-left:20px;">Remover<i class="mdi-navigation-close right"></i></a>
     </form>
 </div>
 
 <table class="table striped hoverable responsive-table centered" style="  font-size: 12px; font-family: roboto-light; margin-top:40px; margin-bottom:40px;">
     <thead>
         <tr>
-            <th class="col m1">View</th>
+            <th class="col m1"></th>
             {% for attr, when in list_columns %}
             <th>
                 {{ when|safe }}
@@ -41,11 +41,11 @@
     <tr>
         <td>
             <div>
-                <a class="icon" href="{{ uri_for('admin-logs-email-view', email_id=email.get_id()) }}"><i class="glyphicon-eye-open glyphicon"></i> View</a>
+                <a class="icon" href="{{ uri_for('admin-logs-email-view', email_id=email.get_id()) }}"><i class="glyphicon-eye-open glyphicon"></i> Ver</a>
             </div>
             <br>
             <div>
-                <a class="icon" href="{{ uri_for('admin-send-email') }}?email_id={{email.to}}"><i class="glyphicon-envelope glyphicon"></i> Write</a>
+                <a class="icon" href="{{ uri_for('admin-send-email') }}?email_id={{email.to}}"><i class="glyphicon-envelope glyphicon"></i> Escribir</a>
             </div>
         </td>
         {% for attr, when in list_columns %}

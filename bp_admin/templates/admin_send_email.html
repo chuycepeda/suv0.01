@@ -1,7 +1,7 @@
 {% extends 'admin_base.html' %}
 
 {% block header_title %}
-    {% trans %}Send Email{% endtrans %}
+    Enviar correo
 {% endblock %}
 
 {% block breadcrums %}
@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-            <h5 class="breadcrumbs-title">Send email<a class="btn waves-effect waves-light right indigo" href="/admin/">Back<i class="mdi-navigation-arrow-back left"></i></a></h5>
+            <h5 class="breadcrumbs-title">Enviar correo</h5>
           </div>
         </div>
     </div>
@@ -29,14 +29,14 @@
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group row">
                         <div class="col s8">
-                            <label for="recipents">Recipient (Comma separated or 'ALLUSERS' to send bulk mail)</label> 
+                            <label for="recipents">Destinatario (Separados por comas o escribe 'ALLUSERS' para enviarlo a todos)</label> 
                             <input class="input-xlarge form-control" id="recipents" name="recipents" type="text" value="{{recipent}}">
                         </div>
                     </div>
             
                     <div class="form-group row">
                         <div class="col s8">
-                            <label for="subject">Subject</label> 
+                            <label for="subject">Asunto</label> 
                             <input class="input-xlarge form-control" id="subject" name="subject" type="text" value=""> 
                             <input class="input-xlarge form-control" id="emailbody" name="emailbody" type="text" value="" hidden="">
                         </div>
@@ -44,7 +44,7 @@
             
                     <div class="form-group">
                         <div class="col s8 controls">
-                            <button onclick="sendForm('form_sendemail')" class="waves-effect waves-light light-blue white-text btn right" value="Enviar">Send<i class="mdi-content-send right"></i></button>
+                            <button onclick="sendForm('form_sendemail')" class="waves-effect waves-light light-blue white-text btn right" value="Enviar">Enviar ahora<i class="mdi-content-send right"></i></button>
                         </div>
                     </div>
                 </fieldset>
@@ -60,7 +60,7 @@
                         <td style="background-color: #FFFFFF;padding:15px 10px">
                             <center>
                                 <div style="width: 100%">
-                                    <label for="logourl">URL for logo image</label>
+                                    <label for="logourl">URL para imagen de logo</label>
                                     <input id="logourl"type="text" style="padding:10px; width: 100%" placeholder="{{brand_favicon}}" value="{{brand_favicon}}">
                                 </div>
                             </center>
@@ -72,7 +72,7 @@
                         <td style="background-color: #FFFFFF;padding:15px 10px">
                             <center>
                                 <div >
-                                    <label for="moodurl">URL for art image</label>
+                                    <label for="moodurl">URL para imagen de arte</label>
                                     <input id="moodurl"type="text" style="padding:10px; width: 100%;height: 100%" placeholder="{{city_splash}}" value="{{city_splash}}">
                                 </div>
                             </center>
@@ -83,19 +83,19 @@
                         <td style="width:24px;background-color: #FFFFFF;"></td>
                         <td style="background-color: #FFFFFF;padding:15px 10px">
                             <div>
-                                <label for="greetingtitle">Welcoming title</label>
+                                <label for="greetingtitle">Título</label>
                             </div>
                             <div>
-                                <input id="greetingtitle"type="text" style="padding:10px;" placeholder="Hello !" value="Hello !">
+                                <input id="greetingtitle"type="text" style="padding:10px;" placeholder="Estuvimos pensando en ti, y..." value="Estuvimos pensando en ti, y...">
                             </div>
                             <div>
-                                <label for="greeting">Greeting</label>
+                                <label for="greeting">Bienvenida</label>
                             </div>
                             <div>
-                                <input id="greeting"type="text" style="padding:10px;" placeholder="How are you Random User!" value="How are you Random User!">
+                                <input id="greeting"type="text" style="padding:10px;" placeholder="¡Queremos agradecerte!" value="¡Queremos agradecerte!">
                             </div>
-                            <label for="body">Body</label>
-                            <textarea id="body" rows="8" style="width: 100%" placeholder="Mensaje principal del correo" >We're happy to have you so close. Thus, we wanted to tell you that...</textarea>
+                            <label for="body">Mensaje</label>
+                            <textarea id="body" rows="8" style="width: 100%" placeholder="Mensaje principal del correo" >Estamos felices de que estés con nosotros en esta misión. Por eso queremos decirte que...</textarea>
                         </td>
                         <td style="width:24px;background-color: #FFFFFF;"></td>
                     </tr>
@@ -103,18 +103,18 @@
                         <td style="width:24px;background-color: #FFFFFF;"></td>
                         <td style="background-color: #FFFFFF;padding:15px 10px; color:white;text-align:center;">
                             <center>
-                                <div style="padding: 5px; width: 60%; border-style: solid;" >
+                                <div style="padding: 5px; width: 100%; border-style: solid;" >
                                 <div>
-                                    <label for="ctatext">Call to action text</label>
+                                    <label for="ctatext">Llamada a la acción</label>
                                 </div>
                                 <div>
-                                    <input id="ctatext"type="text" style="padding:10px; width: 50%; color: #BABABA" placeholder="Confirm email" value="Confirm email">
+                                    <input id="ctatext"type="text" style="padding:10px; width: 100%; color: #BABABA" placeholder="Visita tu plataforma" value="Visita tu plataforma">
                                 </div>
                                 <div>
-                                    <label for="ctaurl">URL for call to action</label>
+                                    <label for="ctaurl">URL de llamada a la acción</label>
                                 </div>
                                 <div>
-                                    <input id="ctaurl"type="text" style="padding:10px; width: 50%; color: #BABABA" placeholder="http://mboilerplate.appspot.com/" value="http://mboilerplate.appspot.com/">
+                                    <input id="ctaurl"type="text" style="padding:10px; width: 100%; color: #BABABA" placeholder="{{app_domain}}" value="{{app_domain}}">
                                 </div>
                                 </div>
                             </center>
@@ -125,22 +125,22 @@
                         <td style="width:24px;background-color: #FFFFFF;"></td>
                         <td style="background-color: #FFFFFF;padding:15px 10px">
                             <div>
-                                <label for="closing">Closing</label>
+                                <label for="closing">Cierre</label>
                             </div>
                             <div style="width: 60%">
-                                <input id="closing"type="text" style="padding:10px;width: 100%" placeholder="Mensaje de cierre" value="Have a good one !">
+                                <input id="closing"type="text" style="padding:10px;width: 100%" placeholder="Mensaje de cierre" value="¡Hoy será tu día!">
                             </div>
                             <div>
-                                <label for="cheers">Good-bye</label>
+                                <label for="cheers">Despedida</label>
                             </div>
                             <div>
-                                <input id="cheers"type="text" style="padding:10px;" placeholder="Truly yours," value="Truly yours,">
+                                <input id="cheers"type="text" style="padding:10px;" placeholder="Sinceramente," value="Sinceramente,">
                             </div>
                             <div>
-                               <label for="sign">Signature</label>
+                               <label for="sign">Firma</label>
                             </div>
                             <div>
-                                <input id="sign"type="text" style="padding:10px; color:{{brand_color}};" placeholder="Firma" value="Mboilerplate team">
+                                <input id="sign"type="text" style="padding:10px; color:{{brand_color}};" placeholder="El equipo de {{app_name}}" value="El equipo de {{app_name}}">
                             </div>
                         </td>
                         <td style="width:24px;background-color: #FFFFFF;"></td>
@@ -205,7 +205,7 @@
                                                             </div>
                                                             <p id="p_closing"style="margin:45px 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color: #657D8D;"></p>    
                                                             <p id="p_cheers"style="margin:0 0 -5px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color: #657D8D;"></p>
-                                                            <p id="p_sign"style="margin:0 0 -5px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color:{{brand_color}}" ></p>  
+                                                            <p id="p_sign"style="margin:6px 0 -5px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light;color:{{brand_color}}" ></p>  
                                                         </td>
                                                         <td width="20" valign="middle" style="width:20px"></td>
                                                     </tr>

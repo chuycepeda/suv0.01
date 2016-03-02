@@ -15,7 +15,7 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-            <h5 class="breadcrumbs-title">Email Details</h5>
+            <h5 class="breadcrumbs-title">Detalle del correo</h5>
           </div>
         </div>
     </div>
@@ -25,16 +25,16 @@
 
 {% block page_content %}
 
-      <a href="{{ uri_for("admin-logs-emails") }}" class="btn waves-effect waves-light light-blue right"><i class="mdi-hardware-keyboard-arrow-left left"></i>{% trans %}Back to Emails{% endtrans %}</a>
+      <a href="{{ uri_for("admin-logs-emails") }}" class="btn waves-effect waves-light light-blue right"><i class="mdi-hardware-keyboard-arrow-left left"></i>Volver a los correos</a>
       {% if emailinfo %}
           <dl class="dl-horizontal">
-            <dt class="grey-text">{% trans %}To{% endtrans %}</dt>
+            <dt class="grey-text">Para</dt>
             <dd class="grey-text text-darken-3">{{ emailinfo.to|safe }}</dd>
-            <dt class="grey-text">{% trans %}Subject{% endtrans %}</dt>
+            <dt class="grey-text">Asunto</dt>
             <dd class="grey-text text-darken-3">{{ emailinfo.subject|safe }}</dd>
-            <dt class="grey-text">{% trans %}When{% endtrans %}</dt>
+            <dt class="grey-text">Fecha</dt>
             <dd class="grey-text text-darken-3">{{ emailinfo.when|safe }}</dd>
-            <dt class="grey-text">{% trans %}Body{% endtrans %}</dt>
+            <dt class="grey-text">Contenido</dt>
             <dd class="grey-text text-darken-3" style="  background-color: rgb(233, 233, 233);padding: 20px;   overflow: scroll;">{{ emailinfo.body|safe }}</dd>
           </dl>
       {% endif %}

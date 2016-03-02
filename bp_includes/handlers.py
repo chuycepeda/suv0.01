@@ -2735,6 +2735,13 @@ class MaterializeOrganizationExportReportsHandler(BaseHandler):
         else:
             self.abort(403)
 
+class MaterializeOrganizationDirectoryRequestHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params, user_info = disclaim(self)
+
+        return self.render_template('materialize/users/sections/directory.html', **params)
+
 #USER SECRETARY
 class MaterializeSecretaryInboxRequestHandler(BaseHandler):
     @user_required
@@ -5284,7 +5291,7 @@ class MaterializeCategoriesHandler(BaseHandler):
                     'benchmark': cat.benchmark
                 }
         
-        
+        #Return organization
         elif q=='org':
             secretaries = models.Secretary.query()
             for secretary in secretaries:
@@ -5297,21 +5304,27 @@ class MaterializeCategoriesHandler(BaseHandler):
                         operators = agency.get_operators()
                         agArr.append({
                             'name': agency.name,
+                            'description': agency.description,
                             'admin_image':  self.user_model.get_by_email(agency.admin_email).get_image_url() if self.user_model.get_by_email(agency.admin_email) else '',
                             'admin_name': agency.admin_name,
+                            'admin_email': agency.admin_email,
                             'group_cat': {
                                 'name': group_cat.name,
                                 'subcats': subcats
                             },
-                            'operators' : {operator.name : self.user_model.get_by_email(operator.email).get_image_url() if self.user_model.get_by_email(operator.email) else '' for operator in operators}
+                            'operators' : {operator.name : [self.user_model.get_by_email(operator.email).get_image_url() if self.user_model.get_by_email(operator.email) else '', operator.email] for operator in operators}
                         })
                 reportDict[secretary.name] = {
+                        'name': secretary.name,
+                        'description': secretary.description,
+                        'phone': secretary.phone,
+                        'address': secretary.address,
                         'admin_name': secretary.admin_name,
+                        'admin_email': secretary.admin_email,
                         'admin_image':  self.user_model.get_by_email(secretary.admin_email).get_image_url() if self.user_model.get_by_email(secretary.admin_email) else '',
                         'agency': agArr
                 }
                     
-        
         #Return category groups attributes including subcategories
         else:
             groups = models.GroupCategory.query()
@@ -5340,6 +5353,7 @@ class MaterializeCategoriesHandler(BaseHandler):
                     cdbArr.append(subcat.cdb_id)
                 reportDict[cat.name] = {
                     'color': cat.color,
+                    'icon': cat.icon_url,
                     'categories': subcatArr,
                     'icon_url': icons,
                     'secretaries': secArr,

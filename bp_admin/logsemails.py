@@ -48,9 +48,9 @@ class AdminLogsEmailsHandler(BaseHandler):
         self.view.q = q
 
         params = {
-            "list_columns": [('when', 'When'),
-                             ('to', 'Recipient'),
-                             ('subject', 'Subject'),
+            "list_columns": [('when', 'Fecha'),
+                             ('to', 'Destinatario'),
+                             ('subject', 'Asunto'),
             #                 ('sender', 'Sender'),
             #                 ('body', 'Body')
             ],

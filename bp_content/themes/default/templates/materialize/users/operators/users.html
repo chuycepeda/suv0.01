@@ -97,6 +97,16 @@
 {% block page_scripts %}
     <script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript">
+        $(function () {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+            });
+            if(vars['q'])
+              $('#remove').show();
+            else
+              $('#remove').hide();
+        });
         $('#data-table-simple').DataTable({
             scrollY: 300,
             scrollCollapse: true,

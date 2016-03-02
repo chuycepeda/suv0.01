@@ -261,7 +261,7 @@
               parent = 0;
               child = counter;
 
-              label = orgDict[x].admin_name;// + " - " + x;
+              label = orgDict[x].admin_name + " ("+ orgDict[x].admin_email +") - " + orgDict[x].name;// + " - " + x;
               image = orgDict[x].admin_image;
               if (image == "") image = no_account_image;
               if (image.toString() == "-1") image = empty_image;
@@ -277,7 +277,7 @@
 
                 resDict.push({secretary: x, secretary_admin: orgDict[x].admin_name, secretary_admin_image: orgDict[x].admin_image, agency: orgDict[x].agency[i].name, agency_admin: orgDict[x].agency[i].admin_name, agency_admin_image: orgDict[x].agency[i].admin_image, group_cat: orgDict[x].agency[i].group_cat.name, sub_cats: orgDict[x].agency[i].group_cat.subcats, operators: orgDict[x].agency[i].operators, pending: 0, closed: 0});
 
-                  label = orgDict[x].agency[i].admin_name;// + " - " + orgDict[x].agency[i].name;
+                  label = orgDict[x].agency[i].admin_name + " ("+ orgDict[x].agency[i].admin_email +") - " + orgDict[x].agency[i].name;// + " - " + orgDict[x].agency[i].name;
                   image = orgDict[x].agency[i].admin_image;
                   if (image == "") image = no_account_image;
                   if (image.toString() == "-1") image = empty_image;
@@ -287,8 +287,8 @@
                   age_parent = child;
                   if (orgDict[x].agency[i].operators)
                       for (var y in orgDict[x].agency[i].operators){
-                        label = y;
-                        image = orgDict[x].agency[i].operators[y];
+                        label = y + " ("+ orgDict[x].agency[i].operators[y][1] +") - " + orgDict[x].agency[i].group_cat.subcats.toString();
+                        image = orgDict[x].agency[i].operators[y][0];
                         if (image == "") image = no_account_image;
                         if (image.toString() == "-1") image = empty_image;
                         child = counter;

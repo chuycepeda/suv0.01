@@ -332,6 +332,7 @@ class BaseHandler(webapp2.RequestHandler):
             'zendesk_code': self.app.config.get('zendesk_code'),
             'zendesk_imports': self.app.config.get('zendesk_imports'),
             'app_name': self.app.config.get('app_name'),
+            'app_domain': self.app.config.get('app_domain'),
             'city_name': self.app.config.get('city_name'),
             'city_url': self.app.config.get('city_url'),
             'city_slogan': self.app.config.get('city_slogan'),

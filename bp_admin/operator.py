@@ -19,7 +19,7 @@ from bp_includes.lib.decorators import taskqueue_method
 
 """
 
-    REPORTS HANDLERS
+    REPORT HANDLERS
 
 """
 def get_status(_stat):
@@ -48,7 +48,7 @@ def get_status(_stat):
     if _stat == 'pending':
         return 'Pendientes'
 
-class AdminInboxHandler(BaseHandler):
+class AdminReportsHandler(BaseHandler):
     def get(self):
         params={}
         names = []
@@ -122,7 +122,7 @@ class AdminInboxHandler(BaseHandler):
                 params['p'] = p
             if cursor:
                 params['c'] = cursor.urlsafe()
-            return self.uri_for('admin-inbox', **params)
+            return self.uri_for('admin-reports', **params)
 
 
 
@@ -136,7 +136,7 @@ class AdminInboxHandler(BaseHandler):
         params['reports'] = reports
         params['count'] = count
         params['cats'] = sorted(names) if names else names
-        params['inbox'] = 'admin-inbox'
+        params['inbox'] = 'admin-reports'
         params['nickname'] = g_users.get_current_user().email().lower()
 
         return self.render_template('admin_inbox.html', **params)
@@ -162,15 +162,6 @@ class AdminMapHandler(BaseHandler):
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         return self.render_template('admin_map.html', **params)
-
-class AdminManualHandler(BaseHandler):
-    """
-    Handler to show the manuals page
-    """
-    def get(self):
-        params = {}
-        params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_manual.html', **params)
 
 class AdminReportEditHandler(BaseHandler):
     def get_or_404(self, report_id):
@@ -493,16 +484,7 @@ class AdminReportEditHandler(BaseHandler):
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         return self.render_template('admin_report_edit.html', **params)
 
-class AdminOrganizationViewHandler(BaseHandler):
-    """
-    Handler to show the organization visualization page
-    """
-    def get(self):
-        params = {}
-        params['nickname'] = g_users.get_current_user().email().lower()
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')        
-        return self.render_template('admin_orgview.html', **params)
+
 
 """
 
@@ -614,6 +596,8 @@ class AdminCallCenterOperatorHandler(BaseHandler):
         }
         params['nickname'] = g_users.get_current_user().email().lower()
         return self.render_template('admin_callcenter_operator.html', **params)
+
+
 
 """
 
@@ -991,6 +975,7 @@ class AdminOrganizationOperatorHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         return self.render_template('admin_operator.html', **params)
 
+
 """
 
     CATEGORIES HANDLERS
@@ -1001,11 +986,13 @@ class AdminCategoriesHandler(BaseHandler):
         params = {}
         params['nickname'] = g_users.get_current_user().email().lower()
         params['groups'] = models.GroupCategory.query()
+        params['group_color'] = self.app.config.get('brand_secondary_color')
         return self.render_template('admin_categories.html', **params)
     
     def post(self):
         name = self.request.get('name').strip()
         color = self.request.get('color').upper()[1:]
+        icon_url = self.request.get('subicon')
         groupCat = models.GroupCategory.query(models.GroupCategory.name == name).get()
         if groupCat is not None:
             agencies = groupCat.get_agencies()
@@ -1018,7 +1005,7 @@ class AdminCategoriesHandler(BaseHandler):
             groupCat = models.GroupCategory()
             groupCat.name = name
             groupCat.color = color
-            groupCat.icon_url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld= |%s" %(color)
+            groupCat.icon_url = icon_url
         
             #PUSH TO CARTODB
             from google.appengine.api import urlfetch
@@ -1080,11 +1067,12 @@ class AdminSubcategoriesHandler(BaseHandler):
                     #GROUP EDITION
                     name = self.request.get('name').strip()
                     color = self.request.get('color').upper()[1:]
+                    icon_url = self.request.get('group_subicon')
 
                     groupCat = models.GroupCategory.get_by_id(long(group_id))
                     if groupCat.name != name:
                         possible_repeat = models.GroupCategory.query(models.GroupCategory.name == name).get()
-                        if possible_repeat is not None:
+                        if possible_repeat is not None and int(possible_repeat.key.id()) != int(group_id):
                             agencies = groupCat.get_agencies()
                             agenciesArr = [agency.name for agency in agencies]
                             self.add_message(messages.nametaken, 'danger')
@@ -1095,8 +1083,7 @@ class AdminSubcategoriesHandler(BaseHandler):
                     
                     groupCat.name = name
                     groupCat.color = color
-                    groupCat.icon_url = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld= |%s" %(color)
-
+                    groupCat.icon_url = icon_url
 
                     #PUSH TO CARTODB
                     from google.appengine.api import urlfetch
@@ -1128,7 +1115,7 @@ class AdminSubcategoriesHandler(BaseHandler):
                     groupCat.put()
 
                     self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("admin-category-edit", group_id=group_id)
+                    return self.redirect_to("admin-categories")
                 else:
                     #SUBCATEGORY ADD
                     logging.info("adding a new subcategory")
@@ -1233,7 +1220,7 @@ class AdminSubcategoriesEditHandler(BaseHandler):
 
                     if subcategory.name != name:
                         possible_repeat = models.SubCategory.query(models.SubCategory.name == name).get()
-                        if possible_repeat is not None:
+                        if possible_repeat is not None and int(possible_repeat.key.id()) != int(category_id):
                             group = models.GroupCategory.get_by_id(long(possible_repeat.group_category_id))
                             self.add_message(messages.nametaken, 'danger')
                             message = ('<div>El nombre %s esta en uso por el grupo:</div><div> - %s</div>' %(name, group.name))
@@ -1315,140 +1302,202 @@ class AdminSubcategoriesEditHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         return self.render_template('admin_subcategory.html', **params)
 
-class AdminBulkCategoriesHandler(BaseHandler):
+
+"""
+
+    PETITIONS HANDLERS
+
+"""
+class AdminPetitionsHandler(BaseHandler):
     def get(self):
+        params={}
+        names = []
+        categories = models.GroupCategory.query()
+        for category in categories:
+            names.append(category.name)
+
+        status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
+        ticket = int(self.request.get('ticket')) if (self.request.get('ticket') or self.request.get('ticket') != "") else False
+        folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
+        groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
         
-        peopleDict = {
-            'FRANCISCO CIENFUEGOS MARTÍNEZ': 'ALCALDE',
-            'JORGE STAHL ESCAMILLA': 'SECRETARIO DE ADMINISTRACIÓN',
-            'THANIA BERENICE SAUCEDO ELIZONDO': 'DIRECTORA GENERAL DEL INSTITUTO MUNICIPAL DE LA JUVENTUD',
-            'NATALIA MERCADO RODRÍGUEZ': 'DIRECTORA GENERAL  DE GOBIERNO DIGITAL Y TECNOLOGÍA',
-            'ALBERTO BARRERA CANTÚ': 'SECRETARIO DE CONTROL Y  SUSTENTABILIDAD URBANA',
-            'MARIA DE JESÚS AGUIRRE MALDONADO': 'CONSEJERA MUNICIPAL',
-            'OLIVERIO TIJERINA SEPÚLVEDA': 'SECRETARIO DE SERVICIOS PÚBLICOS',
-            'ADRIÁN FERNÁNDEZ GARZA': 'JEFE DE LA OFICINA EJECUTIVA DE LA PRESIDENCIA MUNICIPAL',
-            'JOSÉ SALVADOR TREVIÑO FLORES': 'CONTRALOR',
-            'JUAN FRANCISCO LIVAS CANTÚ': 'SECRETARIO DE DESARROLLO ECONÓMICO',
-            'ALEJANDRA LARA MAIZ': 'DIRECTORA GENERAL DEL SISTEMA DIF',
-            'CLARITZA ESTEFANÍA DUARTE LUGO': 'DIRECTORA GENERAL DEL INSTITUTO DE LA MUJER',
-            'RICARDO GARZA VILLARREAL': 'SECRETARÍA DE FINANZAS Y TESORERÍA MUNICIPAL',
-            'FELIPE DE JESÚS GALLO GUTIÉRREZ': 'SECRETARIO DE SEGURIDAD PÚBLICA Y TRÁNSITO',
-            'ARTURO ALEJANDRO CANTÚ GONZÁLEZ': 'DIRECTOR GENERAL DE RELACIONES PÚBLICAS',
-            'EPIGMENIO GARZA VILLARREAL': 'SECRETARIO DEL AYUNTAMIENTO',
-            'LORENA DE LA GARZA VENECIA': 'DIRECTORA GENERAL DE COMUNICACIÓN SOCIAL',
-            'MÓNICA AGREDANO RAMÍREZ': 'CONSEJERA DE MEDIOS DE COMUNICACIÓN',
-            'JUAN RAMÓN PALACIOS CHAPA': 'SECRETARIO DE DESARROLLO SOCIAL',
-            'HÉCTOR MORALES RIVERA': 'SECRETARIO DE OBRAS PÚBLICAS',
-            'GERARDO SAÚL PALACIOS PÁMANES': 'SECRETARIO DE PREVENCIÓN SOCIAL'
+        logging.info(status)
+        logging.info(ticket)
+        logging.info(folio)
+        logging.info(groupCat)
+        
+        p = self.request.get('p')
+        q = self.request.get('q')
+        c = self.request.get('c')
+        forward = True if p not in ['prev'] else False
+        cursor = Cursor(urlsafe=c)
+
+        if q:
+            reports = models.Report.query()            
+            count = reports.count()
+        else:
+            if groupCat:
+                reports = models.Report.query(models.Report.group_category == groupCat)
+                params['ddfill'] = groupCat
+            else:
+                reports = models.Report.query()
+                params['ddfill'] = 'TODOS'
+            if status:
+                reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
+                params['ddfillstat'] = get_status(status)
+            else:
+                params['ddfillstat'] = 'TODOS'
+            if ticket:    
+                reports = reports.filter(models.Report.cdb_id == ticket)
+            if folio:     
+                reports = reports.filter(models.Report.folio == folio)
+            count = reports.count()
+            PAGE_SIZE = 100
+            if forward:
+                reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                if next_cursor and more:
+                    self.view.next_cursor = next_cursor
+                if c:
+                    self.view.prev_cursor = cursor.reversed()
+            else:
+                reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                reports = list(reversed(reports))
+                if next_cursor and more:
+                    self.view.prev_cursor = next_cursor
+                self.view.next_cursor = cursor.reversed()
+
+        def pager_url(p, cursor):
+            params = OrderedDict()
+            if q:
+                params['q'] = q
+            if status:
+                params['status'] = status
+            if ticket:
+                params['ticket'] = ticket
+            if folio:
+                params['folio'] = folio
+            if groupCat:
+                params['cat'] = groupCat
+            if p in ['prev']:
+                params['p'] = p
+            if cursor:
+                params['c'] = cursor.urlsafe()
+            return self.uri_for('admin-reports', **params)
+
+
+
+        self.view.pager_url = pager_url
+        self.view.q = q
+
+        params['statusval'] = get_status(status) if status else ""
+        params['ticketval'] = ticket if ticket else ""
+        params['folioval'] = folio if folio else ""
+        params['catGroup'] = groupCat if groupCat else ""
+        params['reports'] = reports
+        params['count'] = count
+        params['cats'] = sorted(names) if names else names
+        params['inbox'] = 'admin-reports'
+        params['nickname'] = g_users.get_current_user().email().lower()
+
+        return self.render_template('admin_petitions.html', **params)
+
+
+"""
+
+    TOPICS HANDLERS
+
+"""
+class AdminTopicsHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['topics'] = models.Topic.query()
+        params['group_color'] = self.app.config.get('brand_secondary_color')
+        return self.render_template('admin_topics.html', **params)
+    
+    def post(self):
+        name = self.request.get('name').strip()
+        color = self.request.get('color').upper()[1:]
+        icon_url = self.request.get('subicon')
+        requires_image = True if self.request.get('subimagereq') else False
+        benchmark = int(self.request.get('subbenchmark'))
+        trigger = int(self.request.get('subtrigger'))
+
+        topic = models.Topic.query(models.Topic.name == name).get()
+        if topic is not None:
+            self.add_message(messages.nametaken, 'danger')
+        else:
+            topic = models.Topic()
+            topic.name = name
+            topic.color = color
+            topic.icon_url = icon_url
+            topic.requires_image = requires_image
+            topic.benchmark = benchmark
+            topic.trigger = trigger
+            topic.put()
+            self.add_message(messages.saving_success, 'success')
+        
+        return self.get()  
+
+class AdminTopicEditHandler(BaseHandler):
+    def get_or_404(self, topic_id):
+        try:
+            topic = models.Topic.get_by_id(long(topic_id))
+            if topic:
+                return topic
+        except ValueError:
+            pass
+        self.abort(404)
+
+    def edit(self, topic_id):
+        if self.request.POST:
+            topic = self.get_or_404(topic_id)
+            delete = self.request.get('delete')
+            
+            try:
+
+                if delete == 'confirmed_deletion':
+                    topic_info = models.Topic.get_by_id(long(topic_id))
+
+                    #DELETE TOPIC CATEGORY
+                    topic_info.key.delete()
+
+                    self.add_message(messages.saving_success, 'success')
+                    return self.redirect_to("admin-topics")
+                elif delete == 'category_edition':
+                    #TOPIC EDITION
+                    name = self.request.get('name').strip()
+                    color = self.request.get('color').upper()[1:]
+                    icon_url = self.request.get('subicon')
+                    requires_image = True if self.request.get('subimagereq') else False
+                    benchmark = int(self.request.get('subbenchmark'))
+                    trigger = int(self.request.get('subtrigger'))
+
+                    topic = models.Topic.query(models.Topic.name == name).get()
+                    if topic is not None and int(topic.key.id()) != int(topic_id):
+                        self.add_message(messages.nametaken, 'danger')
+                    else:
+                        topic.name = name
+                        topic.color = color
+                        topic.icon_url = icon_url
+                        topic.requires_image = requires_image
+                        topic.benchmark = benchmark
+                        topic.trigger = trigger
+                        topic.put()
+                        self.add_message(messages.saving_success, 'success')
+
+                    return self.redirect_to("admin-topics")
+                
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error updating topic: %s ' % e)
+                self.add_message(messages.saving_error, 'danger')
+                return self.redirect_to("admin-topic-edit", topic_id=topic_id)
+        else:
+            topic = self.get_or_404(topic_id)
+
+        params = {
+            'topic': topic
         }
 
-        try:                 
-#             import csv, json
-#             from google.appengine.api import urlfetch
-#             urlfetch.set_default_fetch_deadline(45)
-#             url = self.app.config.get('reports_export_url')
-#             result = urlfetch.fetch(url)
-#             if result.status_code == 200:
-#                 data = json.loads(result.content)                
-#                 writer = csv.writer(self.response.out)
-#                 writer.writerow(["rating", "via", "sub_category", "contact_info", "urgent", "req_deletion", "address_lon", "terminated", "folio", "user_id", "title", "cdb_id", "group_category", "when", "address_lat", "status", "updated", "address_from", "description", "created", "follows", "emailed_72", "image_url"])
-#                 for item in data['items']:
-#                     writer.writerow([ item['rating'], item['via'], item['sub_category'].encode('utf8'), item['contact_info'].encode('utf8'), item['urgent'], item['req_deletion'], item['address_lon'], item['terminated'], item['folio'], item['user_id'], item['title'].encode('utf8'), item['cdb_id'], item['group_category'].encode('utf8'), item['when'], item['address_lat'], item['status'], item['updated'], item['address_from'].encode('utf8'), item['description'].encode('utf8'), item['created'], item['follows'], item['emailed_72'], str(item['image_url'])  ])
-#                         
-#             self.response.headers['Content-Type'] = 'application/csv'
-#             self.response.headers['Content-Disposition'] = 'attachment; filename=export.csv'
-#             writer = csv.writer(self.response.out)
-            
-            ''' 
-            import csv, json
-            from google.appengine.api import urlfetch
-            urlfetch.set_default_fetch_deadline(45)
-            url = self.app.config.get('users_export_url')
-            result = urlfetch.fetch(url)
-            if result.status_code == 200:
-                data = json.loads(result.content)                
-                writer = csv.writer(self.response.out)
-                writer.writerow(["name", "credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
-                for item in data['items']:
-                    logging.info(item)
-                    writer.writerow([ item['name'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',' ').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], item['identifier'], item['email'] ])
-                        
-            self.response.headers['Content-Type'] = 'application/csv'
-            self.response.headers['Content-Disposition'] = 'attachment; filename=export.csv'
-            writer = csv.writer(self.response.out)            
-            '''
-            '''
-            reports = models.Report.query(models.Report.status == 'solved')
-            ids = [5833671273611264, 5874719752454144, 6012377212387328, 6089252966236160, 6356598976937984, 6396621227032576, 6466823809662976, 6631555267035136]
-            reportList = []
-            for id in ids:
-                reportList.append(ndb.Key(models.Report, id))
-            reports = ndb.get_multi(reportList)
-            url = self.uri_for('admin-bulk')
-            from google.appengine.api import urlfetch
-            import urllib
-            api_key = self.app.config.get('cartodb_apikey')
-            cartodb_domain = self.app.config.get('cartodb_user')
-            cartodb_table = self.app.config.get('cartodb_reports_table')
-            for report in reports:
-                taskqueue.add(url=url, target = 'devdb', params={
-                    'terminated': report.terminated.strftime("%Y-%m-%d %H:%M:%S"),
-                    'cdb_id': report.cdb_id,
-                })
-                unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET terminated = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report.terminated, report.cdb_id, api_key)).encode('utf8')
-                url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                try:
-                    t = urlfetch.fetch(url)
-                    logging.info("t: %s" % t.content)
-                except Exception as e:
-                    logging.info('error in cartodb UPDATE request: %s' % e)
-                    pass            
-    
-            reports = models.Report.query()     
-            mod_reports=[]
-            for report_info in reports:
-                if report_info.status == 'solved':
-                    logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
-                    for log in logs:
-                        if log.title == 'Ha marcado este reporte como resuelto.':
-                            report_info.terminated = log.created
-                            mod_reports.append(report_info)
-                elif report_info.status == 'failed': 
-                    logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
-                    for log in logs:
-                        if log.title == 'Ha marcado este reporte como fallo.':
-                            report_info.terminated = log.created
-                            mod_reports.append(report_info)
-                elif report_info.status == 'archived':
-                    logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
-                    for log in logs:
-                        if log.title == "Ha archivado este reporte.":
-                            report_info.terminated = log.created
-                            mod_reports.append(report_info)
-                        
-            self.response.headers['Content-Type'] = 'text/plain'
-            self.response.write('Done with bulk operation')
-            '''
-
-        except Exception as e:
-            self.response.headers['Content-Type'] = 'text/plain'
-            self.response.write('Bulk error: %s' %e)
-    '''
-    @taskqueue_method
-    def post(self):
-        from google.appengine.api import urlfetch
-        import urllib
-        cdb_id = self.request.get("cdb_id")
-        terminated = self.request.get("terminated")        
-        api_key = self.app.config.get('cartodb_apikey')
-        cartodb_domain = self.app.config.get('cartodb_user')
-        cartodb_table = self.app.config.get('cartodb_reports_table')
-        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET terminated = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, terminated, cdb_id, api_key)).encode('utf8')
-        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-        try:
-            t = urlfetch.fetch(url)
-            logging.info("t: %s" % t.content)
-        except Exception as e:
-            logging.info('error in cartodb UPDATE request: %s' % e)
-            pass
-    '''
+        params['nickname'] = g_users.get_current_user().email().lower()
+        return self.render_template('admin_topic_edit.html', **params)

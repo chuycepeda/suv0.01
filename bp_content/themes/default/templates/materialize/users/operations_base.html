@@ -111,6 +111,7 @@
                 }
                 .btn{
                     background-color: {{brand_color}};
+                    font-family: roboto-light;
                 }
                 .btn:hover{
                     background-color: {{brand_secondary_color}}!important;
@@ -118,6 +119,7 @@
                 }
                 .btn-large{
                     background-color: {{brand_color}};
+                    font-family: roboto-light;
                 }
                 .btn-large:hover{
                     background-color: {{brand_secondary_color}}!important;
@@ -148,6 +150,9 @@
                 [type=checkbox].filled-in:checked+label:after{
                     border: 2px solid {{brand_secondary_color}}!important;
                     background-color: {{brand_secondary_color}}!important;
+                }
+                .dataTables_scrollBody {
+                    min-height: 200px;
                 }
             </style>
             {% block page_css %}{% endblock %}

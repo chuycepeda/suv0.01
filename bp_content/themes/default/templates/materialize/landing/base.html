@@ -22,7 +22,8 @@
 	  	{% block stylesheets %}
 	  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
-		    <link href="/{{theme}}/materialize/css/style.css?v=1" type="text/css" rel="stylesheet" media="screen,projection">
+		    <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
 		    <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
 		    <style type="text/css">
 		    	#lean-overlay{
@@ -81,6 +82,7 @@
 				}
 				.btn{
 					background-color: {{brand_color}};
+					font-family: roboto-light;
 				}
 				.btn:hover{
 					background-color: {{brand_secondary_color}}!important;
@@ -88,6 +90,7 @@
 				}
 				.btn-large{
 					background-color: {{brand_color}};
+					font-family: roboto-light;
 				}
 				.btn-large:hover{
 					background-color: {{brand_secondary_color}}!important;
@@ -174,6 +177,16 @@
 
 {% block document_body %}
 	<body>
+		{% block loader %}
+            <!-- Start Page Loading -->
+            <div id="loader-wrapper">
+                <div id="loader"></div>        
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+            </div>
+            <!-- End Page Loading -->
+        {% endblock %}
+        
 		{% block navbar %}
 			<!-- START NAVBAR -->
 			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-1">
@@ -375,7 +388,7 @@
 					    	<div class="hide-on-med-only">
 			                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()">
 			                  <li>
-			                    <div class="collapsible-header white-text truncate brand-color"> Estás viendo <span id="rep_count_M" style="font-family: roboto-regular;">0</span> reportes.</div>
+			                    <div class="collapsible-header white-text truncate brand-secondary-color"> Estás viendo <span id="rep_count_M" style="font-family: roboto-regular;">0</span> reportes.</div>
 			                    <div class="collapsible-body white">
 			                    	<p style="padding: 8px;">
 	    		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde_M" checked>
@@ -390,11 +403,11 @@
 			                    </div>
 			                  </li>
 			                  <li>
-			                  	<div class="collapsible-header white-text truncate brand-color" id="my-zone-m" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
+			                  	<div class="collapsible-header white-text truncate brand-secondary-color" id="my-zone-m" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
 			                    <div class="collapsible-body brand-color lighten-5"></div>
 			                  </li>
 			                  <li>
-			                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
+			                    <div class="collapsible-header white-text brand-secondary-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
 			                    <div class="collapsible-body white lighten-5 center">
 			                      <div class="row">
 			                      	<div class="col s6" style="margin-top:15px;"><a style="padding: 0px 1px!important;" class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
@@ -434,7 +447,7 @@
 				</div>
                 <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
                   <li>
-                    <div class="collapsible-header white-text truncate brand-color"> <i class="mdi-navigation-arrow-drop-down"></i> Estás viendo <span id="rep_count" style="font-family: roboto-regular;">0</span> reportes.</div>
+                    <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-navigation-arrow-drop-down"></i> Estás viendo <span id="rep_count" style="font-family: roboto-regular;">0</span> reportes.</div>
 		                    <div class="collapsible-body white">
 		                    	<p style="padding: 8px;">
     		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde" checked>
@@ -449,11 +462,11 @@
 		                    </div>
                   </li>
                   <li>
-                  	<div class="collapsible-header white-text truncate brand-color" id="my-zone" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
+                  	<div class="collapsible-header white-text truncate brand-secondary-color" id="my-zone" style="opacity:0.95" onclick="{% if has_address %}myZone(){% else %}window.open('{{ uri_for("materialize-settings-profile") }}', '_top'){% endif %}"><i class="mdi-navigation-fullscreen"></i> {% if has_address %}Ver mi colonia{% else %}Establecer mi colonia{% endif %}</div>
                     <div class="collapsible-body brand-color lighten-5"></div>
                   </li>
                   <li>
-                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
+                    <div class="collapsible-header white-text brand-secondary-color" style="opacity:0.95"><i class="mdi-device-dvr"></i> Cambiar vista</div>
                     <div class="collapsible-body white lighten-5 center">
                       <div class="row">
                       	<div class="col s6" style="margin-top:15px;"><a class="btn-floating btn-large waves-effect waves-light green tooltipped" data-position="top" data-delay="50" data-tooltip="Normal" onclick="setMapView('normal');"><i class="mdi-maps-place"></i></a></div>
@@ -466,7 +479,7 @@
                     </div>
                   </li>
                   <li>
-                    <div class="collapsible-header white-text brand-color" style="opacity:0.95"><i class="mdi-content-filter-list"></i> Filtrar</div>
+                    <div class="collapsible-header white-text brand-secondary-color" style="opacity:0.95"><i class="mdi-content-filter-list"></i> Filtrar</div>
                     <div class="collapsible-body white lighten-5">
                         
                         <div class="row">
@@ -550,6 +563,7 @@
                 <ul>
                   {% if user_id %}<li><a id="chatout-btn" href="#" data-activates="chat-out" class="tooltipped btn-floating brand-color chat-collapse" data-position="left" data-delay="50" data-tooltip="información" onclick="$('#right-sidebar-nav').show()"><i class="large mdi-communication-live-help"></i></a></li>
                   {% endif %}
+                  {% if path != uri_for('materialize-organization-directory') %}<li><a href="{{ uri_for('materialize-organization-directory') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="directorio"><i class="large mdi-communication-quick-contacts-dialer"></i></a></li>{% endif %}
                   {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="contáctanos"><i class="large mdi-communication-email"></i></a></li>{% endif %}
                   {% if path != uri_for('landing-map') %}<li><a href="{{ uri_for('landing-map') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver mapa"><i class="large mdi-social-public"></i></a></li>{% endif %}
                   <li><a href="{{ uri_for('materialize-petition-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear petición"><i class="large mdi-maps-local-parking"></i></a></li>
@@ -1377,13 +1391,15 @@
 							tileStyle += "marker-file: url(http://com.cartodb.users-assets.production.s3.amazonaws.com/maki-icons/marker-18.svg);marker-fill-opacity: 1.0;marker-line-color: {{brand_secondary_color}};marker-line-width: 2;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 30;marker-fill: {{brand_tertiary_color}};marker-allow-overlap:" + mOverlap +";";
 						
                             for (var x in reportDict){
-                            	if  (city_catMarkers.length < 30){
-                            		for (var y in reportDict[x].icon_url){
-                               			tileStyle += '[sub_category="'+y+'"] {marker-file: url('+ reportDict[x].icon_url[y] +');marker-fill: #'+reportDict[x].color+';marker-width: 30;}';    
-				    	            }
-                            	}else{
-                               		tileStyle += '[group_category="'+x+'"] {marker-fill: #'+reportDict[x].color+';}';    
-                            	}
+                                if  (city_catMarkers.length < 30){
+                                    for (var y in reportDict[x].icon_url){
+                                        tileStyle += '[sub_category="'+y+'"] {marker-file: url('+ reportDict[x].icon_url[y] +');marker-fill: #'+reportDict[x].color+';marker-width: 30;}';    
+                                    }
+                                }else if (Object.keys(reportDict).length < 30){
+                                    tileStyle += '[group_category="'+x+'"] {marker-file: url('+ reportDict[x].icon +');marker-fill: #'+reportDict[x].color+';marker-width: 30;}';    
+                                }else{
+                                    tileStyle += '[group_category="'+x+'"] {marker-fill: #'+reportDict[x].color+';}';    
+                                }   
                             }
 							
 							tileStyle += closeStyle;
@@ -2147,12 +2163,14 @@
 							
 	                            for (var x in reportDict){
 	                                if  (city_catMarkers.length < 30){
-                            		for (var y in reportDict[x].icon_url){
-                               			tileStyle += '[sub_category="'+y+'"] {marker-file: url('+ reportDict[x].icon_url[y] +');marker-fill: #'+reportDict[x].color+';marker-width: 30;}';    
-				    	            }
-	                            	}else{
-	                               		tileStyle += '[group_category="'+x+'"] {marker-fill: #'+reportDict[x].color+';}';    
-	                            	} 
+	                                    for (var y in reportDict[x].icon_url){
+	                                        tileStyle += '[sub_category="'+y+'"] {marker-file: url('+ reportDict[x].icon_url[y] +');marker-fill: #'+reportDict[x].color+';marker-width: 30;}';    
+	                                    }
+	                                }else if (Object.keys(reportDict).length < 30){
+	                                    tileStyle += '[group_category="'+x+'"] {marker-file: url('+ reportDict[x].icon +');marker-fill: #'+reportDict[x].color+';marker-width: 30;}';    
+	                                }else{
+	                                    tileStyle += '[group_category="'+x+'"] {marker-fill: #'+reportDict[x].color+';}';    
+	                                }   
 	                            }
 							
 							}

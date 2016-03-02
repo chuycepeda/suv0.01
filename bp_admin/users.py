@@ -64,13 +64,13 @@ class AdminUserListHandler(BaseHandler):
         self.view.q = q
 
         params = {
-            "list_columns": [('username', 'Email'),
-                             ('name', 'Name'),
-                             ('last_name', 'Last'),
-                             ('link_referral', 'Unique Link'),
-                             ('rewards','Rewards'),
-                             ('created', 'Created'),
-                             ('last_login', 'Last Login')
+            "list_columns": [('username', 'Correo'),
+                             ('name', 'Nombre'),
+                             ('last_name', 'Apellido'),
+                             ('link_referral', u'Url único'),
+                             # ('rewards','Recompensas'),
+                             ('created', 'Registro'),
+                             ('last_login', u'Último ingreso')
                              ],
             "users": users,
             "count": count

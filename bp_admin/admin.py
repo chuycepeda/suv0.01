@@ -12,9 +12,38 @@ from google.appengine.api import taskqueue
 from google.appengine.api import users as g_users #https://cloud.google.com/appengine/docs/python/refdocs/modules/google/appengine/api/users#get_current_user
 
 
-class AdminLogoutHandler(BaseHandler):
+class AdminRequestHandler(BaseHandler):
     def get(self):
-        self.redirect(g_users.create_logout_url(dest_url=self.uri_for('landing')))
+        self.redirect(self.uri_for('admin-stats-reports'))
+
+class AdminStatsReportsHandler(BaseHandler):
+    def get(self):
+        params = {}
+        reports = models.Report.query()
+        users = self.user_model.query()
+        params['sum_users'] = users.count()
+        params['sum_reports'] = reports.count()
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_has_cic'] = self.app.config.get('cartodb_has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        return self.render_template('admin_summary.html', **params)
+
+class AdminStatsOrganizationHandler(BaseHandler):
+    """
+    Handler to show the organization visualization page
+    """
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')        
+        return self.render_template('admin_orgview.html', **params)
 
 class AdminSendEmailListHandler(BaseHandler):
     def get(self):
@@ -57,21 +86,15 @@ class AdminSendEmailListHandler(BaseHandler):
         
         return self.get()
 
-class AdminSummaryHandler(BaseHandler):
+class AdminManualHandler(BaseHandler):
+    """
+    Handler to show the manuals page
+    """
     def get(self):
         params = {}
-        reports = models.Report.query()
-        users = self.user_model.query()
-        params['sum_users'] = users.count()
-        params['sum_reports'] = reports.count()
         params['nickname'] = g_users.get_current_user().email().lower()
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_has_cic'] = self.app.config.get('cartodb_has_cic')
-        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
-        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        return self.render_template('admin_summary.html', **params)
+        return self.render_template('admin_manual.html', **params)
 
+class AdminLogoutHandler(BaseHandler):
+    def get(self):
+        self.redirect(g_users.create_logout_url(dest_url=self.uri_for('landing')))
