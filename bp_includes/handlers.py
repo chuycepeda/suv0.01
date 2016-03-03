@@ -4680,7 +4680,9 @@ class MaterializeReportCardlistHandler(BaseHandler):
     def get(self):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
-
+        
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         return self.render_template('materialize/users/sections/reports_list.html', **params)
 
 class MaterializeNewReportHandler(BaseHandler):
@@ -5506,6 +5508,30 @@ class MaterializeLogChangeDeleteHandler(BaseHandler):
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))
+
+class MaterializeTopicsHandler(BaseHandler):
+    def get(self):
+        reportDict = {}
+        q = self.request.get('q') if self.request.get('q') else False
+        o = self.request.get('o') if self.request.get('o') else False
+        logging.info(q)
+        logging.info(o)
+
+        topics = models.Topic.query()
+        for topic in topics:
+            reportDict[topic.name] = {
+                    'name': topic.name,
+                    'color': topic.color,
+                    'icon_url': topic.icon_url,
+                    'requires_image': topic.requires_image,
+                    'benchmark': topic.benchmark,
+                    'trigger': topic.trigger,
+                }
+        
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+
 
 class TempFixesHandler(BaseHandler):
     @user_required

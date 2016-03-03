@@ -230,30 +230,84 @@
                                             </div>
                                         </div>
                                     </li>
-                                    <li {% if path == uri_for('materialize-organization-dashboard') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-dashboard') }}">Resumen estadístico </a></li>
-                                    <li {% if path == uri_for('materialize-organization-users') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-users') }}">Expediente ciudadano </a></li>
+                                    
+
+                                    <li class="no-padding" style="margin-bottom: 15px;">
+                                        <ul class="collapsible collapsible-accordion">
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-organization-dashboard') %}active{% endif %}"><i class="mdi-action-assessment grey-text left"></i>Estadísticas</a>
+                                               <div class="collapsible-body">
+                                                    <ul>
+                                                    <li {% if path == uri_for('materialize-organization-dashboard') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-dashboard') }}">De reportes</a></li>                                                    
+                                                    </ul>
+                                               </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+
+
                                     <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
+
+                                    <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
+                                        <ul class="collapsible collapsible-accordion">
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-callcenter-inbox') or path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') %}active{% endif %}"><i class="mdi-content-inbox grey-text left"></i>Bandeja de reportes</a>
+                                               <div class="collapsible-body">
+                                                    <ul>
+                                                        {% if user_is_callcenter %}
+                                                            <li {% if path == uri_for('materialize-callcenter-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-inbox') }}">Atención ciudadana </a></li>
+                                                        {% endif %}
+                                                        {% if user_is_secretary %}
+                                                            <li {% if path == uri_for('materialize-secretary-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-secretary-inbox') }}">Secretaría</a></li>
+                                                        {% endif %}
+                                                        {% if user_is_agent %}
+                                                            <li {% if path == uri_for('materialize-agent-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-agent-inbox') }}">Dirección</a></li>
+                                                        {% endif %}
+                                                        {% if user_is_operator %}
+                                                            <li {% if path == uri_for('materialize-operator-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-operator-inbox') }}">Operador de enlace</a></li>
+                                                        {% endif %}
+                                                    
+                                                    </ul>
+                                               </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
+
+
                                     {% if user_is_callcenter %}
-                                        <li {% if path == uri_for('materialize-callcenter-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-inbox') }}">Bandeja de atención </a></li>
-                                        <!-- <li {% if path == uri_for('materialize-callcenter-facebook') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-facebook') }}" style="color:#5976B1!important;">Bandeja de Facebook </a></li>
-                                        <li {% if path == uri_for('materialize-callcenter-twitter') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-twitter') }}" style="color:#60BAF0!important;">Bandeja de Twitter </a></li> -->
-                                    {% endif %}
-                                    {% if user_is_secretary %}
-                                        <li {% if path == uri_for('materialize-secretary-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-secretary-inbox') }}">Bandeja de secretaría</a></li>
-                                    {% endif %}
-                                    {% if user_is_agent %}
-                                        <li {% if path == uri_for('materialize-agent-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-agent-inbox') }}">Bandeja de dirección</a></li>
-                                    {% endif %}
-                                    {% if user_is_operator %}
-                                        <li {% if path == uri_for('materialize-operator-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-operator-inbox') }}">Bandeja de operador </a></li>
-                                    {% endif %}
+                                    <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
+                                        <ul class="collapsible collapsible-accordion">
+                                            
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-callcenter-facebook') or path == uri_for('materialize-callcenter-twitter') %}active{% endif %}"><i class="mdi-communication-forum grey-text left"></i>Redes sociales</a>
+                                               <div class="collapsible-body">
+                                                    <ul>
+                                                        <li {% if path == uri_for('materialize-callcenter-facebook') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-facebook') }}" style="color:#496BA4!important;font-family: roboto-black;">Facebook</a></li>
+                                                        <li {% if path == uri_for('materialize-callcenter-twitter') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-twitter') }}" style="color:#00B0F3!important;">Twitter</a></li>
+                                                    </ul>
+                                               </div>
+                                            </li>
+                                        </ul>
+                                    </li>
                                     <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
-                                    {% if user_is_callcenter %}
-                                        <li {% if path == uri_for('materialize-callcenter-facebook') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-facebook') }}">Conexión a Facebook </a></li>
-                                        <li {% if path == uri_for('materialize-callcenter-twitter') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-twitter') }}">Conexión a Twitter </a></li>
                                     {% endif %}
-                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
-                                    <li {% if path == uri_for('materialize-organization-manual') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-manual') }}">Manual de operador</a></li>
+
+
+
+                                    <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
+                                        <ul class="collapsible collapsible-accordion">
+                                            
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-organization-manual') or path == uri_for('materialize-organization-users') %}active{% endif %}"><i class="mdi-navigation-more-vert grey-text left"></i>Otros</a>
+                                               <div class="collapsible-body">
+                                                    <ul>
+                                                       <li {% if path == uri_for('materialize-organization-users') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-users') }}">Expediente ciudadano</a></li>
+                                                       <li {% if path == uri_for('materialize-organization-manual') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-manual') }}">Manual de operador</a></li>
+                                                       <li><a href="{{ uri_for('logout') }}">Salir</a></li>
+                                                    </ul>
+                                               </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+
+                                    
                                 </ul>
                                 <!-- <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating waves-effect waves-light hide-on-large-only darken-2" style="margin-top:-5px;"><i class="mdi-navigation-more-vert" style="color: rgb(62, 193, 251);background-color: white;" ></i></a> -->
 

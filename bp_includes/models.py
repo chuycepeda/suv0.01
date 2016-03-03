@@ -570,6 +570,7 @@ class Followers(ndb.Model):
 
 
 
+
 #--------------------------------------- P E T I T I O N    M O D E L ---------------------------------------------------------------     
 
 class Petition(ndb.Model):
@@ -733,7 +734,13 @@ class Flags(ndb.Model):
     petition_id = ndb.IntegerProperty(required = True, default = -1)
     user_id = ndb.IntegerProperty(required = True, default = -1)
 
+class Comments(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add = True)                                                                             
+    petition_id = ndb.IntegerProperty(required = True, default = -1)
+    user_id = ndb.IntegerProperty(required = True, default = -1)
+
 #--------------------------------------- ENDOF   P E T I T I O N   M O D E L --------------------------------------------------------          
+
 
 
 

@@ -57,7 +57,7 @@ config = {
     'facebook_url': 'https://www.facebook.com/GuadalupeNuevoLeon',
     'facebook_handle':'GuadalupeNuevoLeon',
     'facebook_appID': '201422020200516',
-    'google_clientID': '470636988216-hlgtlpo9rj85k27c5cm8r7abjceatndo.apps.googleusercontent.com',
+    'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com',
     'indicoio_apikey': 'bfb2bd9d8307bc472297287bac8f68c9',  
     #cartodb integration
     'map_center_lat': 25.683956577519417, 
@@ -95,8 +95,8 @@ config = {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",
     #application endpoints
-    'users_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/one-smart-city-demo/v1/users?fields=items",
-    'reports_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/one-smart-city-demo/v1/reports?fields=items",
+    'users_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/users?fields=items",
+    'reports_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/reports?fields=items",
     # the default language code for the application.
     # should match whatever language the site uses when i18n is disabled
     'app_lang': 'en',

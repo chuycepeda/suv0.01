@@ -7,6 +7,7 @@
  	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
     <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
  	<link href="/{{theme}}/materialize/css/plugins/rrssb/rrssb.css" type="text/css" rel="stylesheet" media="screen,projection">
+ 	<link href="/{{theme}}/materialize/css/jquery.timelineMe.css" type="text/css" rel="stylesheet" media="screen,projection">
  	<style>
 		.rating:hover{
 			color:#ffc107!important;
@@ -18,6 +19,57 @@
 			font-size: 30px;
 			transform: scale(1.5);
 			-webkit-transform: scale(1.5);
+		} 
+
+		.create{
+			transition-timing-function: ease-in;
+    		transition: border 0.3s;
+    		-webkit-transition-timing-function: ease-in;
+    		-webkit-transition: border 0.3s;
+		}
+
+		.create:hover{
+			border-bottom: 6px solid {{brand_color}};
+		}
+
+		.chip {
+		    display: inline-block;
+		    height: 32px;
+		    font-size: 13px;
+		    font-weight: 500;
+		    color: rgba(0, 0, 0, 0.6);
+		    line-height: 32px;
+		    padding: 0 12px;
+		    border-radius: 16px;
+		    background-color: #e4e4e4;
+		}
+
+		.hoverable:hover{
+        	box-shadow: #A9A6A6 0px 8px 23px 6px;
+        	transition: all .3s ease-out;
+        }
+
+        .hoverable{
+        	transition: all .3s ease-out;
+		}
+
+		.image{
+			-webkit-transform: scale(0.55);
+			transform: scale(0.55);
+			display: inline-block;
+			vertical-align: top;
+			width: 60px;
+			height: 70px;
+			max-width: 60px;
+			max-height: 70px;
+			border-radius: 3px;
+			line-height: 60px;
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+		.image:hover{
+			-webkit-transform: scale(0.65);
+			transform: scale(0.65);
 		}
  	</style>
 {% endblock %}
@@ -30,7 +82,7 @@
 <div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
 	<div class="section no-pad-bot">
 	  <div class="container">
-	    <h2 class="header center brand-color-text" style="margin-top:85px;">Lista de reportes</h2>        
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Reportes</h2>        
 	  </div>
 	</div>
 </div>
@@ -38,147 +90,47 @@
 
 {% block body_content %}
 	<div class="section">
-		<div class="container">
+		<div class="container" style="margin-top:80px">
 			<div class="row">
-				{% for idx, title, when, address_from_coord, address_from, description, status, image_url, group, category, cdb_id, req_deletion, color, rating, follows, log_count, kind in reports %}
-		            <div class="col s12 m6 l3" id="panel_{{idx}}">
-		                <div class="map-card">
-		                    <div class="card">
-		                        <div class="card-image waves-effect waves-block waves-light">
-		                            <div id="map-canvas_{{idx}}" style="height: 342px; width: 100%"></div>
-		                        </div>
-		                        <div class="card-content" style="border-left: 5px solid #{{color}};">                    
-		                            <a class="btn-floating activator btn-move-up waves-effect waves-light right" style="background-color:#{{color}}; width: 60px;height: 60px;top: -50px;">
-		                                <i class="{% if kind == 'follow' %}mdi-social-notifications-none{% else %}mdi-action-info{% endif %}" style="font-size:40px; margin-top:11px;"></i>
-		                            </a>
-		                            <h4 class="card-title grey-text text-darken-4">
-		                                <a href="#" class="grey-text text-darken-4 activator truncate">{{group}}</a>
-		                            </h4>	
-		                            {% if kind == 'own' and status == 'Resuelto' %}
-		                            <p style="cursor: pointer; line-height: 40px; margin-top: -20px;" class="valign-wrapper">Tu calificación:
-		                            	<span id="stars_{{idx}}" class="valign-wrapper right">
-										<i class="rating mdi-action-star-rate {% if rating >= 1 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{idx}},1)"></i>
-										<i class="rating mdi-action-star-rate {% if rating >= 2 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{idx}},2)"></i>
-										<i class="rating mdi-action-star-rate {% if rating >= 3 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{idx}},3)"></i>
-										<i class="rating mdi-action-star-rate {% if rating >= 4 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{idx}},4)"></i>
-										<i class="rating mdi-action-star-rate {% if rating >= 5 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{idx}},5)"></i>
-										</span>
-		                            </p>
-		                            {% endif %}	                            
-		                            {% if cdb_id != -1 %}<p class="activator" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-receipt brand-color-text"></i>Ticket: <span class="brand-secondary-color-text">{{cdb_id}}</span> <span class="grey-text text-lighten-2 activator">(haz clic aquí para ver el detalle)</span></p>
-		                            {% else %} <p class="blog-post-content activator" style="cursor: pointer">Haz clic aquí para ver el detalle.</p>{% endif %}
-									
-									{% if log_count > 0 %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes brand-color-text"></i>Comentarios: <span class="brand-secondary-color-text">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(haz clic aquí para verlos)</a></p>
-		                            {% endif %}
-									<div class="divider" style="margin-top:8px; margin-bottom:8px;"></div>
-									<div class="col s6 center">
-		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="grey-text" href="{{uri_for('landing-map')}}?cdb_id={{cdb_id}}" target="_blank"><i class="mdi-maps-place"></i>Ver mapa</a></p>		                            	
-		                            </div>                            
-		                            <div class="col s6 center">
-		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="grey-text modal-trigger" href="#modal_share" onclick="populateShare({{cdb_id}})"><i class="mdi-social-share"></i>Compartir</a></p>
-		                            </div>
-		                        </div>
-		                        <div class="card-reveal" style="border-left: 5px solid #{{color}};">
-		                            <span class="card-title grey-text text-darken-4"><i class="mdi-navigation-close right"></i></span>                   
-		                            {% if image_url %}<img class="responsive-img center z-depth-2" style="margin-top: 12px;" src="{{image_url}}">{% endif %}
-		                            <p><i style="padding:8px;" class="mdi-action-event brand-color-text"></i>Fecha: <span class="brand-secondary-color-text">{{when}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-maps-pin-drop brand-color-text"></i>Dirección: <span class="brand-secondary-color-text">{{address_from}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-action-group-work brand-color-text"></i>Grupo: <span class="brand-secondary-color-text">{{group}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-image-style brand-color-text"></i>Categoría: <span class="brand-secondary-color-text">{{category}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-action-description brand-color-text"></i>Descripción: <span class="brand-secondary-color-text">{{description}}</span></p>
-		                            <p><i style="padding:8px;" class="mdi-action-book brand-color-text"></i>Estado: <span class="brand-secondary-color-text">{{status}}</span></p>
-		                            {% if cdb_id != -1 %}<p><i style="padding:8px;" class="mdi-action-receipt brand-color-text"></i>Ticket: <span class="brand-secondary-color-text">{{cdb_id}}</span></p>{% endif %}
-		                            {% if status == 'Resuelto' %}
-		                            <p><i style="padding:8px;" class="mdi-action-star-rate brand-color-text"></i>Calificación: <span class="brand-secondary-color-text">{{rating}}</span></p>
-		                            {% endif %}
-		                            <p><i style="padding:8px;" class="mdi-social-group-add brand-color-text"></i>Seguidores: <span class="brand-secondary-color-text">{{follows}}</span></p>
-		                            {% if kind == 'own' %}
-		                            	<div class="col s12 center" style="padding-top: 20px;">
-			                            	<div class="divider" style="    margin-bottom: 10px;"></div>
-			                            	<a class="waves-effect waves-light brand-color white-text btn modal-trigger truncate tooltipped" data-position="top" data-delay="50" data-tooltip="{% if req_deletion %} Cancelar la eliminación{% else %} Solicitar eliminación{% endif %}"href="#modal_delete" onclick="setReportID({{idx}},'{{req_deletion}}');">{% if req_deletion %}Cancelar la eliminación <i class="mdi-action-settings-backup-restore right"></i>{% else %}Solicitar eliminación <i class="mdi-action-delete right"></i>{% endif %}
-							                </a>
-						                </div>	
-						            {% elif kind == 'follow' %}
-									<p><i style="padding:8px;" class="mdi-social-notifications-none brand-color-text"></i>Siguiendo: <a class="brand-secondary-color-text" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(haz clic aquí para dejar de seguirlo)</a></p>
-						            {% endif %}				                		                                           
-		                        </div>
-		                    </div>
-		                </div>
-		            </div>
-		            <input type="text" id = "{{idx|safe}}" class="data" value="{{ address_from_coord|safe }}" icon="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|{{color}}"hidden>
-				{% endfor %}
-				<div id="modal_delete" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
-		            <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
-		            <div class="modal-content">
-			            <div class="row">
-			                <div class="input-field col s12 center">
-			                  <p class="center login-form-text" id="modal-title"></p>
-			                </div>
-			              <div class="row">
-			                <div class="input-field col s12">
-			                  <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
-			                  <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" id="submit_report_form_delete">Sí, seguro</a>
-			                </div>
-			              </div>
-			            </div>
-			        </div>
-			    </div>
-			    <form class="col s12" id="form_edit_report" action="{{ url|safe }}" method="post">
-		            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-		            <input type="hidden" name="delete" id="delete" value="">
-		            <input type="hidden" name="comment" id="comment" value="">
-		            <input type="hidden" name="report_id" id="report_id" value="">
-		        </form>
+		        <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200">Tu espacio digital para apoyar en la detección de problemas de infraestructura y recibir soluciones.</h3>
+		        <div class="col card-panel s12 m2 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('materialize-report-new')}}";'>
+		          <h2 class="grey-text"><i class="mdi-maps-place" style="font-size:34px"></i></h2>
+                  <h5 class="brand-color-text" style="font-family: roboto-thin;">Crea un reporte</h5>
+                </div>
+	    	</div>
+	    	<div class="row">
+		        <h5 class="col s12 m10 offset-m1 grey-text"> Cómo funciona</h5>
+		        <div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div>
+		        <div class="col s12 m10 offset-m1 center">
+		        	<div class="col s12 m4">
+		        		<img class="reponsive-img col s8 offset-s2" src="/{{theme}}/materialize/images/rep_1.png" alt="pet1">
+		        		<h5 class="col s12 grey-text" style="font-weight: 200">I. Detectas un problema en la ciudad.</h5>
+		        	</div>
+		        	<div class="col s12 m4">
+		        		<img class="reponsive-img col s8 offset-s2" src="/{{theme}}/materialize/images/rep_2.png" alt="pet2">
+		        		<h5 class="col s12 grey-text" style="font-weight: 200">II. Creas un reporte y notificas.</h5>
+		        	</div>
+		        	<div class="col s12 m4">
+		        		<img class="reponsive-img col s8 offset-s2" src="/{{theme}}/materialize/images/rep_3.png" alt="pet3">
+		        		<h5 class="col s12 grey-text" style="font-weight: 200">III. Tu gobierno te soluciona.</h5>
+		        	</div>
+		        </div>
+	    	</div>
+			<div class="row">
+				<h5 class="col s12 m10 offset-m1 grey-text"> Actividad</h5>
+		        <div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div>
+		        <div class="row">
+	                <div class="col s12 m10 offset-m1 ">
+	                   <a id="loadmore" class="waves-effect waves-light btn" style="display:none">Cargar siguientes reportes</a>
+	                </div>
+	                <div id="tl-meta" class="col s12 m10 offset-m1 ">
+	                   <div id="timeline-container" class="row"></div>
+	                </div>
+				</div>
+
 			</div>
 		</div>
 	</div>
-	<div id="modal_comments" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
-          <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
-          <div class="modal-content">
-              <div class="row">
-                    <div class="input-field col s12 center">
-                      <p class="center login-form-text">Este es el historial de cambios de tu reporte. Si tienes algo que agregar, no dudes en comentarlo.</p>
-                      <p class="center login-form-text">Para agregar un comentario llena la casilla inferior y da clic en comentar.</p>
-                    </div>
-                    <div class="row">
-                      <div class="container">
-                          <div class="row">
-							<div class="input-field container col s12" id="report_comments" style="font-weight:bold;">              
-                            </div>
-                            <div class="row">
-		                        <div class="input-field col s12 l6 right">
-		                            <i class="mdi-maps-map prefix brand-color-text brand-color-text"></i>
-		                            <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
-		                            <label for="commentbox">Escribe aquí tu comentario</label>
-		                        </div>
-		                    </div> 
-                          	<div class="input-field col s12">
-                              <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cerrar</a>
-                              <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" id="submit_report_form_comment">Comentar</a>
-                            </div>
-                          </div>
-                      </div>
-                    </div>
-              </div>
-          </div>
-    </div>
-    <div id="modal_share" class="modal white {{brand_color}}-text center" style="display: none; opacity: 1; top: 0px;">
-          <i class="mdi-navigation-close {{brand_color}}-text right modal-action modal-close" style="padding: 10px;"></i>
-          <div class="modal-content">
-              <div class="row">
-                    <div class="input-field col s12 center" style="    margin-bottom: 40px;">
-                      <p class="center login-form-text">Comparte el reporte en tu red social favorita.</p>
-                    </div>
-                    <div class="row">
-                      <div class="container">
-                          <div id="share_scripts" class="row center">
-							<div id="share_content" class="col s8 offset-s2"></div>
-                          </div>
-                      </div>
-                    </div>
-              </div>
-          </div>
-    </div>
 {% endblock %}
 
 {% block footer_content %}
@@ -187,157 +139,68 @@
 {% block page_scripts %}
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places,visualization"></script>
 	<script src="/{{theme}}/materialize/js/plugins/rrssb/rrssb.min.js"></script>
-	<script type="text/javascript">
-	    var gmarkers=[];
-	    var map;
-
-	    function dropMarker (loc, origin, iconUrl) {
-	    	
-	        gmarkers[0] = new google.maps.Marker({
-            				animation: google.maps.Animation.DROP,
-            				position: loc,
-            				map: map,
-            				icon: iconUrl
-            			});
-	    }
-	    
-	    function makemapcard (id,m1,iconUrl) {
-	      // Google Maps  
-	      $('#map-canvas_'+id).addClass('loading');    
-	      var latlng = new google.maps.LatLng(m1[0],m1[1]);
-	      var settings = {
-	          zoom: 15,
-	          center: latlng,
-	          mapTypeId: google.maps.MapTypeId.ROADMAP,
-	          mapTypeControl: false,
-	          scrollwheel: false,
-	          draggable: true,
-	          navigationControl: false,
-	      };
-	      map = new google.maps.Map(document.getElementById("map-canvas_"+id), settings);
-
-	      google.maps.event.addDomListener(window, "resize", function() {
-	          var center = map.getCenter();
-	          google.maps.event.trigger(map, "resize");
-	          map.setCenter(center);
-	          $('#map-canvas_'+id).removeClass('loading');
-	      });
-	      var gmarkers=[];
-	      var companyPos = new google.maps.LatLng(m1[0],m1[1]);
-	      dropMarker (companyPos,'from',iconUrl);
-	    }
-
-		$(function() {
-		    var data = document.getElementsByClassName("data");
-		    for (var i = 0, j = data.length; i<j; i++){
-		        var m1 = data[i].value.split(',').map(Number).slice(0,2);
-		        makemapcard (data[i].id,m1,$(data[i]).attr('icon'))    
-		    }
-		});
-	</script>
-	<script type="text/javascript">
-			var _req_d = false;
-			function setReportID(id,req_d){
-				document.getElementById("report_id").value = id;
-				if (req_d == 'True'){
-					document.getElementById("modal-title").innerHTML = "¿Seguro que deseas cancelar la eliminación del reporte?";
-					_req_d = true;
-				}else{
-					document.getElementById("modal-title").innerHTML = "¿Seguro que deseas solicitar la eliminación del reporte?";
-					_req_d = false;
-				}	
-			}
-        	document.querySelector('#submit_report_form_delete').addEventListener('click', function() { 
-		            if (_req_d)
-		            	document.getElementById("delete").value = "confirmed_cancelation";
-		            else
-		            	document.getElementById("delete").value = "confirmed_deletion";
-		            document.getElementById("form_edit_report").submit();
+	<script src="/{{theme}}/materialize/js/jquery.timelineMe.js"></script>
+	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
+	<script>
+		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+	    var city_table_name = '{{cartodb_reports_table}}';
+        var reportDict;
+		
+		function getData(step,limit){
+            var q = "Select * from "+city_table_name+" order by created desc offset "+step+" limit "+ limit;
+            city_sql.execute(q).done(function(data) {
+                console.log(data)
+                var items = [];
+                for (var i = 0; i < data.total_rows;i++){
+                    var shrt = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><div class="col s2"><span class="image " style="background-color:#'+reportDict[data.rows[i].group_category].color+'; -webkit-mask: url('+reportDict[data.rows[i].group_category].icon+') no-repeat 50% 50%;"></span></div><p class="col s10 truncate">'+data.rows[i].description+'</p><div class="chip white-text" style="margin-top: 20px;margin-left: 10px;">Ticket:'+data.rows[i].cartodb_id+'</div></div><div class="card-action center"><a class="grey-text maplink" href="/map/?cdb_id='+data.rows[i].cartodb_id+'" target="_blank"><i class="mdi-maps-place"></i>Ver mapa</a></div></div>';
+                    var full = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-image-style brand-color-text left"></i>Categoría: <span id="report_group_category" class="brand-secondary-color-text"> '+data.rows[i].sub_category+' </span></p><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-action-description brand-color-text left"></i>Descripción:</p><div class="col s12"><blockquote class="grey-text text-lighten-1" style="margin-top: 10px; border-left-width: 5px; border-left-style: solid; border-left-color: rgb(221, 61, 161);">'+data.rows[i].description+'</blockquote></div></div>';
+                    
+                    var d = new Date(data.rows[i].created);
+                    items.push({
+                      type: 'smallItem',
+                      label: d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate()  + " " + d.getHours() + ":" + d.getMinutes(),
+                      picto: '<a style="background-color: #'+reportDict[data.rows[i].group_category].color+';height: 250%;width: 250%;margin-left: -50%;margin-top: -55%;" class="image"></a>',
+                      shortContent: shrt,
+                      fullContent: full,
+                      showMore: '<a class="btn-floating waves-effect waves-light blue right" style="right: 20px; "><i class="material-icons">add</i></a>',
+                      showLess: '<a class="btn-floating waves-effect waves-light blue right" style="right: 20px; "><i class="material-icons">remove</i></a>'
+                    });
+                }
+                $('#timeline-container').timelineMe({
+                  labelClass: 'labelclass',
+                  shortContentClass: 'card',
+                  fullContentClass: 'card',
+                  showMoreClass: 'row',
+                  showLessClass: 'row',
+                  items: items
+                });
+                Materialize.fadeInImage('#tl-meta');        
 		    });
-
-			document.querySelector('#submit_report_form_comment').addEventListener('click', function() { 
-				if (document.getElementById("commentbox").value == '')
-    	            Materialize.toast('<span class="toast-warning">Oops! Escribe un comentario por favor.</span>',4500);
-    	        else{
-    	        	document.getElementById("comment").value = document.getElementById("commentbox").value;
-			        document.getElementById("delete").value = "confirmed_comment";
-			        document.getElementById("form_edit_report").submit();
-    	        }	            	            
-	        });
-
-	        function populateModal(idx){
-	        	console.log(idx);
-	        	rep_com = document.getElementById('report_comments');
-
-	        	var url = "/report/comments/"+idx+"/";
-	        
-	            $.ajax({
-	                url: url,
-	                type: 'GET',
-	                success: function(data) { 
-	                    console.log(data)
-	                }
-	            }).done(function(data) {
-	                rep_com.innerHTML = data.logs.html;
-	                document.getElementById("report_id").value = idx;
-	            }); 
-	        }
-
-	        function followReport(cdb, idx){
-				$.ajax({
-	                url: "{{ uri_for('materialize-report-follow') }}",
-	                type: 'POST',
-	                data: { 
-				        'report_id': cdb,
-				        'user_id': {{user_id}},
-				        '_csrf_token': '{{ csrf_token() }}',
-				        'kind': 'unfollow'
-				    }
-	            }).done(function(data) {
-					if (data.contents == 'user already following')
-	    				Materialize.toast('<span class="toast-warning">Oops! Tú ya seguías este reporte.</span>',4500);
-					else if (data.contents == 'follow request successful')
-	    				Materialize.toast('<span class="toast-success">Estás siguiendo este reporte, ahora podrás verlo en tus reportes.</span>',4500);
-					else if (data.contents == 'unfollow request successful')
-	    				Materialize.toast('<span class="toast-success">Has dejado de seguir este reporte.</span>',4500);
-	    			$('#panel_'+idx).hide();
-	            });
-			}
-
-			function rateReport(idx, rating){
-				$.ajax({
-	                url: "{{ uri_for('materialize-report-rate') }}",
-	                type: 'POST',
-	                data: { 
-				        'report_id': idx,
-				        'user_id': {{user_id}},
-				        '_csrf_token': '{{ csrf_token() }}',
-				        'rating': rating
-				    }
-	            }).done(function(data) {
-	            	console.log(data);
-					if (data.contents == 'rating request successful'){
-	    				Materialize.toast('<span class="toast-success">Gracias! Ya hemos recibido tu calificación.</span>',4500);
-	    				var colors = []
-	    				switch(data.rating){
-	    					case 1: colors = ['amber-text','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2'];break;
-	    					case 2: colors = ['amber-text','amber-text','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2'];break;
-	    					case 3: colors = ['amber-text','amber-text','amber-text','grey-text text-lighten-2','grey-text text-lighten-2'];break;
-	    					case 4: colors = ['amber-text','amber-text','amber-text','amber-text','grey-text text-lighten-2'];break;
-	    					case 5: colors = ['amber-text','amber-text','amber-text','amber-text','amber-text'];break;
-	    				}
-	    				document.getElementById('stars_'+idx).innerHTML = '<i class="rating mdi-action-star-rate '+ colors[0] +'" onclick="rateReport('+ idx +',1)"></i><i class="rating mdi-action-star-rate '+ colors[1] +'" onclick="rateReport('+ idx +',2)"></i><i class="rating mdi-action-star-rate '+ colors[2] +'" onclick="rateReport('+ idx +',3)"></i><i class="rating mdi-action-star-rate '+ colors[3] +'" onclick="rateReport('+ idx +',4)"></i><i class="rating mdi-action-star-rate '+ colors[4] +'" onclick="rateReport('+ idx +',5)"></i>';
-					}
-					else
-	    				Materialize.toast('<span class="toast-danger">Oops! Algo ha salido mal, por favor intenta más tarde.</span>',4500);
-
-	            });
-			}
-
-			function populateShare(cdb_id){
-	        	var _html = ' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{uri_for("landing-map", _full=True)}}?cdb_id='+cdb_id+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Hola!%20sigue%20mi%20reporte%20en%20{{uri_for("landing-map", _full=True)}}?cdb_id='+cdb_id+'&hashtags=#onesmartcity" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ';
-	        	$('#share_content').html(_html);
-	        	setTimeout(function(){ rrssbInit();}, 500);
-			}
+		}
+		
+		$(function() {
+            var step = 0;
+            var limit = 15;	
+            var url = "/report/categories/";
+        
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data) { 
+                    console.log(data)
+                }
+            }).done(function(data) {
+                reportDict = data;
+                getData(step,limit);
+            });                
+            
+            $('#loadmore').click(function(){
+                $('#tl-meta').empty();
+                $('#tl-meta').append('<div id="timeline-container" class="row"></div>');
+                step += 1;
+                getData(step*limit, limit);
+            });
+        
+        });
 	</script>
 {% endblock %}

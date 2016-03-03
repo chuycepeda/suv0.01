@@ -50,6 +50,7 @@ _routes = [
     RedirectRoute('/petition/new/', handlers.MaterializeNewPetitionHandler, name='materialize-petition-new', strict_slash=True),
     RedirectRoute('/petition/image/upload/<petition_id>', handlers.MaterializePetitionUploadImageHandler, name='petition-image-upload', strict_slash=True),
     RedirectRoute('/petition/success/', handlers.MaterializeNewPetitionSuccessHandler, name='materialize-petition-success', strict_slash=True),
+    RedirectRoute('/petition/topics/', handlers.MaterializeTopicsHandler, name='materialize-petition-topics', strict_slash=True),
 
     # User: All
     RedirectRoute('/user/referrals/', handlers.MaterializeReferralsRequestHandler, name='materialize-referrals', strict_slash=True),

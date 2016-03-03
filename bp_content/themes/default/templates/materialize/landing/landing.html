@@ -245,7 +245,7 @@
 								<ul id="reports-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Mapa</a>
 				                        </li>
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Listado</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a>
 				                        </li>
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Crear reporte</a>
 				                        </li>
@@ -256,7 +256,7 @@
 
 		                    <!-- PETITIONS DROPDOWN -->
 								<ul id="petitions-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Listado</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a>
 				                        </li>
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Crear petición</a>
 				                        </li>
@@ -380,9 +380,9 @@
 				    <br><br><br>
 				    <br><br><br>
 				    <div class="row center">
-				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a la plataforma de</h3>
+				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a</h3>
 				      <h1 class="header col s12 white-text" style="font-family:Novecentowide-Bold;">{{app_name}}</h1>
-					  {% if not is_mobile %}<h3 class="col s10 offset-s1 light center header white-text" style="font-size:2.2rem;">Un espacio en el que podrás mandar peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.</h3>{% endif %}
+					  {% if not is_mobile %}<h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" style="font-size:2.2rem;">Un espacio en el que podrás mandar reportes, peticiones y sugerencias que serán respondidas por tu alcalde.</h3>{% endif %}
 				    </div>
 				    <div class="row center">
 				    </div>
@@ -405,7 +405,7 @@
 				        <h2 class="center brand-color-text"><i class="mdi-editor-insert-emoticon" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">¿Cómo funciona?</h5>
 
-				        <p class="center light" style="font-size: 18px;">{{app_name}} es un mecanismo de reporte digital de {{city_name}}. Al crear una cuenta podrás enviar reportes sobre las necesidades de {{city_name}} que serán registradas en tu historial, y te enviaremos notificaciones de avance hasta dar solución.</p>
+				        <p class="center light" style="font-size: 18px;">{{app_name}} es un mecanismo de reporte digital de {{city_name}}. Al crear una cuenta podrás enviar reportes y peticiones sobre las necesidades de {{city_name}} que serán registradas en tu historial, y te enviaremos notificaciones de avance hasta dar solución.</p>
 				      </div>
 				    </div>
 
@@ -414,7 +414,7 @@
 				        <h2 class="center brand-color-text"><i class="mdi-action-receipt" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Reporta y Participa</h5>
 
-				        <p class="center light" style="font-size: 18px;">Al reportar colaboras para hacer de {{city_name}} una mejor ciudad. Con tu partipación se habilita el flujo de conocimiento para la entrega eficaz de servicios y la notificación oportuna al gobierno de lo que nuestra ciudad necesita.</p>
+				        <p class="center light" style="font-size: 18px;">Al participar colaboras para hacer de {{city_name}} una mejor ciudad. Con ello se habilita el flujo de conocimiento para la entrega eficaz de servicios y la notificación oportuna al gobierno de lo que nuestra ciudad necesita. Aprovecha el diálogo y la transparencia como nunca antes.</p>
 				      </div>
 				    </div>
 
@@ -423,7 +423,7 @@
 				        <h2 class="center brand-color-text"><i class="mdi-action-favorite-outline" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Sé parte del cambio</h5>
 
-				        <p class="center light" style="font-size: 18px;">Ayúdanos a conocer las necesidades de nuestra {{city_name}}, juntos lograremos el cambio que estas esperando. En tus manos tienes la herramienta digital que está por transformar {{city_name}} en una ciudad inteligente.</p>
+				        <p class="center light" style="font-size: 18px;">Reportes, peticiones y transparencia en un sólo lugar. Ayúdanos a conocer las necesidades de {{city_name}}, juntos lograremos el cambio que estas esperando. En tus manos tienes la herramienta digital que está por transformar {{city_name}} en una ciudad inteligente.</p>
 				      </div>
 				    </div>
 				  </div>
@@ -590,7 +590,7 @@
 				    <div class="col s12 m9">
 				      <h5 class="white-text">Acerca de</h5>
 				      <p class="grey-text text-lighten-4" style="    margin-top: 3%;">
-				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde. En este espacio esperamos compartir, dialogar y cooperar para juntos producir el gobierno y la ciudad inteligente que deseas.
+				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde. En este espacio esperamos compartir, dialogar y cooperar para juntos producir el gobierno y la ciudad inteligente que deseas. Te damos la bienvenida al acercamiento y la transparencia como nunca antes lo habías visto.
 				      </p>
 				    </div>
 				    <div class="col s12 m2 offset-m1" style="margin-top:12px;">
