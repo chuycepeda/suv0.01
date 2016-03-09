@@ -25,6 +25,20 @@ package = 'Hello'
 
 api = endpoints.api(name='onesmartcity', version='v1')
 
+api_key = "86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA"
+
+MAX_SIZE = 3000
+
+KEYPAGE_RESOURCE = endpoints.ResourceContainer(
+      message_types.VoidMessage,
+      api_key=messages.StringField(1),
+      page=messages.IntegerField(2))
+
+PAGE_RESOURCE = endpoints.ResourceContainer(
+      message_types.VoidMessage,
+      page=messages.IntegerField(1))
+
+
 """
 
   USERS INFO API
@@ -49,10 +63,13 @@ class UsersCollection(messages.Message):
     """Collection of Users."""
     total_rows = messages.IntegerField(1)
     items = messages.MessageField(Users, 2, repeated=True)
+    pages = messages.IntegerField(3)
 
-def getUsers():
+def getUsers(page):
   users = models.User.query()
-  users = users.order(models.User.created)
+  users = users.order(-models.User.created)
+  users = users.count()
+  users = users.fetch(MAX_SIZE, offset = MAX_SIZE*page)
   users_array = []
   for user in users:
     users_array.append(Users(identifier=str(user.key.id()), 
@@ -68,7 +85,7 @@ def getUsers():
       address=user.address.address_from if user.address else '', 
       phone=user.phone if user.phone else ''))
 
-  return UsersCollection(total_rows = len(users_array), items=users_array)
+  return UsersCollection(total_rows = len(users_array), items=users_array, pages=count/MAX_SIZE)
 
 
 """
@@ -106,10 +123,13 @@ class ReportsCollection(messages.Message):
     """Collection of Reports."""
     total_rows = messages.IntegerField(1)
     items = messages.MessageField(Reports, 2, repeated=True)
+    pages = messages.IntegerField(3)
 
-def getReports():
+def getReports(page):
   reports = models.Report.query()
   reports = reports.order(-models.Report.created)
+  count = reports.count()
+  reports = reports.fetch(MAX_SIZE, offset = MAX_SIZE*page)
   reports_array = []
   for report in reports:
     reports_array.append(Reports(created = report.created.strftime("%Y-%m-%d"),
@@ -136,7 +156,40 @@ def getReports():
       emailed_72 = report.emailed_72,
       urgent = report.urgent))   
 
-  return ReportsCollection(total_rows = len(reports_array), items=reports_array)
+  return ReportsCollection(total_rows = len(reports_array), items=reports_array, pages=count/MAX_SIZE)
+
+
+"""  MEDIA GETTER  """
+class ReportsMedias(messages.Message):
+    """Reports medias that stores a message."""
+    created = messages.StringField(1)
+    status = messages.StringField(2)
+    image_url = messages.StringField(3)
+    group_category = messages.StringField(4)
+    sub_category  = messages.StringField(5)
+      
+class ReportsMediasCollection(messages.Message):
+    """Collection of Reports."""
+    total_rows = messages.IntegerField(1)
+    items = messages.MessageField(ReportsMedias, 2, repeated=True)
+    pages = messages.IntegerField(3)
+
+def getReportsMedias(page):
+  reports = models.Report.query()
+  reports = reports.order(-models.Report.created)
+  reports = reports.fetch(MAX_SIZE, offset = MAX_SIZE*page)
+  reports_array = []
+  for report in reports:
+    if report.image_url:
+      reports_array.append(ReportsMedias(created = report.created.strftime("%Y-%m-%d"),
+        status = report.status,
+        image_url = report.image_url if report.image_url else '',
+        group_category = report.group_category,
+        sub_category  = report.sub_category))   
+
+  return ReportsMediasCollection(total_rows = len(reports_array), items=reports_array, pages=int(len(reports_array)/MAX_SIZE))
+
+
 
 
 """
@@ -146,21 +199,39 @@ def getReports():
 """
 @api.api_class(resource_name='main')
 class MainApi(remote.Service):
-    """Main onesmartcity API v1."""
+    """
+        Main onesmartcity API v1.
+
+        For methods without input vars use 
+        message_types.VoidMessage as RESOURCE.
+
+    """
 
     #USERS INFO METHOD
-    @endpoints.method(message_types.VoidMessage, UsersCollection,
-                      path='users', http_method='GET',
+    @endpoints.method(KEYPAGE_RESOURCE, UsersCollection,
+                      path='users/{api_key}/{page}', http_method='GET',
                       name='users.list')
-    def users_list(self, unused_request):
-        return getUsers()
+    def users_list(self, request):
+      if request.api_key == api_key:
+        page = request.page if request.page is not None else 0
+        return getUsers(int(page))
 
     #REPORTS INFO METHOD
-    @endpoints.method(message_types.VoidMessage, ReportsCollection,
-                      path='reports', http_method='GET',
+    @endpoints.method(KEYPAGE_RESOURCE, ReportsCollection,
+                      path='reports/{api_key}/{page}', http_method='GET',
                       name='reports.list')
-    def reports_list(self, unused_request):
-        return getReports()
+    def reports_list(self, request):
+      if request.api_key == api_key:
+        page = request.page if request.page is not None else 0
+        return getReports(int(page))
+
+    #REPORTS MEDIAS METHOD
+    @endpoints.method(PAGE_RESOURCE, ReportsMediasCollection,
+                      path='reports/{page}', http_method='GET',
+                      name='reports.media')
+    def reports_media(self, request):
+      page = request.page if request.page is not None else 0
+      return getReportsMedias(int(page))
 
 
 #Endpoints yaml pointer

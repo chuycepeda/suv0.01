@@ -139,7 +139,7 @@ class Report(ndb.Model):
     group_category = ndb.StringProperty()                                                                                           #: Parent category
     sub_category  = ndb.StringProperty()                                                                                            #: Child category
     follows = ndb.IntegerProperty(default = 0)                                                                                      #: Followers as votes/relevance for this report
-    rating = ndb.IntegerProperty(choices = [1,2,3,4,5], default = 3)                                                                #: Report satisfaction
+    rating = ndb.IntegerProperty(choices = [0,1,2,3,4,5], default = 0)                                                                #: Report satisfaction
     via = ndb.StringProperty(choices = ['web','whatsapp','phone','street','networks','office','event','letter', 'media'], default = 'web')   #: Report via
     req_deletion = ndb.BooleanProperty(default = False)                                                                             #: Raised flag for user requesting deletion
     emailed_72 = ndb.BooleanProperty(default = False)                                                                               #: Raised flag for detecting if user has been emailed at most 72 hours.

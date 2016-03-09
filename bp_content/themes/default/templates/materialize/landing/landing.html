@@ -712,6 +712,10 @@
 									is_Safari = true;
 								else if (this.browser.indexOf("Chrome") == -1)
 									not_Chrome = true;
+
+								if (not_Chrome){
+                                    $(".input-field label").addClass("active");
+                                }
 							},
 							searchString: function(data) {
 								for (var i = 0; i < data.length; i++) {

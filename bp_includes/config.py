@@ -58,7 +58,7 @@ config = {
     'facebook_handle':'GuadalupeNuevoLeon',
     'facebook_appID': '201422020200516',
     'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com',
-    'indicoio_apikey': 'bfb2bd9d8307bc472297287bac8f68c9',  
+    'indicoio_apikey': 'e1e494fc522650381efc67d23e515692',  
     #cartodb integration
     'map_center_lat': 25.683956577519417, 
     'map_center_lng': -100.20524472216799,

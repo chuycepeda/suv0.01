@@ -2108,10 +2108,8 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             if self.user_is_secretary:    
                 #If secretary            
                 secretaries = models.Secretary.get_admin_by_email(user_info.email)
-                if len(secretaries)>0:
-                    for secretary in secretaries:
-                        names[0]=secretary.name
-                        break
+                if secretaries is not None:
+                    names[0]=secretaries.name
             elif self.user_is_operator:
                 #If operator
                 operators = models.Operator.get_by_email(user_info.email)
@@ -2767,9 +2765,16 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
                 names.append('---')
 
             status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
-            ticket = int(self.request.get('ticket')) if (self.request.get('ticket') or self.request.get('ticket') != "") else False
+            ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
             folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
             groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
+
+            if ticket:
+                if ticket.isdigit():
+                   ticket = int(ticket)
+                else:
+                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
+                   return self.redirect_to("materialize-secretary-inbox")
 
             p = self.request.get('p')
             q = self.request.get('q')
@@ -3223,9 +3228,16 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
                 names.append('---')
                         
             status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
-            ticket = int(self.request.get('ticket')) if (self.request.get('ticket') or self.request.get('ticket') != "") else False
+            ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
             folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
             groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
+
+            if ticket:
+                if ticket.isdigit():
+                   ticket = int(ticket)
+                else:
+                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
+                   return self.redirect_to("materialize-agent-inbox")
             
             p = self.request.get('p')
             q = self.request.get('q')
@@ -3684,9 +3696,16 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
                 names.append('---')
             
             status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
-            ticket = int(self.request.get('ticket')) if (self.request.get('ticket') or self.request.get('ticket') != "") else False
+            ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
             folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
-            groupCat = self.request.get('cat') if (self.request.get('groupCat') or self.request.get('cat') != "") else False
+            groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
+
+            if ticket:
+                if ticket.isdigit():
+                   ticket = int(ticket)
+                else:
+                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
+                   return self.redirect_to("materialize-operator-inbox")
                         
             p = self.request.get('p')
             q = self.request.get('q')
@@ -4128,9 +4147,16 @@ class MaterializeCallCenterInboxRequestHandler(BaseHandler):
                 names.append(group.name)
             
             status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
-            ticket = int(self.request.get('ticket')) if (self.request.get('ticket') or self.request.get('ticket') != "") else False
+            ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
             folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
-            groupCat = self.request.get('cat') if (self.request.get('groupCat') or self.request.get('cat') != "") else False
+            groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
+
+            if ticket:
+                if ticket.isdigit():
+                   ticket = int(ticket)
+                else:
+                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
+                   return self.redirect_to("materialize-callcenter-inbox")
                         
             p = self.request.get('p')
             q = self.request.get('q')
