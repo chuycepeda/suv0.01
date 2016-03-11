@@ -81,22 +81,27 @@
         		                <div class="row">
         		                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         		                    <div class="row">
-        		                      <div class="input-field col s6">
+        		                      <div class="input-field col s12 m6 l4">
         		                        <input id="name" name="name" type="text" value="{{name}}">
         		                        <label for="name">Nombre</label>
         		                      </div>
         		                    
-        		                      <div class="input-field col s6">
+        		                      <div class="input-field col s12 m6 l4">
         		                        <input id="last_name" name="last_name" type="text" value="{{last_name}}">
         		                        <label for="last_name">Apellidos</label>
         		                      </div>
+
+        		                      <div class="input-field col s12 m6 l4">
+        		                        <input id="birth" name="birth" type="date" class="datepicker" value="{{birth}}">
+        		                        <label for="birth">Nacimiento</label>
+        		                      </div>
         		                    </div>
         		                    <div class="row">
-        		                      <div class="input-field col s6 m4">
+        		                      <div class="input-field col s12 m6 l4">
         		                        <input id="phone" name="phone" type="tel" value="{{phone}}">
         		                        <label for="phone">Teléfono</label>
         		                      </div>
-        		                      <div class="input-field col s6 m4">
+        		                      <div class="input-field col s12 m6 l4">
         		                        <select id="gender" name="gender">
         		                          {% if gender == '' or gender == 'male' %}
         		                          	<option value="male" selected>Masculino</option>
@@ -108,9 +113,53 @@
         		                        </select>
         		                        <label>Género</label>
         		                      </div>                        
-        		                      <div class="input-field col s6 m4">
-        		                        <input id="birth" name="birth" type="date" class="datepicker" value="{{birth}}">
-        		                        <label for="birth">Nacimiento</label>
+        		                      <div class="input-field col s12 m6 l4">
+        		                        <select id="scholarity" name="scholarity">
+        		                          {% if scholarity == '' or scholarity == 'elementary' %}
+        		                          	<option value="elementary" selected>Primaria</option>
+        		                          	<option value="middleschool">Secundaria</option>
+        		                          	<option value="highschool">Bachillerato</option>
+        		                          	<option value="technical">Carrera Técnica</option>
+        		                          	<option value="undergraduate">Profesional</option>
+        		                          	<option value="graduate">Posgrado</option>
+        		                          {% elif scholarity == 'middleschool' %}
+        		                          	<option value="elementary">Primaria</option>
+        		                          	<option value="middleschool" selected>Secundaria</option>
+        		                          	<option value="highschool">Bachillerato</option>
+        		                          	<option value="technical">Carrera Técnica</option>
+        		                          	<option value="undergraduate">Profesional</option>
+        		                          	<option value="graduate">Posgrado</option>
+        		                          {% elif scholarity == 'highschool' %}
+        		                          	<option value="elementary">Primaria</option>
+        		                          	<option value="middleschool">Secundaria</option>
+        		                          	<option value="highschool" selected>Bachillerato</option>
+        		                          	<option value="technical">Carrera Técnica</option>
+        		                          	<option value="undergraduate">Profesional</option>
+        		                          	<option value="graduate">Posgrado</option>
+        		                          {% elif scholarity == 'technical' %}
+        		                          	<option value="elementary">Primaria</option>
+        		                          	<option value="middleschool">Secundaria</option>
+        		                          	<option value="highschool">Bachillerato</option>
+        		                          	<option value="technical" selected>Carrera Técnica</option>
+        		                          	<option value="undergraduate">Profesional</option>
+        		                          	<option value="graduate">Posgrado</option>
+        		                          {% elif scholarity == 'undergraduate' %}
+        		                          	<option value="elementary">Primaria</option>
+        		                          	<option value="middleschool">Secundaria</option>
+        		                          	<option value="highschool">Bachillerato</option>
+        		                          	<option value="technical">Carrera Técnica</option>
+        		                          	<option value="undergraduate" selected>Profesional</option>
+        		                          	<option value="graduate">Posgrado</option>
+        		                          {% elif scholarity == 'graduate' %}
+        		                          	<option value="elementary">Primaria</option>
+        		                          	<option value="middleschool">Secundaria</option>
+        		                          	<option value="highschool">Bachillerato</option>
+        		                          	<option value="technical">Carrera Técnica</option>
+        		                          	<option value="undergraduate">Profesional</option>
+        		                          	<option value="graduate" selected>Posgrado</option>
+        		                          {% endif %}
+        		                        </select>
+        		                        <label>Nivel de estudios</label>
         		                      </div>
         		                    </div>
         		                    <div class="input-field col s12">

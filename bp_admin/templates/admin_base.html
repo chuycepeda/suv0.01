@@ -566,9 +566,11 @@
                                     else if (this.browser.indexOf("Chrome") == -1)
                                         not_Chrome = true;
 
-                                    if (not_Chrome){
-                                        $(".input-field label").addClass("active");
-                                    }
+                                    setTimeout(function(){ 
+                                        if (not_Chrome || is_Safari){
+                                           $(".input-field label").addClass("active");
+                                        }
+                                    }, 500);
                                 },
                                 searchString: function(data) {
                                     for (var i = 0; i < data.length; i++) {

@@ -73,7 +73,7 @@
               <tr>
                   <td>
                       <div>    
-                          <a class="icon" href="{{ uri_for('materialize-organization-user-reports', user_id=user.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Ver sus reportes</a>
+                          <a class="icon" href="{{ uri_for('materialize-organization-user-reports', user_id=user.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Ver sus {{user.get_reports_count()}} reportes</a>
                       </div>
                   </td>
                   <td>{{user.key.id()}}</td>

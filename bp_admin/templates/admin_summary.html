@@ -146,6 +146,18 @@
             </div>
         </div>
     </div>
+    <div class="section">
+        <div class="card col s12">
+            <div class="row">
+                <div class="container">
+                    <div class="col s12">
+                        <p class="caption center">Nivel de satisfacción.</p>
+                        <div id="container-pie-rating"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block page_floatings %}
@@ -662,6 +674,10 @@
                     }else if (source=='status') {
                         pieData.push({name:getStatus(x),y:data[x]})
                         barCats.push(getStatus(x));
+                    }else if (source=='rating'){
+                        var visible = true;
+                        if (x == 0) visible = false;
+                        pieData.push({name:x+' estrellas',y:data[x],visible: visible});
                     }else{
                         barCats.push(x);
                     }
@@ -682,7 +698,39 @@
                     chartBarGroup.xAxis[0].setCategories(barCats);
                     chartBarGroup.series[0].setData(barData);
                     chartBarGroup.hideLoading();            
+                }else if (source=='rating') {
+                    chartPieRating.series[0].setData(pieData);
+                    chartPieRating.hideLoading();            
                 }
+                
+            }).error(function(errors) {
+                // errors contains a list of errors
+                //console.log("errors:" + errors);
+            })            
+        }
+
+        function getRatingData(source, when){
+            
+            var qs = "SELECT "+source+" as prop, count(*) FROM  "+city_table_name+" WHERE status in ('solved') ";            
+            if (when) qs += when.replace('WHERE', 'AND');             
+            qs += 'GROUP BY prop';
+            city_sql.execute(qs).done(function(data) {
+                
+                var trans = {};
+                for (var x = 0; x < data.total_rows;x++){
+                    trans[data.rows[x]['prop']] = data.rows[x]['count'];
+                }
+                var pieData=[];                
+                var data = trans;
+
+                for (var x in data){
+                    var visible = true;
+                    if (x == 0) visible = false;
+                    pieData.push({name:x+' estrellas',y:data[x],visible: visible});
+                }
+                                
+                chartPieRating.series[0].setData(pieData);
+                chartPieRating.hideLoading();            
                 
             }).error(function(errors) {
                 // errors contains a list of errors
@@ -902,10 +950,12 @@
             chartPieVia = $('#container-pie-via').highcharts();
             chartPieStatus = $('#container-pie-status').highcharts();
             chartDdown = $('#container-drilldown').highcharts();
+            chartPieRating = $('#container-pie-rating').highcharts();
             
             chartPieVia.destroy();
             chartPieStatus.destroy();
             chartDdown.destroy();
+            chartPieRating.destroy();
             
             for (var x in allDone){
                 allDone[x]=false;
@@ -920,6 +970,11 @@
             chartPieStatus = $('#container-pie-status').highcharts();
             chartPieStatus.showLoading('Cargando datos...');
             getData('status',when);
+
+            createPie(null,'container-pie-rating');
+            chartPieRating = $('#container-pie-rating').highcharts();
+            chartPieRating.showLoading('Cargando datos...');
+            getRatingData('rating',perf_when);  
                         
             getDrillData(when);
             getPerfDrillData(perf_when);
@@ -948,6 +1003,11 @@
             chartPieStatus = $('#container-pie-status').highcharts();
             chartPieStatus.showLoading('Cargando datos...');
             getData('status');
+            
+            createPie(null,'container-pie-rating');
+            chartPieRating = $('#container-pie-rating').highcharts();
+            chartPieRating.showLoading('Cargando datos...');
+            getRatingData('rating');
                                     
             $('#pieornot').click(function(){
                 chartDdown = $('#container-drilldown').highcharts();

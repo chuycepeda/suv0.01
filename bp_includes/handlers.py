@@ -33,7 +33,11 @@ from lib.cartodb import CartoDBAPIKey, CartoDBException
 from lib.basehandler import BaseHandler
 from lib.decorators import user_required, taskqueue_method
 
+""" GLOBAL METHODS
 
+    These methods are used accross different handlers.
+
+"""
 def captchaBase(self):
     if self.app.config.get('captcha_public_key') == "" or \
                     self.app.config.get('captcha_private_key') == "":
@@ -46,7 +50,165 @@ def captchaBase(self):
         chtml = captcha.displayhtml(public_key=self.app.config.get('captcha_public_key'))
     return chtml
 
-""" ACCOUNT handlers 
+def disclaim(_self, **kwargs):
+    """
+        This method is used as a validator previous to loading a get handler for most of user's screens.
+        It can either redirect user to login, edit cfe data and edit home data, or
+        return required params, user_info and user_home values.
+    """
+    _params = {}
+    user_info = _self.user_model.get_by_id(long(_self.user_id))        
+    
+    #0: FOR PERSONALIZATION MEANS WE TAKE CARE OF BEST DATA TO ADDRESS USER
+    _params['email'] = user_info.email
+    _params['last_name'] = user_info.last_name
+    _params['last_name_i'] = user_info.last_name[0] + "." if len(user_info.last_name) >= 1 else ""
+    _params['name'] = user_info.name
+    _params['name_i'] = user_info.name[0].upper()
+    _params['role'] = 'Administrator' if user_info.role == 'Admin' else 'Member'
+    _params['phone'] = user_info.phone if user_info.phone != None else ""
+    _params['gender'] = user_info.gender if user_info.gender != None else ""
+    _params['scholarity'] = user_info.scholarity if user_info.scholarity != None else ""
+    _params['birth'] = user_info.birth.strftime("%Y-%m-%d") if user_info.birth != None else ""
+    _params['has_picture'] = True if user_info.picture is not None else False
+    _params['has_address'] = True if user_info.address is not None else False
+    _params['address_from'] = False
+    if _params['has_address']:
+        if user_info.address.address_from_coord is not None:
+            lat = str(user_info.address.address_from_coord.lat)
+            lng = str(user_info.address.address_from_coord.lon)
+            _params['address_from_coord'] = lat + "," + lng
+        _params['address_from'] = user_info.address.address_from
+    if not _params['has_picture']:
+        _params['disclaim'] = True
+    _params['link_referral'] = user_info.link_referral
+    _params['date'] = date.today().strftime("%Y-%m-%d")
+
+    return _params, user_info
+
+def cartoInsert(self, report_id, manual):
+    #PUSH TO CARTODB
+    from google.appengine.api import urlfetch
+    import urllib
+    api_key = self.app.config.get('cartodb_apikey')
+    cartodb_domain = self.app.config.get('cartodb_user')
+    cartodb_table = self.app.config.get('cartodb_reports_table')
+    report_info = models.Report.get_by_id(long(report_id))
+    private = models.SubCategory.query(models.SubCategory.name == report_info.sub_category).get()
+    if private is not None:
+        private = private.private
+    else:
+        private = False
+    if report_info.cdb_id == -1:
+        #INSERT
+        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (created, pvt, the_geom, _when, title, description, status, address_from, folio, image_url, group_category, sub_category, follows, rating, via, man, uuid) VALUES ('%s', %s, ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s', %s, '%s')&api_key=%s" % (cartodb_domain, cartodb_table, report_info.created.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,manual,report_info.key.id(),api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+            #SELECT CARTODB_ID & ASSIGN
+            cl = CartoDBAPIKey(api_key, cartodb_domain)
+            response = cl.sql("select cartodb_id from %s where uuid = '%s'" % (cartodb_table, report_info.key.id()))
+            report_info.cdb_id = response['rows'][0]['cartodb_id']
+            report_info.put()
+            if manual:
+                message = _(messages.report_success)
+                self.add_message(message, 'success')
+                return self.redirect_to("materialize-organization-report-success", ticket = report_info.cdb_id, report_key = report_info.key.id())
+        except Exception as e:
+            logging.info('error in cartodb INSERT request: %s' % e)
+            if manual:
+                message = _(messages.report_success)
+                self.add_message(message, 'success')
+                return self.redirect_to("materialize-organization-report-success", ticket = report_info.cdb_id, report_key = report_info.key.id())
+            pass
+
+def cartoUpdate(self, report_id):
+    #PUSH TO CARTODB
+    from google.appengine.api import urlfetch
+    import urllib
+    api_key = self.app.config.get('cartodb_apikey')
+    cartodb_domain = self.app.config.get('cartodb_user')
+    cartodb_table = self.app.config.get('cartodb_reports_table')
+    report_info = models.Report.get_by_id(long(report_id))
+    private = models.SubCategory.query(models.SubCategory.name == report_info.sub_category).get()
+    if private is not None:
+        private = private.private
+    else:
+        private = False
+    if report_info.cdb_id != -1:
+        #UPDATE
+        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET terminated = '%s', pvt = %s ,the_geom = ST_GeomFromText('POINT(%s %s)', 4326), _when = '%s', title = '%s', description = '%s', status = '%s', address_from = '%s', folio = '%s', image_url = '%s', group_category = '%s', sub_category = '%s', follows = %s, rating = %s, via = '%s', uuid = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table,report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,report_info.key.id(),report_info.cdb_id,api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+        except Exception as e:
+            logging.info('error in cartodb UPDATE request: %s' % e)
+            pass
+
+def archiveReport(self, user_info, report_id, contents):
+    from google.appengine.api import urlfetch
+    import urllib
+    api_key = self.app.config.get('cartodb_apikey')
+    cartodb_domain = self.app.config.get('cartodb_user')
+    cartodb_table = self.app.config.get('cartodb_reports_table')
+    report_info = models.Report.get_by_id(long(report_id))
+
+    #ASSIGN AS IS
+    report_info.status = 'archived'
+    report_info.terminated = datetime.now()
+    
+    #LOG CHANGES
+    log_info = models.LogChange()
+    log_info.user_email = user_info.email.lower()
+    log_info.report_id = int(report_id)
+    log_info.kind = 'status'
+    log_info.title = "Ha archivado este reporte."
+    log_info.contents = contents
+    log_info.put()
+
+    #PUSH TO CARTODB
+    if report_info.cdb_id != -1:
+        #UPDATE
+        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET status = '%s', terminated = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report_info.status, report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), report_info.cdb_id, api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+        except Exception as e:
+            logging.info('error in cartodb status UPDATE request: %s' % e)
+            pass
+    report_info.put()
+
+def get_status(_stat):
+    if _stat == 'open':
+        return 'Abierto'        
+    if _stat == 'halted':
+        return 'En espera'
+    if _stat == 'assigned':
+        return 'Asignado'
+    if _stat == 'spam':
+        return 'Spam'
+    if _stat == 'archived':
+        return 'Archivado'
+    if _stat == 'forgot':
+        return 'Olvidado'
+    if _stat == 'rejected':
+        return 'Rechazado'
+    if _stat == 'working':
+        return 'En proceso'
+    if _stat == 'answered':
+        return 'Respondido'
+    if _stat == 'solved':
+        return 'Resuelto'
+    if _stat == 'failed':
+        return 'Fallo'
+    if _stat == 'pending':
+        return 'Pendientes'
+
+
+""" ACCOUNT HANDLERS 
 
     These handlers include all classes concerning the login and logout interactions with users.
 
@@ -55,154 +217,6 @@ class LoginRequiredHandler(BaseHandler):
     def get(self):
         continue_url = self.request.get_all('continue')
         self.redirect(users.create_login_url(dest_url=continue_url))
-
-    #original login handler
-        # class LoginHandler(BaseHandler):
-        #     """
-        #     Handler for authentication
-        #     """
-
-        #     def get(self):
-        #         """ Returns a simple HTML form for login """
-
-        #         if self.user:
-        #             self.redirect_to('home')
-        #         params = {
-        #             'captchahtml': captchaBase(self),
-        #         }
-        #         continue_url = self.request.get('continue').encode('ascii', 'ignore')
-        #         params['continue_url'] = continue_url
-        #         return self.render_template('login.html', **params)
-
-        #     def post(self):
-        #         """
-        #         username: Get the username from POST dict
-        #         password: Get the password from POST dict
-        #         """
-
-        #         if not self.form.validate():
-        # 			_message = _(messages.post_error)
-        # 			self.add_message(_message, 'danger')
-        # 			return self.get()
-        #         username = self.form.username.data.lower()
-        #         continue_url = self.request.get('continue').encode('ascii', 'ignore')
-
-        #         try:
-        #             if utils.is_email_valid(username):
-        #                 user = self.user_model.get_by_email(username)
-        #                 if user:
-        #                     auth_id = user.auth_ids[0]
-        #                 else:
-        #                     raise InvalidAuthIdError
-        #             else:
-        #                 auth_id = "own:%s" % username
-        #                 user = self.user_model.get_by_auth_id(auth_id)
-                    
-        #             password = self.form.password.data.strip()
-        #             remember_me = True if str(self.request.POST.get('remember_me')) == 'on' else False
-
-        #             # Password to SHA512
-        #             password = utils.hashing(password, self.app.config.get('salt'))
-
-        #             # Try to login user with password
-        #             # Raises InvalidAuthIdError if user is not found
-        #             # Raises InvalidPasswordError if provided password
-        #             # doesn't match with specified user
-        #             self.auth.get_user_by_password(
-        #                 auth_id, password, remember=remember_me)
-
-        #             # if user account is not activated, logout and redirect to home
-        #             if (user.activated == False):
-        #                 # logout
-        #                 self.auth.unset_session()
-
-        #                 # redirect to home with error message
-        #                 resend_email_uri = self.uri_for('resend-account-activation', user_id=user.get_id(),
-        #                                                 token=self.user_model.create_resend_token(user.get_id()))
-        #                 message = _(messages.inactive_account) + ' ' + resend_email_uri
-        #                 self.add_message(message, 'danger')
-        #                 return self.redirect_to('login')
-        #             else:
-        #                 try:
-        #                     user.last_login = utils.get_date_time()
-        #                     user.put()
-        #                 except (apiproxy_errors.OverQuotaError, BadValueError):
-        #                     logging.error("Error saving Last Login in datastore")
-
-        #             # check twitter association in session
-        #             twitter_helper = twitter.TwitterAuth(self)
-        #             twitter_association_data = twitter_helper.get_association_data()
-        #             if twitter_association_data is not None:
-        #                 if models.SocialUser.check_unique(user.key, 'twitter', str(twitter_association_data['id'])):
-        #                     social_user = models.SocialUser(
-        #                         user=user.key,
-        #                         provider='twitter',
-        #                         uid=str(twitter_association_data['id']),
-        #                         extra_data=twitter_association_data
-        #                     )
-        #                     social_user.put()
-
-        #             # check facebook association
-        #             fb_data = None
-        #             try:
-        #                 fb_data = json.loads(self.session['facebook'])
-        #             except:
-        #                 pass
-
-        #             if fb_data is not None:
-        #                 if models.SocialUser.check_unique(user.key, 'facebook', str(fb_data['id'])):
-        #                     social_user = models.SocialUser(
-        #                         user=user.key,
-        #                         provider='facebook',
-        #                         uid=str(fb_data['id']),
-        #                         extra_data=fb_data
-        #                     )
-        #                     social_user.put()
-
-        #             # check linkedin association
-        #             li_data = None
-        #             try:
-        #                 li_data = json.loads(self.session['linkedin'])
-        #             except:
-        #                 pass
-
-        #             if li_data is not None:
-        #                 if models.SocialUser.check_unique(user.key, 'linkedin', str(li_data['id'])):
-        #                     social_user = models.SocialUser(
-        #                         user=user.key,
-        #                         provider='linkedin',
-        #                         uid=str(li_data['id']),
-        #                         extra_data=li_data
-        #                     )
-        #                     social_user.put()
-
-        #             # end linkedin
-
-        #             if self.app.config['log_visit']:
-        #                 try:
-        #                     logVisit = models.LogVisit(
-        #                         user=user.key,
-        #                         uastring=self.request.user_agent,
-        #                         ip=self.request.remote_addr,
-        #                         timestamp=utils.get_date_time()
-        #                     )
-        #                     logVisit.put()
-        #                 except (apiproxy_errors.OverQuotaError, BadValueError):
-        #                     logging.error("Error saving Visit Log in datastore")
-        #             if continue_url:
-        #                 self.redirect(continue_url)
-        #             else:
-        #                 self.redirect_to('home')
-        #         except (InvalidAuthIdError, InvalidPasswordError), e:
-        #             # Returns error message to self.response.write in
-        #             # the BaseHandler.dispatcher
-        #             message = _(messages.user_pass_mismatch)
-        #             self.add_message(message, 'danger')
-        #             self.redirect_to('login', continue_url=continue_url) if continue_url else self.redirect_to('login')
-
-        #     @webapp2.cached_property
-        #     def form(self):
-        #         return forms.LoginForm(self)
 
 class MaterializeLoginRequestHandler(BaseHandler):
     """
@@ -518,7 +532,8 @@ class PasswordResetCompleteHandler(BaseHandler):
     def form(self):
         return forms.PasswordResetCompleteForm(self)
 
-""" REGISTRATION handlers 
+
+""" REGISTRATION HANDLERS 
 
     These handlers concern registration in 2 ways: direct, or from referral.
 
@@ -1068,45 +1083,12 @@ class ResendActivationEmailHandler(BaseHandler):
             self.add_message(message, 'danger')
             return self.redirect_to('login')
 
-""" MATERIALIZE handlers 
+
+""" MATERIALIZE HANDLERS 
 
     These handlers are the core of the Platform, they give life to main user materialized screens
 
 """
-def disclaim(_self, **kwargs):
-    """
-        This method is used as a validator previous to loading a get handler for most of user's screens.
-        It can either redirect user to login, edit cfe data and edit home data, or
-        return required params, user_info and user_home values.
-    """
-    _params = {}
-    user_info = _self.user_model.get_by_id(long(_self.user_id))        
-    
-    #0: FOR PERSONALIZATION MEANS WE TAKE CARE OF BEST DATA TO ADDRESS USER
-    _params['email'] = user_info.email
-    _params['last_name'] = user_info.last_name
-    _params['last_name_i'] = user_info.last_name[0] + "." if len(user_info.last_name) >= 1 else ""
-    _params['name'] = user_info.name
-    _params['name_i'] = user_info.name[0].upper()
-    _params['role'] = 'Administrator' if user_info.role == 'Admin' else 'Member'
-    _params['phone'] = user_info.phone if user_info.phone != None else ""
-    _params['gender'] = user_info.gender if user_info.gender != None else ""
-    _params['birth'] = user_info.birth.strftime("%Y-%m-%d") if user_info.birth != None else ""
-    _params['has_picture'] = True if user_info.picture is not None else False
-    _params['has_address'] = True if user_info.address is not None else False
-    _params['address_from'] = False
-    if _params['has_address']:
-        if user_info.address.address_from_coord is not None:
-            lat = str(user_info.address.address_from_coord.lat)
-            lng = str(user_info.address.address_from_coord.lon)
-            _params['address_from_coord'] = lat + "," + lng
-        _params['address_from'] = user_info.address.address_from
-    if not _params['has_picture']:
-        _params['disclaim'] = True
-    _params['link_referral'] = user_info.link_referral
-    _params['date'] = date.today().strftime("%Y-%m-%d")
-
-    return _params, user_info
 
 # LANDING
 class MaterializeLandingRequestHandler(BaseHandler):
@@ -1386,6 +1368,39 @@ class MaterializeReferralsRequestHandler(BaseHandler):
         params, user_info = disclaim(self)
         params['link_referral'] = user_info.link_referral
         params['google_clientID'] = self.app.config.get('google_clientID')
+
+        if user_info.link_referral is None:
+            # create unique url for sharing & referrals purposes
+            long_url = self.uri_for("register-referral",user_id=user_info.get_id(),_full=True)
+            logging.info("Long URL: %s" % long_url)
+            short_url = long_url
+            
+            #The goo.gl way:
+            # post_url = 'https://www.googleapis.com/urlshortener/v1/url'            
+            # payload = {'longUrl': long_url}
+            # headers = {'content-type': 'application/json'}
+            # r = requests.post(post_url, data=json.dumps(payload), headers=headers)
+            # j = json.loads(r.text)
+            # logging.info("Google response: %s" % j)
+            # short_url = j['id']
+
+            #The bit.ly way:
+            try:
+                api = bitly.Api(login=self.app.config.get('bitly_login'), apikey=self.app.config.get('bitly_apikey'))
+                short_url=api.shorten(long_url)
+                logging.info("Bitly response: %s" % short_url)
+            except:
+                pass
+
+            user_info.link_referral = short_url
+            reward = models.Rewards(amount = 100,earned = True, category = 'configuration',
+                content = 'Activation',timestamp = utils.get_date_time(),status = 'completed')                 
+            user_info.rewards.append(reward)
+            user_info.put()
+            params['link_referral'] = user_info.link_referral
+
+
+
         return self.render_template('materialize/users/sections/referrals.html', **params)
 
     def post(self):
@@ -1503,6 +1518,7 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
         name = self.request.get('name')
         last_name = self.request.get('last_name')
         gender = self.request.get('gender')
+        scholarity = self.request.get('scholarity')
         phone = self.request.get('phone')
         birth = self.request.get('birth')
         address_from = self.request.get('address_from')
@@ -1520,6 +1536,8 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
                     user_info.birth = date(int(birth[:4]), int(birth[5:7]), int(birth[8:]))
                 if 'male' in gender:
                     user_info.gender = gender
+                if scholarity in ('elementary','middleschool','highschool','technical','undergraduate','graduate'):
+                    user_info.scholarity = scholarity
                 user_info.phone = phone
                 if picture is not None:
                     user_info.picture = images.resize(picture, width=180, height=180, crop_to_fit=True, quality=100)
@@ -2047,32 +2065,6 @@ class MaterializeTutorialsRequestHandler(BaseHandler):
         return self.render_template('materialize/users/sections/tutorials.html', **params)
 
 #USER SPECIAL ACCESS
-def get_status(_stat):
-    if _stat == 'open':
-        return 'Abierto'        
-    if _stat == 'halted':
-        return 'En espera'
-    if _stat == 'assigned':
-        return 'Asignado'
-    if _stat == 'spam':
-        return 'Spam'
-    if _stat == 'archived':
-        return 'Archivado'
-    if _stat == 'forgot':
-        return 'Olvidado'
-    if _stat == 'rejected':
-        return 'Rechazado'
-    if _stat == 'working':
-        return 'En proceso'
-    if _stat == 'answered':
-        return 'Respondido'
-    if _stat == 'solved':
-        return 'Resuelto'
-    if _stat == 'failed':
-        return 'Fallo'
-    if _stat == 'pending':
-        return 'Pendientes'
-
 class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
     @user_required
     def get(self):
@@ -2089,6 +2081,7 @@ class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/dashboard.html', **params)
         self.abort(403)
 
+#testcarto
 class MaterializeOrganizationNewReportHandler(BaseHandler):
     """
     Handler for materialized home
@@ -2149,46 +2142,8 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             return self.render_template('materialize/users/operators/new_report.html', **params)
         self.abort(403)
         
-
     @user_required
     def post(self):
-
-        def properRedirect(report_info):
-            message = _(messages.report_success)
-            self.add_message(message, 'success')
-            return self.redirect_to("materialize-organization-report-success", ticket = report_info.cdb_id, report_key = report_info.key.id())
-
-        def cartoInsert(report_id):
-            #PUSH TO CARTODB
-            from google.appengine.api import urlfetch
-            import urllib
-            api_key = self.app.config.get('cartodb_apikey')
-            cartodb_domain = self.app.config.get('cartodb_user')
-            cartodb_table = self.app.config.get('cartodb_reports_table')
-            report_info = models.Report.get_by_id(long(report_id))
-            private = models.SubCategory.query(models.SubCategory.name == report_info.sub_category).get()
-            if private is not None:
-                private = private.private
-            else:
-                private = False
-            if report_info.cdb_id == -1:
-                #INSERT
-                unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (created, pvt, the_geom, _when, title, description, status, address_from, folio, image_url, group_category, sub_category, follows, rating, via) VALUES ('%s', %s, ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s')&api_key=%s" % (cartodb_domain, cartodb_table, report_info.created.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,api_key)).encode('utf8')
-                url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                try:
-                    t = urlfetch.fetch(url)
-                    logging.info("t: %s" % t.content)
-                    #SELECT CARTODB_ID & ASSIGN
-                    cl = CartoDBAPIKey(api_key, cartodb_domain)
-                    response = cl.sql('select cartodb_id from %s order by cartodb_id desc limit 1' % cartodb_table)
-                    report_info.cdb_id = response['rows'][0]['cartodb_id']
-                    report_info.put()
-                    properRedirect(report_info)
-                except Exception as e:
-                    logging.info('error in cartodb INSERT request: %s' % e)
-                    properRedirect(report_info)
-                    pass
-    
 
         """ Get fields from POST dict """
                         
@@ -2237,13 +2192,13 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
                 logging.info('t.content: %s' % t.content)
                 
                 if t.content == 'success':
-                    cartoInsert(user_report.key.id())
+                    cartoInsert(self, user_report.key.id(), True)
                 else:
                     message = _(messages.attach_error)
                     self.add_message(message, 'danger')            
                     return self.get()                    
             else:
-                cartoInsert(user_report.key.id())
+                cartoInsert(self, user_report.key.id(), True)
 
         except Exception as e:
             logging.info('error in post: %s' % e)
@@ -2785,9 +2740,9 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
             if q:
                 reports = models.Report.query()            
                 if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
                 else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
+                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
                 count = reports.count()
                 PAGE_SIZE = 50
                 if forward:
@@ -2894,38 +2849,7 @@ class MaterializeSecretaryReportRequestHandler(BaseHandler):
             
             try:
                 if delete == 'confirmed_deletion':
-                    
-                    #ASSIGN AS IS
-                    report_info.status = 'archived'
-                    report_info.terminated = datetime.now()
-                    
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = 'status'
-                    log_info.title = "Ha archivado este reporte."
-                    log_info.contents = self.request.get('contents')
-                    log_info.put()
-
-                    #PUSH UPDATED STATUS TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
-                    if report_info.cdb_id != -1:
-                        #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET status = '%s', terminated = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report_info.status, report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), report_info.cdb_id, api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb status UPDATE request: %s' % e)
-                            pass
-                    report_info.put()
-
+                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
                     self.add_message(messages.saving_success, 'success')
                     return self.redirect_to("materialize-secretary-report", report_id=report_id)
 
@@ -3073,35 +2997,13 @@ class MaterializeSecretaryReportRequestHandler(BaseHandler):
                         log_info.put()
                 
                     #PUSH TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
                     if report_info.cdb_id == -1:
                         #INSERT
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (created, pvt, the_geom, _when, title, description, status, address_from, folio, image_url, group_category, sub_category, follows, rating, via) VALUES ('%s', %s, ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s')&api_key=%s" % (cartodb_domain, cartodb_table, report_info.created.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                            #SELECT CARTODB_ID & ASSIGN
-                            cl = CartoDBAPIKey(api_key, cartodb_domain)
-                            response = cl.sql('select cartodb_id from %s order by cartodb_id desc limit 1' % cartodb_table)
-                            report_info.cdb_id = response['rows'][0]['cartodb_id']
-                        except Exception as e:
-                            logging.info('error in cartodb INSERT request: %s' % e)
-                            pass
+                        cartoInsert(self, report_info.key.id(),False)
                     else:
                         #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET terminated = '%s', pvt = %s ,the_geom = ST_GeomFromText('POINT(%s %s)', 4326), _when = '%s', title = '%s', description = '%s', status = '%s', address_from = '%s', folio = '%s', image_url = '%s', group_category = '%s', sub_category = '%s', follows = %s, rating = %s, via = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table,report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,report_info.cdb_id,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb UPDATE request: %s' % e)
-                            pass
+                        cartoUpdate(self, report_info.key.id())
+
                     report_info.put()
 
                     #NOTIFY APPROPRIATELY
@@ -3248,9 +3150,9 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
             if q:
                 reports = models.Report.query()            
                 if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
                 else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
+                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
                 count = reports.count()
                 PAGE_SIZE = 50
                 if forward:
@@ -3357,38 +3259,7 @@ class MaterializeAgentReportRequestHandler(BaseHandler):
             user_info = self.user_model.get_by_id(long(self.user_id))
             try:
                 if delete == 'confirmed_deletion':
-                    
-                    #ASSIGN AS IS
-                    report_info.status = 'archived'
-                    report_info.terminated = datetime.now()
-
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = 'status'
-                    log_info.title = "Ha archivado este reporte."
-                    log_info.contents = self.request.get('contents')
-                    log_info.put()
-
-                    #PUSH UPDATED STATUS TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
-                    if report_info.cdb_id != -1:
-                        #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET status = '%s', terminated = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report_info.status, report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), report_info.cdb_id, api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb request: %s' % e)
-                            pass
-                    report_info.put()
-
+                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
                     self.add_message(messages.saving_success, 'success')
                     return self.redirect_to("materialize-agent-report", report_id=report_id)
 
@@ -3534,35 +3405,12 @@ class MaterializeAgentReportRequestHandler(BaseHandler):
                 
 
                     #PUSH TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
                     if report_info.cdb_id == -1:
                         #INSERT
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (created, pvt, the_geom, _when, title, description, status, address_from, folio, image_url, group_category, sub_category, follows, rating, via) VALUES ('%s', %s, ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s')&api_key=%s" % (cartodb_domain, cartodb_table, report_info.created.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                            #SELECT CARTODB_ID & ASSIGN
-                            cl = CartoDBAPIKey(api_key, cartodb_domain)
-                            response = cl.sql('select cartodb_id from %s order by cartodb_id desc limit 1' % cartodb_table)
-                            report_info.cdb_id = response['rows'][0]['cartodb_id']
-                        except Exception as e:
-                            logging.info('error in cartodb INSERT request: %s' % e)
-                            pass
+                        cartoInsert(self, report_info.key.id(),False)
                     else:
                         #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET terminated = '%s', pvt = %s ,the_geom = ST_GeomFromText('POINT(%s %s)', 4326), _when = '%s', title = '%s', description = '%s', status = '%s', address_from = '%s', folio = '%s', image_url = '%s', group_category = '%s', sub_category = '%s', follows = %s, rating = %s, via = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table,report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,report_info.cdb_id,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb UPDATE request: %s' % e)
-                            pass
+                        cartoUpdate(self, report_info.key.id())
                     report_info.put()
 
 
@@ -3716,9 +3564,9 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
             if q:
                 reports = models.Report.query()            
                 if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
                 else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
+                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
                 count = reports.count()
                 PAGE_SIZE = 50
                 if forward:
@@ -3822,38 +3670,7 @@ class MaterializeOperatorReportRequestHandler(BaseHandler):
             user_info = self.user_model.get_by_id(long(self.user_id))
             try:
                 if delete == 'confirmed_deletion':
-                    
-                    #ASSIGN AS IS
-                    report_info.status = 'archived'
-                    report_info.terminated = datetime.now()
-
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = 'status'
-                    log_info.title = "Ha archivado este reporte."
-                    log_info.contents = self.request.get('contents')
-                    log_info.put()
-
-                    #PUSH UPDATED STATUS TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
-                    if report_info.cdb_id != -1:
-                        #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET status = '%s', terminated = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report_info.status, report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), report_info.cdb_id, api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb request: %s' % e)
-                            pass
-                    report_info.put()
-
+                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
                     self.add_message(messages.saving_success, 'success')
                     return self.redirect_to("materialize-operator-report", report_id=report_id)
 
@@ -4001,35 +3818,12 @@ class MaterializeOperatorReportRequestHandler(BaseHandler):
                 
 
                     #PUSH TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
                     if report_info.cdb_id == -1:
                         #INSERT
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (created, pvt, the_geom, _when, title, description, status, address_from, folio, image_url, group_category, sub_category, follows, rating, via) VALUES ('%s', %s, ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s')&api_key=%s" % (cartodb_domain, cartodb_table, report_info.created.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                            #SELECT CARTODB_ID & ASSIGN
-                            cl = CartoDBAPIKey(api_key, cartodb_domain)
-                            response = cl.sql('select cartodb_id from %s order by cartodb_id desc limit 1' % cartodb_table)
-                            report_info.cdb_id = response['rows'][0]['cartodb_id']
-                        except Exception as e:
-                            logging.info('error in cartodb INSERT request: %s' % e)
-                            pass
+                        cartoInsert(self, report_info.key.id(),False)
                     else:
                         #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET terminated = '%s', pvt = %s ,the_geom = ST_GeomFromText('POINT(%s %s)', 4326), _when = '%s', title = '%s', description = '%s', status = '%s', address_from = '%s', folio = '%s', image_url = '%s', group_category = '%s', sub_category = '%s', follows = %s, rating = %s, via = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table,report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,report_info.cdb_id,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb UPDATE request: %s' % e)
-                            pass
+                        cartoUpdate(self, report_info.key.id())
                     report_info.put()
 
 
@@ -4167,9 +3961,9 @@ class MaterializeCallCenterInboxRequestHandler(BaseHandler):
             if q:
                 reports = models.Report.query()            
                 if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[1].strip()))
+                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
                 else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name == q.split(',')[0].strip(), models.Report.contact_lastname == q.split(',')[0].strip()))
+                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
                 count = reports.count()
                 PAGE_SIZE = 50
                 if forward:
@@ -4269,38 +4063,7 @@ class MaterializeCallCenterReportRequestHandler(BaseHandler):
             user_info = self.user_model.get_by_id(long(self.user_id))
             try:
                 if delete == 'confirmed_deletion':
-                    
-                    #ASSIGN AS IS
-                    report_info.status = 'archived'
-                    report_info.terminated = datetime.now()
-
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = 'status'
-                    log_info.title = "Ha archivado este reporte."
-                    log_info.contents = self.request.get('contents')
-                    log_info.put()
-
-                    #PUSH UPDATED STATUS TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
-                    if report_info.cdb_id != -1:
-                        #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET status = '%s', terminated = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report_info.status, report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), report_info.cdb_id, api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb request: %s' % e)
-                            pass
-                    report_info.put()
-
+                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
                     self.add_message(messages.saving_success, 'success')
                     return self.redirect_to("materialize-callcenter-report", report_id=report_id)
 
@@ -4450,35 +4213,12 @@ class MaterializeCallCenterReportRequestHandler(BaseHandler):
                 
 
                     #PUSH TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
                     if report_info.cdb_id == -1:
                         #INSERT
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (created, pvt, the_geom, _when, title, description, status, address_from, folio, image_url, group_category, sub_category, follows, rating, via) VALUES ('%s', %s, ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s')&api_key=%s" % (cartodb_domain, cartodb_table, report_info.created.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                            #SELECT CARTODB_ID & ASSIGN
-                            cl = CartoDBAPIKey(api_key, cartodb_domain)
-                            response = cl.sql('select cartodb_id from %s order by cartodb_id desc limit 1' % cartodb_table)
-                            report_info.cdb_id = response['rows'][0]['cartodb_id']
-                        except Exception as e:
-                            logging.info('error in cartodb INSERT request: %s' % e)
-                            pass
+                        cartoInsert(self, report_info.key.id(),False)
                     else:
                         #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET terminated = '%s', pvt = %s ,the_geom = ST_GeomFromText('POINT(%s %s)', 4326), _when = '%s', title = '%s', description = '%s', status = '%s', address_from = '%s', folio = '%s', image_url = '%s', group_category = '%s', sub_category = '%s', follows = %s, rating = %s, via = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table,report_info.terminated.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,report_info.cdb_id,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb UPDATE request: %s' % e)
-                            pass
+                        cartoUpdate(self, report_info.key.id())
                     report_info.put()
 
 
@@ -4604,6 +4344,7 @@ class MaterializeCallCenterTwitterRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/twitter.html', **params)
         self.abort(403)
 
+
 """
         REPORT HANDLERS
 
@@ -4658,7 +4399,7 @@ class MaterializeReportsRequestHandler(BaseHandler):
             if delete == 'confirmed_comment':
                 user_info = self.user_model.get_by_id(long(self.user_id))
                 if report_info:
-                    report_info.status = 'answered'
+                    report_info.status = 'answered' if report_info.status in ('open', 'halted', 'forgot') else report_info.status
                     log_info = models.LogChange()
                     log_info.user_email = user_info.email.lower()
                     log_info.report_id = int(report_id)
@@ -4666,28 +4407,10 @@ class MaterializeReportsRequestHandler(BaseHandler):
                     log_info.title = "Ha hecho un comentario en su reporte."
                     log_info.contents = self.request.get('comment')
                     log_info.put()
-                    private = models.SubCategory.query(models.SubCategory.name == report_info.sub_category).get()
-                    if private is not None:
-                        private = private.private
-                    else:
-                        private = False
                     
                     #PUSH TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
-                    if report_info.cdb_id != -1:
-                        #UPDATE                        
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET pvt = %s ,the_geom = ST_GeomFromText('POINT(%s %s)', 4326), _when = '%s', title = '%s', description = '%s', status = '%s', address_from = '%s', folio = '%s', image_url = '%s', group_category = '%s', sub_category = '%s', follows = %s, rating = %s, via = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,report_info.cdb_id,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        try:
-                            t = urlfetch.fetch(url)
-                            logging.info("t: %s" % t.content)
-                        except Exception as e:
-                            logging.info('error in cartodb UPDATE request: %s' % e)
-                            pass
+                    if report_info.cdb_id !=-1:
+                        cartoUpdate(self, report_info.key.id())
                         
             report_info.put()
             self.add_message(messages.inquiry_success, 'success')
@@ -4990,6 +4713,7 @@ class MaterializeRateRequestHandler(BaseHandler):
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))
+
 
 """
         PETITION HANDLERS
@@ -5559,64 +5283,7 @@ class MaterializeTopicsHandler(BaseHandler):
         self.response.write(json.dumps(reportDict))
 
 
-class TempFixesHandler(BaseHandler):
-    @user_required
-    def get(self):
-        import collections
-        tree = lambda: collections.defaultdict(tree)
-        reportDict = tree()
-        reports = models.Report.query()
-        for report in reports:
-            changes = False
-            if report.group_category == 'Seguridad Publica (Policia y Transito)':
-                report.group_category = 'Seguridad Publica Policia y Transito'
-                changes = True
-            elif report.group_category == 'Educacion (Desarrollo Social)':
-                report.group_category = 'Educacion Desarrollo Social'
-                changes = True
-            elif report.group_category == 'Eventos (Instituto del Deporte)':
-                report.group_category = 'Eventos Instituto del Deporte'
-                changes = True
-            elif report.group_category == 'Sociales (Desarrollo Social)':
-                report.group_category = 'Sociales Desarrollo Social'
-                changes = True
-            elif report.group_category == 'Asistencia Social (DIF)':
-                report.group_category = 'Asistencia Social DIF'
-                changes = True
-            elif report.group_category == 'Ayuntamiento (Permisos)':
-                report.group_category = 'Ayuntamiento Permisos'
-                changes = True
-            elif report.group_category == 'Salud (Desarrollo Social)':
-                report.group_category = 'Salud Desarrollo Social'
-                changes = True
-            
-            if changes:
-                report.put()
-                logging.info("id: %s" % report.key.id())
-                reportDict[report.key.id()]['fixed'] = 'true'
-                try:
-                    #PUSH TO CARTODB
-                    from google.appengine.api import urlfetch
-                    import urllib
-                    api_key = self.app.config.get('cartodb_apikey')
-                    cartodb_domain = self.app.config.get('cartodb_user')
-                    cartodb_table = self.app.config.get('cartodb_reports_table')
-                    if report.cdb_id != -1:
-                        #UPDATE
-                        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET group_category = '%s' WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, report.group_category, report.cdb_id,api_key)).encode('utf8')
-                        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-                        t = urlfetch.fetch(url)
-                        logging.info("t: %s" % t.content)
-                    reportDict[report.key.id()]['carto'] = 'true'
-                except:
-                    reportDict[report.key.id()]['carto'] = 'false'
-                    pass
-
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers['Content-Type'] = 'application/json'
-        self.response.write(json.dumps(reportDict))
-
-""" REST API preparation handlers
+""" REST API HANDLERS
 
     These handlers obey to interactions with key-holder developers
 
@@ -5744,7 +5411,9 @@ class MBoiUsersHandler(BaseHandler):
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))
-""" SMALL MEDIA handlers
+
+
+""" SMALL MEDIA HANDLERS
 
     These handlers are used to serve small media files from datastore
 
@@ -5769,7 +5438,8 @@ class MediaDownloadHandler(BaseHandler):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write('No image')
 
-""" BIG MEDIA handlers
+
+""" BIG MEDIA HANDLERS
 
     These handlers operate files larger than the 1Mb, upload and serve.
 
@@ -5803,7 +5473,8 @@ class BlobDownloadHandler(blobstore_handlers.BlobstoreDownloadHandler):
         else:
             self.send_blob(photo_key)
 
-""" CRONJOB + TASKQUEUE handlers
+
+""" CRONJOB + TASKQUEUE HANDLERS
 
     These handlers obey to cron.yaml in order to produce recurrent, autonomous tasks
 
@@ -5846,7 +5517,8 @@ class ForgotHandler(BaseHandler):
         # AUTOMATIC EMAIL IF REPORT STATUS IS AUTOMATICALLY CHANGED TO FORGOT. (template: change_notification.txt)
         return ''
 
-""" WEB  static handlers
+
+""" WEB STATIC HANDLERS
 
     These handlers are just to be a full website in the web background.
 

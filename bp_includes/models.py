@@ -40,6 +40,7 @@ class User(User):
     password = ndb.StringProperty()                                                                #: Hashed password. Only set for own authentication.    
     birth = ndb.DateProperty()                                                                     #: User birthday.
     gender = ndb.StringProperty(choices = ['male','female'])                                       #: User sex    
+    scholarity = ndb.StringProperty(choices = ['elementary','middleschool','highschool','technical','undergraduate','graduate'])  #: User scholarity    
     activated = ndb.BooleanProperty(default=False)                                                 #: Account activation verifies email    
     link_referral = ndb.StringProperty()                                                           #: Once verified, this link is used for referral sign ups (uses bit.ly)    
     rewards = ndb.StructuredProperty(Rewards, repeated = True)                                     #: Rewards allocation property, includes referral email tracking.    
@@ -114,6 +115,10 @@ class User(User):
             amount += reward.amount
 
         return amount
+
+    def get_reports_count(self):
+        reports = Report.query(Report.user_id == int(self.key.id()))
+        return reports.count()
 #--------------------------------------- ENDOF   U S E R    M O D E L -----------------------------------------------------------   
 
 

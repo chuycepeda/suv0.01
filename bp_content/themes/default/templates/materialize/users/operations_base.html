@@ -249,7 +249,7 @@
 
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-callcenter-inbox') or path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') %}active{% endif %}"><i class="mdi-content-inbox grey-text left"></i>Bandeja de reportes</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-callcenter-inbox') or path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-organization-users') %}active{% endif %}"><i class="mdi-content-inbox grey-text left"></i>Bandeja de reportes</a>
                                                <div class="collapsible-body">
                                                     <ul>
                                                         {% if user_is_callcenter %}
@@ -264,7 +264,8 @@
                                                         {% if user_is_operator %}
                                                             <li {% if path == uri_for('materialize-operator-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-operator-inbox') }}">Operador de enlace</a></li>
                                                         {% endif %}
-                                                    
+                                                        
+                                                       <li {% if path == uri_for('materialize-organization-users') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-users') }}">Expediente ciudadano</a></li>
                                                     </ul>
                                                </div>
                                             </li>
@@ -295,10 +296,9 @@
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
                                             
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-organization-manual') or path == uri_for('materialize-organization-users') %}active{% endif %}"><i class="mdi-navigation-more-vert grey-text left"></i>Otros</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-organization-manual') %}active{% endif %}"><i class="mdi-navigation-more-vert grey-text left"></i>Otros</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                       <li {% if path == uri_for('materialize-organization-users') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-users') }}">Expediente ciudadano</a></li>
                                                        <li {% if path == uri_for('materialize-organization-manual') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-manual') }}">Manual de operador</a></li>
                                                        <li><a href="{{ uri_for('logout') }}">Salir</a></li>
                                                     </ul>
@@ -437,9 +437,11 @@
                                     else if (this.browser.indexOf("Chrome") == -1)
                                         not_Chrome = true;
 
-                                    if (not_Chrome){
-                                        $(".input-field label").addClass("active");
-                                    }
+                                    setTimeout(function(){ 
+                                        if (not_Chrome || is_Safari){
+                                           $(".input-field label").addClass("active");
+                                        }
+                                    }, 500);
                                 },
                                 searchString: function(data) {
                                     for (var i = 0; i < data.length; i++) {
