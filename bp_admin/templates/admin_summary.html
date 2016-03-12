@@ -98,23 +98,25 @@
         </div>
     </div>
     
-    <div class="row section">
-        <div class="card col s12 l6">
-            <div class="row">
-                <div class="container">
-                    <div class="col s12">
-                        <p class="caption center">Reportes por vía.</p>
-                        <div id="container-pie-via"></div>
+    <div class="section">
+        <div class="row">
+            <div class="card col s12 l6">
+                <div class="row">
+                    <div class="container">
+                        <div class="col s12">
+                            <p class="caption center">Reportes por vía.</p>
+                            <div id="container-pie-via"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card col s12 l6">
-            <div class="row">
-                <div class="container">
-                    <div class="col s12">
-                        <p class="caption center">Reportes por estado.</p>
-                        <div id="container-pie-status"></div>
+            <div class="card col s12 l6">
+                <div class="row">
+                    <div class="container">
+                        <div class="col s12">
+                            <p class="caption center">Reportes por estado.</p>
+                            <div id="container-pie-status"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -147,14 +149,26 @@
         </div>
     </div>
     <div class="section">
-        <div class="card col s12">
+        <div class="card">
+            <div class="row">
+                <div class="col s12">
+                    <a class="btn dropdown-button waves-effect waves-light right" href="#!" data-activates="ratingDdown">Exporta en .CSV<i class="mdi-navigation-arrow-drop-down right"></i></a>
+                    <ul id="ratingDdown" class="dropdown-content">
+                        <li><button class="rating-exp waves-effect waves-light btn white-text col s12" id ="rating-tickets_5" onclick="exportCSV(this.id)" >5 <i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i></button></li>
+                        <li> <button class="rating-exp waves-effect waves-light btn white-text col s12" id ="rating-tickets_4" onclick="exportCSV(this.id)" >4 <i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i></button></li>
+                        <li><button class="rating-exp waves-effect waves-light btn white-text col s12" id ="rating-tickets_3" onclick="exportCSV(this.id)" >3 <i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i></button></li>
+                        <li><button class="rating-exp waves-effect waves-light btn white-text col s12" id ="rating-tickets_2" onclick="exportCSV(this.id)" >2 <i class="mdi-action-star-rate"></i><i class="mdi-action-star-rate"></i></button></li>
+                        <li><button class="rating-exp waves-effect waves-light btn white-text col s12" id ="rating-tickets_1" onclick="exportCSV(this.id)" >1 <i class="mdi-action-star-rate"></i></button></li>
+                    </ul>            
+                </div>
+            </div>   
             <div class="row">
                 <div class="container">
                     <div class="col s12">
                         <p class="caption center">Nivel de satisfacción.</p>
                         <div id="container-pie-rating"></div>
-                    </div>
-                </div>
+                    </div>                                   
+                </div>                    
             </div>
         </div>
     </div>
@@ -715,7 +729,8 @@
             if (when) qs += when.replace('WHERE', 'AND');             
             qs += 'GROUP BY prop';
             city_sql.execute(qs).done(function(data) {
-                
+        
+                $('.rating-exp').prop('disabled',true);
                 var trans = {};
                 for (var x = 0; x < data.total_rows;x++){
                     trans[data.rows[x]['prop']] = data.rows[x]['count'];
@@ -726,6 +741,7 @@
                 for (var x in data){
                     var visible = true;
                     if (x == 0) visible = false;
+                    else $('#rating-tickets_'+x).prop('disabled',false);
                     pieData.push({name:x+' estrellas',y:data[x],visible: visible});
                 }
                                 
@@ -736,7 +752,6 @@
                 // errors contains a list of errors
                 //console.log("errors:" + errors);
             })            
-    
         }
         
         function getDict(){
@@ -752,7 +767,6 @@
                 getDrillData();
                 getPerfDrillData();            
             });             
-            
         }
         
         function parseDate(str) {
@@ -844,7 +858,6 @@
                 // errors contains a list of errors
                 //console.log("errors:" + errors);
             })            
-            
         }
         
         function getDrillData(when){
@@ -902,7 +915,6 @@
                 // errors contains a list of errors
                 //console.log("errors:" + errors);
             })            
-            
         }
         
         function allTrue(obj) {
@@ -915,7 +927,6 @@
         }
         
         function pollforall(){
-        
             var poll = setInterval(function() {
                 if( allTrue(allDone) ) {
                     $('#calendar').attr('disabled',false);
@@ -923,7 +934,6 @@
                     window.clearInterval(poll);
                 }
             }, 100);            
-            
         }
         
         function destroyAndCreate(source){
@@ -980,9 +990,91 @@
             getPerfDrillData(perf_when);
         }
         
-        
-        
-        
+        function exportCSV(rating) {
+            rating = rating.substring(rating.search("_")+1);
+            var qs = "SELECT cartodb_id AS ticket FROM "+city_table_name+" WHERE status IN ('solved') AND rating = "+rating+" ORDER BY ticket DESC";    
+            city_sql.execute(qs).done(function(data) {
+                console.log(data);
+                writeCSV(data.rows,'Tickets '+rating+' Estrellas', data.total_rows, true);
+            }).error(function(errors) {
+                // errors contains a list of errors
+                console.log("errors:" + errors);
+            }) 
+        }
+
+        function writeCSV(JSONData, ReportTitle, totalTickets, ShowLabel) {
+            //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+            var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+            
+            var CSV = '';    
+            //Set Report title in first row or line
+            
+            CSV += ReportTitle + ' ('+totalTickets+')' + '\r\n\n';
+
+            //This condition will generate the Label/Header
+            if (ShowLabel) {
+                var row = "";
+                
+                //This loop will extract the label from 1st index of on array
+                for (var index in arrData[0]) {
+                    
+                    //Now convert each value to string and comma-seprated
+                    row += index + ',';
+                }
+
+                row = row.slice(0, -1);
+                
+                //append Label row with line break
+                CSV += row + '\r\n';
+            }
+            
+            //1st loop is to extract each row
+            for (var i = 0; i < arrData.length; i++) {
+                var row = "";
+                
+                //2nd loop will extract each column and convert it in string comma-seprated
+                for (var index in arrData[i]) {
+                    row += '"' + arrData[i][index] + '",';
+                }
+
+                row.slice(0, row.length - 1);
+                
+                //add a line break after each row
+                CSV += row + '\r\n';
+            }
+
+            if (CSV == '') {        
+                alert("Invalid data");
+                return;
+            }   
+            
+            //Generate a file name
+            var fileName = "Reporte_";
+            //this will remove the blank-spaces from the title and replace it with an underscore
+            fileName += ReportTitle.replace(/ /g,"_");   
+            
+            //Initialize file format you want csv or xls
+            var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+            
+            // Now the little tricky part.
+            // you can use either>> window.open(uri);
+            // but this will not work in some browsers
+            // or you will not get the correct file extension    
+            
+            //this trick will generate a temp <a /> tag
+            var link = document.createElement("a");    
+            link.href = uri;
+            
+            //set the visibility hidden so it will not effect on your web-layout
+            link.style = "visibility:hidden";
+            link.download = fileName + ".csv";
+            
+            //this part will append the anchor tag and remove it after automatic click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         //Initial setup on DOM ready
         $(document).ready(function(){   
             
