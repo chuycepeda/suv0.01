@@ -29,7 +29,7 @@
         <!-- All stylesheets   -->
         {% block stylesheets %}
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-            <link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">         
+            <link href="/{{theme}}/materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">         
             <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
             <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
             <style type="text/css">
@@ -203,7 +203,7 @@
                 <div class="navbar-fixed">
                     <nav class="white">
                         <div class="nav-wrapper">
-                            <h1 class="logo-wrapper"><a href="{{ uri_for('admin-stats-reports') }}" class="brand-logo darken-1"><img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" alt="materialize logo" style="{% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-top:-2px; margin-left:-5px; height:60px; {% endif %}">
+                            <h1 class="logo-wrapper"><a href="{{ uri_for('admin-stats-reports') }}" class="brand-logo darken-1"><img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" alt="materialize logo" style="{% if is_mobile %}margin-top:-10px; margin-left:4px; width:50px; {% else %}margin-top:-5px; margin-left:-5px; width:50px; {% endif %}">
                             <div id="main-preloader" class="preloader-wrapper small active right" style="display: none;margin-top:8px;margin-left:12px;">
                                   <div class="spinner-layer spinner-blue">
                                     <div class="circle-clipper left">
@@ -388,7 +388,7 @@
                                 </ul>
                                 <!-- <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating waves-effect waves-light hide-on-large-only darken-2" style="margin-top:-5px;"><i class="mdi-navigation-more-vert" style="color: rgb(62, 193, 251);background-color: white;" ></i></a> -->
 
-                                <a href="#" data-activates="slide-out" class="sidebar-collapse hide-on-large-only waves-effect waves-light" style="top:-40px;float:right!important"><i class="mdi-navigation-more-vert brand-color-text"></i></a>
+                                <a href="#" data-activates="slide-out" class="sidebar-collapse hide-on-large-only waves-effect waves-light" style="top:-40px;float:right!important"><i class="mdi-navigation-more-vert brand-color-text" style="font-size: 30px;margin-top: -12px;"></i></a>
                             </aside>
                             <!-- END LEFT SIDEBAR NAV-->
                         {% endblock %}

@@ -21,8 +21,8 @@
 	  	<!-- CSS  -->
 	  	{% block stylesheets %}
 	  		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
-		    <link href="/{{theme}}/materialize/css/style.css?v=25" type="text/css" rel="stylesheet" media="screen,projection">
+	  		<link href="/{{theme}}/materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">		    
+		    <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
 		    <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
 		    <style type="text/css">
 	    		.toast {background-color: white!important;}
@@ -382,7 +382,7 @@
 				    <div class="row center">
 				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a</h3>
 				      <h1 class="header col s12 white-text" style="font-family:Novecentowide-Bold;">{{app_name}}</h1>
-					  {% if not is_mobile %}<h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" style="font-size:2.2rem;">Un espacio en el que podrás mandar reportes, peticiones y sugerencias que serán respondidas por tu alcalde.</h3>{% endif %}
+					  <h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" {% if not is_mobile %}style="font-size:2.2rem;"{% else %}style="font-size:1.5rem;"{% endif %}>Un espacio en el que podrás mandar reportes, peticiones y sugerencias que serán respondidas por tu alcalde.</h3>
 				    </div>
 				    <div class="row center">
 				    </div>

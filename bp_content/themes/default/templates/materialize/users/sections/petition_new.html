@@ -33,70 +33,98 @@
 {% block body_content %}
 	<div class="section">
 	    <div class="container" style="margin-top:80px">
-	    	<div class="row">
-	    		<!-- STEP I: tema y título -->
-		        <h3 id="step_i"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200">¿De qué trata tu petición? Con menos de 50 palabras completa la oración: "Hago esta petición al gobierno de {{city_name}} porque...</h3>
-		        <!-- STEP II: similars -->
-		        <h3 id="step_ii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">Antes de continuar te recomendamos revisar estas peticiones. Si no te parecen similares, haz clic en el botón de continuar.</h3>
-		        <!-- STEP III: description -->
-		        <h3 id="step_iii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Cuál es tu petición? Describe tu petición con lujo de detalle en el tema que seleccionaste. </h3>
-		        <!-- STEP IV: summary and publish -->
-		        <h3 id="step_iv"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Todo en orden? Revisa tu petición y has clic en publicar para comenzar a sumar voces.</h3>
-	    	</div>
+	    	
 	        <div class="row">
-	        	 <form class="col s12" id="form_report" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
-		                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-		                <input type="hidden" id="catGroup" name="catGroup">
-		                <input type="hidden" id="subCat" name="subCat">
 		                <div class="container">                
 		                    <div class="col s12 m9 offset-m1">
-		    	                <div class="row">
-		    	                    <div class="row">
-		                                <div class="input-field col s12 l6">
-		                                    <!-- Dropdown Trigger -->
-		                                    <p>Me gustaría me ayudaran con los siguientes temas:</p>
-		                                    <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">
-    		                                    <div class="preloader-wrapper small active" style="margin-top: 5px;">
-                                                    <div class="spinner-layer spinner-green-only">
-                                                      <div class="circle-clipper left">
-                                                        <div class="circle"></div>
-                                                      </div><div class="gap-patch">
-                                                        <div class="circle"></div>
-                                                      </div><div class="circle-clipper right">
-                                                        <div class="circle"></div>
-                                                      </div>
-                                                    </div>
-                                                </div>
-		                                    </a>
-		                                    <!-- Dropdown Structure -->
-		                                    <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
-                       						 <blockquote id="_description" class="grey-text text-lighten-1" style="margin-top: 10px;border-left: 5px solid {{brand_color}};display:none;"></blockquote>
+                          <div class="row">
+                              <div class="row">
+                                <div class="col s12">
+                                  <ul class="tabs tab-demo z-depth-1">
+                                    <li class="tab col s3"><a class="brand-color-text active" href="#test1">Paso 1</a>
+                                    </li>
+                                    <li class="tab col s3"><a class="brand-color-text" href="#test2">Paso 2</a>
+                                    </li>
+                                    <li class="tab col s3"><a class="brand-color-text" href="#test3">Paso 3</a>
+                                    </li>
+                                    <li class="tab col s3"><a class="brand-color-text" href="#test4">Paso 4</a>
+                                    </li>
+                                  </ul>
+                                </div>
+                                <div class="col s12">
+                                  <form class="col s12" id="form_report" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" id="catGroup" name="catGroup">
+                                        <input type="hidden" id="subCat" name="subCat">
+                                        <div id="test1" class="col s12">
+                                            <div class="row">
+                                              <!-- STEP I: tema y título -->
+                                                <h3 id="step_i"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200">¿De qué trata tu petición? Con menos de 50 palabras completa la oración: "Hago esta petición al gobierno de {{city_name}} porque...</h3>
+                                            </div>
+                                            <div class="row">
+                                                  <div class="input-field col s12 l6">
+                                                      <!-- Dropdown Trigger -->
+                                                      <p>Me gustaría me ayudaran con los siguientes temas:</p>
+                                                      <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">
+                                                          <div class="preloader-wrapper small active" style="margin-top: 5px;">
+                                                                  <div class="spinner-layer spinner-green-only">
+                                                                    <div class="circle-clipper left">
+                                                                      <div class="circle"></div>
+                                                                    </div><div class="gap-patch">
+                                                                      <div class="circle"></div>
+                                                                    </div><div class="circle-clipper right">
+                                                                      <div class="circle"></div>
+                                                                    </div>
+                                                                  </div>
+                                                              </div>
+                                                      </a>
+                                                      <!-- Dropdown Structure -->
+                                                      <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
+                                                      <blockquote id="_description" class="grey-text text-lighten-1" style="margin-top: 10px;border-left: 5px solid {{brand_color}};display:none;"></blockquote>
 
-		                                </div>
-		    	                    </div>
-		    	                    
-		    	                    <div class="row">
-		                                <div class="input-field col s12 l6">
-		                                    <i class="mdi-maps-map prefix brand-color-text brand-color-text"></i>
-		                                    <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
-		                                    <label for="description">Asunto de la petición (se breve, más adelante nos das detalle)</label>
-		                                </div>
-		                            </div>    
-		                            
-		                                                                       
-		    	                
-		    	                </div>
-		        	        </div>
+                                                  </div>
+                                            </div>
+                                            <div class="row">
+                                              <div class="input-field col s12 l6">
+                                                  <i class="mdi-maps-map prefix brand-color-text brand-color-text"></i>
+                                                  <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+                                                  <label for="description">Asunto de la petición (se breve, más adelante nos das detalle)</label>
+                                              </div>
+                                            </div> 
+                                            <div class="row">
+                                              <div class="input-field col s10 offset-s1 center">
+                                                    <button class="waves-effect waves-light brand-color white-text btn-large right" id="next_step_at_1" >Avanzar
+                                                        <i class="mdi-content-send right"></i>
+                                                    </button>                           
+                                                </div>
+                                            </div>                         
+                                        </div>
+                                        <div id="test2" class="col s12">
+                                          <div class="row">
+                                              <!-- STEP II: similars -->
+                                              <h3 id="step_ii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">Antes de continuar te recomendamos revisar estas peticiones. Si no te parecen similares, haz clic en el botón de continuar.</h3>                                        
+                                          </div>
+                                        </div>
+                                        <div id="test3" class="col s12">
+                                          <div class="row">
+                                              <!-- STEP III: description -->
+                                              <h3 id="step_iii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Cuál es tu petición? Describe tu petición con lujo de detalle en el tema que seleccionaste. </h3>
+                                          </div>
+                                        </div>
+                                        <div id="test4" class="col s12">
+                                          <div class="row">
+                                              <!-- STEP IV: summary and publish -->
+                                              <h3 id="step_iv"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Todo en orden? Revisa tu petición y has clic en publicar para comenzar a sumar voces.</h3>
+                                          </div>
+                                        </div>
+                                  </form>
+                                </div>
+                              </div>
+                          </div>
+                        </div>
 		                </div>
-		         </form>
 	        </div>
-	        <div class="row">
-	        	<div class="input-field col s10 offset-s1 center">
-	                <button class="waves-effect waves-light brand-color white-text btn-large right" id="submit_report_form" >Avanzar
-	                    <i class="mdi-content-send right"></i>
-	                </button>	                          
-	            </div>
-	        </div>
+	        
 	    </div>
 	</div>
 	<div id="modal_follow" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">

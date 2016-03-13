@@ -7,7 +7,7 @@
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://gpegobmx.appspot.com/default/materialize/images/logoH.png" height="80px">
+            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
           </a>
           </center>
         </td>
@@ -33,14 +33,14 @@
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
                           <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">{{user_name}} ({{user_email}}) te invita a que te unas a transformar Ciudad Guadalupe.</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Alcalde en línea es un espacio en el que podrás mandar peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.</p>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Mi Ciudad en línea es un espacio en el que podrás mandar peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde.</p>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">¿Qué esperas? Acepta la invitación y súmate</p>
                           
                           <div style="text-align:center">
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #235B63;" onclick=""><a href="{{link_referral}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Aceptar invitación</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{link_referral}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Aceptar invitación</a>
                                   </td>
                                 </tr>
                               </tbody>

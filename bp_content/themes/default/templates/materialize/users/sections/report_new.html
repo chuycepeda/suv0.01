@@ -6,6 +6,12 @@
 	<style type="text/css">
 		.disclaimer{margin-bottom: 0px;width: 101%;height: auto;left: 0px;text-align: center;z-index: 9999;background: rgb(205, 55, 53);color: white;font-size: 16px;font-family: roboto-thin;letter-spacing: 1.5px; padding:10px;cursor: pointer;border-bottom: 1px solid rgb(240, 240, 240);position: absolute;top: 65px;}		
 	</style>
+	<link href="/default/materialize/css/plugins/dropify/dropify.css" type="text/css" rel="stylesheet" media="screen,projection">
+	<style>
+	  .dropify-message p{
+	    text-align: center!important;
+	  }
+	</style>
 {% endblock %}
 
 {% block header_content %}
@@ -92,20 +98,15 @@
 		                                </div>
 		                            </div>
 		                            
-		                            <div class="row">
-		                                <div class="container">
-		                                    <p>Adjunta una foto para servirte mejor.</p>
-		                                    <div class="file-field input-field">
-		                                        <a class="waves-effect waves-light btn brand-color">
-		                                            <i class="mdi-editor-attach-file"></i>
-		                                            <input id="file" name="file" type="file">
-		                                        </a>          
-		                                        <div class="file-path-wrapper">
-		                                            <input class="file-path validate" type="text" style="width: 50%">
-		                                        </div>
-		                                    </div>
+		                             <div class="row">
+		                             	<div class="input-field col s12 l6" style="    margin-bottom: 35px;">
+		                                    <i class="mdi-image-image prefix brand-color-text brand-color-text"></i>
+		                                    <label for="when">Adjunta una imagen.</label>
 		                                </div>
-		                            </div>                                                
+					                   <div class="input-field col s12">
+					                    <input type="file" id="input-file-now" name="file" class="dropify" data-default-file="" />
+					                   </div>
+					                 </div>                                               
 		    	                
 		    	                </div>
 		        	        </div>
@@ -156,6 +157,19 @@
 {% block page_scripts %} 
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places,visualization"></script>
 	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
+	<script type="text/javascript" src="/default/materialize/js/plugins/dropify/dropify.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+	    $('.dropify').dropify({
+	                messages: {
+	                    default: 'Arrasta una foto o has clic aquí para adjuntarla.',
+	                    replace: 'Arrastra o has clic para reemplazar tu adjunto',
+	                    remove:  'Remover',
+	                    error:   'Oops!, este archivo es demasiado pesado.'
+	                }
+	            });
+		});
+	</script>
 	<script type="text/javascript">
 				
 		google.maps.event.addDomListener(window,'load', init);
@@ -481,8 +495,6 @@
 		    map.setZoom(16);
 			$('#main-preloader').hide();
 		}
-		
-
 	</script>
 {% endblock %}
 

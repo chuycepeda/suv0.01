@@ -7,7 +7,7 @@
  	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
     <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
  	<link href="/{{theme}}/materialize/css/plugins/rrssb/rrssb.css" type="text/css" rel="stylesheet" media="screen,projection">
- 	<link href="/{{theme}}/materialize/css/jquery.timelineMe.css" type="text/css" rel="stylesheet" media="screen,projection">
+ 	<link href="/{{theme}}/materialize/css/plugins/jquery/jquery.timelineMe.css" type="text/css" rel="stylesheet" media="screen,projection">
  	<style>
 		.rating:hover{
 			color:#ffc107!important;
@@ -139,7 +139,7 @@
 {% block page_scripts %}
 	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places,visualization"></script>
 	<script src="/{{theme}}/materialize/js/plugins/rrssb/rrssb.min.js"></script>
-	<script src="/{{theme}}/materialize/js/jquery.timelineMe.js"></script>
+	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.timelineMe.js"></script>
 	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
 	<script>
 		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });

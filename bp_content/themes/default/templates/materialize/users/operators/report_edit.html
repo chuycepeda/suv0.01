@@ -518,7 +518,7 @@
                                 {{contents}}
                                 {% if user_is_callcenter %}
                                 <br>
-                                <i class="mdi-action-delete red white-text" style="cursor:pointer; border-radius: 10px;" onclick="$('#modal_log').openModal(); $('#logID_url').val('{{ uri_for('materialize-log-delete', log_id = idx) }}'); $('#logID').val('{{idx}}'); return false;"></i>
+                                <i class="mdi-action-delete red-text" style="cursor:pointer; border-radius: 10px;" onclick="$('#modal_log').openModal(); $('#logID_url').val('{{ uri_for('materialize-log-delete', log_id = idx) }}'); $('#logID').val('{{idx}}'); return false;"></i>
                                 {% endif %}
 
                             </p>

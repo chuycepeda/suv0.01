@@ -7,7 +7,7 @@
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://gpegobmx.appspot.com/default/materialize/images/logoH.png" height="80px">
+            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
           </a>
           </center>
         </td>
@@ -38,7 +38,7 @@
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #235B63;" onclick=""><a href="{{confirmation_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Confirmar mi correo</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{confirmation_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Confirmar mi correo</a>
                                   </td>
                                 </tr>
                               </tbody>

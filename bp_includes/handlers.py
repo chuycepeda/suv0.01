@@ -3,7 +3,11 @@
     A real simple app for using webapp2 with auth and session.
     Routes are setup in routes.py and added in main.py
 """
-# python imports
+
+# ------------------------------------------------------------------------------------------- #
+"""                                     LIBRARY IMPORTS                                     """
+# ------------------------------------------------------------------------------------------- #
+#PYTHON
 import logging
 import json
 import requests
@@ -11,7 +15,7 @@ from datetime import date, timedelta, datetime
 import time
 from collections import OrderedDict, Counter
 
-# appengine imports
+#APPENGINE
 import webapp2
 from webapp2_extras import security
 from webapp2_extras.auth import InvalidAuthIdError, InvalidPasswordError
@@ -24,20 +28,19 @@ from google.appengine.api.datastore_errors import BadValueError
 from google.appengine.runtime import apiproxy_errors
 from google.appengine.datastore.datastore_query import Cursor
 
-# local imports
+#LOCAL
 import models, messages, forms
-from github import github
-from linkedin import linkedin
-from lib import utils, captcha, twitter, facebook, bitly, myhtmlparser
+from lib import utils, captcha, bitly
 from lib.cartodb import CartoDBAPIKey, CartoDBException
 from lib.basehandler import BaseHandler
 from lib.decorators import user_required, taskqueue_method
 
-""" GLOBAL METHODS
 
-    These methods are used accross different handlers.
+# ------------------------------------------------------------------------------------------- #
+"""                                     GLOBAL METHODS                                      """
+# ------------------------------------------------------------------------------------------- #
 
-"""
+#CAPTCHA
 def captchaBase(self):
     if self.app.config.get('captcha_public_key') == "" or \
                     self.app.config.get('captcha_private_key') == "":
@@ -50,6 +53,7 @@ def captchaBase(self):
         chtml = captcha.displayhtml(public_key=self.app.config.get('captcha_public_key'))
     return chtml
 
+#USER INFO
 def disclaim(_self, **kwargs):
     """
         This method is used as a validator previous to loading a get handler for most of user's screens.
@@ -86,6 +90,7 @@ def disclaim(_self, **kwargs):
 
     return _params, user_info
 
+#REPORTS RELATED
 def cartoInsert(self, report_id, manual):
     #PUSH TO CARTODB
     from google.appengine.api import urlfetch
@@ -147,7 +152,7 @@ def cartoUpdate(self, report_id):
             logging.info('error in cartodb UPDATE request: %s' % e)
             pass
 
-def archiveReport(self, user_info, report_id, contents):
+def archiveReport(self, user_info, report_id, handler):
     from google.appengine.api import urlfetch
     import urllib
     api_key = self.app.config.get('cartodb_apikey')
@@ -165,7 +170,7 @@ def archiveReport(self, user_info, report_id, contents):
     log_info.report_id = int(report_id)
     log_info.kind = 'status'
     log_info.title = "Ha archivado este reporte."
-    log_info.contents = contents
+    log_info.contents = self.request.get('contents')
     log_info.put()
 
     #PUSH TO CARTODB
@@ -180,6 +185,274 @@ def archiveReport(self, user_info, report_id, contents):
             logging.info('error in cartodb status UPDATE request: %s' % e)
             pass
     report_info.put()
+
+    self.add_message(messages.saving_success, 'success')
+    return self.redirect_to(handler, report_id=report_id)
+
+def editReport(self, user_info, report_id, handler):
+    from google.appengine.api import urlfetch
+    import urllib
+    api_key = self.app.config.get('cartodb_apikey')
+    cartodb_domain = self.app.config.get('cartodb_user')
+    cartodb_table = self.app.config.get('cartodb_reports_table')
+    report_info = models.Report.get_by_id(long(report_id))
+
+    #UPDATED VALUES
+    address_from = self.request.get('address_from')
+    address_from_coord = self.request.get('address_from_coord')
+    catGroup = self.request.get('catGroup')
+    subCat = self.request.get('subCat')
+    description = self.request.get('description')
+    when = self.request.get('when')
+    folio = self.request.get('folio')
+    status = self.request.get('status')
+    note = self.request.get('note')
+    comment = self.request.get('comment')
+    title = self.request.get('title')
+    kind = self.request.get('kind')
+    changes = ""
+    private = models.SubCategory.query(models.SubCategory.name == subCat).get()
+    if private is not None:
+        private = private.private
+    else:
+        report_info.group_category = '---'
+        report_info.sub_category = '---'
+        report_info.put()
+        self.add_message(messages.reselect, 'warning')
+        return self.redirect_to(handler, report_id=report_id)
+
+    #ASSIGN AS IS
+    status = status if status != 'undefined' else report_info.status
+    
+    if report_info.address_from != address_from:
+        report_info.address_from = address_from
+        changes += "el domicilio, "
+    # if report_info.address_from_coord != ndb.GeoPt(address_from_coord):
+    #     report_info.address_from_coord = ndb.GeoPt(address_from_coord)
+    #     changes += "el mapa, "
+    if report_info.when.strftime("%Y-%m-%d") != when:
+        report_info.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
+        changes += "la fecha, "
+    if report_info.title != title:
+        report_info.title = title
+        changes += "el titulo, "
+    if report_info.description != description:
+        report_info.description = description
+        changes += "la descripcion, "
+    
+    if status != report_info.status:
+        #increment credibility
+        if ((status != 'spam' and report_info.status == 'spam') or (status == 'solved' and report_info.status != 'solved')) and report_info.user_id != -1:
+            _user = self.user_model.get_by_id(long(report_info.user_id))
+            if _user:
+                _user.credibility += 1
+                _user.put()
+        #decrement credibility
+        elif (status == 'spam' and report_info.status != 'spam') and report_info.user_id != -1:
+            _user = self.user_model.get_by_id(long(report_info.user_id))
+            if _user:
+                _user.credibility -= 1
+                _user.put()
+        
+        #set terminated
+        if (status == 'solved' and report_info.status != 'solved') or (status == 'failed' and report_info.status != 'failed'):
+            report_info.terminated = datetime.now()
+        else:
+            #J-DAY
+            report_info.terminated = datetime(1997, 8, 29)
+                       
+        report_info.status = status
+        changes += "el estado, "
+                        
+    if report_info.folio != folio:
+        report_info.folio = folio
+        changes += "el folio, "
+    if report_info.group_category != catGroup:
+        report_info.group_category = catGroup
+        changes += "el grupo de categoria, "
+    if report_info.sub_category != subCat:
+        report_info.sub_category = subCat
+        changes += "la subcategoria, "
+
+    if report_info.terminated is None:
+        report_info.terminated = datetime(1997, 8, 29)
+
+    """
+        --------------------------------------------------
+        CONDITIONAL OVERRIDES FOR AUTOMATIC STATUS CHANGE
+        --------------------------------------------------
+
+        CASES FOR ADMIN
+        1.- If report is OPEN and admin does a COMMENT action: status -> HALTED
+        2.- If report is ARCHIVED and admin does a COMMENT action: status -> HALTED
+        3.- If report is SPAM and admin does a COMMENT action: status -> HALTED
+        4.- If report is REJECTED and admin does a COMMENT action: status -> HALTED
+
+        CASES FOR OPERATOR
+        1.- If report is ASSIGNED and operator does a COMMENT action: status -> WORKING
+
+        OTHER CASES
+        *.- If report is HALTED for more than 30 days a cronjob will set: status -> FORGOT
+        *.- If report is HALTED and citizen does a COMMENT action: status -> OPEN
+
+        NOTE THAT:
+            -ADMIN CAN ONLY SET STATUS TO ASSIGNED (dropdown), ARCHIVED (button), OR SPAM (button).
+            -OPERATOR CAN ONLY SET STATUS TO REJECTED (dropdown), SOLVED (button), OR FAILED (button).
+            -THERE ARE FOUR STATUSES THAT ARE AUTOMATICALLY SET: OPEN, HALTED, WORKING AND FORGOT.
+
+    """
+    if kind == 'comment' and report_info.status in ['open','archived','rejected', 'spam']:
+        report_info.status = 'halted'
+    if kind == 'comment' and report_info.status == 'assigned':
+        report_info.status = 'working'
+
+    #LOG CHANGES
+    log_info = models.LogChange()
+    log_info.user_email = user_info.email.lower()
+    log_info.report_id = int(report_id)
+    log_info.kind = kind
+    if kind == 'status' and report_info.status == 'archived':
+        log_info.title = "Ha archivado este reporte."
+        log_info.contents = self.request.get('contents')
+    elif kind == 'status' and report_info.status == 'spam':
+        log_info.title = "Ha marcado como spam este reporte."
+        log_info.contents = self.request.get('contents')
+    elif kind == 'status' and report_info.status == 'solved':
+        log_info.title = "Ha marcado este reporte como resuelto."
+        log_info.contents = self.request.get('contents')
+    elif kind == 'status' and report_info.status == 'failed':
+        log_info.title = "Ha marcado este reporte como fallo."
+        log_info.contents = self.request.get('contents')
+    elif kind == 'status' and report_info.status == 'rejected':
+        log_info.title = "Ha rechazado este reporte."
+        log_info.contents = self.request.get('contents')
+    elif kind == 'comment':
+        log_info.title = "Ha enviado un comentario al ciudadano."
+        log_info.contents = self.request.get('contents')
+    elif kind == 'note':
+        log_info.title = "Ha agregado una nota interna en este reporte."
+        log_info.contents = self.request.get('contents')
+    elif changes != "":
+        log_info.title = "Ha hecho algunos cambios en este reporte."
+        log_info.contents = "Fue modificado %s de este reporte." % changes[0:-2]
+    if log_info.title and log_info.contents:
+        log_info.put()
+
+    #PUSH TO CARTODB
+    if report_info.cdb_id == -1:
+        #INSERT
+        cartoInsert(self, report_info.key.id(),False)
+    else:
+        #UPDATE
+        cartoUpdate(self, report_info.key.id())
+
+    report_info.put()
+
+    #NOTIFY APPROPRIATELY
+    """
+        --------------------------------------------------
+        EMAIL NOTIFICATIONS COME WITH DIFFERENT REASONS
+        --------------------------------------------------
+        
+        @CRONJOB
+        1.- AUTOMATIC EMAIL IF REPORT STATUS IS OPEN AND MORE THAN 3 DAYS HAVE PASSED. (template: auto_72.txt)
+        2.- AUTOMATIC EMAIL IF REPORT STATUS IS AUTOMATICALLY CHANGED TO FORGOT. (template: change_notification.txt)
+        
+        @ADMIN
+        3.- ADMIN SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
+        4.- ADMIN SENDS A MODIFICATION OF KIND STATUS WITH STATUS ASSIGNED. (template: change_notification.txt)
+        5.- ADMIN SENDS A MODIFICATION OF REPORT PROPERTIES. (template: change_notification.txt)
+        
+        @OPERATOR
+        6.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS SOLVED. (template: change_notification.txt)
+        7.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS FAILED. (template: change_notification.txt)
+        8.- OPERATOR SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
+
+    """
+    if kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
+        reason = ""
+        if kind == 'comment':
+            reason = unicode('Tu reporte está siendo resuelto pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita tu sección de reportes y envíanos tus comentarios.','utf-8')
+        elif kind == 'status' and report_info.status == 'solved':
+            if report_info.get_agency() != '':
+                _r = u'Tu reporte ha sido resuelto por la %s, parte de la %s. Visita tu sección de reportes para ver su solución y calificarla.'
+                reason = _r % (report_info.get_agency(), report_info.get_secretary())
+            else:
+                reason = unicode('Tu reporte ha sido resuelto. Visita tu sección de reportes para ver su solución y calificarla.', 'utf-8')
+        elif kind == 'status' and report_info.status == 'failed':
+            if report_info.get_agency() != '':
+                _r = u'Tu reporte ha sido cerrado sin resolver por la %s, parte de la %s. Visita tu sección de reportes para ver los detalles.'
+                reason = _r % (report_info.get_agency(), report_info.get_secretary())
+            else:
+                reason = unicode('Tu reporte ha sido cerrado sin resolver. Visita tu sección de reportes para ver los detalles.', 'utf-8')
+        else:
+            reason = unicode('Tu reporte ha sido modificado en algunos campos y estamos avanzando en solucionarlo. Por favor visita tu sección de reportes y si tienes algún comentario por favor háznoslo saber.','utf-8')
+
+        template_val = {
+            "name": report_info.get_user_name(),
+            "_url": self.uri_for("materialize-reports", _full=True),
+            "cdb_id": report_info.cdb_id,
+            "reason": reason,
+            "support_url": self.uri_for("contact", _full=True),
+            "twitter_url": self.app.config.get('twitter_url'),
+            "facebook_url": self.app.config.get('facebook_url'),
+            "faq_url": self.uri_for("faq", _full=True)
+        }
+        body_path = "emails/change_notification.txt"
+        body = self.jinja2.render_template(body_path, **template_val)
+
+        email_url = self.uri_for('taskqueue-send-email')
+        taskqueue.add(url=email_url, params={
+            'to': str(report_info.get_user_email()),
+            'subject': messages.notification,
+            'body': body,
+        })
+
+    self.add_message(messages.saving_success, 'success')
+    return self.redirect_to(handler, report_id=report_id)
+
+def editReportParams(self, report_info):
+    params = {
+        'report': report_info
+    }
+    logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
+    logs = logs.order(-models.LogChange.created)
+    params['logs'] = []
+    for log in logs:
+        user = log.get_user()            
+        if user:
+            image = user.get_image_url()
+            initial_letter = user.name[1]
+            name = user.name
+        else:
+            image = -1
+            initial_letter = log.user_email[1]
+            name = ''
+        params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
+    
+    params['has_logs'] = True if len(params['logs']) > 0 else False
+    params['lat'] = self.app.config.get('map_center_lat')
+    params['lng'] = self.app.config.get('map_center_lng')
+
+    params['cartodb_user'] = self.app.config.get('cartodb_user')
+    params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+    params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+    params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+    params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+    return params
+
+def get_or_404(self, report_id):
+    if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+        try:
+            report = models.Report.get_by_id(long(report_id))
+            if report:
+                return report
+            else:
+                self.abort(404)
+        except ValueError:
+            pass
+    self.abort(403)
 
 def get_status(_stat):
     if _stat == 'open':
@@ -207,12 +480,11 @@ def get_status(_stat):
     if _stat == 'pending':
         return 'Pendientes'
 
+# ------------------------------------------------------------------------------------------- #
+"""                                     ACCOUNT HANDLERS                                    """
+# ------------------------------------------------------------------------------------------- #
 
-""" ACCOUNT HANDLERS 
-
-    These handlers include all classes concerning the login and logout interactions with users.
-
-"""
+#LOGIN
 class LoginRequiredHandler(BaseHandler):
     def get(self):
         continue_url = self.request.get_all('continue')
@@ -345,199 +617,7 @@ class MaterializeLogoutRequestHandler(BaseHandler):
             self.add_message(message, 'danger')
             return self.redirect_to('landing')
 
-class SendEmailHandler(BaseHandler):
-    """
-    Core Handler for sending Emails
-    Use with TaskQueue
-    """
-
-    @taskqueue_method
-    def post(self):
-
-        from google.appengine.api import mail, app_identity
-        from lib import sendgrid
-        from lib.sendgrid import SendGridError, SendGridClientError, SendGridServerError 
-
-        to = self.request.get("to")
-        subject = self.request.get("subject")
-        body = self.request.get("body")
-        sender = self.request.get("sender")
-
-        if sender != '' or not utils.is_email_valid(sender):
-            if utils.is_email_valid(self.app.config.get('contact_sender')):
-                sender = self.app.config.get('contact_sender')
-            else:
-                app_id = app_identity.get_application_id()
-                sender = "%s Mail <no-reply@%s.appspotmail.com>" % (self.app.config.get('app_name'),app_id)                
-
-        if self.app.config['log_email']:
-            try:
-                logEmail = models.LogEmail(
-                    sender=sender,
-                    to=to,
-                    subject=subject,
-                    body=body,
-                    when=utils.get_date_time("datetimeProperty")
-                )
-                logEmail.put()
-            except (apiproxy_errors.OverQuotaError, BadValueError):
-                logging.error("Error saving Email Log in datastore")
-
-
-
-
-        #using appengine email 
-        try:            
-            message = mail.EmailMessage()
-            message.sender = sender
-            message.to = to
-            message.subject = subject
-            message.html = body
-            message.send()
-            logging.info("... sending email to: %s ..." % to)
-        except Exception, e:
-            logging.error("Error sending email: %s" % e)
-
-
-        # using sendgrid
-        # try:
-        #     sg = sendgrid.SendGridClient(self.app.config.get('sendgrid_login'), self.app.config.get('sendgrid_passkey'))
-        #     logging.info("sending with sendgrid client: %s" % sg)
-        #     message = sendgrid.Mail()
-        #     message.add_to(to)
-        #     message.set_subject(subject)
-        #     message.set_html(body)
-        #     message.set_text(body)
-        #     message.set_from(sender)
-        #     status, msg = sg.send(message)
-        # except Exception, e:
-        #     logging.error("Error sending email: %s" % e)
-
-class PasswordResetHandler(BaseHandler):
-    """
-    Password Reset Handler with Captcha
-    """
-
-    def get(self):
-        if self.user:
-            self.auth.unset_session()
-        params = {
-            'captchahtml': captchaBase(self),
-        }
-        return self.render_template('materialize/landing/password_reset.html', **params)
-
-    def post(self):
-        # check captcha
-        response = self.request.POST.get('g-recaptcha-response')
-        remote_ip = self.request.remote_addr
-
-        cResponse = captcha.submit(
-            response,
-            self.app.config.get('captcha_private_key'),
-            remote_ip)
-
-        if cResponse.is_valid:
-            # captcha was valid... carry on..nothing to see here
-            pass
-        else:
-            _message = _(messages.captcha_error)
-            self.add_message(_message, 'danger')
-            return self.redirect_to('password-reset')
-
-        #check if we got an email or username
-        email_or_username = str(self.request.POST.get('email_or_username')).lower().strip()
-        if utils.is_email_valid(email_or_username):
-            user = self.user_model.get_by_email(email_or_username)
-        else:
-            auth_id = "own:%s" % email_or_username
-            user = self.user_model.get_by_auth_id(auth_id)
-
-        if user is not None:
-            user_id = user.get_id()
-            token = self.user_model.create_auth_token(user_id)
-            email_url = self.uri_for('taskqueue-send-email')
-            reset_url = self.uri_for('password-reset-check', user_id=user_id, token=token, _full=True)
-            subject = _(messages.email_passwordassist_subject)
-
-            # load email's template
-            template_val = {
-                "username": user.name,
-                "email": user.email,
-                "reset_password_url": reset_url,
-                "support_url": self.uri_for("contact", _full=True),
-                "twitter_url": self.app.config.get('twitter_url'),
-                "facebook_url": self.app.config.get('facebook_url'),
-                "faq_url": self.uri_for("faq", _full=True),
-                "app_name": self.app.config.get('app_name'),
-            }
-
-            body_path = "emails/reset_password.txt"
-            body = self.jinja2.render_template(body_path, **template_val)
-            taskqueue.add(url=email_url, params={
-                'to': user.email,
-                'subject': subject,
-                'body': body,
-                'sender': self.app.config.get('contact_sender'),
-            })
-            _message = _(messages.password_reset)
-            self.add_message(_message, 'success')
-        else:
-            _message = _(messages.password_reset_invalid_email)
-            self.add_message(_message, 'warning')
-
-        return self.redirect_to('login')
-
-class PasswordResetCompleteHandler(BaseHandler):
-    """
-    Handler to process the link of reset password that received the user
-    """
-
-    def get(self, user_id, token):
-        verify = self.user_model.get_by_auth_token(int(user_id), token)
-        params = {}
-        if verify[0] is None:
-            message = _(messages.password_reset_invalid_link)
-            self.add_message(message, 'warning')
-            return self.redirect_to('password-reset')
-
-        else:
-            user = self.user_model.get_by_id(long(user_id))
-            params = {
-                '_username':user.name
-            }
-            return self.render_template('materialize/landing/password_reset_complete.html', **params)
-
-    def post(self, user_id, token):
-        verify = self.user_model.get_by_auth_token(int(user_id), token)
-        user = verify[0]
-        password = self.form.password.data.strip()
-        if user and self.form.validate():
-            # Password to SHA512
-            password = utils.hashing(password, self.app.config.get('salt'))
-
-            user.password = security.generate_password_hash(password, length=12)
-            user.put()
-            # Delete token
-            self.user_model.delete_auth_token(int(user_id), token)
-            # Login User
-            self.auth.get_user_by_password(user.auth_ids[0], password)
-            self.add_message(_(messages.passwordchange_success), 'success')
-            return self.redirect_to('landing-map')
-
-        else:
-            self.add_message(_(messages.passwords_mismatch), 'danger')
-            return self.redirect_to('password-reset-check', user_id=user_id, token=token)
-
-    @webapp2.cached_property
-    def form(self):
-        return forms.PasswordResetCompleteForm(self)
-
-
-""" REGISTRATION HANDLERS 
-
-    These handlers concern registration in 2 ways: direct, or from referral.
-
-"""
+#REGISTER
 class MaterializeRegisterReferralHandler(BaseHandler):
     """
     Handler to process the link of referrals for a given user_id
@@ -545,7 +625,7 @@ class MaterializeRegisterReferralHandler(BaseHandler):
 
     def get(self, user_id):
         if self.user:
-            self.redirect_to('landing-map')
+            self.redirect_to('landing')
         user = self.user_model.get_by_id(long(user_id))
 
         if user is not None:
@@ -645,7 +725,7 @@ class MaterializeRegisterReferralHandler(BaseHandler):
                         "support_url": self.uri_for("contact", _full=True),
                         "twitter_url": self.app.config.get('twitter_url'),
                         "facebook_url": self.app.config.get('facebook_url'),
-						"faq_url": self.uri_for("faq", _full=True)
+                        "faq_url": self.uri_for("faq", _full=True)
                     }
                     body_path = "emails/account_activation.txt"
                     body = self.jinja2.render_template(body_path, **template_val)
@@ -674,51 +754,11 @@ class MaterializeRegisterReferralHandler(BaseHandler):
 
                     message = _(messages.register_success)
                     self.add_message(message, 'success')
-                    return self.redirect_to('landing-map')
-
-                # If the user didn't register using registration form ???
-                db_user = self.auth.get_user_by_password(referred_user[1].auth_ids[0], password)
-
-                # Check Twitter association in session
-                twitter_helper = twitter.TwitterAuth(self)
-                twitter_association_data = twitter_helper.get_association_data()
-                if twitter_association_data is not None:
-                    if models.SocialUser.check_unique(referred_user[1].key, 'twitter', str(twitter_association_data['id'])):
-                        social_user = models.SocialUser(
-                            user=referred_user[1].key,
-                            provider='twitter',
-                            uid=str(twitter_association_data['id']),
-                            extra_data=twitter_association_data
-                        )
-                        social_user.put()
-
-                #check Facebook association
-                fb_data = json.loads(self.session['facebook'])
-                if fb_data is not None:
-                    if models.SocialUser.check_unique(referred_user.key, 'facebook', str(fb_data['id'])):
-                        social_user = models.SocialUser(
-                            user=referred_user.key,
-                            provider='facebook',
-                            uid=str(fb_data['id']),
-                            extra_data=fb_data
-                        )
-                        social_user.put()
-
-                #check LinkedIn association
-                li_data = json.loads(self.session['linkedin'])
-                if li_data is not None:
-                    if models.SocialUser.check_unique(referred_user.key, 'linkedin', str(li_data['id'])):
-                        social_user = models.SocialUser(
-                            user=referred_user.key,
-                            provider='linkedin',
-                            uid=str(li_data['id']),
-                            extra_data=li_data
-                        )
-                        social_user.put()
-
+                    return self.redirect_to('landing')
+                
                 message = _(messages.logged).format(username)
                 self.add_message(message, 'success')
-                return self.redirect_to('landing-map')
+                return self.redirect_to('landing')
             except (AttributeError, KeyError), e:
                 logging.error('Unexpected error creating the user %s: %s' % (username, e ))
                 message = _(messages.user_creation_error).format(username)
@@ -849,7 +889,7 @@ class MaterializeRegisterRequestHandler(BaseHandler):
 
                 message = _(messages.logged).format(username)
                 self.add_message(message, 'success')
-                return self.redirect_to('landing-map')
+                return self.redirect_to('landing')
             except (AttributeError, KeyError), e:
                 logging.error('Unexpected error creating the user %s: %s' % (username, e ))
                 message = _(messages.user_creation_error).format(username)
@@ -860,6 +900,75 @@ class MaterializeRegisterRequestHandler(BaseHandler):
     def form(self):
         f = forms.RegisterForm(self)
         return f
+
+#ACTIVATION
+class SendEmailHandler(BaseHandler):
+    """
+    Core Handler for sending Emails
+    Use with TaskQueue
+    """
+
+    @taskqueue_method
+    def post(self):
+
+        from google.appengine.api import mail, app_identity
+        from lib import sendgrid
+        from lib.sendgrid import SendGridError, SendGridClientError, SendGridServerError 
+
+        to = self.request.get("to")
+        subject = self.request.get("subject")
+        body = self.request.get("body")
+        sender = self.request.get("sender")
+
+        if sender != '' or not utils.is_email_valid(sender):
+            if utils.is_email_valid(self.app.config.get('contact_sender')):
+                sender = self.app.config.get('contact_sender')
+            else:
+                app_id = app_identity.get_application_id()
+                sender = "%s Mail <no-reply@%s.appspotmail.com>" % (self.app.config.get('app_name'),app_id)                
+
+        if self.app.config['log_email']:
+            try:
+                logEmail = models.LogEmail(
+                    sender=sender,
+                    to=to,
+                    subject=subject,
+                    body=body,
+                    when=utils.get_date_time("datetimeProperty")
+                )
+                logEmail.put()
+            except (apiproxy_errors.OverQuotaError, BadValueError):
+                logging.error("Error saving Email Log in datastore")
+
+
+
+
+        #using appengine email 
+        try:            
+            message = mail.EmailMessage()
+            message.sender = sender
+            message.to = to
+            message.subject = subject
+            message.html = body
+            message.send()
+            logging.info("... sending email to: %s ..." % to)
+        except Exception, e:
+            logging.error("Error sending email: %s" % e)
+
+
+        # using sendgrid
+        # try:
+        #     sg = sendgrid.SendGridClient(self.app.config.get('sendgrid_login'), self.app.config.get('sendgrid_passkey'))
+        #     logging.info("sending with sendgrid client: %s" % sg)
+        #     message = sendgrid.Mail()
+        #     message.add_to(to)
+        #     message.set_subject(subject)
+        #     message.set_html(body)
+        #     message.set_text(body)
+        #     message.set_from(sender)
+        #     status, msg = sg.send(message)
+        # except Exception, e:
+        #     logging.error("Error sending email: %s" % e)
 
 class MaterializeAccountActivationHandler(BaseHandler):
     """
@@ -1055,7 +1164,7 @@ class ResendActivationEmailHandler(BaseHandler):
                     "support_url": self.uri_for("contact", _full=True),
                     "twitter_url": self.app.config.get('twitter_url'),
                     "facebook_url": self.app.config.get('facebook_url'),
-					"faq_url": self.uri_for("faq", _full=True)
+                    "faq_url": self.uri_for("faq", _full=True)
                 }
                 body_path = "emails/account_activation.txt"
                 body = self.jinja2.render_template(body_path, **template_val)
@@ -1083,14 +1192,131 @@ class ResendActivationEmailHandler(BaseHandler):
             self.add_message(message, 'danger')
             return self.redirect_to('login')
 
+#PASSWORD RESET
+class PasswordResetHandler(BaseHandler):
+    """
+    Password Reset Handler with Captcha
+    """
 
-""" MATERIALIZE HANDLERS 
+    def get(self):
+        if self.user:
+            self.auth.unset_session()
+        params = {
+            'captchahtml': captchaBase(self),
+        }
+        return self.render_template('materialize/landing/password_reset.html', **params)
 
-    These handlers are the core of the Platform, they give life to main user materialized screens
+    def post(self):
+        # check captcha
+        response = self.request.POST.get('g-recaptcha-response')
+        remote_ip = self.request.remote_addr
 
-"""
+        cResponse = captcha.submit(
+            response,
+            self.app.config.get('captcha_private_key'),
+            remote_ip)
 
-# LANDING
+        if cResponse.is_valid:
+            # captcha was valid... carry on..nothing to see here
+            pass
+        else:
+            _message = _(messages.captcha_error)
+            self.add_message(_message, 'danger')
+            return self.redirect_to('password-reset')
+
+        #check if we got an email or username
+        email_or_username = str(self.request.POST.get('email_or_username')).lower().strip()
+        if utils.is_email_valid(email_or_username):
+            user = self.user_model.get_by_email(email_or_username)
+        else:
+            auth_id = "own:%s" % email_or_username
+            user = self.user_model.get_by_auth_id(auth_id)
+
+        if user is not None:
+            user_id = user.get_id()
+            token = self.user_model.create_auth_token(user_id)
+            email_url = self.uri_for('taskqueue-send-email')
+            reset_url = self.uri_for('password-reset-check', user_id=user_id, token=token, _full=True)
+            subject = _(messages.email_passwordassist_subject)
+
+            # load email's template
+            template_val = {
+                "username": user.name,
+                "email": user.email,
+                "reset_password_url": reset_url,
+                "support_url": self.uri_for("contact", _full=True),
+                "twitter_url": self.app.config.get('twitter_url'),
+                "facebook_url": self.app.config.get('facebook_url'),
+                "faq_url": self.uri_for("faq", _full=True),
+                "app_name": self.app.config.get('app_name'),
+            }
+
+            body_path = "emails/reset_password.txt"
+            body = self.jinja2.render_template(body_path, **template_val)
+            taskqueue.add(url=email_url, params={
+                'to': user.email,
+                'subject': subject,
+                'body': body,
+                'sender': self.app.config.get('contact_sender'),
+            })
+            _message = _(messages.password_reset)
+            self.add_message(_message, 'success')
+        else:
+            _message = _(messages.password_reset_invalid_email)
+            self.add_message(_message, 'warning')
+
+        return self.redirect_to('login')
+
+class PasswordResetCompleteHandler(BaseHandler):
+    """
+    Handler to process the link of reset password that received the user
+    """
+
+    def get(self, user_id, token):
+        verify = self.user_model.get_by_auth_token(int(user_id), token)
+        params = {}
+        if verify[0] is None:
+            message = _(messages.password_reset_invalid_link)
+            self.add_message(message, 'warning')
+            return self.redirect_to('password-reset')
+
+        else:
+            user = self.user_model.get_by_id(long(user_id))
+            params = {
+                '_username':user.name
+            }
+            return self.render_template('materialize/landing/password_reset_complete.html', **params)
+
+    def post(self, user_id, token):
+        verify = self.user_model.get_by_auth_token(int(user_id), token)
+        user = verify[0]
+        password = self.form.password.data.strip()
+        if user and self.form.validate():
+            # Password to SHA512
+            password = utils.hashing(password, self.app.config.get('salt'))
+
+            user.password = security.generate_password_hash(password, length=12)
+            user.put()
+            # Delete token
+            self.user_model.delete_auth_token(int(user_id), token)
+            # Login User
+            self.auth.get_user_by_password(user.auth_ids[0], password)
+            self.add_message(_(messages.passwordchange_success), 'success')
+            return self.redirect_to('landing')
+
+        else:
+            self.add_message(_(messages.passwords_mismatch), 'danger')
+            return self.redirect_to('password-reset-check', user_id=user_id, token=token)
+
+    @webapp2.cached_property
+    def form(self):
+        return forms.PasswordResetCompleteForm(self)
+
+
+# ------------------------------------------------------------------------------------------- #
+"""                                 NON-USER, LANDING HANDLERS                              """
+# ------------------------------------------------------------------------------------------- #
+
 class MaterializeLandingRequestHandler(BaseHandler):
     """
     Handler to show the landing page
@@ -1357,7 +1583,11 @@ class MaterializeLandingContactRequestHandler(BaseHandler):
     def form(self):
         return forms.ContactForm(self)
 
-# USER ALL
+
+# ------------------------------------------------------------------------------------------- #
+"""                                 REGISTERED USERS HANDLERS                               """
+# ------------------------------------------------------------------------------------------- #
+
 class MaterializeReferralsRequestHandler(BaseHandler):
     """
         Handler for materialized referrals
@@ -1866,7 +2096,7 @@ class MaterializeEmailChangedCompleteHandler(BaseHandler):
         if verify[0] is None:
             message = _(messages.used_activation_link)
             self.add_message(message, 'warning')
-            self.redirect_to('landing-map')
+            self.redirect_to('landing')
 
         else:
             # save new email
@@ -1899,7 +2129,7 @@ class MaterializeEmailChangedCompleteHandler(BaseHandler):
             # add successful message and redirect
             message = _(messages.emailchanged_confirm)
             self.add_message(message, 'success')
-            self.redirect_to('landing-map')
+            self.redirect_to('landing')
 
 class MaterializeSettingsPasswordRequestHandler(BaseHandler):
     """
@@ -2032,7 +2262,7 @@ class MaterializeSettingsDeleteRequestHandler(BaseHandler):
                     # display successful message
                     msg = _(messages.account_delete_success)
                     self.add_message(msg, 'success')
-                    return self.redirect_to('landing-map')
+                    return self.redirect_to('landing')
                 else:
                     message = _(messages.password_wrong)
                     self.add_message(message, 'danger')
@@ -2064,7 +2294,12 @@ class MaterializeTutorialsRequestHandler(BaseHandler):
         params, user_info = disclaim(self)
         return self.render_template('materialize/users/sections/tutorials.html', **params)
 
-#USER SPECIAL ACCESS
+
+# ------------------------------------------------------------------------------------------- #
+"""                                 REGISTERED OPERATORS HANDLERS                           """
+# ------------------------------------------------------------------------------------------- #
+
+#ORGANIZATION ACCESS
 class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
     @user_required
     def get(self):
@@ -2081,7 +2316,6 @@ class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/dashboard.html', **params)
         self.abort(403)
 
-#testcarto
 class MaterializeOrganizationNewReportHandler(BaseHandler):
     """
     Handler for materialized home
@@ -2239,6 +2473,142 @@ class MaterializeOrganizationNewReportSuccessHandler(BaseHandler):
         
         return self.render_template('materialize/users/operators/new_report_success.html', **params)
 
+class MaterializeOrganizationManualHandler(BaseHandler):
+    """
+        Handler for materialized operators manual
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        params, user_info = disclaim(self)
+        return self.render_template('materialize/users/operators/manual.html', **params)
+
+class MaterializeOrganizationUsersHandler(BaseHandler):
+    """
+        Handler for materialized operators users list
+    """
+    @user_required
+    def get(self):
+        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+            """ returns simple html for a get request """
+            params, user_info = disclaim(self)
+            p = self.request.get('p')
+            q = self.request.get('q')
+            c = self.request.get('c')
+            forward = True if p not in ['prev'] else False
+            cursor = Cursor(urlsafe=c)
+
+            if q:
+                try:
+                    qry = self.user_model.get_by_id(long(q.lower()))
+                    count = 1 if qry else 0
+                except Exception as e:
+                    logging.info('Exception at query: %s; trying with email' % e)
+                    qry = self.user_model.get_by_email(q.lower())
+                    count = 1 if qry else 0
+                users = []
+                if qry:
+                    users.append(qry)
+            else:
+                qry = self.user_model.query()
+                count = qry.count()
+
+                PAGE_SIZE = 50
+                if forward:
+                    users, next_cursor, more = qry.order(-self.user_model.last_login, self.user_model.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    if next_cursor and more:
+                        self.view.next_cursor = next_cursor
+                    if c:
+                        self.view.prev_cursor = cursor.reversed()
+                else:
+                    users, next_cursor, more = qry.order(self.user_model.last_login, self.user_model.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
+                    users = list(reversed(users))
+                    if next_cursor and more:
+                        self.view.prev_cursor = next_cursor
+                    self.view.next_cursor = cursor.reversed()
+                
+            def pager_url(p, cursor):
+                params = OrderedDict()
+                if q:
+                    params['q'] = q
+                if p in ['prev']:
+                    params['p'] = p
+                if cursor:
+                    params['c'] = cursor.urlsafe()
+                return self.uri_for('materialize-organization-users', **params)
+
+            self.view.pager_url = pager_url
+            self.view.q = q
+
+            params["list_columns"] = [('username', 'Email'),
+                                 ('name', 'Nombre'),
+                                 ('last_name', 'Apellido'),
+                                 ('last_login', u'Último ingreso')
+                                 ]
+            params["users"] = users
+            params["count"] = count
+            return self.render_template('materialize/users/operators/users.html', **params)
+
+        self.abort(403)
+
+class MaterializeOrganizationExportUsersHandler(BaseHandler):
+    """
+        Handler for materialized operators export users list
+    """
+    @user_required
+    def get(self):
+        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+            import csv, json
+            from google.appengine.api import urlfetch
+            urlfetch.set_default_fetch_deadline(45)
+            url = self.app.config.get('users_export_url')
+            result = urlfetch.fetch(url)
+            if result.status_code == 200:
+                data = json.loads(result.content)                
+                writer = csv.writer(self.response.out)
+                writer.writerow(["name", "last_name", "credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
+                for item in data['items']:
+                    writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'].encode('utf8') ])
+                        
+            self.response.headers['Content-Type'] = 'application/csv'
+            self.response.headers['Content-Disposition'] = 'attachment; filename=usuarios.csv'
+            writer = csv.writer(self.response.out)
+        else:
+            self.abort(403)
+
+class MaterializeOrganizationExportReportsHandler(BaseHandler):
+    """
+        Handler for materialized operators export users list
+    """
+    @user_required
+    def get(self):
+        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+            import csv, json
+            from google.appengine.api import urlfetch
+            urlfetch.set_default_fetch_deadline(45)
+            url = self.app.config.get('reports_export_url')
+            result = urlfetch.fetch(url)
+            if result.status_code == 200:
+                data = json.loads(result.content)                
+                writer = csv.writer(self.response.out)
+                writer.writerow(["rating", "via", "sub_category", "contact_info", "urgent", "req_deletion", "address_lon", "terminated", "folio", "user_id", "title", "cdb_id", "group_category", "when", "address_lat", "status", "updated", "address_from", "description", "created", "follows", "emailed_72", "image_url"])
+                for item in data['items']:
+                    writer.writerow([ item['rating'], item['via'], item['sub_category'].encode('utf8'), item['contact_info'].encode('utf8'), item['urgent'], item['req_deletion'], item['address_lon'], item['terminated'], item['folio'], "'%s"%item['user_id'], item['title'].encode('utf8'), item['cdb_id'], item['group_category'].encode('utf8'), item['when'], item['address_lat'], item['status'], item['updated'], item['address_from'].encode('utf8'), item['description'].encode('utf8'), item['created'], item['follows'], item['emailed_72'], str(item['image_url'])  ])
+                        
+            self.response.headers['Content-Type'] = 'application/csv'
+            self.response.headers['Content-Disposition'] = 'attachment; filename=reportes.csv'
+            writer = csv.writer(self.response.out)
+        else:
+            self.abort(403)
+
+class MaterializeOrganizationDirectoryRequestHandler(BaseHandler):
+    @user_required
+    def get(self):
+        params, user_info = disclaim(self)
+
+        return self.render_template('materialize/users/sections/directory.html', **params)
+
+#REPORTS INBOXES
 class MaterializeOrganizationUrgentsHandler(BaseHandler):
     @user_required
     def get(self):
@@ -2397,84 +2767,6 @@ class MaterializeOrganizationUrgentsHandler(BaseHandler):
             params['inbox'] = 'materialize-organization-urgents'
             return self.render_template('materialize/users/operators/inbox.html', **params)
         
-        self.abort(403)
-
-class MaterializeOrganizationManualHandler(BaseHandler):
-    """
-        Handler for materialized operators manual
-    """
-    @user_required
-    def get(self):
-        """ returns simple html for a get request """
-        params, user_info = disclaim(self)
-        return self.render_template('materialize/users/operators/manual.html', **params)
-
-class MaterializeOrganizationUsersHandler(BaseHandler):
-    """
-        Handler for materialized operators users list
-    """
-    @user_required
-    def get(self):
-        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
-            """ returns simple html for a get request """
-            params, user_info = disclaim(self)
-            p = self.request.get('p')
-            q = self.request.get('q')
-            c = self.request.get('c')
-            forward = True if p not in ['prev'] else False
-            cursor = Cursor(urlsafe=c)
-
-            if q:
-                try:
-                    qry = self.user_model.get_by_id(long(q.lower()))
-                    count = 1 if qry else 0
-                except Exception as e:
-                    logging.info('Exception at query: %s; trying with email' % e)
-                    qry = self.user_model.get_by_email(q.lower())
-                    count = 1 if qry else 0
-                users = []
-                if qry:
-                    users.append(qry)
-            else:
-                qry = self.user_model.query()
-                count = qry.count()
-
-                PAGE_SIZE = 50
-                if forward:
-                    users, next_cursor, more = qry.order(-self.user_model.last_login, self.user_model.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    if next_cursor and more:
-                        self.view.next_cursor = next_cursor
-                    if c:
-                        self.view.prev_cursor = cursor.reversed()
-                else:
-                    users, next_cursor, more = qry.order(self.user_model.last_login, self.user_model.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    users = list(reversed(users))
-                    if next_cursor and more:
-                        self.view.prev_cursor = next_cursor
-                    self.view.next_cursor = cursor.reversed()
-                
-            def pager_url(p, cursor):
-                params = OrderedDict()
-                if q:
-                    params['q'] = q
-                if p in ['prev']:
-                    params['p'] = p
-                if cursor:
-                    params['c'] = cursor.urlsafe()
-                return self.uri_for('materialize-organization-users', **params)
-
-            self.view.pager_url = pager_url
-            self.view.q = q
-
-            params["list_columns"] = [('username', 'Email'),
-                                 ('name', 'Nombre'),
-                                 ('last_name', 'Apellido'),
-                                 ('last_login', u'Último ingreso')
-                                 ]
-            params["users"] = users
-            params["count"] = count
-            return self.render_template('materialize/users/operators/users.html', **params)
-
         self.abort(403)
 
 class MaterializeOrganizationUserReportsHandler(BaseHandler):
@@ -2638,64 +2930,6 @@ class MaterializeOrganizationUserReportsHandler(BaseHandler):
         
         self.abort(403)
 
-class MaterializeOrganizationExportUsersHandler(BaseHandler):
-    """
-        Handler for materialized operators export users list
-    """
-    @user_required
-    def get(self):
-        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
-            import csv, json
-            from google.appengine.api import urlfetch
-            urlfetch.set_default_fetch_deadline(45)
-            url = self.app.config.get('users_export_url')
-            result = urlfetch.fetch(url)
-            if result.status_code == 200:
-                data = json.loads(result.content)                
-                writer = csv.writer(self.response.out)
-                writer.writerow(["name", "last_name", "credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
-                for item in data['items']:
-                    writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'].encode('utf8') ])
-                        
-            self.response.headers['Content-Type'] = 'application/csv'
-            self.response.headers['Content-Disposition'] = 'attachment; filename=usuarios.csv'
-            writer = csv.writer(self.response.out)
-        else:
-            self.abort(403)
-
-class MaterializeOrganizationExportReportsHandler(BaseHandler):
-    """
-        Handler for materialized operators export users list
-    """
-    @user_required
-    def get(self):
-        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
-            import csv, json
-            from google.appengine.api import urlfetch
-            urlfetch.set_default_fetch_deadline(45)
-            url = self.app.config.get('reports_export_url')
-            result = urlfetch.fetch(url)
-            if result.status_code == 200:
-                data = json.loads(result.content)                
-                writer = csv.writer(self.response.out)
-                writer.writerow(["rating", "via", "sub_category", "contact_info", "urgent", "req_deletion", "address_lon", "terminated", "folio", "user_id", "title", "cdb_id", "group_category", "when", "address_lat", "status", "updated", "address_from", "description", "created", "follows", "emailed_72", "image_url"])
-                for item in data['items']:
-                    writer.writerow([ item['rating'], item['via'], item['sub_category'].encode('utf8'), item['contact_info'].encode('utf8'), item['urgent'], item['req_deletion'], item['address_lon'], item['terminated'], item['folio'], "'%s"%item['user_id'], item['title'].encode('utf8'), item['cdb_id'], item['group_category'].encode('utf8'), item['when'], item['address_lat'], item['status'], item['updated'], item['address_from'].encode('utf8'), item['description'].encode('utf8'), item['created'], item['follows'], item['emailed_72'], str(item['image_url'])  ])
-                        
-            self.response.headers['Content-Type'] = 'application/csv'
-            self.response.headers['Content-Disposition'] = 'attachment; filename=reportes.csv'
-            writer = csv.writer(self.response.out)
-        else:
-            self.abort(403)
-
-class MaterializeOrganizationDirectoryRequestHandler(BaseHandler):
-    @user_required
-    def get(self):
-        params, user_info = disclaim(self)
-
-        return self.render_template('materialize/users/sections/directory.html', **params)
-
-#USER SECRETARY
 class MaterializeSecretaryInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
@@ -2825,289 +3059,6 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/inbox.html', **params)
         self.abort(403)
 
-class MaterializeSecretaryReportRequestHandler(BaseHandler):
-    @user_required
-    def get_or_404(self, report_id):
-        if self.user_is_secretary:
-            try:
-                report = models.Report.get_by_id(long(report_id))
-                if report:
-                    return report
-                else:
-                    self.abort(404)
-            except ValueError:
-                pass
-        self.abort(403)
-
-    @user_required
-    def edit(self, report_id):
-        if self.request.POST:
-            report_info = self.get_or_404(report_id)
-            delete = self.request.get('delete')
-            status = self.request.get('status')
-            user_info = self.user_model.get_by_id(long(self.user_id))
-            
-            try:
-                if delete == 'confirmed_deletion':
-                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-secretary-report", report_id=report_id)
-
-                elif delete == 'report_edition':
-
-                    #UPDATED VALUES
-                    address_from = self.request.get('address_from')
-                    address_from_coord = self.request.get('address_from_coord')
-                    catGroup = self.request.get('catGroup')
-                    subCat = self.request.get('subCat')
-                    description = self.request.get('description')
-                    when = self.request.get('when')
-                    folio = self.request.get('folio')
-                    status = self.request.get('status')
-                    note = self.request.get('note')
-                    comment = self.request.get('comment')
-                    title = self.request.get('title')
-                    kind = self.request.get('kind')
-                    changes = ""
-                    private = models.SubCategory.query(models.SubCategory.name == subCat).get()
-                    if private is not None:
-                        private = private.private
-                    else:
-                        report_info.group_category = '---'
-                        report_info.sub_category = '---'
-                        report_info.put()
-                        self.add_message(messages.reselect, 'warning')
-                        return self.redirect_to("materialize-secretary-report", report_id=report_id)
-
-                    #ASSIGN AS IS
-                    status = status if status != 'undefined' else report_info.status
-                    
-                    if report_info.address_from != address_from:
-                        report_info.address_from = address_from
-                        changes += "el domicilio, "
-                    if report_info.address_from_coord != ndb.GeoPt(address_from_coord):
-                        report_info.address_from_coord = ndb.GeoPt(address_from_coord)
-                        changes += "el mapa, "
-                    if report_info.when.strftime("%Y-%m-%d") != when:
-                        report_info.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
-                        changes += "la fecha, "
-                    if report_info.title != title:
-                        report_info.title = title
-                        changes += "el titulo, "
-                    if report_info.description != description:
-                        report_info.description = description
-                        changes += "la descripcion, "
-                    
-                    if status != report_info.status:
-                        #increment credibility
-                        if ((status != 'spam' and report_info.status == 'spam') or (status == 'solved' and report_info.status != 'solved')) and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility += 1
-                                _user.put()
-                        #decrement credibility
-                        elif (status == 'spam' and report_info.status != 'spam') and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility -= 1
-                                _user.put()
-                        
-                        #set terminated
-                        if (status == 'solved' and report_info.status != 'solved') or (status == 'failed' and report_info.status != 'failed'):
-                            report_info.terminated = datetime.now()
-                        else:
-                            #J-DAY
-                            report_info.terminated = datetime(1997, 8, 29)
-                                       
-                        report_info.status = status
-                        changes += "el estado, "
-                                        
-                    if report_info.folio != folio:
-                        report_info.folio = folio
-                        changes += "el folio, "
-                    if report_info.group_category != catGroup:
-                        report_info.group_category = catGroup
-                        changes += "el grupo de categoria, "
-                    if report_info.sub_category != subCat:
-                        report_info.sub_category = subCat
-                        changes += "la subcategoria, "
-
-                    if report_info.terminated is None:
-                        report_info.terminated = datetime(1997, 8, 29)
-
-                    """
-                        --------------------------------------------------
-                        CONDITIONAL OVERRIDES FOR AUTOMATIC STATUS CHANGE
-                        --------------------------------------------------
-
-                        CASES FOR ADMIN
-                        1.- If report is OPEN and admin does a COMMENT action: status -> HALTED
-                        2.- If report is ARCHIVED and admin does a COMMENT action: status -> HALTED
-                        3.- If report is SPAM and admin does a COMMENT action: status -> HALTED
-                        4.- If report is REJECTED and admin does a COMMENT action: status -> HALTED
-
-                        CASES FOR OPERATOR
-                        1.- If report is ASSIGNED and operator does a COMMENT action: status -> WORKING
-
-                        OTHER CASES
-                        *.- If report is HALTED for more than 30 days a cronjob will set: status -> FORGOT
-                        *.- If report is HALTED and citizen does a COMMENT action: status -> OPEN
-
-                        NOTE THAT:
-                            -ADMIN CAN ONLY SET STATUS TO ASSIGNED (dropdown), ARCHIVED (button), OR SPAM (button).
-                            -OPERATOR CAN ONLY SET STATUS TO REJECTED (dropdown), SOLVED (button), OR FAILED (button).
-                            -THERE ARE FOUR STATUSES THAT ARE AUTOMATICALLY SET: OPEN, HALTED, WORKING AND FORGOT.
-    
-                    """
-                    if kind == 'comment' and report_info.status in ['open','archived','rejected', 'spam']:
-                        report_info.status = 'halted'
-                    if kind == 'comment' and report_info.status == 'assigned':
-                        report_info.status = 'working'
-
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = kind
-                    if kind == 'status' and report_info.status == 'archived':
-                        log_info.title = "Ha archivado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'spam':
-                        log_info.title = "Ha marcado como spam este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'solved':
-                        log_info.title = "Ha marcado este reporte como resuelto."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'failed':
-                        log_info.title = "Ha marcado este reporte como fallo."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'rejected':
-                        log_info.title = "Ha rechazado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'comment':
-                        log_info.title = "Ha enviado un comentario al ciudadano."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'note':
-                        log_info.title = "Ha agregado una nota interna en este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif changes != "":
-                        log_info.title = "Ha hecho algunos cambios en este reporte."
-                        log_info.contents = "Fue modificado %s de este reporte." % changes[0:-2]
-                    if log_info.title and log_info.contents:
-                        log_info.put()
-                
-                    #PUSH TO CARTODB
-                    if report_info.cdb_id == -1:
-                        #INSERT
-                        cartoInsert(self, report_info.key.id(),False)
-                    else:
-                        #UPDATE
-                        cartoUpdate(self, report_info.key.id())
-
-                    report_info.put()
-
-                    #NOTIFY APPROPRIATELY
-                    """
-                        --------------------------------------------------
-                        EMAIL NOTIFICATIONS COME WITH DIFFERENT REASONS
-                        --------------------------------------------------
-                        
-                        @CRONJOB
-                        1.- AUTOMATIC EMAIL IF REPORT STATUS IS OPEN AND MORE THAN 3 DAYS HAVE PASSED. (template: auto_72.txt)
-                        2.- AUTOMATIC EMAIL IF REPORT STATUS IS AUTOMATICALLY CHANGED TO FORGOT. (template: change_notification.txt)
-                        
-                        @ADMIN
-                        3.- ADMIN SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-                        4.- ADMIN SENDS A MODIFICATION OF KIND STATUS WITH STATUS ASSIGNED. (template: change_notification.txt)
-                        5.- ADMIN SENDS A MODIFICATION OF REPORT PROPERTIES. (template: change_notification.txt)
-                        
-                        @OPERATOR
-                        6.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS SOLVED. (template: change_notification.txt)
-                        7.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS FAILED. (template: change_notification.txt)
-                        8.- OPERATOR SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-
-                    """
-                    if kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
-                        reason = ""
-                        if kind == 'comment':
-                            reason = unicode('Tu reporte está siendo resuelto pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita Alcalde en Línea en la sección de Mis reportes y envíanos tus comentarios.','utf-8')
-                        elif kind == 'status' and report_info.status == 'solved':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido resuelto por la %s, parte de la %s. Visita Alcalde en Línea para ver su solución y calificarla.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido resuelto. Visita Alcalde en Línea para ver su solución y calificarla.', 'utf-8')
-                        elif kind == 'status' and report_info.status == 'failed':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido cerrado sin resolver por la %s, parte de la %s. Visita Alcalde en Línea para ver los detalles.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido cerrado sin resolver. Visita Alcalde en Línea para ver los detalles.', 'utf-8')
-                        else:
-                            reason = unicode('Tu reporte ha sido modificado en algunos campos y estamos avanzando en solucionarlo. Por favor visita Alcalde en Línea en la sección de Mis reportes y si tienes algún comentario por favor háznoslo saber.','utf-8')
-
-                        template_val = {
-                            "name": report_info.get_user_name(),
-                            "_url": self.uri_for("materialize-reports", _full=True),
-                            "cdb_id": report_info.cdb_id,
-                            "reason": reason,
-                            "support_url": self.uri_for("contact", _full=True),
-                            "twitter_url": self.app.config.get('twitter_url'),
-                            "facebook_url": self.app.config.get('facebook_url'),
-                            "faq_url": self.uri_for("faq", _full=True)
-                        }
-                        body_path = "emails/change_notification.txt"
-                        body = self.jinja2.render_template(body_path, **template_val)
-
-                        email_url = self.uri_for('taskqueue-send-email')
-                        taskqueue.add(url=email_url, params={
-                            'to': str(report_info.get_user_email()),
-                            'subject': messages.notification,
-                            'body': body,
-                        })
-
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-secretary-report", report_id=report_id)
-                
-            except (AttributeError, KeyError, ValueError), e:
-                logging.error('Error updating report: %s ' % e)
-                self.add_message(messages.saving_error, 'danger')
-                return self.redirect_to("materialize-secretary-report", report_id=report_id)
-        else:
-            report_info = self.get_or_404(report_id)
-
-        # GET Request (or other)
-        params = {
-            'report': report_info
-        }
-        logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
-        logs = logs.order(-models.LogChange.created)
-        params['logs'] = []
-        for log in logs:
-            user = log.get_user()            
-            if user:
-                image = user.get_image_url()
-                initial_letter = user.name[1]
-                name = user.name
-            else:
-                image = -1
-                initial_letter = log.user_email[1]
-                name = ''
-            params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
-        
-        params['has_logs'] = True if len(params['logs']) > 0 else False
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
-
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-
-        return self.render_template('materialize/users/operators/report_edit.html', **params)
-
-#USER AGENT
 class MaterializeAgentInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
@@ -3236,288 +3187,6 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/inbox.html', **params)
         self.abort(403)
 
-class MaterializeAgentReportRequestHandler(BaseHandler):
-    @user_required
-    def get_or_404(self, report_id):
-        if self.user_is_agent:
-            try:
-                report = models.Report.get_by_id(long(report_id))
-                if report:
-                    return report
-                else:
-                    self.abort(404)
-            except ValueError:
-                pass
-        self.abort(403)
-
-    @user_required
-    def edit(self, report_id):
-        if self.request.POST:
-            report_info = self.get_or_404(report_id)
-            delete = self.request.get('delete')
-            status = self.request.get('status')
-            user_info = self.user_model.get_by_id(long(self.user_id))
-            try:
-                if delete == 'confirmed_deletion':
-                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-agent-report", report_id=report_id)
-
-                elif delete == 'report_edition':
-
-                    #UPDATED VALUES
-                    address_from = self.request.get('address_from')
-                    address_from_coord = self.request.get('address_from_coord')
-                    catGroup = self.request.get('catGroup')
-                    subCat = self.request.get('subCat')
-                    description = self.request.get('description')
-                    when = self.request.get('when')
-                    folio = self.request.get('folio')
-                    status = self.request.get('status')
-                    note = self.request.get('note')
-                    comment = self.request.get('comment')
-                    title = self.request.get('title')
-                    kind = self.request.get('kind')
-                    changes = ""
-                    private = models.SubCategory.query(models.SubCategory.name == subCat).get()
-                    if private is not None:
-                        private = private.private
-                    else:
-                        report_info.group_category = '---'
-                        report_info.sub_category = '---'
-                        report_info.put()
-                        self.add_message(messages.reselect, 'warning')
-                        return self.redirect_to("materialize-agent-report", report_id=report_id)
-                    
-                    #ASSIGN AS IS
-                    status = status if status != 'undefined' else report_info.status
-                    if report_info.address_from != address_from:
-                        report_info.address_from = address_from
-                        changes += "el domicilio, "
-                    if report_info.address_from_coord != ndb.GeoPt(address_from_coord):
-                        report_info.address_from_coord = ndb.GeoPt(address_from_coord)
-                        changes += "el mapa, "
-                    if report_info.when.strftime("%Y-%m-%d") != when:
-                        report_info.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
-                        changes += "la fecha, "
-                    if report_info.title != title:
-                        report_info.title = title
-                        changes += "el titulo, "
-                    if report_info.description != description:
-                        report_info.description = description
-                        changes += "la descripcion, "
-                    if status != report_info.status:
-                        #increment credibility
-                        if ((status != 'spam' and report_info.status == 'spam') or (status == 'solved' and report_info.status != 'solved')) and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility += 1
-                                _user.put()
-                        #decrement credibility
-                        elif (status == 'spam' and report_info.status != 'spam') and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility -= 1
-                                _user.put()
-                        
-                        #set terminated
-                        if (status == 'solved' and report_info.status != 'solved') or (status == 'failed' and report_info.status != 'failed'):
-                            report_info.terminated = datetime.now()
-                        else:
-                            #J-DAY
-                            report_info.terminated = datetime(1997, 8, 29)
-                                       
-                        report_info.status = status
-                        changes += "el estado, "
-                    if report_info.folio != folio:
-                        report_info.folio = folio
-                        changes += "el folio, "
-                    if report_info.group_category != catGroup:
-                        report_info.group_category = catGroup
-                        changes += "el grupo de categoria, "
-                    if report_info.sub_category != subCat:
-                        report_info.sub_category = subCat
-                        changes += "la subcategoria, "
-
-                    if report_info.terminated is None:
-                        report_info.terminated = datetime(1997, 8, 29)
-
-                    """
-                        --------------------------------------------------
-                        CONDITIONAL OVERRIDES FOR AUTOMATIC STATUS CHANGE
-                        --------------------------------------------------
-
-                        CASES FOR ADMIN
-                        1.- If report is OPEN and admin does a COMMENT action: status -> HALTED
-                        2.- If report is ARCHIVED and admin does a COMMENT action: status -> HALTED
-                        3.- If report is SPAM and admin does a COMMENT action: status -> HALTED
-                        4.- If report is REJECTED and admin does a COMMENT action: status -> HALTED
-
-                        CASES FOR OPERATOR
-                        1.- If report is ASSIGNED and operator does a COMMENT action: status -> WORKING
-
-                        OTHER CASES
-                        *.- If report is HALTED for more than 30 days a cronjob will set: status -> FORGOT
-                        *.- If report is HALTED and citizen does a COMMENT action: status -> OPEN
-
-                        NOTE THAT:
-                            -ADMIN CAN ONLY SET STATUS TO ASSIGNED (dropdown), ARCHIVED (button), OR SPAM (button).
-                            -OPERATOR CAN ONLY SET STATUS TO REJECTED (dropdown), SOLVED (button), OR FAILED (button).
-                            -THERE ARE FOUR STATUSES THAT ARE AUTOMATICALLY SET: OPEN, HALTED, WORKING AND FORGOT.
-    
-                    """
-                    if kind == 'comment' and report_info.status in ['open','archived','rejected', 'spam']:
-                        report_info.status = 'halted'
-                    if kind == 'comment' and report_info.status == 'assigned':
-                        report_info.status = 'working'
-
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = kind
-                    if kind == 'status' and report_info.status == 'archived':
-                        log_info.title = "Ha archivado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'spam':
-                        log_info.title = "Ha marcado como spam este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'solved':
-                        log_info.title = "Ha marcado este reporte como resuelto."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'failed':
-                        log_info.title = "Ha marcado este reporte como fallo."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'rejected':
-                        log_info.title = "Ha rechazado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'comment':
-                        log_info.title = "Ha enviado un comentario al ciudadano."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'note':
-                        log_info.title = "Ha agregado una nota interna en este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif changes != "":
-                        log_info.title = "Ha hecho algunos cambios en este reporte."
-                        log_info.contents = "Fue modificado %s de este reporte." % changes[0:-2]
-                    if log_info.title and log_info.contents:
-                        log_info.put()
-                
-
-                    #PUSH TO CARTODB
-                    if report_info.cdb_id == -1:
-                        #INSERT
-                        cartoInsert(self, report_info.key.id(),False)
-                    else:
-                        #UPDATE
-                        cartoUpdate(self, report_info.key.id())
-                    report_info.put()
-
-
-
-                    #NOTIFY APPROPRIATELY
-                    """
-                        --------------------------------------------------
-                        EMAIL NOTIFICATIONS COME WITH DIFFERENT REASONS
-                        --------------------------------------------------
-                        
-                        @CRONJOB
-                        1.- AUTOMATIC EMAIL IF REPORT STATUS IS OPEN AND MORE THAN 3 DAYS HAVE PASSED. (template: auto_72.txt)
-                        2.- AUTOMATIC EMAIL IF REPORT STATUS IS AUTOMATICALLY CHANGED TO FORGOT. (template: change_notification.txt)
-                        
-                        @ADMIN
-                        3.- ADMIN SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-                        4.- ADMIN SENDS A MODIFICATION OF KIND STATUS WITH STATUS ASSIGNED. (template: change_notification.txt)
-                        5.- ADMIN SENDS A MODIFICATION OF REPORT PROPERTIES. (template: change_notification.txt)
-                        
-                        @OPERATOR
-                        6.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS SOLVED. (template: change_notification.txt)
-                        7.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS FAILED. (template: change_notification.txt)
-                        8.- OPERATOR SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-
-                    """
-                    if kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
-                        reason = ""
-                        if kind == 'comment':
-                            reason = unicode('Tu reporte está siendo resuelto pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita Alcalde en Línea en la sección de Mis reportes y envíanos tus comentarios.','utf-8')
-                        elif kind == 'status' and report_info.status == 'solved':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido resuelto por la %s, parte de la %s. Visita Alcalde en Línea para ver su solución y calificarla.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido resuelto. Visita Alcalde en Línea para ver su solución y calificarla.', 'utf-8')
-                        elif kind == 'status' and report_info.status == 'failed':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido cerrado sin resolver por la %s, parte de la %s. Visita Alcalde en Línea para ver los detalles.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido cerrado sin resolver. Visita Alcalde en Línea para ver los detalles.', 'utf-8')
-                        else:
-                            reason = unicode('Tu reporte ha sido modificado en algunos campos y estamos avanzando en solucionarlo. Por favor visita Alcalde en Línea en la sección de Mis reportes y si tienes algún comentario por favor háznoslo saber.','utf-8')
-
-                        template_val = {
-                            "name": report_info.get_user_name(),
-                            "_url": self.uri_for("materialize-reports", _full=True),
-                            "cdb_id": report_info.cdb_id,
-                            "reason": reason,
-                            "support_url": self.uri_for("contact", _full=True),
-                            "twitter_url": self.app.config.get('twitter_url'),
-                            "facebook_url": self.app.config.get('facebook_url'),
-                            "faq_url": self.uri_for("faq", _full=True)
-                        }
-                        body_path = "emails/change_notification.txt"
-                        body = self.jinja2.render_template(body_path, **template_val)
-
-                        email_url = self.uri_for('taskqueue-send-email')
-                        taskqueue.add(url=email_url, params={
-                            'to': str(report_info.get_user_email()),
-                            'subject': messages.notification,
-                            'body': body,
-                        })
-
-                    
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-agent-report", report_id=report_id)
-                
-
-            except (AttributeError, KeyError, ValueError), e:
-                logging.error('Error updating report: %s ' % e)
-                self.add_message(messages.saving_error, 'danger')
-                return self.redirect_to("materialize-agent-report", report_id=report_id)
-        else:
-            report_info = self.get_or_404(report_id)
-
-        params = {
-            'report': report_info
-        }
-        logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
-        logs = logs.order(-models.LogChange.created)
-        params['logs'] = []
-        for log in logs:
-            user = log.get_user()            
-            if user:
-                image = user.get_image_url()
-                initial_letter = user.name[1]
-                name = user.name
-            else:
-                image = -1
-                initial_letter = log.user_email[1]
-                name = ''
-            params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
-        
-        params['has_logs'] = True if len(params['logs']) > 0 else False
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
-
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-
-        return self.render_template('materialize/users/operators/report_edit.html', **params)
-
-#USER OPERATOR
 class MaterializeOperatorInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
@@ -3649,287 +3318,6 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/inbox.html', **params)
         self.abort(403)
 
-class MaterializeOperatorReportRequestHandler(BaseHandler):
-    @user_required
-    def get_or_404(self, report_id):
-        if self.user_is_operator:
-            try:
-                report = models.Report.get_by_id(long(report_id))
-                if report:
-                    return report
-            except ValueError:
-                pass
-        self.abort(403)
-
-    @user_required
-    def edit(self, report_id):
-        if self.request.POST:
-            report_info = self.get_or_404(report_id)
-            delete = self.request.get('delete')
-            status = self.request.get('status')
-            user_info = self.user_model.get_by_id(long(self.user_id))
-            try:
-                if delete == 'confirmed_deletion':
-                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-operator-report", report_id=report_id)
-
-                elif delete == 'report_edition':
-
-                    #UPDATED VALUES
-                    address_from = self.request.get('address_from')
-                    address_from_coord = self.request.get('address_from_coord')
-                    catGroup = self.request.get('catGroup')
-                    subCat = self.request.get('subCat')
-                    description = self.request.get('description')
-                    when = self.request.get('when')
-                    folio = self.request.get('folio')
-                    status = self.request.get('status')
-                    note = self.request.get('note')
-                    comment = self.request.get('comment')
-                    title = self.request.get('title')
-                    kind = self.request.get('kind')
-                    changes = ""
-                    private = models.SubCategory.query(models.SubCategory.name == subCat).get()
-                    if private is not None:
-                        private = private.private
-                    else:
-                        report_info.group_category = '---'
-                        report_info.sub_category = '---'
-                        report_info.put()
-                        self.add_message(messages.reselect, 'warning')
-                        return self.redirect_to("materialize-operator-report", report_id=report_id)
-
-                    #ASSIGN AS IS
-                    report_info = models.Report.get_by_id(long(report_id))
-                    status = status if status != 'undefined' else report_info.status
-                    if report_info.address_from != address_from:
-                        report_info.address_from = address_from
-                        changes += "el domicilio, "
-                    if report_info.address_from_coord != ndb.GeoPt(address_from_coord):
-                        report_info.address_from_coord = ndb.GeoPt(address_from_coord)
-                        changes += "el mapa, "
-                    if report_info.when.strftime("%Y-%m-%d") != when:
-                        report_info.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
-                        changes += "la fecha, "
-                    if report_info.title != title:
-                        report_info.title = title
-                        changes += "el titulo, "
-                    if report_info.description != description:
-                        report_info.description = description
-                        changes += "la descripcion, "
-                    if status != report_info.status:
-                        #increment credibility
-                        if ((status != 'spam' and report_info.status == 'spam') or (status == 'solved' and report_info.status != 'solved')) and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility += 1
-                                _user.put()
-                        #decrement credibility
-                        elif (status == 'spam' and report_info.status != 'spam') and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility -= 1
-                                _user.put()
-                        
-                        #set terminated
-                        if (status == 'solved' and report_info.status != 'solved') or (status == 'failed' and report_info.status != 'failed'):
-                            report_info.terminated = datetime.now()
-                        else:
-                            #J-DAY
-                            report_info.terminated = datetime(1997, 8, 29)
-
-                        report_info.status = status
-                        changes += "el estado, "
-                    if report_info.folio != folio:
-                        report_info.folio = folio
-                        changes += "el folio, "
-                    if report_info.group_category != catGroup:
-                        report_info.group_category = catGroup
-                        changes += "el grupo de categoria, "
-                    if report_info.sub_category != subCat:
-                        report_info.sub_category = subCat
-                        changes += "la subcategoria, "
-                            
-                    if report_info.terminated is None:
-                        report_info.terminated = datetime(1997, 8, 29)
-
-                    """
-                        --------------------------------------------------
-                        CONDITIONAL OVERRIDES FOR AUTOMATIC STATUS CHANGE
-                        --------------------------------------------------
-
-                        CASES FOR ADMIN
-                        1.- If report is OPEN and admin does a COMMENT action: status -> HALTED
-                        2.- If report is ARCHIVED and admin does a COMMENT action: status -> HALTED
-                        3.- If report is SPAM and admin does a COMMENT action: status -> HALTED
-                        4.- If report is REJECTED and admin does a COMMENT action: status -> HALTED
-
-                        CASES FOR OPERATOR
-                        1.- If report is ASSIGNED and operator does a COMMENT action: status -> WORKING
-
-                        OTHER CASES
-                        *.- If report is HALTED for more than 30 days a cronjob will set: status -> FORGOT
-                        *.- If report is HALTED and citizen does a COMMENT action: status -> OPEN
-
-                        NOTE THAT:
-                            -ADMIN CAN ONLY SET STATUS TO ASSIGNED (dropdown), ARCHIVED (button), OR SPAM (button).
-                            -OPERATOR CAN ONLY SET STATUS TO REJECTED (dropdown), SOLVED (button), OR FAILED (button).
-                            -THERE ARE FOUR STATUSES THAT ARE AUTOMATICALLY SET: OPEN, HALTED, WORKING AND FORGOT.
-    
-                    """
-                    if kind == 'comment' and report_info.status in ['open','archived','rejected', 'spam']:
-                        report_info.status = 'halted'
-                    if kind == 'comment' and report_info.status == 'assigned':
-                        report_info.status = 'working'
-                    report_info.put()
-
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = kind
-                    if kind == 'status' and report_info.status == 'archived':
-                        log_info.title = "Ha archivado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'spam':
-                        log_info.title = "Ha marcado como spam este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'solved':
-                        log_info.title = "Ha marcado este reporte como resuelto."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'failed':
-                        log_info.title = "Ha marcado este reporte como fallo."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'rejected':
-                        log_info.title = "Ha rechazado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'comment':
-                        log_info.title = "Ha enviado un comentario al ciudadano."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'note':
-                        log_info.title = "Ha agregado una nota interna en este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif changes != "":
-                        log_info.title = "Ha hecho algunos cambios en este reporte."
-                        log_info.contents = "Fue modificado %s de este reporte." % changes[0:-2]
-                    if log_info.title and log_info.contents:
-                        log_info.put()
-                
-
-                    #PUSH TO CARTODB
-                    if report_info.cdb_id == -1:
-                        #INSERT
-                        cartoInsert(self, report_info.key.id(),False)
-                    else:
-                        #UPDATE
-                        cartoUpdate(self, report_info.key.id())
-                    report_info.put()
-
-
-                    #NOTIFY APPROPRIATELY
-                    """
-                        --------------------------------------------------
-                        EMAIL NOTIFICATIONS COME WITH DIFFERENT REASONS
-                        --------------------------------------------------
-                        
-                        @CRONJOB
-                        1.- AUTOMATIC EMAIL IF REPORT STATUS IS OPEN AND MORE THAN 3 DAYS HAVE PASSED. (template: auto_72.txt)
-                        2.- AUTOMATIC EMAIL IF REPORT STATUS IS AUTOMATICALLY CHANGED TO FORGOT. (template: change_notification.txt)
-                        
-                        @ADMIN
-                        3.- ADMIN SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-                        4.- ADMIN SENDS A MODIFICATION OF KIND STATUS WITH STATUS ASSIGNED. (template: change_notification.txt)
-                        5.- ADMIN SENDS A MODIFICATION OF REPORT PROPERTIES. (template: change_notification.txt)
-                        
-                        @OPERATOR
-                        6.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS SOLVED. (template: change_notification.txt)
-                        7.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS FAILED. (template: change_notification.txt)
-                        8.- OPERATOR SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-
-                    """
-                    if kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
-                        reason = ""
-                        if kind == 'comment':
-                            reason = unicode('Tu reporte está siendo resuelto pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita Alcalde en Línea en la sección de Mis reportes y envíanos tus comentarios.','utf-8')
-                        elif kind == 'status' and report_info.status == 'solved':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido resuelto por la %s, parte de la %s. Visita Alcalde en Línea para ver su solución y calificarla.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido resuelto. Visita Alcalde en Línea para ver su solución y calificarla.', 'utf-8')
-                        elif kind == 'status' and report_info.status == 'failed':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido cerrado sin resolver por la %s, parte de la %s. Visita Alcalde en Línea para ver los detalles.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido cerrado sin resolver. Visita Alcalde en Línea para ver los detalles.', 'utf-8')
-                        else:
-                            reason = unicode('Tu reporte ha sido modificado en algunos campos y estamos avanzando en solucionarlo. Por favor visita Alcalde en Línea en la sección de Mis reportes y si tienes algún comentario por favor háznoslo saber.','utf-8')
-
-                        template_val = {
-                            "name": report_info.get_user_name(),
-                            "_url": self.uri_for("materialize-reports", _full=True),
-                            "cdb_id": report_info.cdb_id,
-                            "reason": reason,
-                            "support_url": self.uri_for("contact", _full=True),
-                            "twitter_url": self.app.config.get('twitter_url'),
-                            "facebook_url": self.app.config.get('facebook_url'),
-                            "faq_url": self.uri_for("faq", _full=True)
-                        }
-                        body_path = "emails/change_notification.txt"
-                        body = self.jinja2.render_template(body_path, **template_val)
-
-                        email_url = self.uri_for('taskqueue-send-email')
-                        taskqueue.add(url=email_url, params={
-                            'to': str(report_info.get_user_email()),
-                            'subject': messages.notification,
-                            'body': body,
-                        })
-
-                    
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-operator-report", report_id=report_id)
-                
-
-            except (AttributeError, KeyError, ValueError), e:
-                logging.error('Error updating report: %s ' % e)
-                self.add_message(messages.saving_error, 'danger')
-                return self.redirect_to("materialize-operator-report", report_id=report_id)
-        else:
-            report_info = self.get_or_404(report_id)
-
-        params = {
-            'report': report_info
-        }
-        logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
-        logs = logs.order(-models.LogChange.created)
-        params['logs'] = []
-        for log in logs:
-            user = log.get_user()            
-            if user:
-                image = user.get_image_url()
-                initial_letter = user.name[1]
-                name = user.name
-            else:
-                image = -1
-                initial_letter = log.user_email[1]
-                name = ''
-            params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
-        
-        params['has_logs'] = True if len(params['logs']) > 0 else False
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
-
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-
-        return self.render_template('materialize/users/operators/report_edit.html', **params)
-
-#USER CALL CENTER
 class MaterializeCallCenterInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
@@ -4042,287 +3430,113 @@ class MaterializeCallCenterInboxRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/inbox.html', **params)
         self.abort(403)
 
-class MaterializeCallCenterReportRequestHandler(BaseHandler):
-    @user_required
-    def get_or_404(self, report_id):
-        if self.user_is_callcenter:
-            try:
-                report = models.Report.get_by_id(long(report_id))
-                if report:
-                    return report
-            except ValueError:
-                pass
-        self.abort(403)
-
+#REPORTS EDIT
+class MaterializeSecretaryReportRequestHandler(BaseHandler):
     @user_required
     def edit(self, report_id):
         if self.request.POST:
-            report_info = self.get_or_404(report_id)
+            report_info = get_or_404(self, report_id)
+            delete = self.request.get('delete')
+            status = self.request.get('status')
+            user_info = self.user_model.get_by_id(long(self.user_id))
+            
+            try:
+                if delete == 'confirmed_deletion':
+                    archiveReport(self, user_info, report_info.key.id(), "materialize-secretary-report")                    
+
+                elif delete == 'report_edition':
+                    editReport(self, user_info, report_info.key.id(), "materialize-secretary-report")                    
+
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error updating report: %s ' % e)
+                self.add_message(messages.saving_error, 'danger')
+                return self.redirect_to("materialize-secretary-report", report_id=report_id)
+        else:
+            report_info = get_or_404(self, report_id)
+
+        params = editReportParams(self, report_info)
+
+        return self.render_template('materialize/users/operators/report_edit.html', **params)
+
+class MaterializeAgentReportRequestHandler(BaseHandler):
+    @user_required
+    def edit(self, report_id):
+        if self.request.POST:
+            report_info = get_or_404(self, report_id)
             delete = self.request.get('delete')
             status = self.request.get('status')
             user_info = self.user_model.get_by_id(long(self.user_id))
             try:
                 if delete == 'confirmed_deletion':
-                    archiveReport(self, user_info, report_info.key.id(),self.request.get('contents'))
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-callcenter-report", report_id=report_id)
+                    archiveReport(self, user_info, report_info.key.id(), "materialize-agent-report")
 
                 elif delete == 'report_edition':
+                    editReport(self, user_info, report_info.key.id(), "materialize-agent-report")                    
 
-                    #UPDATED VALUES
-                    address_from = self.request.get('address_from')
-                    address_from_coord = self.request.get('address_from_coord')
-                    catGroup = self.request.get('catGroup')
-                    subCat = self.request.get('subCat')
-                    description = self.request.get('description')
-                    when = self.request.get('when')
-                    folio = self.request.get('folio')
-                    status = self.request.get('status')
-                    note = self.request.get('note')
-                    comment = self.request.get('comment')
-                    title = self.request.get('title')
-                    kind = self.request.get('kind')
-                    changes = ""
-                    
-                    private = models.SubCategory.query(models.SubCategory.name == subCat).get()
-                    if private is not None:
-                        private = private.private
-                    else:
-                        report_info.group_category = '---'
-                        report_info.sub_category = '---'
-                        report_info.put()
-                        self.add_message(messages.reselect, 'warning')
-                        return self.redirect_to("materialize-callcenter-report", report_id=report_id)
-                    
-                    #ASSIGN AS IS
-                    status = status if status != 'undefined' else report_info.status
-                    if report_info.address_from != address_from:
-                        report_info.address_from = address_from
-                        changes += "el domicilio, "
-                    if report_info.address_from_coord != ndb.GeoPt(address_from_coord):
-                        report_info.address_from_coord = ndb.GeoPt(address_from_coord)
-                        changes += "el mapa, "
-                    if report_info.when.strftime("%Y-%m-%d") != when:
-                        report_info.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
-                        changes += "la fecha, "
-                        report_info.put()
-                    if report_info.title != title:
-                        report_info.title = title
-                        changes += "el titulo, "
-                    if report_info.description != description:
-                        report_info.description = description
-                        changes += "la descripcion, "
-                    if status != report_info.status:
-                        #increment credibility
-                        if ((status != 'spam' and report_info.status == 'spam') or (status == 'solved' and report_info.status != 'solved')) and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility += 1
-                                _user.put()
-                        #decrement credibility
-                        elif (status == 'spam' and report_info.status != 'spam') and report_info.user_id != -1:
-                            _user = self.user_model.get_by_id(long(report_info.user_id))
-                            if _user:
-                                _user.credibility -= 1
-                                _user.put()
-                        
-                        #set terminated
-                        if (status == 'solved' and report_info.status != 'solved') or (status == 'failed' and report_info.status != 'failed'):
-                            report_info.terminated = datetime.now()
-                        else:
-                            #J-DAY
-                            report_info.terminated = datetime(1997, 8, 29)
-                                       
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error updating report: %s ' % e)
+                self.add_message(messages.saving_error, 'danger')
+                return self.redirect_to("materialize-agent-report", report_id=report_id)
+        else:
+            report_info = get_or_404(self, report_id)
 
-                        report_info.status = status
-                        changes += "el estado, "
-                    if report_info.folio != folio:
-                        report_info.folio = folio
-                        changes += "el folio, "
-                    if report_info.group_category != catGroup:
-                        report_info.group_category = catGroup
-                        changes += "el grupo de categoria, "
-                    if report_info.sub_category != subCat:
-                        report_info.sub_category = subCat
-                        changes += "la subcategoria, "
+        params = editReportParams(self, report_info)
 
-                    if report_info.terminated is None:
-                        report_info.terminated = datetime(1997, 8, 29)
+        return self.render_template('materialize/users/operators/report_edit.html', **params)
 
-                    """
-                        --------------------------------------------------
-                        CONDITIONAL OVERRIDES FOR AUTOMATIC STATUS CHANGE
-                        --------------------------------------------------
+class MaterializeOperatorReportRequestHandler(BaseHandler):
+    @user_required
+    def edit(self, report_id):
+        if self.request.POST:
+            report_info = get_or_404(self, report_id)
+            delete = self.request.get('delete')
+            status = self.request.get('status')
+            user_info = self.user_model.get_by_id(long(self.user_id))
+            try:
+                if delete == 'confirmed_deletion':
+                    archiveReport(self, user_info, report_info.key.id(), "materialize-operator-report")
 
-                        CASES FOR ADMIN
-                        1.- If report is OPEN and admin does a COMMENT action: status -> HALTED
-                        2.- If report is ARCHIVED and admin does a COMMENT action: status -> HALTED
-                        3.- If report is SPAM and admin does a COMMENT action: status -> HALTED
-                        4.- If report is REJECTED and admin does a COMMENT action: status -> HALTED
+                elif delete == 'report_edition':
+                    editReport(self, user_info, report_info.key.id(), "materialize-operator-report")                    
+                                
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error updating report: %s ' % e)
+                self.add_message(messages.saving_error, 'danger')
+                return self.redirect_to("materialize-operator-report", report_id=report_id)
+        else:
+            report_info = get_or_404(self, report_id)
 
-                        CASES FOR OPERATOR
-                        1.- If report is ASSIGNED and operator does a COMMENT action: status -> WORKING
+        params = editReportParams(self, report_info)
 
-                        OTHER CASES
-                        *.- If report is HALTED for more than 30 days a cronjob will set: status -> FORGOT
-                        *.- If report is HALTED and citizen does a COMMENT action: status -> OPEN
+        return self.render_template('materialize/users/operators/report_edit.html', **params)
 
-                        NOTE THAT:
-                            -ADMIN CAN ONLY SET STATUS TO ASSIGNED (dropdown), ARCHIVED (button), OR SPAM (button).
-                            -OPERATOR CAN ONLY SET STATUS TO REJECTED (dropdown), SOLVED (button), OR FAILED (button).
-                            -THERE ARE FOUR STATUSES THAT ARE AUTOMATICALLY SET: OPEN, HALTED, WORKING AND FORGOT.
-    
-                    """
-                    if kind == 'comment' and report_info.status in ['open','archived','rejected', 'spam']:
-                        report_info.status = 'halted'
-                    if kind == 'comment' and report_info.status == 'assigned':
-                        report_info.status = 'working'
-                    report_info.put()
+class MaterializeCallCenterReportRequestHandler(BaseHandler):
+    @user_required
+    def edit(self, report_id):
+        if self.request.POST:
+            report_info = get_or_404(self, report_id)
+            delete = self.request.get('delete')
+            status = self.request.get('status')
+            user_info = self.user_model.get_by_id(long(self.user_id))
+            try:
+                if delete == 'confirmed_deletion':
+                    archiveReport(self, user_info, report_info.key.id(), "materialize-callcenter-report")
 
-                    #LOG CHANGES
-                    log_info = models.LogChange()
-                    log_info.user_email = user_info.email.lower()
-                    log_info.report_id = int(report_id)
-                    log_info.kind = kind
-                    if kind == 'status' and report_info.status == 'archived':
-                        log_info.title = "Ha archivado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'spam':
-                        log_info.title = "Ha marcado como spam este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'solved':
-                        log_info.title = "Ha marcado este reporte como resuelto."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'failed':
-                        log_info.title = "Ha marcado este reporte como fallo."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'status' and report_info.status == 'rejected':
-                        log_info.title = "Ha rechazado este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'comment':
-                        log_info.title = "Ha enviado un comentario al ciudadano."
-                        log_info.contents = self.request.get('contents')
-                    elif kind == 'note':
-                        log_info.title = "Ha agregado una nota interna en este reporte."
-                        log_info.contents = self.request.get('contents')
-                    elif changes != "":
-                        log_info.title = "Ha hecho algunos cambios en este reporte."
-                        log_info.contents = "Fue modificado %s de este reporte." % changes[0:-2]
-                    if log_info.title and log_info.contents:
-                        log_info.put()
-                
-
-                    #PUSH TO CARTODB
-                    if report_info.cdb_id == -1:
-                        #INSERT
-                        cartoInsert(self, report_info.key.id(),False)
-                    else:
-                        #UPDATE
-                        cartoUpdate(self, report_info.key.id())
-                    report_info.put()
-
-
-                    #NOTIFY APPROPRIATELY
-                    """
-                        --------------------------------------------------
-                        EMAIL NOTIFICATIONS COME WITH DIFFERENT REASONS
-                        --------------------------------------------------
-                        
-                        @CRONJOB
-                        1.- AUTOMATIC EMAIL IF REPORT STATUS IS OPEN AND MORE THAN 3 DAYS HAVE PASSED. (template: auto_72.txt)
-                        2.- AUTOMATIC EMAIL IF REPORT STATUS IS AUTOMATICALLY CHANGED TO FORGOT. (template: change_notification.txt)
-                        
-                        @ADMIN
-                        3.- ADMIN SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-                        4.- ADMIN SENDS A MODIFICATION OF KIND STATUS WITH STATUS ASSIGNED. (template: change_notification.txt)
-                        5.- ADMIN SENDS A MODIFICATION OF REPORT PROPERTIES. (template: change_notification.txt)
-                        
-                        @OPERATOR
-                        6.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS SOLVED. (template: change_notification.txt)
-                        7.- OPERATOR A MODIFICATION OF KIND STATUS WITH STATUS FAILED. (template: change_notification.txt)
-                        8.- OPERATOR SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
-
-                    """
-                    if kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
-                        reason = ""
-                        if kind == 'comment':
-                            reason = unicode('Tu reporte está siendo resuelto pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita Alcalde en Línea en la sección de Mis reportes y envíanos tus comentarios.','utf-8')
-                        elif kind == 'status' and report_info.status == 'solved':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido resuelto por la %s, parte de la %s. Visita Alcalde en Línea para ver su solución y calificarla.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido resuelto. Visita Alcalde en Línea para ver su solución y calificarla.', 'utf-8')
-                        elif kind == 'status' and report_info.status == 'failed':
-                            if report_info.get_agency() != '':
-                                _r = u'Tu reporte ha sido cerrado sin resolver por la %s, parte de la %s. Visita Alcalde en Línea para ver los detalles.'
-                                reason = _r % (report_info.get_agency(), report_info.get_secretary())
-                            else:
-                                reason = unicode('Tu reporte ha sido cerrado sin resolver. Visita Alcalde en Línea para ver los detalles.', 'utf-8')
-                        else:
-                            reason = unicode('Tu reporte ha sido modificado en algunos campos y estamos avanzando en solucionarlo. Por favor visita Alcalde en Línea en la sección de Mis reportes y si tienes algún comentario por favor háznoslo saber.','utf-8')
-
-                        template_val = {
-                            "name": report_info.get_user_name(),
-                            "_url": self.uri_for("materialize-reports", _full=True),
-                            "cdb_id": report_info.cdb_id,
-                            "reason": reason,
-                            "support_url": self.uri_for("contact", _full=True),
-                            "twitter_url": self.app.config.get('twitter_url'),
-                            "facebook_url": self.app.config.get('facebook_url'),
-                            "faq_url": self.uri_for("faq", _full=True)
-                        }
-                        body_path = "emails/change_notification.txt"
-                        body = self.jinja2.render_template(body_path, **template_val)
-
-                        email_url = self.uri_for('taskqueue-send-email')
-                        taskqueue.add(url=email_url, params={
-                            'to': str(report_info.get_user_email()),
-                            'subject': messages.notification,
-                            'body': body,
-                        })
-
-                    self.add_message(messages.saving_success, 'success')
-                    return self.redirect_to("materialize-callcenter-report", report_id=report_id)
-                
+                elif delete == 'report_edition':
+                    editReport(self, user_info, report_info.key.id(), "materialize-callcenter-report")                    
 
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating report: %s ' % e)
                 self.add_message(messages.saving_error, 'danger')
                 return self.redirect_to("materialize-callcenter-report", report_id=report_id)
         else:
-            report_info = self.get_or_404(report_id)
+            report_info = get_or_404(self, report_id)
 
-        params = {
-            'report': report_info
-        }
-        logs = models.LogChange.query(models.LogChange.report_id == report_info.key.id())
-        logs = logs.order(-models.LogChange.created)
-        params['logs'] = []
-        for log in logs:
-            user = log.get_user()            
-            if user:
-                image = user.get_image_url()
-                initial_letter = user.name[1]
-                name = user.name
-            else:
-                image = -1
-                initial_letter = log.user_email[1]
-                name = ''
-            params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
-        
-        params['has_logs'] = True if len(params['logs']) > 0 else False
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
-
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params = editReportParams(self, report_info)
 
         return self.render_template('materialize/users/operators/report_edit.html', **params)
 
+#SOCIAL NETWORKS
 class MaterializeCallCenterFacebookRequestHandler(BaseHandler):
     @user_required
     def get(self):
@@ -4345,10 +3559,10 @@ class MaterializeCallCenterTwitterRequestHandler(BaseHandler):
         self.abort(403)
 
 
-"""
-        REPORT HANDLERS
+# ------------------------------------------------------------------------------------------- #
+"""                                     CORE REPORT HANDLERS                                """
+# ------------------------------------------------------------------------------------------- #
 
-"""
 class MaterializeReportsRequestHandler(BaseHandler):
     """
         Handler for materialized reports
@@ -4715,10 +3929,10 @@ class MaterializeRateRequestHandler(BaseHandler):
         self.response.write(json.dumps(reportDict))
 
 
-"""
-        PETITION HANDLERS
+# ------------------------------------------------------------------------------------------- #
+"""                                  CORE PETITION HANDLERS                                 """
+# ------------------------------------------------------------------------------------------- #
 
-"""
 class MaterializePetitionsRequestHandler(BaseHandler):
     """
         Handler for materialized petitions
@@ -4944,11 +4158,10 @@ class MaterializeNewPetitionSuccessHandler(BaseHandler):
         return self.render_template('materialize/users/sections/petition_success.html', **params)
 
 
-""" JSON API HANDLERS
+# ------------------------------------------------------------------------------------------- #
+"""                                     JSON/API HELPER HANDLERS                            """
+# ------------------------------------------------------------------------------------------- #
 
-    These handlers are used to serve categories and subcategories JSON data
-
-"""
 class MaterializeCategoriesHandler(BaseHandler):
     def get(self):
         reportDict = {}
@@ -5231,7 +4444,7 @@ class MaterializeReportCommentsAddHandler(BaseHandler):
         self.response.write(json.dumps(reportDict))
 
 class MaterializeLogChangeDeleteHandler(BaseHandler):
-    def get_or_404(self, log_id):
+    def get_log_or_404(self, log_id):
         if log_id:
             try:
                 log = models.LogChange.get_by_id(long(log_id))
@@ -5243,7 +4456,7 @@ class MaterializeLogChangeDeleteHandler(BaseHandler):
 
     def edit(self, log_id):
         reportDict = {}
-        log = self.get_or_404(log_id)
+        log = self.get_log_or_404(log_id)
         if self.request.POST:
             try:
                 log.key.delete()
@@ -5283,11 +4496,10 @@ class MaterializeTopicsHandler(BaseHandler):
         self.response.write(json.dumps(reportDict))
 
 
-""" REST API HANDLERS
+# ------------------------------------------------------------------------------------------- #
+"""                                     REST API HANDLERS                                   """
+# ------------------------------------------------------------------------------------------- #
 
-    These handlers obey to interactions with key-holder developers
-
-"""
 class APIDocHandler(BaseHandler):
     @user_required
     def get(self):
@@ -5413,11 +4625,11 @@ class MBoiUsersHandler(BaseHandler):
         self.response.write(json.dumps(reportDict))
 
 
-""" SMALL MEDIA HANDLERS
+# ------------------------------------------------------------------------------------------- #
+"""                                     MEDIA HANDLERS                                      """
+# ------------------------------------------------------------------------------------------- #
 
-    These handlers are used to serve small media files from datastore
-
-"""
+#SMALL MEDIA
 class MediaDownloadHandler(BaseHandler):
     """
     Handler for Serve Vendor's Logo
@@ -5438,12 +4650,7 @@ class MediaDownloadHandler(BaseHandler):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.out.write('No image')
 
-
-""" BIG MEDIA HANDLERS
-
-    These handlers operate files larger than the 1Mb, upload and serve.
-
-"""
+#LARGE MEDIA
 class BlobFormHandler(BaseHandler, blobstore_handlers.BlobstoreUploadHandler):
     """
         To better handle text inputs included in same file form, please refer to bp_admin/blog.py
@@ -5474,11 +4681,10 @@ class BlobDownloadHandler(blobstore_handlers.BlobstoreDownloadHandler):
             self.send_blob(photo_key)
 
 
-""" CRONJOB + TASKQUEUE HANDLERS
+# ------------------------------------------------------------------------------------------- #
+"""                                CRONJOB + TASKQUEUE HANDLERS                             """
+# ------------------------------------------------------------------------------------------- #
 
-    These handlers obey to cron.yaml in order to produce recurrent, autonomous tasks
-
-"""
 class Auto72CronjobHandler(BaseHandler):
     def get(self):
         _url = self.uri_for('taskqueue-auto72')
@@ -5518,11 +4724,9 @@ class ForgotHandler(BaseHandler):
         return ''
 
 
-""" WEB STATIC HANDLERS
-
-    These handlers are just to be a full website in the web background.
-
-"""
+# ------------------------------------------------------------------------------------------- #
+"""                                     WEB STATIC HANDLERS                                 """
+# ------------------------------------------------------------------------------------------- #
 class RobotsHandler(BaseHandler):
     def get(self):
         params = {

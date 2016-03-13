@@ -51,10 +51,10 @@ config = {
         </p>
     """,'utf-8'),
     # application on social media
-    'twitter_url': 'https://twitter.com/ciudadguadalupe',
+    'twitter_url': 'https://twitter.com/miciudadenlinea',
     'twitter_appID': '201422020200516',
     'twitter_handle': 'ciudadguadalupe',
-    'facebook_url': 'https://www.facebook.com/GuadalupeNuevoLeon',
+    'facebook_url': 'https://www.facebook.com/miciudadenlinea',
     'facebook_handle':'GuadalupeNuevoLeon',
     'facebook_appID': '201422020200516',
     'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com',
