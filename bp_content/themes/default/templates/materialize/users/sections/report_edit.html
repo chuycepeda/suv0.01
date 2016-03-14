@@ -1,5 +1,5 @@
 {% extends landing_layout %}
-{% block title %}<title>Nuevo Reporte</title>{% endblock %}
+{% block title %}<title>Editar Reporte</title>{% endblock %}
 
 {% block page_css %}
 	<link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
@@ -18,7 +18,7 @@
 <div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
 	<div class="section no-pad-bot">
 	  <div class="container">
-	    <h2 class="header center brand-color-text" style="margin-top:85px;">Crear un reporte</h2>        
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Edita tu reporte</h2>        
 	  </div>
 	</div>
 </div>
@@ -40,32 +40,22 @@
 	<div class="section">
 	    <div class="container" style="margin-top:80px">
 	    	<div class="row">
-		        <h3 class="col s12 m9 offset-m1 grey-text" style="font-weight: 200">¿Cómo podemos ayudarte?, estaremos encantados de atenderte.</h3>
+		        <h3 class="col s12 m9 offset-m1 grey-text" style="font-weight: 200">Actualiza la información de tu reporte.</h3>
 	    	</div>
 	        <div class="row">
 	        	 <form class="col s12" id="form_report" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
 		                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-		                <input type="hidden" id="catGroup" name="catGroup">
-		                <input type="hidden" id="subCat" name="subCat">
+		                <input type="hidden" id="catGroup" name="catGroup" value="{{report.group_category}}">
+		                <input type="hidden" id="subCat" name="subCat" value="{{report.sub_category}}">
 		                <div class="container">                
 		                    <div class="col s12 m9 offset-m1">
 		    	                <div class="row">
 		    	                    <div class="row">
 		                                <div class="input-field col s12 l6">
 		                                    <!-- Dropdown Trigger -->
-		                                    <p>Me gustaría me ayudaran con:</p>
-		                                    <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">
-    		                                    <div class="preloader-wrapper small active" style="margin-top: 5px;">
-                                                    <div class="spinner-layer spinner-green-only">
-                                                      <div class="circle-clipper left">
-                                                        <div class="circle"></div>
-                                                      </div><div class="gap-patch">
-                                                        <div class="circle"></div>
-                                                      </div><div class="circle-clipper right">
-                                                        <div class="circle"></div>
-                                                      </div>
-                                                    </div>
-                                                </div>
+		                                    <p>Grupo de categoría:</p>
+		                                    <a data-hover="false" id='catGroupbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">
+    		                                    {{report.group_category}}
 		                                    </a>
 		                                    <!-- Dropdown Structure -->
 		                                    <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
@@ -75,8 +65,8 @@
 		                              
 		                                <div id="subCatdd_container" class="input-field col s12 l6">
 		                                    <!-- Dropdown Trigger -->
-		                                    <p>En atención a:</p>
-		                                    <a data-hover="false" id='subCatbtn' class='dropdown-button btn disabled brand-color truncate' href='#' data-activates='subCatdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+		                                    <p>Subcategoría:</p>
+		                                    <a data-hover="false" id='subCatbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='subCatdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{report.sub_category}}</a>
 		                                    <!-- Dropdown Structure -->
 		                                    <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
 		                                </div>
@@ -85,7 +75,7 @@
 		    	                    <div class="row">
 		                                <div class="input-field col s12 l6">
 		                                    <i class="mdi-maps-map prefix brand-color-text brand-color-text"></i>
-		                                    <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+		                                    <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" >{{report.description}}</textarea>
 		                                    <label for="description">Descripción la situación</label>
 		                                </div>
 		                            </div>    
@@ -93,7 +83,7 @@
 		                            <div class="row">
 		                                <div class="input-field col s12 l6">                                
 		                                    <i class="mdi-action-event prefix brand-color-text brand-color-text"></i>
-		                                    <input id="when" name="when" type="date" class="datepicker" >
+		                                    <input id="when" name="when" type="date" class="datepicker" value="{{report.get_formatted_date()}}">
 		                                    <label for="when">¿Cuándo sucedió?</label>
 		                                </div>
 		                            </div>
@@ -114,44 +104,22 @@
 		                
 		                <div class="input-field col s10 offset-s1">
 		                    <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="geocode('from')"></i>
-		                    <input id="address_from" name="address_from" type="text" class="validate" value="{{address_from}}" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) geocode('from');">
+		                    <input id="address_from" name="address_from" type="text" class="validate" value="{{report.address_from}}" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) geocode('from');">
 		                    <label for="address_from" class="active">Ubicación</label>
 		                    <div id="map" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
 		                </div>                
-		                <input type="text" id ="address_from_coord" name="address_from_coord" value="{{ address_from_coord}}" hidden>
+		                <input type="text" id ="address_from_coord" name="address_from_coord" value="{{report.address_from_coord}}" hidden>
 		         </form>
 	        </div>
 	        <div class="row">
 	        	<div class="input-field col s10 offset-s1 center">
-	                <button class="waves-effect waves-light brand-color white-text btn-large right" id="submit_report_form" >Enviar reporte
+	                <button class="waves-effect waves-light brand-color white-text btn-large right" id="submit_report_form" >Actualizar reporte
 	                    <i class="mdi-content-send right"></i>
 	                </button>	                          
 	            </div>
 	        </div>
 	    </div>
 	</div>
-	<div id="modal_follow" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
-          <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
-          <div class="modal-content">
-              <div class="row">
-                    <div class="input-field col s12 center" style="    margin-bottom: 40px;">
-                      <p class="center login-form-text">En nuestros registros ya hay un reporte muy parecido sin resolver. </p>
-                      <p class="center login-form-text">Te sugerimos dar clic en <strong class="brand-color white-text" style="padding: 8px;">seguir</strong> para sumarte a este reporte.</p>
-                    </div>
-                    <div class="row">
-                      <div class="container">
-                          <div class="row">
-							<p style="padding:40px;"><i style="padding:8px;" class="mdi-action-description brand-color-text"></i>Descripción: <span class="brand-secondary-color-text" id="report_description_follow"></span></p> 
-                          	<div class="input-field col s12">
-                              <a class="btn-large waves-effect waves-light col s12 m4 grey white-text modal-action" onclick="document.getElementById('form_report').submit();" style="cursor:pointer;">Enviar</a>
-                              <a class="btn-large waves-effect waves-light col s12 m4 offset-m4 brand-color white-text" style="cursor:pointer;" id="cdb_id_follow">Seguir</a>
-                            </div>
-                          </div>
-                      </div>
-                    </div>
-              </div>
-          </div>
-    </div>
 {% endblock %}
 
 {% block page_scripts %} 
@@ -216,7 +184,7 @@
 			if(document.getElementById('address_from_coord').value){
 	        	var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
 	        	var latlng = new google.maps.LatLng(coof[0],coof[1]);
-	        	if (document.getElementById('subCat').value!='') marker_icon = reportDict[catGroup.value].icon_url[subCat.value];
+	        	//if (document.getElementById('subCat').value!='') marker_icon = reportDict[catGroup.value].icon_url[subCat.value];
 	        	markerDrop (latlng);
 	    	}
 		}
@@ -255,11 +223,11 @@
 	    }		
 		
 		function fillDd(pKey){
-	        document.getElementById('subCatbtn').innerHTML='---';
-	        document.getElementById('subCat').value='';
+	        //document.getElementById('subCatbtn').innerHTML='---';
+	        //document.getElementById('subCat').value='';
 	        pKey = (pKey.innerHTML).trim();
-	        document.getElementById('catGroup').value=pKey;
-	        document.getElementById('catGroupbtn').innerHTML = pKey;
+	        //document.getElementById('catGroup').value=pKey;
+	        //document.getElementById('catGroupbtn').innerHTML = pKey;
 	        
 	        if ($('#subCatbtn').hasClass('disabled')) $('#subCatbtn').removeClass('disabled');	        
 	        var html='';
@@ -308,7 +276,7 @@
     	            html += '<li> <a class="brand-color-text" href="#" onclick="fillDd(this);return false;">'+ abcList[i] +'</a></li>';
     	        }
     	        document.getElementById('catGroupdd').innerHTML = html;
-                document.getElementById('catGroupbtn').innerHTML='---';
+                //document.getElementById('catGroupbtn').innerHTML='---';
                 if ($('#catGroupbtn').hasClass('disabled')) $('#catGroupbtn').removeClass('disabled');
             });    
 
@@ -428,30 +396,8 @@
     	        }
     	        document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1); 
 
-    	        //CHECK IF BEST TO FOLLOW OR COMMENT - - -
-	            var m1 = marker.getPosition().toString().slice(1,-1).split(',').map(Number);           
-	            var city_query= "SELECT * FROM " + city_table_name + "  WHERE status not in ('spam', 'archived', 'forgot', 'solved', 'failed') AND ( ST_Intersects("+city_table_name+".the_geom,ST_Buffer( ST_SetSRID('POINT("+m1[1]+" "+m1[0]+")'::geometry , 4326), 0.00044966080296049427))) AND (group_category ilike '%"+document.getElementById('catGroup').value+"%') AND (sub_category ilike '%"+document.getElementById('subCat').value+"%')";
-	            city_sql.execute(city_query).done(function(data) {
-			        if(data.total_rows >= 1) {
-			        	console.log(data);
-						console.log('suggesting follow');
-
-						$("#report_description_follow").html(data.rows[0].description);
-						$("#cdb_id_follow").attr('href', '{{uri_for("landing-map")}}?cdb_id='+data.rows[0].cartodb_id+'');
-						$("#modal_follow").openModal();
-
-						// Materialize.toast('<span class="toast-success">Tenemos un reporte muy parecido al tuyo en proceso de solución.</span>',3000);
-						// setTimeout(function(){
-						// 	Materialize.toast('<span class="toast-info"><a href="{{uri_for("landing-map")}}?cdb_id='+data.rows[0].cartodb_id+'" target="_blank">Te sugerimos seguirlo y comentar DANDO CLIC AQUÍ.</a></span>',15000);
-						// 	setTimeout(function(){
-						//  	Materialize.toast('<span class="toast-warning" onclick="document.getElementById("form_report").submit();" style="cursor:pointer;">O bien, para enviar el tuyo HAS CLIC AQUÍ.</span>',15000);
-						//                 }, 3000);
-						//                }, 2000);
-					}else{
-						console.log('sending report');
-    	        		document.getElementById("form_report").submit();        
-					}
-			    })
+    	        console.log('sending report');
+    	        document.getElementById("form_report").submit(); 
     	    });
 		}
 

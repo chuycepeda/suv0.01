@@ -56,8 +56,8 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">Categorías </li>
-                <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar<i class="mdi-action-note-add left"></i></a>
+                <li class="active">Grupos de categorías <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar grupo<i class="mdi-action-note-add left"></i></a></li>
+                
             </ol>
           </div>
         </div>
@@ -76,7 +76,7 @@
                 <thead style="font-family:roboto; color:#777777;">
                   <tr class="brand-color white-text">
                       <th>✎</th>
-                      <th>Categoría</th>
+                      <th>Grupo de categoría</th>
                       <th>Color</th>
                       <th>Icono</th>
                       <th>Subcategorías</th>
@@ -87,7 +87,7 @@
                       <tr>
                           <td>
                               <div>    
-                                  <a class="icon" href="{{ uri_for('admin-category-edit', group_id=group.get_id()) }}" >Editar o agregar subcategorías</a>
+                                  <a class="icon" href="{{ uri_for('admin-category-edit', group_id=group.get_id()) }}" >Editar grupo o agregar subcategorías</a>
                               </div>
                           </td>
                           <td>{{group.name}}</td>

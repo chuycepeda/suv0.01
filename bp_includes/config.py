@@ -50,14 +50,20 @@ config = {
             ¡Felicidades por ser parte! Comienza a contribuir hacia la mejora de Mi Ciudad.
         </p>
     """,'utf-8'),
+    # application services
+    'has_reports': True,
+    'has_petitions': True,
+    'has_transparency': True,
+    'has_social_media': True,
+    'has_cic': True,
     # application on social media
     'twitter_url': 'https://twitter.com/miciudadenlinea',
+    'facebook_url': 'https://www.facebook.com/miciudadenlinea',
+    'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com',
     'twitter_appID': '201422020200516',
     'twitter_handle': 'ciudadguadalupe',
-    'facebook_url': 'https://www.facebook.com/miciudadenlinea',
     'facebook_handle':'GuadalupeNuevoLeon',
     'facebook_appID': '201422020200516',
-    'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com',
     'indicoio_apikey': 'e1e494fc522650381efc67d23e515692',  
     #cartodb integration
     'map_center_lat': 25.683956577519417, 
@@ -68,7 +74,6 @@ config = {
     'cartodb_category_dict_table': 'cat_dict',
     'cartodb_polygon_table': 'mun_poly',
     'cartodb_polygon_name': 'GPE',
-    'cartodb_has_cic': False,
     'cartodb_cic_user': 'cicadmin',
     'cartodb_cic_reports_table': 'nl_public',
     # contact page email settings
@@ -95,8 +100,8 @@ config = {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",
     #application endpoints
-    'users_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/users?fields=items",
-    'reports_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/reports?fields=items",
+    'users_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/users/86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA/0/?fields=items",
+    'reports_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/reports/86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA/0/?fields=items",
     # the default language code for the application.
     # should match whatever language the site uses when i18n is disabled
     'app_lang': 'en',

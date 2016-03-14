@@ -370,7 +370,7 @@ def editReport(self, user_info, report_id, handler):
         8.- OPERATOR SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
 
     """
-    if kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
+    if not report_info.is_manual and kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
         reason = ""
         if kind == 'comment':
             reason = unicode('Tu reporte está siendo resuelto pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita tu sección de reportes y envíanos tus comentarios.','utf-8')
@@ -913,9 +913,7 @@ class SendEmailHandler(BaseHandler):
     def post(self):
 
         from google.appengine.api import mail, app_identity
-        from lib import sendgrid
-        from lib.sendgrid import SendGridError, SendGridClientError, SendGridServerError 
-
+        
         to = self.request.get("to")
         subject = self.request.get("subject")
         body = self.request.get("body")
@@ -940,9 +938,7 @@ class SendEmailHandler(BaseHandler):
                 logEmail.put()
             except (apiproxy_errors.OverQuotaError, BadValueError):
                 logging.error("Error saving Email Log in datastore")
-
-
-
+                pass
 
         #using appengine email 
         try:            
@@ -955,9 +951,11 @@ class SendEmailHandler(BaseHandler):
             logging.info("... sending email to: %s ..." % to)
         except Exception, e:
             logging.error("Error sending email: %s" % e)
+            pass
 
-
-        # using sendgrid
+        #using sendgrid
+        # from lib import sendgrid
+        # from lib.sendgrid import SendGridError, SendGridClientError, SendGridServerError 
         # try:
         #     sg = sendgrid.SendGridClient(self.app.config.get('sendgrid_login'), self.app.config.get('sendgrid_passkey'))
         #     logging.info("sending with sendgrid client: %s" % sg)
@@ -1354,6 +1352,10 @@ class MaterializeLandingMapRequestHandler(BaseHandler):
     """
     def get(self):
         """ Returns a simple HTML form for landing """
+
+        if not self.has_reports:
+            self.abort(403)
+
         params = {}
         if self.user:
             params, user_info = disclaim(self)   
@@ -1366,13 +1368,14 @@ class MaterializeLandingMapRequestHandler(BaseHandler):
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_has_cic'] = self.app.config.get('cartodb_has_cic')
+        params['has_cic'] = self.app.config.get('has_cic')
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
-        return self.render_template('materialize/landing/base.html', **params)
 
+        return self.render_template('materialize/landing/base.html', **params)
+        
 class MaterializeLandingBlogRequestHandler(BaseHandler):
     """
         Handler for materialized blog
@@ -2306,7 +2309,7 @@ class MaterializeTutorialsRequestHandler(BaseHandler):
 class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.user_is_callcenter or self.user_is_secretary or self.user_is_agent or self.user_is_operator: #modified for every special access to be able to see it
+        if self.has_reports and (self.user_is_callcenter or self.user_is_secretary or self.user_is_agent or self.user_is_operator): #modified for every special access to be able to see it
             params = {}
             reports = models.Report.query()
             users = self.user_model.query()
@@ -2326,6 +2329,10 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
     @user_required
     def get(self):
         """ Returns a simple HTML form for materialize home """
+
+        if not self.has_reports:
+            self.abort(403)
+
         ####-------------------- P R E P A R A T I O N S --------------------####
         if self.user:
             params, user_info = disclaim(self)
@@ -2383,6 +2390,8 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
     def post(self):
 
         """ Get fields from POST dict """
+        if not self.has_reports:
+            self.abort(403)
                         
         address_from = self.request.get('address_from')
         address_from_coord = self.request.get('address_from_coord')
@@ -2400,7 +2409,7 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             user_report.address_from_coord = ndb.GeoPt(address_from_coord)
             user_report.address_from = address_from
             user_report.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
-            user_report.title = 'GPE-IO #%s' % subCat
+            user_report.title = u'%s #%s' % (self.app.config.get('app_name'),subCat)
             user_report.description = description
             user_report.group_category = catGroup
             user_report.sub_category  = subCat
@@ -2408,6 +2417,7 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             user_report.contact_info  = contact_info
             user_report.status = 'assigned'
             user_report.folio = folio
+            user_report.is_manual = True
             user_report.put()
             
             if hasattr(self.request.POST['file'], 'filename'):
@@ -2450,6 +2460,9 @@ class MaterializeOrganizationNewReportSuccessHandler(BaseHandler):
     @user_required
     def get(self):
         """ Returns a simple HTML form for materialize home """
+        if not self.has_reports:
+            self.abort(403)
+
         ####-------------------- P R E P A R A T I O N S --------------------####
         if self.user:
             params, user_info = disclaim(self)
@@ -2473,9 +2486,8 @@ class MaterializeOrganizationNewReportSuccessHandler(BaseHandler):
             params['level'] = 'materialize-callcenter-report'
             params['inbox'] = 'materialize-callcenter-inbox'
         
-        
         return self.render_template('materialize/users/operators/new_report_success.html', **params)
-
+        
 class MaterializeOrganizationManualHandler(BaseHandler):
     """
         Handler for materialized operators manual
@@ -2492,7 +2504,7 @@ class MaterializeOrganizationUsersHandler(BaseHandler):
     """
     @user_required
     def get(self):
-        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+        if self.has_reports and (self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter):
             """ returns simple html for a get request """
             params, user_info = disclaim(self)
             p = self.request.get('p')
@@ -2585,7 +2597,7 @@ class MaterializeOrganizationExportReportsHandler(BaseHandler):
     """
     @user_required
     def get(self):
-        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+        if self.has_reports and (self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter):
             import csv, json
             from google.appengine.api import urlfetch
             urlfetch.set_default_fetch_deadline(45)
@@ -2615,7 +2627,7 @@ class MaterializeOrganizationDirectoryRequestHandler(BaseHandler):
 class MaterializeOrganizationUrgentsHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+        if self.has_reports and (self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter):
             params={}
             user_info = self.user_model.get_by_id(long(self.user_id))            
             if self.user_is_callcenter:
@@ -2775,7 +2787,7 @@ class MaterializeOrganizationUrgentsHandler(BaseHandler):
 class MaterializeOrganizationUserReportsHandler(BaseHandler):
     @user_required
     def get(self, user_id):
-        if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
+        if self.has_reports and (self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter):
             params={}
             user_info = self.user_model.get_by_id(long(self.user_id))            
             if self.user_is_callcenter:
@@ -2937,7 +2949,7 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
         
-        if self.user_is_secretary:
+        if self.has_reports and self.user_is_secretary:
             params={}
             user_info = self.user_model.get_by_id(long(self.user_id))            
             
@@ -3065,7 +3077,7 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
 class MaterializeAgentInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.user_is_agent:
+        if self.has_reports and self.user_is_agent:
             params={}
             user_info = self.user_model.get_by_id(long(self.user_id))            
             agencies = models.Agency.get_admin_by_email(user_info.email)
@@ -3193,7 +3205,7 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
 class MaterializeOperatorInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.user_is_operator:
+        if self.has_reports and self.user_is_operator:
             params={}
             user_info = self.user_model.get_by_id(long(self.user_id))            
             operators = models.Operator.get_by_email(user_info.email)
@@ -3324,7 +3336,7 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
 class MaterializeCallCenterInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.user_is_callcenter:
+        if self.has_reports and self.user_is_callcenter:
             params={}
             names = []
             _group = models.GroupCategory.query()
@@ -3437,6 +3449,9 @@ class MaterializeCallCenterInboxRequestHandler(BaseHandler):
 class MaterializeSecretaryReportRequestHandler(BaseHandler):
     @user_required
     def edit(self, report_id):
+        if not self.has_reports:
+            self.abort(403)
+
         if self.request.POST:
             report_info = get_or_404(self, report_id)
             delete = self.request.get('delete')
@@ -3460,10 +3475,12 @@ class MaterializeSecretaryReportRequestHandler(BaseHandler):
         params = editReportParams(self, report_info)
 
         return self.render_template('materialize/users/operators/report_edit.html', **params)
-
+        
 class MaterializeAgentReportRequestHandler(BaseHandler):
     @user_required
     def edit(self, report_id):
+        if not self.has_reports:
+            self.abort(403)
         if self.request.POST:
             report_info = get_or_404(self, report_id)
             delete = self.request.get('delete')
@@ -3486,10 +3503,13 @@ class MaterializeAgentReportRequestHandler(BaseHandler):
         params = editReportParams(self, report_info)
 
         return self.render_template('materialize/users/operators/report_edit.html', **params)
-
+        
 class MaterializeOperatorReportRequestHandler(BaseHandler):
     @user_required
     def edit(self, report_id):
+        if not self.has_reports:
+            self.abort(403)
+
         if self.request.POST:
             report_info = get_or_404(self, report_id)
             delete = self.request.get('delete')
@@ -3512,10 +3532,13 @@ class MaterializeOperatorReportRequestHandler(BaseHandler):
         params = editReportParams(self, report_info)
 
         return self.render_template('materialize/users/operators/report_edit.html', **params)
-
+        
 class MaterializeCallCenterReportRequestHandler(BaseHandler):
     @user_required
     def edit(self, report_id):
+        if not self.has_reports:
+            self.abort(403)
+
         if self.request.POST:
             report_info = get_or_404(self, report_id)
             delete = self.request.get('delete')
@@ -3538,12 +3561,12 @@ class MaterializeCallCenterReportRequestHandler(BaseHandler):
         params = editReportParams(self, report_info)
 
         return self.render_template('materialize/users/operators/report_edit.html', **params)
-
+        
 #SOCIAL NETWORKS
 class MaterializeCallCenterFacebookRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.user_is_callcenter:
+        if self.has_social_media and self.user_is_callcenter:
             params = {}
             params['indicoio_apikey'] = self.app.config.get('indicoio_apikey')
             params['facebook_appID'] = self.app.config.get('facebook_appID')
@@ -3554,7 +3577,7 @@ class MaterializeCallCenterFacebookRequestHandler(BaseHandler):
 class MaterializeCallCenterTwitterRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.user_is_callcenter:
+        if self.has_social_media and self.user_is_callcenter:
             params = {}
             params['twitter_appID'] = self.app.config.get('twitter_appID')
             params['twitter_handle'] = self.app.config.get('twitter_handle')
@@ -3573,6 +3596,9 @@ class MaterializeReportsRequestHandler(BaseHandler):
     @user_required
     def get(self):
         """ returns simple html for a get request """
+        if not self.has_reports:
+            self.abort(403)
+
         params, user_info = disclaim(self)
 
         user_reports = models.Report.query(models.Report.user_id == int(user_info.key.id()))
@@ -3597,8 +3623,9 @@ class MaterializeReportsRequestHandler(BaseHandler):
                 logging.error('Error updating profile: %s' % e)
                 self.add_message(login_error_message, 'danger')
                 self.redirect_to('login')
-
+        
         return self.render_template('materialize/users/sections/reports.html', **params)
+        
 
     @user_required
     def post(self):
@@ -3638,6 +3665,126 @@ class MaterializeReportsRequestHandler(BaseHandler):
             self.add_message(messages.saving_error, 'danger')
             return self.get()
 
+class MaterializeReportsEditRequestHandler(BaseHandler):
+    """
+    Handler for materialized home
+    """  
+    @user_required
+    def get(self, report_id):
+        """ Returns a simple HTML form for materialize home """
+
+        if not self.has_reports:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        user_report = models.Report.get_by_id(long(report_id))
+        
+        if user_report == None:
+            self.abort(404)
+
+        if user_report.user_id != int(self.user_id):
+            self.abort(403)
+
+        params['report'] = user_report
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+        if params['report']:
+            if params['report'].user_id == int(self.user_id):
+                return self.render_template('materialize/users/sections/report_edit.html', **params)
+            else:
+                self.abort(403)
+        else:
+            self.abort(404)
+
+    @user_required
+    def post(self, report_id):
+        """ Get fields from POST dict """
+
+        if not self.has_reports:
+            self.abort(403)
+
+        user_report = models.Report.get_by_id(long(report_id))
+        user_info = self.user_model.get_by_id(long(self.user_id))   
+
+        if user_report == None or user_info == None:
+            self.abort(404)
+
+        if user_report.user_id != int(self.user_id):
+            self.abort(403)
+
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord')
+        catGroup = self.request.get('catGroup')
+        subCat = self.request.get('subCat')
+        description = self.request.get('description')
+        when = self.request.get('when')
+        
+        try:
+            user_report.user_id = int(self.user_id) if int(self.user_id) is not None else -1
+            user_report.address_from_coord = ndb.GeoPt(address_from_coord)
+            user_report.address_from = address_from
+            user_report.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
+            user_report.title = u'%s #%s' % (self.app.config.get('app_name'),subCat)
+            user_report.description = description
+            user_report.group_category = catGroup
+            user_report.sub_category  = subCat
+            user_report.contact_info = u'%s, %s, %s, %s, %s' % (user_info.name, user_info.last_name, user_info.address.address_from, user_info.phone, user_info.email)
+            if user_info.credibility <= 0:
+                user_report.status = 'spam'
+            else:
+                user_report.status = 'answered' if user_report.status in ('open', 'halted', 'forgot', 'solved', 'failed') else user_report.status
+            
+            user_report.put()
+            
+
+            if hasattr(self.request.POST['file'], 'filename'):
+                #create attachment
+                from google.appengine.api import urlfetch
+                from poster.encode import multipart_encode, MultipartParam
+                
+                urlfetch.set_default_fetch_deadline(45)
+
+                payload = {}
+                upload_url = blobstore.create_upload_url('/report/image/upload/%s' %(user_report.key.id()))
+                file_data = self.request.POST['file']
+                payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                         filetype=file_data.type,
+                                                         fileobj=file_data.file)
+                data,headers= multipart_encode(payload)
+                t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                
+                logging.info('t.content: %s' % t.content)
+                
+                if t.content == 'success':
+                    cartoUpdate(self, user_report.key.id())
+                    return self.redirect_to('materialize-reports')                    
+                else:
+                    message = _(messages.attach_error)
+                    self.add_message(message, 'danger')            
+                    return self.get(report_id=report_id)                    
+            else:
+                cartoUpdate(self, user_report.key.id())
+                return self.redirect_to('materialize-reports')
+
+
+        except Exception as e:
+            logging.info('error in post: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            return self.get(report_id=report_id)         
+        
 class MaterializeReportCardlistHandler(BaseHandler):
     """
         Handler for materialized reports cardlists
@@ -3645,12 +3792,16 @@ class MaterializeReportCardlistHandler(BaseHandler):
     @user_required
     def get(self):
         """ returns simple html for a get request """
+        if not self.has_reports:
+            self.abort(403)
+
         params, user_info = disclaim(self)
         
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        
         return self.render_template('materialize/users/sections/reports_list.html', **params)
-
+        
 class MaterializeNewReportHandler(BaseHandler):
     """
     Handler for materialized home
@@ -3658,6 +3809,9 @@ class MaterializeNewReportHandler(BaseHandler):
     @user_required
     def get(self):
         """ Returns a simple HTML form for materialize home """
+        if not self.has_reports:
+            self.abort(403)
+
         ####-------------------- P R E P A R A T I O N S --------------------####
         if self.user:
             params, user_info = disclaim(self)
@@ -3674,11 +3828,15 @@ class MaterializeNewReportHandler(BaseHandler):
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
 
         return self.render_template('materialize/users/sections/report_new.html', **params)
+        
 
     @user_required
     def post(self):
         """ Get fields from POST dict """
-                        
+        
+        if not self.has_reports:
+            self.abort(403)
+
         address_from = self.request.get('address_from')
         address_from_coord = self.request.get('address_from_coord')
         catGroup = self.request.get('catGroup')
@@ -3694,7 +3852,7 @@ class MaterializeNewReportHandler(BaseHandler):
             user_report.address_from_coord = ndb.GeoPt(address_from_coord)
             user_report.address_from = address_from
             user_report.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
-            user_report.title = 'GPE-IO #%s' % subCat
+            user_report.title = u'%s #%s' % (self.app.config.get('app_name'),subCat)
             user_report.description = description
             user_report.group_category = catGroup
             user_report.sub_category  = subCat
@@ -3745,6 +3903,8 @@ class MaterializeNewReportHandler(BaseHandler):
 class MaterializeReportUploadImageHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self, report_id):
         try:
+            if not self.has_reports:
+                self.abort(403)
             logging.info(self.get_uploads()[0])
             logging.info('attaching file to report_id: %s' %report_id)
             upload = self.get_uploads()[0]
@@ -3766,6 +3926,9 @@ class MaterializeNewReportSuccessHandler(BaseHandler):
     @user_required
     def get(self):
         """ Returns a simple HTML form for materialize home """
+        if not self.has_reports:
+            self.abort(403)
+
         ####-------------------- P R E P A R A T I O N S --------------------####
         if self.user:
             params, user_info = disclaim(self)
@@ -3778,6 +3941,10 @@ class MaterializeNewReportSuccessHandler(BaseHandler):
 class MaterializeFollowRequestHandler(BaseHandler):
     @user_required
     def post(self):
+
+        if not self.has_reports:
+            self.abort(403)
+
         report_id = int(self.request.get('report_id'))
         user_id = int(self.request.get('user_id'))
         kind = self.request.get('kind')
@@ -3855,6 +4022,10 @@ class MaterializeFollowRequestHandler(BaseHandler):
 class MaterializeUrgentRequestHandler(BaseHandler):
     @user_required
     def post(self):
+
+        if not self.has_reports:
+            self.abort(403)
+
         report_id = int(self.request.get('report_id'))
         reportDict = {}
         reportDict['report_id'] = report_id
@@ -3884,6 +4055,10 @@ class MaterializeUrgentRequestHandler(BaseHandler):
 class MaterializeRateRequestHandler(BaseHandler):
     @user_required
     def post(self):
+
+        if not self.has_reports:
+            self.abort(403)
+
         report_id = int(self.request.get('report_id'))
         user_id = int(self.request.get('user_id'))
         rating = int(self.request.get('rating'))
@@ -3943,6 +4118,9 @@ class MaterializePetitionsRequestHandler(BaseHandler):
     @user_required
     def get(self):
         """ returns simple html for a get request """
+        if not self.has_petitions:
+            self.abort(403)
+
         params, user_info = disclaim(self)
 
         user_reports = models.Report.query(models.Report.user_id == int(user_info.key.id()))
@@ -4033,6 +4211,9 @@ class MaterializePetitionCardlistHandler(BaseHandler):
     @user_required
     def get(self):
         """ returns simple html for a get request """
+        if not self.has_petitions:
+            self.abort(403)
+
         params, user_info = disclaim(self)
 
         return self.render_template('materialize/users/sections/petitions_list.html', **params)
@@ -4044,6 +4225,9 @@ class MaterializeNewPetitionHandler(BaseHandler):
     @user_required
     def get(self):
         """ Returns a simple HTML form for materialize home """
+        if not self.has_petitions:
+            self.abort(403)
+
         ####-------------------- P R E P A R A T I O N S --------------------####
         if self.user:
             params, user_info = disclaim(self)
@@ -4064,7 +4248,9 @@ class MaterializeNewPetitionHandler(BaseHandler):
     @user_required
     def post(self):
         """ Get fields from POST dict """
-                        
+        if not self.has_petitions:
+            self.abort(403)
+
         address_from = self.request.get('address_from')
         address_from_coord = self.request.get('address_from_coord')
         catGroup = self.request.get('catGroup')
@@ -4080,7 +4266,7 @@ class MaterializeNewPetitionHandler(BaseHandler):
             user_report.address_from_coord = ndb.GeoPt(address_from_coord)
             user_report.address_from = address_from
             user_report.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
-            user_report.title = u'Reporte de %s' % (subCat)
+            user_report.title = u'%s #%s' % (self.app.config.get('app_name'),subCat)
             user_report.description = description
             user_report.group_category = catGroup
             user_report.sub_category  = subCat
@@ -4131,6 +4317,8 @@ class MaterializeNewPetitionHandler(BaseHandler):
 class MaterializePetitionUploadImageHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self, petition_id):
         try:
+            if not self.has_petitions:
+                self.abort(403)
             logging.info(self.get_uploads()[0])
             logging.info('attaching file to petition_id: %s' %petition_id)
             upload = self.get_uploads()[0]
@@ -4151,6 +4339,9 @@ class MaterializeNewPetitionSuccessHandler(BaseHandler):
     @user_required
     def get(self):
         """ Returns a simple HTML form for materialize petition success """
+        if not self.has_petitions:
+            self.abort(403)
+
         ####-------------------- P R E P A R A T I O N S --------------------####
         if self.user:
             params, user_info = disclaim(self)
@@ -4167,6 +4358,8 @@ class MaterializeNewPetitionSuccessHandler(BaseHandler):
 
 class MaterializeCategoriesHandler(BaseHandler):
     def get(self):
+        if not self.has_reports:
+            self.abort(403)
         reportDict = {}
         q = self.request.get('q') if self.request.get('q') else False
         o = self.request.get('o') if self.request.get('o') else False
@@ -4338,6 +4531,9 @@ class MaterializeCategoriesHandler(BaseHandler):
         
 class MaterializeReportCommentsHandler(BaseHandler):
     def get(self,report_id):
+        if not self.has_reports:
+            self.abort(403)
+
         reportDict = {}
         logs = models.LogChange.query(models.LogChange.report_id == int(report_id))
         logs = logs.order(-models.LogChange.created)
@@ -4371,6 +4567,9 @@ class MaterializeReportCommentsHandler(BaseHandler):
 
 class MaterializeReportCommentsByTicketHandler(BaseHandler):
     def get(self,ticket):
+        if not self.has_reports:
+            self.abort(403)
+
         reportDict = {}
         reportDict['logs'] = {
             'html': 'error in ticket number request'
@@ -4417,6 +4616,9 @@ class MaterializeReportCommentsByTicketHandler(BaseHandler):
 class MaterializeReportCommentsAddHandler(BaseHandler):
     @user_required
     def get(self):
+        if not self.has_reports:
+            self.abort(403)
+
         reportDict = {}
         report = models.Report.get_by_cdb(int(self.request.get('ticket')))
         if report:
@@ -4458,6 +4660,8 @@ class MaterializeLogChangeDeleteHandler(BaseHandler):
         self.abort(404)
 
     def edit(self, log_id):
+        if not self.has_reports:
+            self.abort(403)
         reportDict = {}
         log = self.get_log_or_404(log_id)
         if self.request.POST:
@@ -4477,6 +4681,9 @@ class MaterializeLogChangeDeleteHandler(BaseHandler):
 
 class MaterializeTopicsHandler(BaseHandler):
     def get(self):
+        if not self.has_petitions:
+            self.abort(403)
+
         reportDict = {}
         q = self.request.get('q') if self.request.get('q') else False
         o = self.request.get('o') if self.request.get('o') else False

@@ -97,6 +97,8 @@
 			                            	<div class="divider" style="    margin-bottom: 10px;"></div>
 			                            	<a class="waves-effect waves-light brand-color white-text btn modal-trigger truncate tooltipped" data-position="top" data-delay="50" data-tooltip="{% if req_deletion %} Cancelar la eliminación{% else %} Solicitar eliminación{% endif %}"href="#modal_delete" onclick="setReportID({{idx}},'{{req_deletion}}');">{% if req_deletion %}Cancelar la eliminación <i class="mdi-action-settings-backup-restore right"></i>{% else %}Solicitar eliminación <i class="mdi-action-delete right"></i>{% endif %}
 							                </a>
+							                <br>
+							                <a style="margin-top:10px;" href="{{ uri_for('materialize-reports-edit', report_id = idx)}}" class="waves-effect waves-light brand-color white-text btn truncate tooltipped"  data-position="top" data-delay="50" data-tooltip="Edita tu reporte">Editar reporte <i class="mdi-editor-mode-edit right"></i></a>
 						                </div>	
 						            {% elif kind == 'follow' %}
 									<p><i style="padding:8px;" class="mdi-social-notifications-none brand-color-text"></i>Siguiendo: <a class="brand-secondary-color-text" href="#" onclick="followReport({{cdb_id}}, {{idx}})">(haz clic aquí para dejar de seguirlo)</a></p>

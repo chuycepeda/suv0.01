@@ -28,7 +28,7 @@ class AdminStatsReportsHandler(BaseHandler):
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_has_cic'] = self.app.config.get('cartodb_has_cic')
+        params['has_cic'] = self.app.config.get('has_cic')
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')

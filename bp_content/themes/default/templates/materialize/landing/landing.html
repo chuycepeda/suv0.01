@@ -227,10 +227,14 @@
 				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert brand-color-text"></i></a>
 				  <ul id="nav-mobile" class="right hide-on-med-and-down">
 				    {% if not user_id %}
+                        {% if has_reports %}
 				    <li id="nav-map"><a href="{{ uri_for('landing-map') }}" class="menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Mapa</a></li>
+                        {% endif %}
 				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Ingresar</a></li>
 				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn brand-color" style="color:white; margin-left: 20px;margin-right: 20px;">Crear Cuenta</a></li>
 				    {% else %}
+                        {% if has_reports %}
+
 					    {% if user_is_callcenter %}
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 						{% elif user_is_secretary %}
@@ -240,7 +244,11 @@
 						{% elif user_is_operator %}
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 						{% endif %}
+
+                        {% endif %}
+
 					    	
+                            {% if has_reports %}
 							<!-- REPORTS DROPDOWN -->
 								<ul id="reports-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Mapa</a>
@@ -251,9 +259,11 @@
 				                        </li>
 					            </ul>
 					            <li class="nav-reports" {% if path == uri_for('materialize-report-new') or path == uri_for('landing-map') or path == uri_for('materialize-report-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
-			                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+			                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Reportes {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                    </li>
+                            {% endif %}
 
+                            {% if has_petitions %}
 		                    <!-- PETITIONS DROPDOWN -->
 								<ul id="petitions-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a>
@@ -263,17 +273,22 @@
 				                      
 					            </ul>
 					            <li class="nav-petitions" {% if path == uri_for('materialize-petition-new') or path == uri_for('materialize-petition-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
-			                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="petitions-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Peticiones<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+			                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="petitions-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Peticiones {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                    </li>	
+                            {% endif %}
 
 							<!-- USER DROPDOWN -->
 							    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
 				                        </li>
+                                      {% if has_reports %}
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-reports") }}">Mis reportes</a>
 				                        </li>
+                                      {% endif %}
+                                      {% if has_petitions %}
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a>
 				                        </li>
+                                      {% endif %}
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
 				                        </li>
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
@@ -283,7 +298,7 @@
 			                        	{% if has_picture %}
 											<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
 													<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
-													<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+													<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}}  {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span>
 					                        </a>
 										{% else %}
 											<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
@@ -300,10 +315,13 @@
 				  </ul>
 				  <ul class="side-nav hide-on-large-only" id="mobile-demo" style="margin-top:65px;">
 				    {% if not user_id %}
+                        {% if has_reports %}
 				    <li id="nav-map"><a href="{{ uri_for('landing-map') }}" class="menu-item">Mapa</a></li>
+                        {% endif %}
 				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingresar</a></li>
 				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white-text brand-color">Crear Cuenta</a></li>
 				    {% else %}
+                        {% if has_reports %}
 				    	{% if user_is_callcenter %}
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 					     <li class="divider"></li>
@@ -317,6 +335,7 @@
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 					     <li class="divider"></li>
 						{% endif %}
+						{% endif %}
 							<!-- USER DROPDOWN -->
 							    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
@@ -325,8 +344,12 @@
 			                            	<div class="collapsible-body">
 			                                    <ul>
 							                      <li><a href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a></li>
+                        						  {% if has_reports %}
 												  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
+                        						  {% endif %}
+                        						  {% if has_petitions %}
 												  <li><a href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a></li>
+                        						  {% endif %}
 							                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
 							                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
 			                                    </ul>
@@ -335,6 +358,7 @@
 			                        </ul>
 			                    </li>
 							    <li class="divider"></li>
+                        	{% if has_reports %}
 						    <!-- REPORTS DROPDOWN -->
 			                    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
@@ -351,6 +375,8 @@
 			                        </ul>
 			                    </li>
 							    <li class="divider"></li>
+                        	{% endif %}
+                        	{% if has_petitions %}
 						    <!-- PETITIONS DROPDOWN -->
 			                    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
@@ -366,6 +392,7 @@
 			                        </ul>
 			                    </li>
 							    <li class="divider"></li>
+                        	{% endif %}
 					{% endif %}
 				  </ul>
 				</div>
@@ -566,8 +593,13 @@
 	                      <a style="margin-bottom:30px;" href="#modal1" class="modal-trigger menu-item  waves-effect waves-light brand-color white-text btn-large ">Ingresar</a>
 	                      <a style="margin-bottom:30px;" href="#modal2" class="modal-trigger menu-item  waves-effect waves-light brand-color white-text btn-large ">Crear Cuenta</a>
 	                      {% else %}
+                            {% if has_reports %}
 	                      <a style="margin-bottom:30px;" href="{{uri_for("landing-map")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Mapa</a>
-	                      <a style="margin-bottom:30px;" href="{{uri_for("materialize-report-new")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Reportar</a>
+	                      <a style="margin-bottom:30px;" href="{{uri_for("materialize-report-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Reportes</a>
+                            {% endif %}
+                            {% if has_petitions %}
+                          <a style="margin-bottom:30px;" href="{{uri_for("materialize-petition-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Peticiones</a>
+                            {% endif %}
 	                      {% endif %}
 	                  </div>
 				      {% if not user_id %}

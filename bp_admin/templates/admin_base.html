@@ -158,6 +158,24 @@
                     margin: 0 1rem 0 2rem;
                 }
 
+                ol{
+                    list-style-type: none!important;
+                }
+
+                .breadcrumb:last-child {
+                    color: {{brand_color}}!important;
+                    font-family: roboto-thin;
+                }
+                
+                .breadcrumb li a {
+                    color: {{brand_secondary_color}};
+                    font-family: roboto-light;
+                }
+
+                .breadcrumb{
+                    height: 15px;
+                    margin-top: 15px;
+                }
              
             </style>
             {% block page_css %}{% endblock %}

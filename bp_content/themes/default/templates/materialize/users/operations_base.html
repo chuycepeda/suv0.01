@@ -237,7 +237,9 @@
                                             <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-organization-dashboard') %}active{% endif %}"><i class="mdi-action-assessment grey-text left"></i>Estadísticas</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                    <li {% if path == uri_for('materialize-organization-dashboard') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-dashboard') }}">De reportes</a></li>                                                    
+                                                    {% if has_reports %}
+                                                        <li {% if path == uri_for('materialize-organization-dashboard') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-dashboard') }}">De reportes</a></li>                                                    
+                                                    {% endif %}
                                                     </ul>
                                                </div>
                                             </li>
@@ -246,7 +248,8 @@
 
 
                                     <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
-
+                                    
+                                    {% if has_reports %}
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
                                             <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-callcenter-inbox') or path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-organization-users') %}active{% endif %}"><i class="mdi-content-inbox grey-text left"></i>Bandeja de reportes</a>
@@ -272,9 +275,10 @@
                                         </ul>
                                     </li>
                                     <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
+                                    {% endif %}
 
 
-                                    {% if user_is_callcenter %}
+                                    {% if user_is_callcenter and has_social_media %}
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
                                             

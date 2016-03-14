@@ -260,6 +260,7 @@
 						{% endif %}
 
 						<!-- REPORTS DROPDOWN -->
+						{% if has_reports %}
 							<ul id="reports-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Mapa</a>
 			                        </li>
@@ -269,10 +270,12 @@
 			                        </li>
 				            </ul>
 				            <li class="nav-reports" {% if path == uri_for('materialize-report-new') or path == uri_for('landing-map') or path == uri_for('materialize-report-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
-		                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+		                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{% if not is_mobile %}Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 		                    </li>
+						{% endif %}
 
 	                    <!-- PETITIONS DROPDOWN -->
+						{% if has_petitions %}
 							<ul id="petitions-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a>
 			                        </li>
@@ -281,17 +284,22 @@
 			                      
 				            </ul>
 				            <li class="nav-petitions" {% if path == uri_for('materialize-petition-new') or path == uri_for('materialize-petition-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
-		                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="petitions-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Peticiones<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+		                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="petitions-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Peticiones{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 		                    </li>	
+						{% endif %}
 
 						<!-- USER DROPDOWN -->
 						    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
 			                        </li>
+                            	  {% if has_reports %}
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-reports") }}">Mis reportes</a>
 			                        </li>
+                            	  {% endif %}
+                            	  {% if has_petitions %}
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a>
 			                        </li>
+                            	  {% endif %}
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
 			                        </li>
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
@@ -301,14 +309,14 @@
 		                        	{% if has_picture %}
 										<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
 												<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
-												<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+												<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span>
 				                        </a>
 									{% else %}
 										<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
 												<div style="position: absolute;left: 0px;">
 													<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
 												</div>
-												<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
+												<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span>
 				                        </a>
 									{% endif %}
 		                     </li>	
@@ -320,6 +328,7 @@
 					    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingresar</a></li>
 					    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white-text brand-color">Crear cuenta</a></li>
 				    {% else %}
+                        {% if has_reports %}
 					    {% if user_is_callcenter %}
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 					     <li class="divider"></li>
@@ -333,16 +342,21 @@
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
 					     <li class="divider"></li>
 						{% endif %}
+						{% endif %}
 							<!-- USER DROPDOWN -->
 							    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
 			                            <li class="bold">
-			                            	<a class="collapsible-header waves-effect waves-light">{{name}}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+			                            	<a class="collapsible-header waves-effect waves-light">{{name}}{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
 							                      <li><a href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a></li>
+                            	  				  {% if has_reports %}
 												  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
+                            	  				  {% endif %}
+                            	  				  {% if has_petitions %}
 												  <li><a href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a></li>
+                            	  				  {% endif %}
 							                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
 							                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
 			                                    </ul>
@@ -351,11 +365,12 @@
 			                        </ul>
 			                    </li>
 							    <li class="divider"></li>
+                        	{% if has_reports %}
 						    <!-- REPORTS DROPDOWN -->
 			                    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
 			                            <li class="bold">
-									    	<a class="collapsible-header waves-effect waves-light">Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+									    	<a class="collapsible-header waves-effect waves-light">Reportes{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
 												  <li><a href="{{ uri_for("landing-map") }}">Mapa</a></li>
@@ -367,11 +382,13 @@
 			                        </ul>
 			                    </li>
 							    <li class="divider"></li>
+                        	{% endif %}
+                        	{% if has_petitions %}
 						    <!-- PETITIONS DROPDOWN -->
 			                    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
 			                            <li class="bold">
-									    	<a class="collapsible-header waves-effect waves-light">Peticiones<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+									    	<a class="collapsible-header waves-effect waves-light">Peticiones{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
 												  <li><a href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a></li>
@@ -382,6 +399,7 @@
 			                        </ul>
 			                    </li>
 							    <li class="divider"></li>
+                        	{% endif %}
 				    {% endif %}
 				    {% if path == uri_for('landing-map') %}
 					    <li>
@@ -394,7 +412,7 @@
 	    		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde_M" checked>
 	    		                    	<label for="check_alcalde_M">Vía {{app_name}}: <span style="color:{{brand_secondary_color}}" id="c_alcalde_M"></span></label>
 	    		                    </p>
-			                    	{% if cartodb_has_cic %}
+			                    	{% if has_cic %}
 			                    	<p style="padding: 8px;">
 	    		                    	<input type="checkbox" class="filled-in layerControl" id="check_cic_M">
 	    		                    	<label for="check_cic_M">Vía CIC: <span style="color:#43D1EC" id="c_cic_M"></span></label>
@@ -453,7 +471,7 @@
     		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde" checked>
     		                    	<label for="check_alcalde">Vía {{app_name}}: <span style="color:{{brand_secondary_color}}" id="c_alcalde"></span></label>
     		                    </p>
-		                    	{% if cartodb_has_cic %}
+		                    	{% if has_cic %}
 		                    	<p style="padding: 8px;">
     		                    	<input type="checkbox" class="filled-in layerControl" id="check_cic">
     		                    	<label for="check_cic">Vía CIC: <span style="color:#43D1EC" id="c_cic"></span></label>
@@ -556,7 +574,7 @@
 		{% block page_floatings %}
 			{% if path != uri_for('materialize-report-new') and path != uri_for('materialize-petition-new') %}
 			<!-- Floating Action Button -->
-            <div class="fixed-action-btn" style="bottom: 65px; right: 60px;">
+            <div class="fixed-action-btn active" style="bottom: 65px; right: 60px;">
                 <a class="btn-floating btn-large brand-color">
                   <i class="large mdi-content-add"></i>
                 </a>
@@ -565,7 +583,7 @@
                   {% endif %}
                   {% if path != uri_for('materialize-organization-directory') %}<li><a href="{{ uri_for('materialize-organization-directory') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="directorio"><i class="large mdi-communication-quick-contacts-dialer"></i></a></li>{% endif %}
                   {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="contáctanos"><i class="large mdi-communication-email"></i></a></li>{% endif %}
-                  {% if path != uri_for('landing-map') %}<li><a href="{{ uri_for('landing-map') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver mapa"><i class="large mdi-social-public"></i></a></li>{% endif %}
+                  {% if path != uri_for('landing-map') and has_reports %}<li><a href="{{ uri_for('landing-map') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver mapa"><i class="large mdi-social-public"></i></a></li>{% endif %}
                   <li><a href="{{ uri_for('materialize-petition-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear petición"><i class="large mdi-content-create"></i></a></li>
                   <li><a href="{{ uri_for('materialize-report-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear reporte"><i class="large mdi-maps-place"></i></a></li>
                 </ul>
@@ -689,8 +707,8 @@
 		        </p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-event brand-color-text"></i>Fecha: <span id="report_date" class="brand-secondary-color-text"></span></p>
                 <p class="col s12 m8"><i style="padding:8px;" class="mdi-maps-pin-drop brand-color-text"></i>Dirección: <span id="report_address" class="brand-secondary-color-text"></span></p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work brand-color-text"></i>Grupo: <span id="report_group_category" class="brand-secondary-color-text"></span></p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-image-style brand-color-text"></i>Categoría: <span id="report_sub_category" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work brand-color-text"></i>Grupo de categoría: <span id="report_group_category" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-image-style brand-color-text"></i>Subcategoría: <span id="report_sub_category" class="brand-secondary-color-text"></span></p>
                 <p class="col s12"><i style="padding:8px;" class="mdi-action-description brand-color-text"></i>Descripción: <span id="report_description" class="brand-secondary-color-text"></span></p>
                 <p class="col s12" style="margin-left:10px;">Cambios y comentarios: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
                 {% if user_id %}
@@ -1079,7 +1097,7 @@
 				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
 				<script src="/{{theme}}/materialize/js/cartodb.js"></script>
 
-				{% if not cartodb_has_cic %}
+				{% if not has_cic %}
 	                <script type="text/javascript">
 	                	// cartodb
 	                	var city_user = '{{cartodb_user}}';

@@ -1,52 +1,120 @@
-<!doctype html>
-<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-    <meta charset="utf-8">
-    <title>Server Error | Over Quota</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="NOINDEX, NOFOLLOW">
-    <meta name="description" content="over quota error">
-    <link rel="shortcut icon" href="/favicon.ico">
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<html lang="en"><!--<![endif]--><head>
+    <head>
+        <title>Server Error | Over Quota</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="NOINDEX, NOFOLLOW">
+        <meta name="description" content="default error Over Quota">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="mboilerplate, appengine, materialize, boilerplate, webcomponents, google cloud, gae">
+        <meta property="og:site_name" content="onesmart.city">
+        <meta property="og:title" content="OneSmart.City">
+        <meta property="og:type" content="website">
+        <meta property="og:description" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine.">
+        <meta property="og:url" content="http://onesmart.city">
+        <meta property="og:image" content="http://onesmart.city/{{theme}}/materialize/images/landing/250H.png">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine.">
+        <meta name="twitter:creator" content="@chuycepeda">
+        <meta name="twitter:title" content="OneSmart.City">
+        <meta name="twitter:description" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine.">
+        <meta name="twitter:image" content="http://onesmart.city/{{theme}}/materialize/images/landing/250H.png">
+        <meta property="twitter:url" content="http://onesmart.city">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+        <link rel="icon" href="/default/materialize/images/favicon/fav-magenta.png" sizes="32x32">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="/default/materialize/css/materialize.min.css?v=1" type="text/css" rel="stylesheet" media="screen,projection">       
+        <link href="/default/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <style type="text/css">
+          @-webkit-keyframes pulsate {
+                0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+                50% {opacity: 1.0;}
+                100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+            }
+            .icon-block {
+              padding: 0 15px;
+            }
+            .icon-block .material-icons {
+              font-size: inherit;
+            }
+            ul li{
+              font-family: roboto-medium!important;
+            }
+            .g-recaptcha{
+                margin-left: 23%;
+                  -webkit-transform: scale(0.8);
+                  transform: scale(0.8);
+            }
+            html, body { height: 100%; margin: 0; padding: 0; }
+            #map {height: 95%}
+            .spacer{margin-bottom: 35px;}
 
-    <script>
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-XXXXX-X']);
-        _gaq.push(['_trackPageview']);
+            .brand-color{
+              background-color: #DD3DA1!important;
+            }
+            .brand-color-text{
+              color:#B240BB!important;
+            }
+            .brand-secondary-color{
+              background-color: #00BBD9!important;
+            }
+            .brand-secondary-color-text{
+              color:#00BBD9!important;
+            }
+            .brand-tertiary-color{
+              background-color: #EAEAEA!important;
+            }
+            .brand-tertiary-color-text{
+              color:#EAEAEA!important;
+            }
+            
+            .btn{
+              background-color: #DD3DA1;
+            }
+            .btn:hover{
+              background-color: #00BBD9;
+            }
+            .btn-large{
+              background-color: #DD3DA1;
+            }
+            .btn-large:hover{
+              background-color: #00BBD9;
+            }
+            .btn-floating{
+              background-color: #DD3DA1;
+            }
+            .btn-floating:hover{
+              background-color: #00BBD9;
+            }
+        </style>
+        
 
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-    </script>
-</head>
-
-<body>
-
-<div class="container">
-    <h1 style="margin-bottom: 1em;">We&rsquo;re sorry &mdash; something has gone wrong on our&nbsp;end.</h1>
-
-    <div>
-        <h2>What could have caused this?</h2>
-        <ul>
-            <li>Well, something technical went wrong on our site.</li>
-        </ul>
-
-        <h2>What you can do?</h2>
-        <ul>
-            <li>You might try again later.</li>
-        </ul>
-
-        <div>
-            <strong>One more thing:</strong><br />
-            If you want to help us fix this issue, we are here to help.
-            Please contact us and <a href="mailto:XXXXX">let us know what went wrong</a>.
+        <script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
+    </head>
+    <body class="loaded">
+        <div class="parallax-container z-depth-3" style="height:100%">
+            <div class="section no-pad-bot">
+              <div class="container row">
+                <div class="card-panel col m3 offset-m8 s8 offset-s4 z-index-3 center" style="opacity: 0.76;margin-top: 80px;">
+                  <img src="/default/materialize/images/500.png" style="height: 200px; margin-top:-25px; margin-bottom: -70px;">
+                  <h5 class="header col s12 brand-color-text light" style="line-height: 40px;">Oops ! Lo sentimos, el servicio ha rebasado la cuota diaria y será reestablecido en 24hrs.<br>
+                <div class="row center">
+                  <a class="glow btn-floating btn-large brand-color" href="/"><i class="mdi-action-home"></i></a>
+                </div>    
+                  </h5>
+                </div>
+              </div>
+            </div>
+            <div class="parallax"><img src="/default/materialize/images/landing/250H.png" alt="onesmart.city" ></div>
         </div>
-    </div>
-</div>
-
-</body>
+        <script type="text/javascript" src="/default/materialize/js/jquery-1.11.2.min.js"></script>
+        <script type="text/javascript" src="/default/materialize/js/materialize.min.js"></script>
+        <script type="text/javascript" src="/default/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script type="text/javascript" src="/default/materialize/js/plugins.js"></script>
+    </body>
 </html>

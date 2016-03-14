@@ -113,6 +113,26 @@ class BaseHandler(webapp2.RequestHandler):
         return str(Locale.parse(self.locale).language)
 
     @webapp2.cached_property
+    def has_reports(self):
+        return self.app.config.get('has_reports')
+
+    @webapp2.cached_property
+    def has_petitions(self):
+        return self.app.config.get('has_petitions')
+
+    @webapp2.cached_property
+    def has_transparency(self):
+        return self.app.config.get('has_transparency')
+
+    @webapp2.cached_property
+    def has_social_media(self):
+        return self.app.config.get('has_social_media')
+
+    @webapp2.cached_property
+    def has_cic(self):
+        return self.app.config.get('has_cic')
+
+    @webapp2.cached_property
     def user(self):
 
         return self.auth.get_user_by_session()
@@ -365,7 +385,12 @@ class BaseHandler(webapp2.RequestHandler):
             'locales': self.locales,
             'enable_federated_login': self.app.config.get('enable_federated_login'),
             'base_layout': self.get_base_layout,
-            'landing_layout': self.get_landing_layout
+            'landing_layout': self.get_landing_layout,
+            'has_reports': self.has_reports,
+            'has_petitions': self.has_petitions,
+            'has_transparency': self.has_transparency,
+            'has_social_media': self.has_social_media,
+            'has_cic': self.has_cic
         })
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):

@@ -37,7 +37,7 @@
                                     <input type="checkbox" class="filled-in layerControl" id="check_alcalde" checked>
                                     <label for="check_alcalde">Vía {{app_name}}: <span style="color:#4EC8BC" id="c_alcalde"></span></label>
                                 </p>
-                                {% if cartodb_has_cic %}
+                                {% if has_cic %}
                                 <p style="padding: 8px;">
                                     <input type="checkbox" class="filled-in layerControl" id="check_cic_M">
                                     <label for="check_cic_M">Vía CIC: <span style="color:#43D1EC" id="c_cic_M"></span></label>
@@ -190,7 +190,7 @@
 {% block page_scripts %}
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
     <script src="/{{theme}}/materialize/js/cartodb.js"></script>
-    {% if not cartodb_has_cic %}
+    {% if not has_cic %}
                     <script type="text/javascript">
                         // cartodb
                         var city_user = '{{cartodb_user}}';
