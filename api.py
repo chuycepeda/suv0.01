@@ -51,14 +51,14 @@ class Users(messages.Message):
     last_login = messages.StringField(3)
     name = messages.StringField(4)
     last_name = messages.StringField(5)
-    email = messages.StringField(6)
-    image_url = messages.StringField(7)
-    birth = messages.StringField(8)
-    gender = messages.StringField(9)
-    credibility = messages.IntegerField(10)
-    address = messages.StringField(11)
-    phone = messages.StringField(12)
-    
+    last_name2 = messages.StringField(6)
+    email = messages.StringField(7)
+    image_url = messages.StringField(8)
+    birth = messages.StringField(9)
+    gender = messages.StringField(10)
+    credibility = messages.IntegerField(11)
+    address = messages.StringField(12)
+    phone = messages.StringField(13)    
 class UsersCollection(messages.Message):
     """Collection of Users."""
     total_rows = messages.IntegerField(1)
@@ -77,6 +77,7 @@ def getUsers(page):
       last_login=user.last_login if user.last_login else '', 
       name= user.name,
       last_name = user.last_name, 
+      last_name2 = user.last_name2 if user.last_name2 != None else '', 
       email = user.email, 
       image_url=user.get_image_url() if user.get_image_url() != -1 else '', 
       birth=user.birth.strftime("%Y-%m-%d") if user.birth else '', 

@@ -33,6 +33,7 @@ class User(User):
     username = ndb.StringProperty()                                                                #: User defined unique name, also used as key_name. >>Replaced as an email duplicate to avoid same emails several accounts
     name = ndb.StringProperty()                                                                    #: User Name    
     last_name = ndb.StringProperty()                                                               #: User Last Name    
+    last_name2 = ndb.StringProperty()                                                              #: User Last Name 
     email = ndb.StringProperty()                                                                   #: User email
     phone = ndb.StringProperty()                                                                   #: User phone
     twitter_handle = ndb.StringProperty()                                                          #: User twitter handle for notification purposes

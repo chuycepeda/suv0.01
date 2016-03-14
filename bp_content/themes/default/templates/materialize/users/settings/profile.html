@@ -86,22 +86,34 @@
         		                        <label for="name">Nombre</label>
         		                      </div>
         		                    
-        		                      <div class="input-field col s12 m6 l4">
+                                      <div class="input-field col s12 m6 l4">
         		                        <input id="last_name" name="last_name" type="text" value="{{last_name}}">
-        		                        <label for="last_name">Apellidos</label>
+        		                        <label for="last_name">Apellido Paterno</label>
         		                      </div>
-
+        		                    
         		                      <div class="input-field col s12 m6 l4">
+        		                        <input id="last_name2" name="last_name2" type="text" value="{{last_name2}}">
+        		                        <label for="last_name2">Apellido Materno</label>
+        		                      </div>
+        		                      
+        		                    </div>
+        		                    <div class="row">
+        		                      
+        		                      <div class="input-field col s12 m6">
         		                        <input id="birth" name="birth" type="date" class="datepicker" value="{{birth}}">
         		                        <label for="birth">Nacimiento</label>
         		                      </div>
-        		                    </div>
-        		                    <div class="row">
-        		                      <div class="input-field col s12 m6 l4">
+
+        		                      <div class="input-field col s12 m6">
         		                        <input id="phone" name="phone" type="tel" value="{{phone}}">
         		                        <label for="phone">Teléfono</label>
         		                      </div>
-        		                      <div class="input-field col s12 m6 l4">
+        		                              		                    
+        		                    </div>
+        		                    
+        		                    <div class="row">
+        		                      
+        		                      <div class="input-field col s12 m6">
         		                        <select id="gender" name="gender">
         		                          {% if gender == '' or gender == 'male' %}
         		                          	<option value="male" selected>Masculino</option>
@@ -113,7 +125,7 @@
         		                        </select>
         		                        <label>Género</label>
         		                      </div>                        
-        		                      <div class="input-field col s12 m6 l4">
+        		                      <div class="input-field col s12 m6">
         		                        <select id="scholarity" name="scholarity">
         		                          {% if scholarity == '' or scholarity == 'elementary' %}
         		                          	<option value="elementary" selected>Primaria</option>
@@ -161,7 +173,10 @@
         		                        </select>
         		                        <label>Nivel de estudios</label>
         		                      </div>
+        		                    
         		                    </div>
+
+        		                    
         		                    <div class="input-field col s12">
         			                    <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="codeAddress('from')"></i>
         			                    <input id="address_from" name="address_from" type="text" class="validate" value="{{address_from}}" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) codeAddress('from');">

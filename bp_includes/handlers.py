@@ -66,6 +66,7 @@ def disclaim(_self, **kwargs):
     #0: FOR PERSONALIZATION MEANS WE TAKE CARE OF BEST DATA TO ADDRESS USER
     _params['email'] = user_info.email
     _params['last_name'] = user_info.last_name
+    _params['last_name2'] = user_info.last_name2 if user_info.last_name2 != None else ""
     _params['last_name_i'] = user_info.last_name[0] + "." if len(user_info.last_name) >= 1 else ""
     _params['name'] = user_info.name
     _params['name_i'] = user_info.name[0].upper()
@@ -1747,6 +1748,7 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
             return self.get()
         name = self.request.get('name')
         last_name = self.request.get('last_name')
+        last_name2 = self.request.get('last_name2')
         gender = self.request.get('gender')
         scholarity = self.request.get('scholarity')
         phone = self.request.get('phone')
@@ -1762,6 +1764,7 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
                 message = ''
                 user_info.name = name
                 user_info.last_name = last_name
+                user_info.last_name2 = last_name2
                 if (len(birth) > 9):
                     user_info.birth = date(int(birth[:4]), int(birth[5:7]), int(birth[8:]))
                 if 'male' in gender:
@@ -2566,9 +2569,9 @@ class MaterializeOrganizationExportUsersHandler(BaseHandler):
             if result.status_code == 200:
                 data = json.loads(result.content)                
                 writer = csv.writer(self.response.out)
-                writer.writerow(["name", "last_name", "credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
+                writer.writerow(["name", "last_name","last_name2","credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
                 for item in data['items']:
-                    writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'].encode('utf8') ])
+                    writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'),item['last_name2'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'].encode('utf8') ])
                         
             self.response.headers['Content-Type'] = 'application/csv'
             self.response.headers['Content-Disposition'] = 'attachment; filename=usuarios.csv'
