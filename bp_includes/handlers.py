@@ -2964,7 +2964,8 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
             group_categories = list(set(group_categories))
             names=[]
             if len(group_categories)>0:
-                names.append('TODOS')
+                if len(group_categories)>1:
+                    names.append('TODOS')
                 for groupID in group_categories:
                     names.append(models.GroupCategory.get_by_id(long(groupID)).name)
             else:
@@ -3096,7 +3097,8 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
             group_categories = list(set(group_categories))
             names=[]
             if len(group_categories)>0:
-                names.append('TODOS')
+                if len(group_categories)>1:
+                    names.append('TODOS')
                 for groupID in group_categories:
                     _group = models.GroupCategory.get_by_id(long(groupID))
                     if _group:
@@ -3243,7 +3245,8 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
             #Get group category names
             names=[]
             if len(group_categories)>0:
-                names.append('TODOS')
+                if len(group_categories)>1:
+                    names.append('TODOS')
                 for groupID in group_categories:
                     _group = models.GroupCategory.get_by_id(long(groupID))
                     if _group:
