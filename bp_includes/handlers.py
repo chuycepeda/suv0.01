@@ -2488,6 +2488,7 @@ class MaterializeOrganizationNewReportSuccessHandler(BaseHandler):
         
         return self.render_template('materialize/users/operators/new_report_success.html', **params)
         
+
 class MaterializeOrganizationManualHandler(BaseHandler):
     """
         Handler for materialized operators manual
@@ -2963,6 +2964,7 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
             group_categories = list(set(group_categories))
             names=[]
             if len(group_categories)>0:
+                names.append('TODOS')
                 for groupID in group_categories:
                     names.append(models.GroupCategory.get_by_id(long(groupID)).name)
             else:
@@ -3008,13 +3010,19 @@ class MaterializeSecretaryInboxRequestHandler(BaseHandler):
                     self.view.next_cursor = cursor.reversed()
             else:
                 if groupCat:
-                    reports = models.Report.query(models.Report.group_category == groupCat)
+                    if groupCat == 'TODOS':
+                        reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                    else:
+                        reports = models.Report.query(models.Report.group_category == groupCat)
                     params['ddfill'] = groupCat
                 else:
                     if names[0]=='---':
                         reports = models.Report.query(models.Report.group_category == 'inexistent')
                     else:
-                        reports = models.Report.query(models.Report.group_category == names[0])
+                        if names[0]== 'TODOS':
+                            reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                        else:
+                            reports = models.Report.query(models.Report.group_category == names[0])
                     params['ddfill'] = names[0]
                 if status:
                     reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
@@ -3088,6 +3096,7 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
             group_categories = list(set(group_categories))
             names=[]
             if len(group_categories)>0:
+                names.append('TODOS')
                 for groupID in group_categories:
                     _group = models.GroupCategory.get_by_id(long(groupID))
                     if _group:
@@ -3135,13 +3144,19 @@ class MaterializeAgentInboxRequestHandler(BaseHandler):
                     self.view.next_cursor = cursor.reversed()
             else:
                 if groupCat:
-                    reports = models.Report.query(models.Report.group_category == groupCat)
+                    if groupCat == 'TODOS':
+                        reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                    else:
+                        reports = models.Report.query(models.Report.group_category == groupCat)
                     params['ddfill'] = groupCat
                 else:
                     if names[0]=='---':
                         reports = models.Report.query(models.Report.group_category == 'inexistent')
                     else:
-                        reports = models.Report.query(models.Report.group_category == names[0])
+                        if names[0]== 'TODOS':
+                            reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                        else:
+                            reports = models.Report.query(models.Report.group_category == names[0])
                     params['ddfill'] = names[0]
                 if status:
                     reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
@@ -3207,19 +3222,28 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
     def get(self):
         if self.has_reports and self.user_is_operator:
             params={}
+            #Get current user
             user_info = self.user_model.get_by_id(long(self.user_id))            
+            #Get operator roles for user
             operators = models.Operator.get_by_email(user_info.email)
-            agencies=[]
+            #Get Agencies to which operator belongs
+            agencyKeys=[]            
             for operator in operators:
-                agencies.append(operator.agency_id)
-            group_categories = []
-            for agencyID in agencies:
-                agency = models.Agency.get_by_id(long(agencyID))
-                if agency.group_category_id is not None:
-                    group_categories.append(agency.group_category_id)
+                agencyKeys.append(ndb.Key(models.Agency, operator.agency_id))
+            #objects = ndb.get_multi([ndb.Key(Model, k) for k in ids])
+            agencies = ndb.get_multi(agencyKeys)            
+            #Get Group Categories agencies work
+            group_categories = []            
+            for agency in agencies:
+                if agency is not None:
+                    if agency.group_category_id is not None:
+                        group_categories.append(agency.group_category_id)
             group_categories = list(set(group_categories))
+            
+            #Get group category names
             names=[]
             if len(group_categories)>0:
+                names.append('TODOS')
                 for groupID in group_categories:
                     _group = models.GroupCategory.get_by_id(long(groupID))
                     if _group:
@@ -3267,13 +3291,19 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
                     self.view.next_cursor = cursor.reversed()
             else:
                 if groupCat:
-                    reports = models.Report.query(models.Report.group_category == groupCat)
+                    if groupCat == 'TODOS':
+                        reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                    else:
+                        reports = models.Report.query(models.Report.group_category == groupCat)
                     params['ddfill'] = groupCat
                 else:
                     if names[0]=='---':
                         reports = models.Report.query(models.Report.group_category == 'inexistent')
                     else:
-                        reports = models.Report.query(models.Report.group_category == names[0])
+                        if names[0]== 'TODOS':
+                            reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                        else:
+                            reports = models.Report.query(models.Report.group_category == names[0])
                     params['ddfill'] = names[0]
                 if status:
                     reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
