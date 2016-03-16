@@ -58,17 +58,17 @@
                                         <tr>
                                         <td style="text-align:center;padding:0px 10px">
                                             <a href="{{support_url}}" title="Contáctanos" target="_blank">
-                                              <img alt="Contáctanos" title="Contáctanos" border="0" src="http://gpegobmx.appspot.com/default/materialize/images/emails/mail_bl.png" height="30px" style="display:block;margin:auto">
+                                              <img alt="Contáctanos" title="Contáctanos" border="0" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/mail_bl.png" height="30px" style="display:block;margin:auto">
                                             </a>
                                           </td>
                                           <td style="text-align:center;padding:0px 10px">
                                             <a href="{{twitter_url}}" title="Comparte en Twitter" target="_blank">
-                                              <img alt="Comparte en Twitter" title="Comparte en Twitter" border="0" src="http://gpegobmx.appspot.com/default/materialize/images/emails/tw_bl.png" height="30px" style="display:block;margin:auto">
+                                              <img alt="Comparte en Twitter" title="Comparte en Twitter" border="0" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/tw_bl.png" height="30px" style="display:block;margin:auto">
                                             </a>
                                           </td>
                                           <td style="text-align:center;padding:0px 10px">
                                             <a href="{{facebook_url}}" title="Comparte en Facebook" target="_blank">
-                                              <img alt="Comparte en Facebook" border="0" title=" Facebook" src="http://gpegobmx.appspot.com/default/materialize/images/emails/fb_bl.png" height="30px" style="display:block;margin:auto">
+                                              <img alt="Comparte en Facebook" border="0" title=" Facebook" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/fb_bl.png" height="30px" style="display:block;margin:auto">
                                             </a>
                                           </td>
                                         </tr>

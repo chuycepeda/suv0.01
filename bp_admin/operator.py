@@ -406,24 +406,24 @@ class AdminReportEditHandler(BaseHandler):
                         8.- OPERATOR SENDS A MODIFICATION OF KIND COMMENT. (template: change_notification.txt)
 
                     """
-                    if kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam':
+                    if not report_info.is_manual and kind != 'note' and report_info.status != 'archived' and report_info.status != 'spam' and report_info.status != 'rejected':
                         reason = ""
                         if kind == 'comment':
-                            reason = unicode('Tu reporte fue recibido pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita Alcalde en Línea en la sección de Mis reportes y envíanos tus comentarios.','utf-8')
-                        elif kind == 'status' and report_info.status == 'assigned':
+                            reason = unicode('Tu reporte está siendo resuelto pero hacen falta algunas aclaraciones para poder seguir avanzando en su solución. Por favor visita tu sección de reportes y envíanos tus comentarios.','utf-8')
+                        elif kind == 'status' and report_info.status == 'solved':
                             if report_info.get_agency() != '':
-                                _r = u'Tu reporte fue recibido y asignado a la %s, parte de la %s. Visita Alcalde en Línea para ver su estado actual, es posible que necesitemos información adicional.'
+                                _r = u'Tu reporte ha sido resuelto por la %s, parte de la %s. Visita tu sección de reportes para ver su solución y calificarla.'
                                 reason = _r % (report_info.get_agency(), report_info.get_secretary())
                             else:
-                                reason = unicode('Tu reporte fue recibido y asignado. Visita Alcalde en Línea para ver su estado actual, es posible que necesitemos información adicional.', 'utf-8')
-                        elif 'categoria' in changes:
+                                reason = unicode('Tu reporte ha sido resuelto. Visita tu sección de reportes para ver su solución y calificarla.', 'utf-8')
+                        elif kind == 'status' and report_info.status == 'failed':
                             if report_info.get_agency() != '':
-                                _r = u'Tu reporte fue recibido y re-asignado a la %s, parte de la %s. Visita Alcalde en Línea para ver su estado actual, es posible que necesitemos información adicional.'
+                                _r = u'Tu reporte ha sido cerrado sin resolver por la %s, parte de la %s. Visita tu sección de reportes para ver los detalles.'
                                 reason = _r % (report_info.get_agency(), report_info.get_secretary())
                             else:
-                                reason = unicode('Tu reporte fue recibido y asignado. Visita Alcalde en Línea para ver su estado actual, es posible que necesitemos información adicional.', 'utf-8')
+                                reason = unicode('Tu reporte ha sido cerrado sin resolver. Visita tu sección de reportes para ver los detalles.', 'utf-8')
                         else:
-                            reason = unicode('Tu reporte ha sido modificado en algunos campos y estamos avanzando en solucionarlo. Por favor visita Alcalde en Línea en la sección de Mis reportes y si tienes algún comentario por favor háznoslo saber.','utf-8')
+                            reason = unicode('Tu reporte ha sido modificado en algunos campos y estamos avanzando en solucionarlo. Por favor visita tu sección de reportes y si tienes algún comentario por favor háznoslo saber.','utf-8')
 
                         template_val = {
                             "name": report_info.get_user_name(),
