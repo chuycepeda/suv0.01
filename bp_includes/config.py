@@ -25,7 +25,7 @@ config = {
     'app_name':  unicode('Mi Ciudad Digital','utf-8'),
     'city_name':  unicode('Mi Ciudad','utf-8'),
     'city_url':  'http://onesmart.city',
-    'city_slogan':  'Slogan de Mi Ciudad',
+    'city_slogan':  unicode('Slogan de Mi Ciudad','utf-8'),
     'city_splash':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/city.jpeg',
     'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
     'app_id': 'one-smart-city-demo',

@@ -6,8 +6,8 @@
         <td style="width:24px;background-color: #FFF;"></td>
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
-          <a href="http://dfcmexico.appspot.com" target="_blank">
-            <img src="http://gpegobmx.appspot.com/default/materialize/images/logo.png" height="40px">
+          <a href="" target="_blank">
+            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="40px">
           </a>
           </center>
         </td>

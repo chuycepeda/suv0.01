@@ -7,7 +7,7 @@
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://gpegobmx.appspot.com/default/materialize/images/logo.png" height="80px" style="margin-bottom: -45px;">
+            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px" style="margin-bottom: -45px;">
           </a>
           </center>
         </td>
@@ -33,12 +33,12 @@
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
                           <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Estamos resolviendo tu reporte.</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Estás recibiendo este correo porque tu reporte ha iniciado el proceso de solución. De ahora en delante recibirás una notificación del estado del mismo que podrás consultar desde Alcalde en Línea.</p>                          
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Estás recibiendo este correo porque tu reporte ha iniciado el proceso de solución. De ahora en delante recibirás una notificación del estado del mismo que podrás consultar desde tu plataforma digital.</p>                          
                           <div style="text-align:center"><u></u>
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid #66B454; cursor:pointer;" onclick=""><a href="{{confirmation_url}}" style="color: #66B454;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ir a Alcalde en Línea</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid #66B454; cursor:pointer;" onclick=""><a href="{{confirmation_url}}" style="color: #66B454;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ir a tu plataforma</a>
                                   </td>
                                 </tr>
                               </tbody>
