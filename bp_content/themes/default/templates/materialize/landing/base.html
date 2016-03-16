@@ -288,6 +288,21 @@
 		                    </li>	
 						{% endif %}
 
+						<!-- TRANSPARENCY DROPDOWN -->
+						{% if has_transparency %}
+							<ul id="transparency-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-city") }}">Conoce {{city_name}}</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a>
+			                        </li>
+				            </ul>
+				            <li class="nav-transparency" {% if path == uri_for('materialize-transparency-budget-new') or path == uri_for('materialize-transparency-budget') or path == uri_for('materialize-transparency-city') or path == uri_for('materialize-transparency-init') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
+		                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="transparency-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Transparencia{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
+		                    </li>	
+						{% endif %}
+
 						<!-- USER DROPDOWN -->
 						    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
@@ -298,6 +313,10 @@
                             	  {% endif %}
                             	  {% if has_petitions %}
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a>
+			                        </li>
+                            	  {% endif %}
+                            	  {% if has_transparency %}
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a>
 			                        </li>
                             	  {% endif %}
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
@@ -357,6 +376,9 @@
                             	  				  {% if has_petitions %}
 												  <li><a href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a></li>
                             	  				  {% endif %}
+                            	  				  {% if has_transparency %}
+												  <li><a href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a></li>
+                            	  				  {% endif %}
 							                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
 							                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
 			                                    </ul>
@@ -393,6 +415,24 @@
 			                                    <ul>
 												  <li><a href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a></li>
 							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Crear petición</a></li>
+			                                    </ul>
+			                                </div>
+			                            </li>
+			                        </ul>
+			                    </li>
+							    <li class="divider"></li>
+                        	{% endif %}
+                        	{% if has_transparency %}
+						    <!-- TRANSPARENCY DROPDOWN -->
+			                    <li class="no-padding">
+			                        <ul class="collapsible collapsible-accordion">
+			                            <li class="bold">
+									    	<a class="collapsible-header waves-effect waves-light">Transparencia{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
+			                            	<div class="collapsible-body">
+			                                    <ul>
+												  <li><a href="{{ uri_for("materialize-transparency-city") }}">Conoce {{city_name}}</a></li>
+							                      <li><a href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a></li>
+							                      <li><a href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a></li>
 			                                    </ul>
 			                                </div>
 			                            </li>
@@ -465,7 +505,7 @@
 				</div>
                 <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
                   <li>
-                    <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-navigation-arrow-drop-down"></i> Estás viendo <span id="rep_count" style="font-family: roboto-regular;">0</span> reportes.</div>
+                    <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Estás viendo <span id="rep_count" style="font-family: roboto-regular;">0</span> reportes.</div>
 		                    <div class="collapsible-body white">
 		                    	<p style="padding: 8px;">
     		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde" checked>
@@ -584,6 +624,7 @@
                   {% if path != uri_for('materialize-organization-directory') %}<li><a href="{{ uri_for('materialize-organization-directory') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="directorio"><i class="large mdi-communication-quick-contacts-dialer"></i></a></li>{% endif %}
                   {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="contáctanos"><i class="large mdi-communication-email"></i></a></li>{% endif %}
                   {% if path != uri_for('landing-map') and has_reports %}<li><a href="{{ uri_for('landing-map') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver mapa"><i class="large mdi-social-public"></i></a></li>{% endif %}
+                  <li><a href="{{ uri_for('materialize-transparency-budget-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="proponer presupuesto"><i class="large mdi-maps-local-pizza"></i></a></li>
                   <li><a href="{{ uri_for('materialize-petition-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear petición"><i class="large mdi-content-create"></i></a></li>
                   <li><a href="{{ uri_for('materialize-report-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear reporte"><i class="large mdi-maps-place"></i></a></li>
                 </ul>

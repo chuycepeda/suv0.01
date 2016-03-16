@@ -1,0 +1,87 @@
+{% extends landing_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>{{app_name}} » Compromisos abiertos</title>{% endblock %}
+   
+{% block page_css %}
+    <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+ 	<style>
+		.create{
+			transition-timing-function: ease-in;
+    		transition: border 0.3s;
+    		-webkit-transition-timing-function: ease-in;
+    		-webkit-transition: border 0.3s;
+		}
+
+		.create:hover{
+			border-bottom: 6px solid {{brand_color}};
+		}
+
+		.chip {
+		    display: inline-block;
+		    height: 32px;
+		    font-size: 13px;
+		    font-weight: 500;
+		    color: rgba(0, 0, 0, 0.6);
+		    line-height: 32px;
+		    padding: 0 12px;
+		    border-radius: 16px;
+		    background-color: #e4e4e4;
+		}
+
+		.hoverable:hover{
+        	box-shadow: #A9A6A6 0px 8px 23px 6px;
+        	transition: all .3s ease-out;
+        }
+
+        .hoverable{
+        	transition: all .3s ease-out;
+		}
+
+	    h3{
+	      line-height: 60px;
+	      letter-spacing: 0.2px;
+	    }
+ 	</style>
+{% endblock %}
+
+{% block page_components %}
+{% endblock %}
+
+
+{% block header_content %}
+<div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
+	<div class="section no-pad-bot">
+	  <div class="container">
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Compromisos abiertos</h2>        
+	  </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block body_content %}
+	<div class="section">
+		<div class="container" style="margin-top:80px">
+			<div class="row">
+		        <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200">Conoce el avance y a los responsables de los compromisos e iniciativas de tu gobierno.</h3>
+		        <div class="col card-panel s12 m2 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('materialize-petition-new')}}";'>
+		          <h2 class="grey-text"><i class="mdi-content-create" style="font-size:34px"></i></h2>
+                  <h5 class="brand-color-text" style="font-family: roboto-thin;">Proponer un compromiso</h5>
+                </div>
+	    	</div>
+			<div class="row">
+				<h5 class="col s12 m10 offset-m1 grey-text"></h5>
+		        <div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div>
+				<div class="col s12 center">
+					<img src="/{{theme}}/materialize/images/govstat.png" alt="" class="responsive-img">
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block footer_content %}
+{% endblock %}
+
+{% block page_scripts %}
+{% endblock %}

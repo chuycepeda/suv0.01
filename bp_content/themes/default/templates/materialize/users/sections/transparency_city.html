@@ -1,0 +1,239 @@
+{% extends landing_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>{{app_name}} » Conoce tu ciudad</title>{% endblock %}
+   
+{% block page_css %}
+    <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+ 	<style>
+		.rating:hover{
+			color:#ffc107!important;
+			transform: scale(1.75);
+			-webkit-transform: scale(1.75);
+		}
+
+		.rating{
+			font-size: 30px;
+			transform: scale(1.5);
+			-webkit-transform: scale(1.5);
+		}
+
+		.create{
+			transition-timing-function: ease-in;
+    		transition: border 0.3s;
+    		-webkit-transition-timing-function: ease-in;
+    		-webkit-transition: border 0.3s;
+		}
+
+		.create:hover{
+			border-bottom: 6px solid {{brand_color}};
+		}
+
+		.chip {
+		    display: inline-block;
+		    height: 32px;
+		    font-size: 13px;
+		    font-weight: 500;
+		    color: rgba(0, 0, 0, 0.6);
+		    line-height: 32px;
+		    padding: 0 12px;
+		    border-radius: 16px;
+		    background-color: #e4e4e4;
+		}
+
+		.hoverable:hover{
+        	box-shadow: #A9A6A6 0px 8px 23px 6px;
+        	transition: all .3s ease-out;
+        }
+
+        .hoverable{
+        	transition: all .3s ease-out;
+		}
+ 	</style>
+{% endblock %}
+
+{% block page_components %}
+{% endblock %}
+
+{% block body_content %}
+	<div id="map">				
+			</div>
+			<div class="hide-on-small-only" style="width:270px; position:fixed; top:12%; left:3%;">
+				<div>
+	            	<input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
+				</div>
+                <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+                  <li>
+                    <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
+	                    <div class="collapsible-body white">
+	                    	<p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde" checked>
+		                    	<label for="check_alcalde">Vía {{app_name}}: <span style="color:{{brand_secondary_color}}" id="c_alcalde"></span></label>
+		                    </p>
+	                    </div>
+                  </li>
+                </ul>
+            </div> 
+{% endblock %}
+
+{% block page_scripts %}
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
+    <script type="text/javascript">
+    	// cartodb
+    	var city_user = '{{cartodb_user}}';
+    	var city_table_name = '{{cartodb_reports_table}}';
+    	var city_mun_table_name = '{{cartodb_polygon_table}}';
+    	var city_polygon_name = '{{cartodb_polygon_name}}'
+		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+		var sublayers = [];
+		var zoned = false;
+		var sourceurl = "{{cartodb_markers_url}}";
+		var city_catMarkers = [];
+        var reportDict;
+        
+		/* MAPS RELATED */
+		var panorama, sv = new google.maps.StreetViewService();
+		var mapCenter = [{{lat}},{{lng}}] , map;
+		google.maps.event.addDomListener(window,'load', init);
+        var query;                    
+		
+		
+		function init(){
+			var mapOptions = {
+				center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+				zoom: {% if is_mobile %}11{% else %}13{% endif %},
+				minZoom:5,
+				zoomControl: true,
+				zoomControlOptions: {
+					style: google.maps.ZoomControlStyle.SMALL,	
+					position: google.maps.ControlPosition.LEFT_BOTTOM	
+				},
+				mapTypeControl: false,
+				scrollwheel: false,
+				streetViewControl: true,
+				streetViewControlOptions: {
+					position: google.maps.ControlPosition.LEFT_BOTTOM	
+				},
+				panControl:false,
+				backgroundColor: 'rgb(249, 249, 249)',
+				rotateControl:true,
+				overviewMapControl:true
+			};
+			map = new google.maps.Map(document.getElementById('map'), mapOptions);
+			
+			google.maps.event.addDomListener(window, 'resize', function() {
+                map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+            });
+
+            var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
+			autocomplete_from.bindTo('bounds', map);
+			google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+			    var place = autocomplete_from.getPlace();
+			    if (place.geometry.viewport) {
+			      map.fitBounds(place.geometry.viewport);
+			    }else{
+			      map.setCenter(place.geometry.location);
+			      map.setZoom(17);
+			    }
+			});	
+
+            var centerControlDiv = document.createElement('div');
+			var centerControl = new CenterControl(centerControlDiv, map);
+			centerControlDiv.index = 1;
+			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
+			   
+		}
+
+		function codeAddress(input) {
+	        var address, obj;	     				        
+
+            address = document.getElementById(input).value;
+            obj = { 'address': address };
+	        geocoder.geocode( obj, function(results, status) {
+	            if (status == google.maps.GeocoderStatus.OK) {
+	                
+	                if (typeof(input) === 'string') {
+	                    map.setCenter(results[0].geometry.location);
+	                    switch (results[0].geometry.location_type){
+	                        case 'ROOFTOP': map.setZoom(17); break;
+	                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+	                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+	                        case 'APPROXIMATE': map.setZoom(13); break;
+	                    }
+	                }else{
+	                    if (results[1]) {
+	                        document.getElementById(input).value = results[1].formatted_address;
+	                    } else {
+	                        console.log('No results found');
+	                    }
+	                }
+	            
+	            } else {
+	                console.log('Geocode was not successful for the following reason: ' + status);
+	            }
+	        });
+	    }
+
+		function CenterControl(controlDiv, map) {
+			// Set CSS for the control border.
+			var controlUI = document.createElement('div');
+			controlUI.style.backgroundColor = '#fff';
+			controlUI.style.border = '2px solid #fff';
+			controlUI.style.borderRadius = '3px';
+			controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+			controlUI.style.cursor = 'pointer';
+			controlUI.style.marginBottom = '2px';
+			controlUI.style.marginLeft = '10px';
+			controlUI.style.textAlign = 'center';
+			controlUI.title = 'Click to locate you.';
+			controlDiv.appendChild(controlUI);
+
+			// Set CSS for the control interior.
+			var controlText = document.createElement('div');
+			controlText.style.color = 'rgb(25,25,25)';
+			controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+			controlText.style.fontSize = '16px';
+			controlText.style.lineHeight = '15px';
+			controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+			controlUI.appendChild(controlText);
+
+			// Setup the click event listeners: simply set the map to Chicago.
+			controlUI.addEventListener('click', function() {
+				$('#main-preloader').show();
+				if (navigator.geolocation) {
+			        navigator.geolocation.getCurrentPosition(mapGoPosition);
+			    } else {
+	            	Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+					$('#main-preloader').hide();
+			    }
+			});
+		}
+
+		function mapGoPosition(position) {
+		    map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+		    map.setZoom(16);
+			$('#main-preloader').hide();
+		}
+
+		function getUrlVars(){
+		    var vars = [], hash;
+		    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		    for(var i = 0; i < hashes.length; i++)
+		    {
+		        hash = hashes[i].split('=');
+		        vars.push(hash[0]);
+		        vars[hash[0]] = hash[1];
+		        if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
+		    }
+		    return vars;
+		}
+			
+        function addCommas(val) {
+		  	while (/(\d+)(\d{3})/.test(val.toString())) {
+		  		var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+		  	}
+		  	return val;
+		}				
+	</script>
+{% endblock %}

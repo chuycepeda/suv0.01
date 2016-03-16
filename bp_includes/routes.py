@@ -45,14 +45,20 @@ _routes = [
     RedirectRoute('/report/urgent/', handlers.MaterializeUrgentRequestHandler, name='materialize-report-urgent', strict_slash=True),   
     RedirectRoute('/report/log/delete/<log_id>/', handlers.MaterializeLogChangeDeleteHandler, name='materialize-log-delete', strict_slash=True, handler_method='edit'),
     
-    # Reports
+    # Petitions
     RedirectRoute('/petition/list/', handlers.MaterializePetitionCardlistHandler, name='materialize-petition-cardlist', strict_slash=True),
     RedirectRoute('/petition/new/', handlers.MaterializeNewPetitionHandler, name='materialize-petition-new', strict_slash=True),
     RedirectRoute('/petition/image/upload/<petition_id>', handlers.MaterializePetitionUploadImageHandler, name='petition-image-upload', strict_slash=True),
     RedirectRoute('/petition/success/', handlers.MaterializeNewPetitionSuccessHandler, name='materialize-petition-success', strict_slash=True),
     RedirectRoute('/petition/topics/', handlers.MaterializeTopicsHandler, name='materialize-petition-topics', strict_slash=True),
 
-    # User: All
+    # Transparency
+    RedirectRoute('/transparency/city/', handlers.MaterializeTransparencyCityHandler, name='materialize-transparency-city', strict_slash=True),
+    RedirectRoute('/transparency/budget/', handlers.MaterializeTransparencyBudgetHandler, name='materialize-transparency-budget', strict_slash=True),
+    RedirectRoute('/transparency/budget/new/', handlers.MaterializeTransparencyBudgetNewHandler, name='materialize-transparency-budget-new', strict_slash=True),
+    RedirectRoute('/transparency/init/', handlers.MaterializeTransparencyInitiativesHandler, name='materialize-transparency-init', strict_slash=True),
+
+    # User: all
     RedirectRoute('/user/referrals/', handlers.MaterializeReferralsRequestHandler, name='materialize-referrals', strict_slash=True),
     RedirectRoute('/user/reports/', handlers.MaterializeReportsRequestHandler, name='materialize-reports', strict_slash=True),
     RedirectRoute('/user/reports/<report_id>/', handlers.MaterializeReportsEditRequestHandler, name='materialize-reports-edit', strict_slash=True),
@@ -63,8 +69,8 @@ _routes = [
     RedirectRoute('/user/settings/delete/', handlers.MaterializeSettingsDeleteRequestHandler, name='materialize-settings-delete', strict_slash=True),
     RedirectRoute('/user/settings/referrals/', handlers.MaterializeSettingsReferralsRequestHandler, name='materialize-settings-referrals', strict_slash=True),
     RedirectRoute('/user/settings/account/', handlers.MaterializeSettingsAccountRequestHandler, name='materialize-settings-account', strict_slash=True),
-    RedirectRoute('/user/change-email/<user_id>/<encoded_email>/<token>', handlers.MaterializeEmailChangedCompleteHandler, name='materialize-email-changed-check', strict_slash=True),
-    # User: all special access
+    RedirectRoute('/user/change-email/<user_id>/<encoded_email>/<token>', handlers.MaterializeEmailChangedCompleteHandler, name='materialize-email-changed-check', strict_slash=True),    
+    # User: special access
     RedirectRoute('/user/organization/directory/', handlers.MaterializeOrganizationDirectoryRequestHandler, name='materialize-organization-directory', strict_slash=True),
     RedirectRoute('/user/organization/dashboard/', handlers.MaterializeOrganizationDashboardRequestHandler, name='materialize-organization-dashboard', strict_slash=True),
     RedirectRoute('/user/organization/report/', handlers.MaterializeOrganizationNewReportHandler, name='materialize-organization-report', strict_slash=True),
@@ -75,17 +81,16 @@ _routes = [
     RedirectRoute('/user/organization/users/<user_id>/', handlers.MaterializeOrganizationUserReportsHandler, name='materialize-organization-user-reports', strict_slash=True),
     RedirectRoute('/user/organization/export/reports/', handlers.MaterializeOrganizationExportReportsHandler, name='materialize-organization-export-reports', strict_slash=True),
     RedirectRoute('/user/organization/export/users/', handlers.MaterializeOrganizationExportUsersHandler, name='materialize-organization-export-users', strict_slash=True),
-
-    # User: Secretary access
+    # User: secretary access
     RedirectRoute('/user/secretary/inbox/', handlers.MaterializeSecretaryInboxRequestHandler, name='materialize-secretary-inbox', strict_slash=True),
     RedirectRoute('/user/secretary/report/<report_id>/', handlers.MaterializeSecretaryReportRequestHandler, name='materialize-secretary-report', strict_slash=True, handler_method='edit'),
-    # User: Agent access
+    # User: agent access
     RedirectRoute('/user/agent/inbox/', handlers.MaterializeAgentInboxRequestHandler, name='materialize-agent-inbox', strict_slash=True),
     RedirectRoute('/user/agent/report/<report_id>/', handlers.MaterializeAgentReportRequestHandler, name='materialize-agent-report', strict_slash=True, handler_method='edit'),
-    # User: Operator access
+    # User: operator access
     RedirectRoute('/user/operator/inbox/', handlers.MaterializeOperatorInboxRequestHandler, name='materialize-operator-inbox', strict_slash=True),
     RedirectRoute('/user/operator/report/<report_id>/', handlers.MaterializeOperatorReportRequestHandler, name='materialize-operator-report', strict_slash=True, handler_method='edit'),
-    # User: Call Center access
+    # User: callcenter access
     RedirectRoute('/user/callcenter/inbox/', handlers.MaterializeCallCenterInboxRequestHandler, name='materialize-callcenter-inbox', strict_slash=True),
     RedirectRoute('/user/callcenter/report/<report_id>/', handlers.MaterializeCallCenterReportRequestHandler, name='materialize-callcenter-report', strict_slash=True, handler_method='edit'),
     RedirectRoute('/user/callcenter/facebook/', handlers.MaterializeCallCenterFacebookRequestHandler, name='materialize-callcenter-facebook', strict_slash=True),
@@ -118,8 +123,7 @@ _routes = [
     RedirectRoute(r'/humans.txt', handlers.HumansHandler, name='humans', strict_slash=True),
     RedirectRoute(r'/sitemap.xml', handlers.SitemapHandler, name='sitemap', strict_slash=True),
     RedirectRoute(r'/crossdomain.xml', handlers.CrossDomainHandler, name='crossdomain', strict_slash=True),
-    
-    
+        
 ]
 
 def get_routes():

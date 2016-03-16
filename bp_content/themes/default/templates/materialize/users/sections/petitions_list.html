@@ -1,7 +1,7 @@
 {% extends landing_layout %}
 
 <!-- ADD PAGE HEAD ELEMENTS -->
-{% block title %}<title>{{app_name}} » Petitions list</title>{% endblock %}
+{% block title %}<title>{{app_name}} » Lista de Peticiones</title>{% endblock %}
    
 {% block page_css %}
  	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -51,6 +51,10 @@
         .hoverable{
         	transition: all .3s ease-out;
 		}
+		h3{
+	      line-height: 60px;
+	      letter-spacing: 0.2px;
+	    }
  	</style>
 {% endblock %}
 

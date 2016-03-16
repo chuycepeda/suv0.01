@@ -1740,6 +1740,9 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
 
+        if not params['address_from']:
+            params['address_from'] = ''
+
         return self.render_template('materialize/users/settings/profile.html', **params)
 
     def post(self):
@@ -3657,7 +3660,7 @@ class MaterializeReportsRequestHandler(BaseHandler):
                 self.add_message(login_error_message, 'danger')
                 self.redirect_to('login')
         
-        return self.render_template('materialize/users/sections/reports.html', **params)
+        return self.render_template('materialize/users/sections/reports_user.html', **params)
         
 
     @user_required
@@ -4179,7 +4182,7 @@ class MaterializePetitionsRequestHandler(BaseHandler):
                 self.add_message(login_error_message, 'danger')
                 self.redirect_to('login')
 
-        return self.render_template('materialize/users/sections/petitions.html', **params)
+        return self.render_template('materialize/users/sections/petitions_user.html', **params)
 
     @user_required
     def post(self):
@@ -4386,7 +4389,104 @@ class MaterializeNewPetitionSuccessHandler(BaseHandler):
 
 
 # ------------------------------------------------------------------------------------------- #
-"""                                     JSON/API HELPER HANDLERS                            """
+"""                              CORE TRANSPARENCY HANDLERS                                 """
+# ------------------------------------------------------------------------------------------- #
+
+class MaterializeTransparencyCityHandler(BaseHandler):
+    """
+    Handler for materialized petition success
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize transparency city"""
+        if not self.has_transparency:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+
+        
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')  
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        
+        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+
+class MaterializeTransparencyBudgetHandler(BaseHandler):
+    """
+    Handler for materialized petition success
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize transparency budget"""
+        if not self.has_transparency:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        return self.render_template('materialize/users/sections/transparency_budget.html', **params)
+
+class MaterializeTransparencyBudgetNewHandler(BaseHandler):
+    """
+    Handler for materialized petition success
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize transparency budget new proposal"""
+        if not self.has_transparency:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        return self.render_template('materialize/users/sections/transparency_budget_new.html', **params)
+
+
+class MaterializeTransparencyInitiativesHandler(BaseHandler):
+    """
+    Handler for materialized petition success
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize transparency initiatives """
+        if not self.has_transparency:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        return self.render_template('materialize/users/sections/transparency_init.html', **params)
+
+
+
+
+# ------------------------------------------------------------------------------------------- #
+"""                                JSON/API HELPER HANDLERS                                 """
 # ------------------------------------------------------------------------------------------- #
 
 class MaterializeCategoriesHandler(BaseHandler):
