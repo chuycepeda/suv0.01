@@ -223,7 +223,6 @@ class BaseHandler(webapp2.RequestHandler):
                 self.redirect_to('landing')
         return None
 
-
     @webapp2.cached_property
     def path_for_language(self):
         """
@@ -317,16 +316,44 @@ class BaseHandler(webapp2.RequestHandler):
         """
         return self.landing_layout if hasattr(self, 'landing_layout') else self.app.config.get('landing_layout')
 
-    @webapp2.cached_property
-    def right_sidenav_msg(self):
-        return self.app.config.get('right_sidenav_msg')
-
     def set_landing_layout(self, layout):
         """
         Set the landing_layout variable, thereby overwriting the default layout template name in config.py.
         """
         self.landing_layout = layout
 
+    @webapp2.cached_property
+    def brand(self):
+        params = {}
+        brand = models.Brand.query().get()
+        if brand is not None:
+            params['app_name'] = self.app.config.get('app_name') if brand.app_name == '' else brand.app_name 
+            params['city_name'] = self.app.config.get('city_name') if brand.city_name == '' else brand.city_name 
+            params['city_slogan'] = self.app.config.get('city_slogan') if brand.city_slogan == '' else brand.city_slogan 
+            params['city_splash'] = self.app.config.get('city_splash') if brand.city_splash == '' else brand.city_splash 
+            params['city_splash_secondary'] = self.app.config.get('city_splash_secondary') if brand.city_splash_secondary == '' else brand.city_splash_secondary 
+            params['brand_logo'] = self.app.config.get('brand_logo') if brand.brand_logo == '' else brand.brand_logo 
+            params['brand_favicon'] = self.app.config.get('brand_favicon') if brand.brand_favicon == '' else brand.brand_favicon 
+            params['brand_color'] = self.app.config.get('brand_color') if brand.brand_color == '' else brand.brand_color 
+            params['brand_secondary_color'] = self.app.config.get('brand_secondary_color') if brand.brand_secondary_color == '' else brand.brand_secondary_color 
+            params['brand_tertiary_color'] = self.app.config.get('brand_tertiary_color') if brand.brand_tertiary_color == '' else brand.brand_tertiary_color 
+        else:
+            params['app_name'] = self.app.config.get('app_name')
+            params['city_name'] = self.app.config.get('city_name')
+            params['city_slogan'] = self.app.config.get('city_slogan')
+            params['city_splash'] = self.app.config.get('city_splash')
+            params['city_splash_secondary'] = self.app.config.get('city_splash_secondary')
+            params['brand_logo'] = self.app.config.get('brand_logo')
+            params['brand_favicon'] = self.app.config.get('brand_favicon')
+            params['brand_color'] = self.app.config.get('brand_color')
+            params['brand_secondary_color'] = self.app.config.get('brand_secondary_color')
+            params['brand_tertiary_color'] = self.app.config.get('brand_tertiary_color')
+        return params
+
+    @webapp2.cached_property
+    def right_sidenav_msg(self):
+        return self.app.config.get('right_sidenav_msg')
+    
     def render_template(self, filename, **kwargs):
         locales = self.app.config.get('locales') or []
         locale_iso = None
@@ -349,22 +376,19 @@ class BaseHandler(webapp2.RequestHandler):
         kwargs.update({
             'google_analytics_code': self.app.config.get('google_analytics_code'),
             'meta_tags_code': self.app.config.get('meta_tags_code'),
-            'zendesk_code': self.app.config.get('zendesk_code'),
-            'zendesk_imports': self.app.config.get('zendesk_imports'),
-            'app_name': self.app.config.get('app_name'),
-            'app_domain': self.app.config.get('app_domain'),
-            'city_name': self.app.config.get('city_name'),
-            'city_url': self.app.config.get('city_url'),
-            'city_slogan': self.app.config.get('city_slogan'),
-            'city_splash': self.app.config.get('city_splash'),
-            'city_splash_secondary': self.app.config.get('city_splash_secondary'),
             'app_id': self.app.config.get('app_id'),
-            'theme': self.get_theme,
-            'brand_logo': self.app.config.get('brand_logo'),
-            'brand_favicon': self.app.config.get('brand_favicon'),
-            'brand_color': self.app.config.get('brand_color'),
-            'brand_secondary_color': self.app.config.get('brand_secondary_color'),
-            'brand_tertiary_color': self.app.config.get('brand_tertiary_color'),
+            'app_name': self.brand['app_name'],
+            'app_domain': self.app.config.get('app_domain'),
+            'city_name': self.brand['city_name'],
+            'city_url': self.app.config.get('city_url'),
+            'city_slogan': self.brand['city_slogan'],
+            'city_splash': self.brand['city_splash'],
+            'city_splash_secondary': self.brand['city_splash_secondary'],
+            'brand_logo': self.brand['brand_logo'],
+            'brand_favicon': self.brand['brand_favicon'],
+            'brand_color': self.brand['brand_color'],
+            'brand_secondary_color': self.brand['brand_secondary_color'],
+            'brand_tertiary_color': self.brand['brand_tertiary_color'],
             'user_id': self.user_id,
             'user_is_secretary': self.user_is_secretary,
             'user_is_agent': self.user_is_agent,
@@ -384,8 +408,11 @@ class BaseHandler(webapp2.RequestHandler):
             'locale_language_id': language_id, # babel locale object
             'locales': self.locales,
             'enable_federated_login': self.app.config.get('enable_federated_login'),
+            'theme': self.get_theme,
             'base_layout': self.get_base_layout,
             'landing_layout': self.get_landing_layout,
+            'zendesk_code': self.app.config.get('zendesk_code'),
+            'zendesk_imports': self.app.config.get('zendesk_imports'),
             'has_reports': self.has_reports,
             'has_petitions': self.has_petitions,
             'has_transparency': self.has_transparency,

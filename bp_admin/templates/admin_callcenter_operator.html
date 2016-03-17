@@ -40,6 +40,9 @@
 <div class="container">
       <div class="section">
        <div class="row" style="margin-top:30px">
+            <div class="row">
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita al operador.</h3>
+            </div>
             <div class="card-panel" style="margin-bottom:30px;">
                 <form id="form_operator" action="{{ url|safe }}" method="post">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
@@ -59,7 +62,7 @@
                     </div>
                   </div>
                   <div class="row container" style="padding:25px;     padding-left: 55px!important;">
-                    <button class="waves-effect waves-light light-blue white-text btn right" id="submit_ops_form" >Guardar Cambios
+                    <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_ops_form" >Guardar Cambios
                       <i class="mdi-content-send right"></i>
                     </button>  
                     <a class="waves-effect waves-light grey white-text btn left modal-trigger" href="#modal_delete" >Eliminar Operador

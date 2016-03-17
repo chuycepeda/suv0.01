@@ -5003,8 +5003,8 @@ class BlobFormHandler(BaseHandler, blobstore_handlers.BlobstoreUploadHandler):
         upload_url = blobstore.create_upload_url('/blobstore/upload/')
         self.response.out.write('<html><body>')
         self.response.out.write('<form action="%s" method="POST" enctype="multipart/form-data">' % upload_url)
-        self.response.out.write('''Upload File: <input type="file" name="file"><br> <input type="submit"
-            name="submit" value="Submit"> <input type="hidden" name="_csrf_token" value="%s"> </form></body></html>''' % self.session.get('_csrf_token'))
+        self.response.out.write('''<h2>Sube tu archivo y luego copia la liga directo de tu navegador</h2><br> <input type="file" name="file" style="padding: 20px;"><br> <input type="submit"
+            name="submit" value="Subir archivo" style="background-color: #FFFFFF;font-family: roboto-light;padding: 20px;margin: 10px;"> <input type="hidden" name="_csrf_token" value="%s"> </form></body></html>''' % self.session.get('_csrf_token'))
 
 class BlobUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):

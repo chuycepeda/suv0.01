@@ -17,6 +17,10 @@ _routes = [
     RedirectRoute('/admin/logout/', admin.AdminLogoutHandler, name='admin-logout', strict_slash=True),
     RedirectRoute('/admin/manual/', admin.AdminManualHandler, name='admin-manual', strict_slash=True),
 
+
+    # CONFIG Brand
+    RedirectRoute('/admin/brand/', operator.AdminBrandHandler, name='admin-brand', strict_slash=True),
+
     # CONFIG Categories
     RedirectRoute('/admin/categories/', operator.AdminCategoriesHandler, name='admin-categories', strict_slash=True),
     RedirectRoute('/admin/categories/<group_id>/', operator.AdminSubcategoriesHandler, name='admin-category-edit', strict_slash=True, handler_method='edit'),

@@ -1,0 +1,132 @@
+{% extends 'admin_base.html' %}
+
+{% block page_css %}
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active"><a href="{{ uri_for('admin-brand') }}">Marca</a></li>
+                
+            </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+
+{% block page_content %}
+<div class="container">
+      <div class="section">
+       <div class="row" style="margin-top:30px">
+            <div class="row">
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Personaliza tu plataforma con tus propias imágenes, mensajes y marca.</h3>
+            </div>
+            <div class="card-panel" style="margin-bottom:30px;">
+                <form id="form_brand" action="{{ url|safe }}" method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+ 
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-hardware-phonelink prefix brand-color-text"></i>
+                      <input id="app_name" name="app_name" type="text" value="{{app_name}}">
+                      <label for="app_name" class="center-align">Nombre de tu plataforma</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-social-public prefix brand-color-text"></i>
+                      <input id="city_name" name="city_name" type="text" value="{{city_name}}">
+                      <label for="city_name" class="center-align">Nombre de tu ciudad</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-notification-sms prefix brand-color-text"></i>
+                      <input id="city_slogan" name="city_slogan" type="text" value="{{city_slogan}}">
+                      <label for="city_slogan" class="center-align">Slogan de tu ciudad</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                      <i class="mdi-image-colorize left brand-color-text" style="margin-left: 22px;"></i>
+                      <p class="grey-text">Haz clic en el recuadro y selecciona el color principal de tu marca</p>
+                      <input id="brand_color" name="brand_color" type="color" style="margin-left:50px; height: 45px;" value="{{brand_color}}">
+                  </div>
+
+                  <div class="row margin">
+                      <i class="mdi-image-colorize left brand-color-text" style="margin-left: 22px;"></i>
+                      <p class="grey-text">Haz clic en el recuadro y selecciona el color secundario de tu marca</p>
+                      <input id="brand_secondary_color" name="brand_secondary_color" type="color" style="margin-left:50px; height: 45px;" value="{{brand_secondary_color}}">
+                  </div>
+
+                  <div class="row margin">
+                      <i class="mdi-image-colorize left brand-color-text" style="margin-left: 22px;"></i>
+                      <p class="grey-text">Haz clic en el recuadro y selecciona el color suplementario de tu marca</p>
+                      <input id="brand_tertiary_color" name="brand_tertiary_color" type="color" style="margin-left:50px; height: 45px;" value="{{brand_tertiary_color}}">
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12" style="margin-top: 30px;">
+                      <i class="mdi-image-image prefix brand-color-text"></i>
+                      <input id="brand_logo" name="brand_logo" type="text" value="{{brand_logo}}">
+                      <label for="brand_logo" class="center-align">URL de tu logo (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-image-image prefix brand-color-text"></i>
+                      <input id="brand_favicon" name="brand_favicon" type="text" value="{{brand_favicon}}">
+                      <label for="brand_favicon" class="center-align">URL de icono (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-image-image prefix brand-color-text"></i>
+                      <input id="city_splash" name="city_splash" type="text" value="{{city_splash}}">
+                      <label for="city_splash" class="center-align">URL de imagen principal (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-image-image prefix brand-color-text"></i>
+                      <input id="city_splash_secondary" name="city_splash_secondary" type="text" value="{{city_splash_secondary}}">
+                      <label for="city_splash_secondary" class="center-align">URL de tu imagen secundaria (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                    </div>
+                  </div>
+
+                  <div class="row container" style="padding:25px;     padding-left: 55px!important;">
+                    <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_brand_form" >Guardar Cambios
+                      <i class="mdi-content-send right"></i>
+                    </button>                          
+                  </div>
+                </form>
+            </div>           
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+<script type="text/javascript">
+    document.querySelector('#submit_brand_form').addEventListener('click', function() { 
+        document.getElementById("form_brand").submit();
+    });
+</script>
+{% endblock %}

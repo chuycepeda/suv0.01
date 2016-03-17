@@ -15,7 +15,71 @@ from google.appengine.api import urlfetch
 import urllib
 from bp_includes.lib.decorators import taskqueue_method
 
+class AdminBrandHandler(BaseHandler):
+    """
+    Handler to show the map page
+    """
+    def get(self):
+        """ Returns a simple HTML form for branding setup """
+        params = {}
 
+        brand = models.Brand.query().get()
+
+        if brand is not None:
+            params['app_name'] = self.app.config.get('app_name') if brand.app_name == '' else brand.app_name 
+            params['city_name'] = self.app.config.get('city_name') if brand.city_name == '' else brand.city_name 
+            params['city_slogan'] = self.app.config.get('city_slogan') if brand.city_slogan == '' else brand.city_slogan 
+            params['city_splash'] = self.app.config.get('city_splash') if brand.city_splash == '' else brand.city_splash 
+            params['city_splash_secondary'] = self.app.config.get('city_splash_secondary') if brand.city_splash_secondary == '' else brand.city_splash_secondary 
+            params['brand_logo'] = self.app.config.get('brand_logo') if brand.brand_logo == '' else brand.brand_logo 
+            params['brand_favicon'] = self.app.config.get('brand_favicon') if brand.brand_favicon == '' else brand.brand_favicon 
+            params['brand_color'] = self.app.config.get('brand_color') if brand.brand_color == '' else brand.brand_color 
+            params['brand_secondary_color'] = self.app.config.get('brand_secondary_color') if brand.brand_secondary_color == '' else brand.brand_secondary_color 
+            params['brand_tertiary_color'] = self.app.config.get('brand_tertiary_color') if brand.brand_tertiary_color == '' else brand.brand_tertiary_color 
+
+        else:
+            params['app_name'] = self.app.config.get('app_name')
+            params['city_name'] = self.app.config.get('city_name')
+            params['city_slogan'] = self.app.config.get('city_slogan')
+            params['city_splash'] = self.app.config.get('city_splash')
+            params['city_splash_secondary'] = self.app.config.get('city_splash_secondary')
+            params['brand_logo'] = self.app.config.get('brand_logo')
+            params['brand_favicon'] = self.app.config.get('brand_favicon')
+            params['brand_color'] = self.app.config.get('brand_color')
+            params['brand_secondary_color'] = self.app.config.get('brand_secondary_color')
+            params['brand_tertiary_color'] = self.app.config.get('brand_tertiary_color')
+
+        params['nickname'] = g_users.get_current_user().email().lower()
+        return self.render_template('admin_brand.html', **params)
+
+
+    def post(self):
+        """ Saves a simple HTML form for branding setup """
+        try:
+            brand = models.Brand.query().get()
+            if brand is None:
+                brand = models.Brand()
+
+            brand.app_name = self.request.get('app_name') 
+            brand.city_name = self.request.get('city_name') 
+            brand.city_slogan = self.request.get('city_slogan') 
+            brand.city_splash = self.request.get('city_splash') 
+            brand.city_splash_secondary = self.request.get('city_splash_secondary') 
+            brand.brand_logo = self.request.get('brand_logo') 
+            brand.brand_favicon = self.request.get('brand_favicon') 
+            brand.brand_color = self.request.get('brand_color') 
+            brand.brand_secondary_color = self.request.get('brand_secondary_color') 
+            brand.brand_tertiary_color = self.request.get('brand_tertiary_color') 
+
+            brand.put()
+
+            self.add_message(messages.saving_success, 'success')
+            return self.get()
+        except Exception as e:
+            logging.info('error in branding post: %s' % e)
+            self.add_message(messages.saving_error, 'danger')
+            return self.get()
+            
 
 """
 

@@ -307,13 +307,14 @@
                                     </li>
                                     <li class="no-padding" style="margin-bottom: 15px;">
                                         <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if uri_for('admin-categories') in path or uri_for('admin-topics') in path or uri_for('admin-organization') in path or uri_for('admin-callcenter') in path %}active{% endif %}"><i class="mdi-action-settings-applications grey-text left"></i>Configuración</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if uri_for('admin-categories') in path or uri_for('admin-topics') in path or uri_for('admin-organization') in path or uri_for('admin-callcenter') in path or uri_for('admin-brand') in path %}active{% endif %}"><i class="mdi-action-settings-applications grey-text left"></i>Configuración</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                        <li {% if uri_for('admin-categories') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">I. Categorías de reporte</a></li>
-                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">II. Temas de petición</a></li>
-                                                        <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">III. Secretarías</a></li>
-                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">IV. Atención ciudadana</a></li>
+                                                        <li {% if uri_for('admin-brand') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-brand') }}">Marca</a></li>
+                                                        <li {% if uri_for('admin-categories') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">Categorías de reporte</a></li>
+                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">Temas de petición</a></li>
+                                                        <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Secretarías</a></li>
+                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención ciudadana</a></li>
                                                     </ul>
                                                </div>
                                             </li>

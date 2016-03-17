@@ -30,16 +30,16 @@ config = {
     'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
     'app_id': 'one-smart-city-demo',
     # application branding 
-    'brand_logo': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png',
-    'brand_favicon': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png',
-    'brand_color' : '#DD3DA1',
-    'brand_secondary_color' : '#3647A1',
+    'brand_logo': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogob.png',
+    'brand_favicon': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogob.png',
+    'brand_color' : '#59BAB9',
+    'brand_secondary_color' : '#00273D',
     'brand_tertiary_color' : '#EAEAEA',
     'landing_skin': '',
     'video_url':  'https://www.youtube.com/embed/RX7JMnsI7K0',
     'video_playlist':  'https://www.youtube.com/watch?v=FxozM2hAHXE',
     'right_sidenav_msg': unicode("""
-        <p class="center"><img src="/default/materialize/images/favicon/rhexlogo.png" style="margin-top:3px; margin-left:5px; height:60px; "></p>
+        <p class="center"><img src="/default/materialize/images/favicon/rhexlogob.png" style="margin-top:3px; margin-left:5px; height:60px; "></p>
         <p>
             A través de tu portal de atención, puedes contribuir a transformar Mi Ciudad en la ciudad que todos queremos. 
         </p>

@@ -3,6 +3,22 @@ from webapp2_extras.appengine.auth.models import User
 from google.appengine.ext import ndb, blobstore
 import datetime
 
+#---------------------------------------  B R A N D    M O D E L -------------------------------------------------------------------          
+class Brand(ndb.Model):
+    app_name = ndb.StringProperty(default = '')
+    city_name = ndb.StringProperty(default = '')
+    city_slogan = ndb.StringProperty(default = '')
+    city_splash = ndb.StringProperty(default = '')
+    city_splash_secondary = ndb.StringProperty(default = '')
+    brand_logo = ndb.StringProperty(default = '')
+    brand_favicon = ndb.StringProperty(default = '')
+    brand_color = ndb.StringProperty(default = '')
+    brand_secondary_color = ndb.StringProperty(default = '')
+    brand_tertiary_color = ndb.StringProperty(default = '')
+#--------------------------------------- ENDOF    B R A N D     M O D E L -------------------------------------------------------------------          
+
+
+
 #--------------------------------------- U S E R    M O D E L -------------------------------------------------------------------          
 class Rewards(ndb.Model):
     amount = ndb.IntegerProperty()                                                                  #: number of points acquired 
