@@ -55,9 +55,6 @@ class SecureRequestHandler(BaseHandler):
         except (AttributeError, KeyError), e:
             return "Secure zone error:" + " %s." % e
 
-        
-
-
 class EmailsRequestHandler(BaseHandler):
     def get(self):
         params = {}

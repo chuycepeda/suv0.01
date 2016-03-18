@@ -66,7 +66,7 @@ $(function() {
   // Pikadate datepicker
   $('.datepicker').pickadate({
     selectMonths: true, // Creates a dropdown to control month
-    selectYears: 60, // Creates a dropdown of 15 years to control year
+    selectYears: 60, // Creates a dropdown of years to control year
     format: 'yyyy-mm-dd', // Creates adequate html5 default formatting
     formatSubmit: 'yyyy-mm-dd', // Creates adequate html5 default formatting
     monthsFull: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
@@ -75,7 +75,8 @@ $(function() {
     weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
     today: 'Hoy',
     clear: '',
-    close: 'Cerrar'
+    close: 'Cerrar',
+    max: new Date()
   });
 
 $('select').material_select();
@@ -130,8 +131,8 @@ $('select').material_select();
   $('.parallax').parallax();
   // Materialize Modal
   $('.modal-trigger').leanModal({
-      dismissible: false, // Modal can be dismissed by clicking outside of the modal
-      opacity: .5, // Opacity of modal background
+      dismissible: true, // Modal can be dismissed by clicking outside of the modal
+      opacity: .25, // Opacity of modal background
       in_duration: 300, // Transition in duration
       out_duration: 200, // Transition out duration
       ready: function() { 

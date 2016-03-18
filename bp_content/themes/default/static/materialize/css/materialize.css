@@ -8526,7 +8526,7 @@ a.waves-effect .waves-ripple {
 
 .lean-overlay {
   position: fixed;
-  z-index: 999;
+  z-index: 998!important;
   top: -100px;
   left: 0;
   bottom: 0;

@@ -154,6 +154,27 @@
                 .dataTables_scrollBody {
                     min-height: 200px;
                 }
+
+                .dropdown-content li > a, .dropdown-content li > span{
+                    color: {{brand_secondary_color}}!important;
+                }
+                
+                .picker__day--selected{
+                    background-color: {{brand_color}}!important;
+                }
+
+                .picker__date-display{
+                    background-color: {{brand_color}}!important;
+                }
+
+                .picker__weekday-display{
+                    background-color: {{brand_color}}!important;
+                }
+                
+                .picker__close, .picker__today{
+                    color: {{brand_color}}!important;
+                }
+
             </style>
             {% block page_css %}{% endblock %}
             {% if user_id %}
@@ -252,23 +273,23 @@
                                     {% if has_reports %}
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('materialize-callcenter-inbox') or path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-organization-users') %}active{% endif %}"><i class="mdi-content-inbox grey-text left"></i>Bandeja de reportes</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if 'callcenter/report' in path or 'secretary/report' in path or 'agent/report' in path or 'operator/report' in path or path == uri_for('materialize-callcenter-inbox') or path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-organization-users') or 'organization/users' in path %}active{% endif %}"><i class="mdi-content-inbox grey-text left"></i>Bandeja de reportes</a>
                                                <div class="collapsible-body">
                                                     <ul>
                                                         {% if user_is_callcenter %}
-                                                            <li {% if path == uri_for('materialize-callcenter-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-inbox') }}">Atención ciudadana </a></li>
+                                                            <li {% if path == uri_for('materialize-callcenter-inbox') or 'callcenter/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-inbox') }}">Atención ciudadana </a></li>
                                                         {% endif %}
                                                         {% if user_is_secretary %}
-                                                            <li {% if path == uri_for('materialize-secretary-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-secretary-inbox') }}">Secretaría</a></li>
+                                                            <li {% if path == uri_for('materialize-secretary-inbox') or 'secretary/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-secretary-inbox') }}">Secretaría</a></li>
                                                         {% endif %}
                                                         {% if user_is_agent %}
-                                                            <li {% if path == uri_for('materialize-agent-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-agent-inbox') }}">Dirección</a></li>
+                                                            <li {% if path == uri_for('materialize-agent-inbox') or 'agent/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-agent-inbox') }}">Dirección</a></li>
                                                         {% endif %}
                                                         {% if user_is_operator %}
-                                                            <li {% if path == uri_for('materialize-operator-inbox') %}class="active"{% endif %}><a href="{{ uri_for('materialize-operator-inbox') }}">Operador de enlace</a></li>
+                                                            <li {% if path == uri_for('materialize-operator-inbox') or 'operator/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-operator-inbox') }}">Operador de enlace</a></li>
                                                         {% endif %}
                                                         
-                                                       <li {% if path == uri_for('materialize-organization-users') %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-users') }}">Expediente ciudadano</a></li>
+                                                       <li {% if path == uri_for('materialize-organization-users') or 'organization/users' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-organization-users') }}">Expediente ciudadano</a></li>
                                                     </ul>
                                                </div>
                                             </li>
@@ -375,7 +396,7 @@
             <!-- jQuery Library -->
             <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
             <!--materialize js-->
-            <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+            <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.js"></script>
             <!--scrollbar-->
             <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
             <!--plugins.js - Some Specific JS codes for Plugin Settings-->

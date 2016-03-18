@@ -191,6 +191,9 @@
                 .hoverable{
                 	transition: all .3s ease-out;
 				}
+				.dropdown-content li > a, .dropdown-content li > span{
+					color: {{brand_secondary_color}}!important;
+				}
 			</style>
 
 		    {% endblock %}
@@ -221,7 +224,9 @@
 
 		{% block navbar %}
 			<!-- START NAVBAR -->
-			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-1">
+            <div class="navbar-fixed">
+
+			<nav style="background-color: transparent;" class="z-depth-1">
 				<div class="nav-wrapper" style="background:white;">
 				  <a href="{{uri_for("landing")}}" class="brand-logo"><img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:60px; {% endif %}"></a>
 				  <a href="#" data-activates="mobile-demo" class="button-collapse right"><i class="mdi-navigation-more-vert brand-color-text"></i></a>
@@ -437,6 +442,8 @@
 				  </ul>
 				</div>
 			</nav>
+
+			</div>
 			<!-- END NAVBAR -->
 		{% endblock %}
 
@@ -690,7 +697,7 @@
 			<!-- jQuery Library -->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
 		    <!--materialize js-->
-		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.js"></script>
 		    <!--scrollbar-->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
@@ -752,7 +759,6 @@
 					    $('.button-collapse').sideNav({
 					      edge: 'right'
 					    });
-						$('.modal-trigger').leanModal();
 						$('.tooltipped').tooltip({delay: 50});
 					    $('.parallax').parallax();
 						$(".menu-item").click(function(){

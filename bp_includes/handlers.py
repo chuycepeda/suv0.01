@@ -503,7 +503,7 @@ class MaterializeLoginRequestHandler(BaseHandler):
             user_info = self.user_model.get_by_id(long(self.user_id))        
             if not user_info.address:
                 return self.redirect_to('materialize-settings-profile')
-            self.redirect_to('materialize-report-new')
+            self.redirect_to('materialize-welcome')
 
         params = {
             'captchahtml': captchaBase(self),
@@ -586,7 +586,7 @@ class MaterializeLoginRequestHandler(BaseHandler):
                 self.add_message(message, 'success')
                 if not user.address:
                     return self.redirect_to('materialize-settings-profile')
-                self.redirect_to('materialize-report-new')
+                self.redirect_to('materialize-welcome')
         except (InvalidAuthIdError, InvalidPasswordError), e:
             # Returns error message to self.response.write in
             # the BaseHandler.dispatcher
@@ -1592,6 +1592,20 @@ class MaterializeLandingContactRequestHandler(BaseHandler):
 """                                 REGISTERED USERS HANDLERS                               """
 # ------------------------------------------------------------------------------------------- #
 
+class MaterializeWelcomeRequestHandler(BaseHandler):
+    """
+        Handler for materialized terms of use
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        if self.user_id:
+            params, user_info = disclaim(self)
+        else:
+            params = {} 
+        params['captchahtml'] = captchaBase(self)
+        return self.render_template('materialize/users/sections/welcome.html', **params)
+
 class MaterializeReferralsRequestHandler(BaseHandler):
     """
         Handler for materialized referrals
@@ -1716,8 +1730,7 @@ class MaterializeReferralsRequestHandler(BaseHandler):
             message = _(messages.post_error)
             self.add_message(message, 'danger')
             return self.redirect_to('home')
-
-          
+         
     @webapp2.cached_property
     def form(self):
         f = forms.ReferralsForm(self)
@@ -2491,7 +2504,6 @@ class MaterializeOrganizationNewReportSuccessHandler(BaseHandler):
         
         return self.render_template('materialize/users/operators/new_report_success.html', **params)
         
-
 class MaterializeOrganizationManualHandler(BaseHandler):
     """
         Handler for materialized operators manual
@@ -2949,313 +2961,62 @@ class MaterializeOrganizationUserReportsHandler(BaseHandler):
         
         self.abort(403)
 
-class MaterializeSecretaryInboxRequestHandler(BaseHandler):
+class MaterializeInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        
-        if self.has_reports and self.user_is_secretary:
+        if self.has_reports:
+            s = self.request.path.startswith('/user/secretary/inbox')
+            a = self.request.path.startswith('/user/agent/inbox')
+            o = self.request.path.startswith('/user/operator/inbox')
+            cc = self.request.path.startswith('/user/callcenter/inbox')
             params={}
+            names=[]
             user_info = self.user_model.get_by_id(long(self.user_id))            
             
-            secretary = models.Secretary.get_admin_by_email(user_info.email)
-            
-            agencies = models.Agency.query(models.Agency.secretary_id == secretary.key.id())
-            group_categories = []
-            for agency in agencies:
-                if agency.group_category_id is not None:
-                    group_categories.append(agency.group_category_id)
-            group_categories = list(set(group_categories))
-            names=[]
-            if len(group_categories)>0:
-                if len(group_categories)>1:
-                    names.append('TODOS')
-                for groupID in group_categories:
-                    names.append(models.GroupCategory.get_by_id(long(groupID)).name)
-            else:
-                names.append('---')
-
-            status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
-            ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
-            folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
-            groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
-
-            if ticket:
-                if ticket.isdigit():
-                   ticket = int(ticket)
-                else:
-                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
-                   return self.redirect_to("materialize-secretary-inbox")
-
-            p = self.request.get('p')
-            q = self.request.get('q')
-            c = self.request.get('c')
-            forward = True if p not in ['prev'] else False
-            cursor = Cursor(urlsafe=c)
-
-            if q:
-                reports = models.Report.query()            
-                if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
-                else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
-                count = reports.count()
-                PAGE_SIZE = 50
-                if forward:
-                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    if next_cursor and more:
-                        self.view.next_cursor = next_cursor
-                    if c:
-                        self.view.prev_cursor = cursor.reversed()
-                else:
-                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    reports = list(reversed(reports))
-                    if next_cursor and more:
-                        self.view.prev_cursor = next_cursor
-                    self.view.next_cursor = cursor.reversed()
-            else:
-                if groupCat:
-                    if groupCat == 'TODOS':
-                        reports = models.Report.query(models.Report.group_category.IN(names[1:]))
-                    else:
-                        reports = models.Report.query(models.Report.group_category == groupCat)
-                    params['ddfill'] = groupCat
-                else:
-                    if names[0]=='---':
-                        reports = models.Report.query(models.Report.group_category == 'inexistent')
-                    else:
-                        if names[0]== 'TODOS':
-                            reports = models.Report.query(models.Report.group_category.IN(names[1:]))
-                        else:
-                            reports = models.Report.query(models.Report.group_category == names[0])
-                    params['ddfill'] = names[0]
-                if status:
-                    reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status(status)
-                else:
-                    reports = reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status('pending')
-                if ticket:    
-                    reports = reports.filter(models.Report.cdb_id == ticket)
-                if folio:     
-                    reports = reports.filter(models.Report.folio == folio)
-                count = reports.count()
-                PAGE_SIZE = 100
-                if forward:
-                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    if next_cursor and more:
-                        self.view.next_cursor = next_cursor
-                    if c:
-                        self.view.prev_cursor = cursor.reversed()
-                else:
-                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    reports = list(reversed(reports))
-                    if next_cursor and more:
-                        self.view.prev_cursor = next_cursor
-                    self.view.next_cursor = cursor.reversed()
-
-            def pager_url(p, cursor):
-                params = OrderedDict()
-                if q:
-                    params['q'] = q
-                if status:
-                    params['status'] = status
-                if ticket:
-                    params['ticket'] = ticket
-                if folio:
-                    params['folio'] = folio
-                if groupCat:
-                    params['cat'] = groupCat
-                if p in ['prev']:
-                    params['p'] = p
-                if cursor:
-                    params['c'] = cursor.urlsafe()
-                return self.uri_for('materialize-secretary-inbox', **params)
-
-            self.view.pager_url = pager_url
-            self.view.q = q
-
-            params['statusval'] = get_status(status) if status else ""
-            params['ticketval'] = ticket if ticket else ""
-            params['folioval'] = folio if folio else ""
-            params['catGroup'] = groupCat if groupCat else ""
-            params['reports'] = reports
-            params['count'] = count
-            params['level'] = 'materialize-secretary-report'
-            params['inbox'] = 'materialize-secretary-inbox'
-            params['cats'] = sorted(names) if names else names
-            return self.render_template('materialize/users/operators/inbox.html', **params)
-        self.abort(403)
-
-class MaterializeAgentInboxRequestHandler(BaseHandler):
-    @user_required
-    def get(self):
-        if self.has_reports and self.user_is_agent:
-            params={}
-            user_info = self.user_model.get_by_id(long(self.user_id))            
-            agencies = models.Agency.get_admin_by_email(user_info.email)
-            group_categories = []
-            for agency in agencies:
-                if agency.group_category_id is not None:
-                    group_categories.append(agency.group_category_id)
-            group_categories = list(set(group_categories))
-            names=[]
-            if len(group_categories)>0:
-                if len(group_categories)>1:
-                    names.append('TODOS')
-                for groupID in group_categories:
-                    _group = models.GroupCategory.get_by_id(long(groupID))
-                    if _group:
-                        names.append(_group.name)
-            else:
-                names.append('---')
-                        
-            status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
-            ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
-            folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
-            groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
-
-            if ticket:
-                if ticket.isdigit():
-                   ticket = int(ticket)
-                else:
-                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
-                   return self.redirect_to("materialize-agent-inbox")
-            
-            p = self.request.get('p')
-            q = self.request.get('q')
-            c = self.request.get('c')
-            forward = True if p not in ['prev'] else False
-            cursor = Cursor(urlsafe=c)
-
-            if q:
-                reports = models.Report.query()            
-                if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
-                else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
-                count = reports.count()
-                PAGE_SIZE = 50
-                if forward:
-                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    if next_cursor and more:
-                        self.view.next_cursor = next_cursor
-                    if c:
-                        self.view.prev_cursor = cursor.reversed()
-                else:
-                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    reports = list(reversed(reports))
-                    if next_cursor and more:
-                        self.view.prev_cursor = next_cursor
-                    self.view.next_cursor = cursor.reversed()
-            else:
-                if groupCat:
-                    if groupCat == 'TODOS':
-                        reports = models.Report.query(models.Report.group_category.IN(names[1:]))
-                    else:
-                        reports = models.Report.query(models.Report.group_category == groupCat)
-                    params['ddfill'] = groupCat
-                else:
-                    if names[0]=='---':
-                        reports = models.Report.query(models.Report.group_category == 'inexistent')
-                    else:
-                        if names[0]== 'TODOS':
-                            reports = models.Report.query(models.Report.group_category.IN(names[1:]))
-                        else:
-                            reports = models.Report.query(models.Report.group_category == names[0])
-                    params['ddfill'] = names[0]
-                if status:
-                    reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status(status)
-                else:
-                    reports = reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status('pending')
-                if ticket:    
-                    reports = reports.filter(models.Report.cdb_id == ticket)
-                if folio:     
-                    reports = reports.filter(models.Report.folio == folio)
+            if cc and self.user_is_callcenter:
+                page='callcenter'
                 
-                count = reports.count()
-                PAGE_SIZE = 100
-                if forward:
-                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    if next_cursor and more:
-                        self.view.next_cursor = next_cursor
-                    if c:
-                        self.view.prev_cursor = cursor.reversed()
+                group_categories = models.GroupCategory.query()
+                if group_categories.count() > 0:
+                    if group_categories.count() > 1:
+                        names.append('TODOS')
+                    for group in group_categories:
+                        if group is not None:
+                            names.append(group.name)
                 else:
-                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    reports = list(reversed(reports))
-                    if next_cursor and more:
-                        self.view.prev_cursor = next_cursor
-                    self.view.next_cursor = cursor.reversed()
+                    names.append('---')
 
-            def pager_url(p, cursor):
-                params = OrderedDict()
-                if q:
-                    params['q'] = q
-                if status:
-                    params['status'] = status
-                if ticket:
-                    params['ticket'] = ticket
-                if folio:
-                    params['folio'] = folio
-                if groupCat:
-                    params['cat'] = groupCat
-                if p in ['prev']:
-                    params['p'] = p
-                if cursor:
-                    params['c'] = cursor.urlsafe()
-                return self.uri_for('materialize-agent-inbox', **params)
-
-            self.view.pager_url = pager_url
-            self.view.q = q
-
-            params['statusval'] = get_status(status) if status else ""
-            params['ticketval'] = ticket if ticket else ""
-            params['folioval'] = folio if folio else ""
-            params['catGroup'] = groupCat if groupCat else ""
-            params['reports'] = reports
-            params['count'] = count
-            params['level'] = 'materialize-agent-report'
-            params['inbox'] = 'materialize-agent-inbox'
-            params['cats'] = sorted(names) if names else names
-            return self.render_template('materialize/users/operators/inbox.html', **params)
-        self.abort(403)
-
-class MaterializeOperatorInboxRequestHandler(BaseHandler):
-    @user_required
-    def get(self):
-        if self.has_reports and self.user_is_operator:
-            params={}
-            #Get current user
-            user_info = self.user_model.get_by_id(long(self.user_id))            
-            #Get operator roles for user
-            operators = models.Operator.get_by_email(user_info.email)
-            #Get Agencies to which operator belongs
-            agencyKeys=[]            
-            for operator in operators:
-                agencyKeys.append(ndb.Key(models.Agency, operator.agency_id))
-            #objects = ndb.get_multi([ndb.Key(Model, k) for k in ids])
-            agencies = ndb.get_multi(agencyKeys)            
-            #Get Group Categories agencies work
-            group_categories = []            
-            for agency in agencies:
-                if agency is not None:
-                    if agency.group_category_id is not None:
-                        group_categories.append(agency.group_category_id)
-            group_categories = list(set(group_categories))
-            
-            #Get group category names
-            names=[]
-            if len(group_categories)>0:
-                if len(group_categories)>1:
-                    names.append('TODOS')
-                for groupID in group_categories:
-                    _group = models.GroupCategory.get_by_id(long(groupID))
-                    if _group:
-                        names.append(_group.name)
             else:
-                names.append('---')
+                if s and self.user_is_secretary:
+                    page = 'secretary'
+                    secretary = models.Secretary.get_admin_by_email(user_info.email)
+                    agencies = models.Agency.query(models.Agency.secretary_id == secretary.key.id())            
+                elif a and self.user_is_agent:
+                    page = 'agent'
+                    agencies = models.Agency.get_admin_by_email(user_info.email)            
+                elif o and self.user_is_operator:
+                    page = 'operator'
+                    operators = models.Operator.get_by_email(user_info.email)
+                    agencies = ndb.get_multi([ndb.Key(models.Agency, operator.agency_id) for operator in operators])             
+                else: 
+                    self.abort(403)
+                
+                group_categories_ids = []            
+                for agency in agencies:
+                    if agency is not None:
+                        if agency.group_category_id is not None:
+                            group_categories_ids.append(agency.group_category_id)
+                group_categories_ids = list(set(group_categories_ids))
+                
+                if len(group_categories_ids)>0:
+                    if len(group_categories_ids)>1:
+                        names.append('TODOS')
+                    group_categories = ndb.get_multi([ndb.Key(models.GroupCategory, groupID) for groupID in group_categories_ids])
+                    for group in group_categories:
+                        if group is not None:
+                            names.append(group.name)            
+                else:
+                    names.append('---')
             
             status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
             ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
@@ -3266,8 +3027,8 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
                 if ticket.isdigit():
                    ticket = int(ticket)
                 else:
-                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
-                   return self.redirect_to("materialize-operator-inbox")
+                   self.add_message('Tu ticket debe contener solamente numeros', 'warning')
+                   return self.get()
                         
             p = self.request.get('p')
             q = self.request.get('q')
@@ -3306,17 +3067,23 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
                     if names[0]=='---':
                         reports = models.Report.query(models.Report.group_category == 'inexistent')
                     else:
-                        if names[0]== 'TODOS':
-                            reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                        if cc:
+                            reports = models.Report.query()
                         else:
-                            reports = models.Report.query(models.Report.group_category == names[0])
+                            if names[0]== 'TODOS':
+                                reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                            else:
+                                reports = models.Report.query(models.Report.group_category == names[0])
                     params['ddfill'] = names[0]
                 if status:
                     reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
                     params['ddfillstat'] = get_status(status)
                 else:
-                    reports = reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status('pending')
+                    if cc:
+                        params['ddfillstat'] = 'TODOS'
+                    else:
+                        reports = reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
+                        params['ddfillstat'] = get_status('pending')
                 if ticket:    
                     reports = reports.filter(models.Report.cdb_id == ticket)
                 if folio:     
@@ -3352,7 +3119,7 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
                     params['p'] = p
                 if cursor:
                     params['c'] = cursor.urlsafe()
-                return self.uri_for('materialize-operator-inbox', **params)
+                return self.uri_for('materialize-'+page+'-inbox', **params)
 
             self.view.pager_url = pager_url
             self.view.q = q
@@ -3363,122 +3130,11 @@ class MaterializeOperatorInboxRequestHandler(BaseHandler):
             params['catGroup'] = groupCat if groupCat else ""
             params['reports'] = reports
             params['count'] = count
-            params['level'] = 'materialize-operator-report'
-            params['inbox'] = 'materialize-operator-inbox'
+            params['level'] = 'materialize-'+page+'-report'
+            params['inbox'] = 'materialize-'+page+'-inbox'
             params['cats'] = sorted(names) if names else names
             return self.render_template('materialize/users/operators/inbox.html', **params)
-        self.abort(403)
-
-class MaterializeCallCenterInboxRequestHandler(BaseHandler):
-    @user_required
-    def get(self):
-        if self.has_reports and self.user_is_callcenter:
-            params={}
-            names = []
-            _group = models.GroupCategory.query()
-            for group in _group:
-                names.append(group.name)
-            
-            status = self.request.get('status') if (self.request.get('status') or self.request.get('status') != "") else False
-            ticket = self.request.get('ticket') if (self.request.get('ticket') or self.request.get('ticket') != "") else False
-            folio = self.request.get('folio') if (self.request.get('folio') or self.request.get('folio') != "") else False
-            groupCat = self.request.get('cat') if (self.request.get('cat') or self.request.get('cat') != "") else False
-
-            if ticket:
-                if ticket.isdigit():
-                   ticket = int(ticket)
-                else:
-                   self.add_message('Tu ticket debe contener solamente digitos', 'warning')
-                   return self.redirect_to("materialize-callcenter-inbox")
-                        
-            p = self.request.get('p')
-            q = self.request.get('q')
-            c = self.request.get('c')
-            forward = True if p not in ['prev'] else False
-            cursor = Cursor(urlsafe=c)
-
-            if q:
-                reports = models.Report.query()            
-                if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
-                else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
-                count = reports.count()
-                PAGE_SIZE = 50
-                if forward:
-                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    if next_cursor and more:
-                        self.view.next_cursor = next_cursor
-                    if c:
-                        self.view.prev_cursor = cursor.reversed()
-                else:
-                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    reports = list(reversed(reports))
-                    if next_cursor and more:
-                        self.view.prev_cursor = next_cursor
-                    self.view.next_cursor = cursor.reversed()
-            else:
-                if groupCat:
-                    reports = models.Report.query(models.Report.group_category == groupCat)
-                    params['ddfill'] = groupCat
-                else:
-                    reports = models.Report.query()
-                    params['ddfill'] = 'TODOS'
-                if status:
-                    reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
-                    params['ddfillstat'] = get_status(status)
-                else:
-                    params['ddfillstat'] = 'TODOS'
-                if ticket:    
-                    reports = reports.filter(models.Report.cdb_id == ticket)
-                if folio:     
-                    reports = reports.filter(models.Report.folio == folio)
-                count = reports.count()
-                PAGE_SIZE = 100
-                if forward:
-                    reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    if next_cursor and more:
-                        self.view.next_cursor = next_cursor
-                    if c:
-                        self.view.prev_cursor = cursor.reversed()
-                else:
-                    reports, next_cursor, more = reports.order(models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
-                    reports = list(reversed(reports))
-                    if next_cursor and more:
-                        self.view.prev_cursor = next_cursor
-                    self.view.next_cursor = cursor.reversed()
-
-            def pager_url(p, cursor):
-                params = OrderedDict()
-                if q:
-                    params['q'] = q
-                if status:
-                    params['status'] = status
-                if ticket:
-                    params['ticket'] = ticket
-                if folio:
-                    params['folio'] = folio
-                if groupCat:
-                    params['cat'] = groupCat
-                if p in ['prev']:
-                    params['p'] = p
-                if cursor:
-                    params['c'] = cursor.urlsafe()
-                return self.uri_for('materialize-callcenter-inbox', **params)
-
-            self.view.pager_url = pager_url
-            self.view.q = q
-
-            params['statusval'] = get_status(status) if status else ""
-            params['ticketval'] = ticket if ticket else ""
-            params['folioval'] = folio if folio else ""
-            params['catGroup'] = groupCat if groupCat else ""
-            params['reports'] = reports
-            params['count'] = count
-            params['cats'] = sorted(names) if names else names
-            params['level'] = 'materialize-callcenter-report'
-            params['inbox'] = 'materialize-callcenter-inbox'
-            return self.render_template('materialize/users/operators/inbox.html', **params)
+        
         self.abort(403)
 
 #REPORTS EDIT

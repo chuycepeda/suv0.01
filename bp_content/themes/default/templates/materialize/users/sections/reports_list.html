@@ -76,6 +76,11 @@
 	      line-height: 60px;
 	      letter-spacing: 0.2px;
 	    }
+
+	    .timeline-me-showmore{
+	        margin-top: -45px;
+    		margin-bottom: 0px;
+	    }
  	</style>
 {% endblock %}
 
@@ -125,12 +130,13 @@
 				<h5 class="col s12 m10 offset-m1 grey-text"> Actividad</h5>
 		        <div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div>
 		        <div class="row">
-	                <div class="col s12 m10 offset-m1 ">
-	                   <a id="loadmore" class="waves-effect waves-light btn" style="display:none">Cargar siguientes reportes</a>
-	                </div>
 	                <div id="tl-meta" class="col s12 m10 offset-m1 ">
-	                   <div id="timeline-container" class="row"></div>
+	                   <div id="timeline-container-0" class="row"></div>
 	                </div>
+	                <div class="col s12 m10 offset-m1 center">
+	                   <a id="loadmore" class="waves-effect waves-light btn" style="display: none">Ver siguientes 5 reportes</a>
+	                </div>
+	                
 				</div>
 
 			</div>
@@ -150,15 +156,17 @@
 		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
 	    var city_table_name = '{{cartodb_reports_table}}';
         var reportDict;
+        var step = 0;
+        var limit = 5;	
 		
-		function getData(step,limit){
-            var q = "Select * from "+city_table_name+" order by created desc offset "+step+" limit "+ limit;
+		function getData(offset,limit){
+            var q = "Select * from "+city_table_name+"  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false order by created desc offset "+offset+" limit "+ limit;
             city_sql.execute(q).done(function(data) {
                 console.log(data)
                 var items = [];
                 for (var i = 0; i < data.total_rows;i++){
                     var shrt = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><div class="col s2"><span class="image " style="background-color:#'+reportDict[data.rows[i].group_category].color+'; -webkit-mask: url('+reportDict[data.rows[i].group_category].icon+') no-repeat 50% 50%;"></span></div><p class="col s10 truncate">'+data.rows[i].description+'</p><div class="chip white-text" style="margin-top: 20px;margin-left: 10px;">Ticket:'+data.rows[i].cartodb_id+'</div></div><div class="card-action center"><a class="grey-text maplink" href="{{uri_for('landing-map')}}?cdb_id='+data.rows[i].cartodb_id+'" target="_blank"><i class="mdi-maps-place"></i>Ver mapa</a></div></div>';
-                    var full = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-image-style brand-color-text left"></i>Subcategoría: <span id="report_group_category" class="brand-secondary-color-text"> '+data.rows[i].sub_category+' </span></p><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-action-description brand-color-text left"></i>Descripción:</p><div class="col s12"><blockquote class="grey-text text-lighten-1" style="margin-top: 10px; border-left-width: 5px; border-left-style: solid; border-left-color: rgb(221, 61, 161);">'+data.rows[i].description+'</blockquote></div></div>';
+                    var full = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-image-style brand-color-text left"></i>Subcategoría: <span id="report_group_category" class="brand-secondary-color-text"> '+data.rows[i].sub_category+' </span></p><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-action-description brand-color-text left"></i>Descripción:</p><div class="col s12"><blockquote class="grey-text text-lighten-1" style="margin-top: 10px; border-left-width: 5px; border-left-style: solid; border-left-color: {{brand_color}};">'+data.rows[i].description+'</blockquote></div></div>';
                     
                     var d = new Date(data.rows[i].created);
                     items.push({
@@ -171,7 +179,15 @@
                       showLess: '<a class="btn-floating waves-effect waves-light blue right" style="right: 20px; "><i class="material-icons">remove</i></a>'
                     });
                 }
-                $('#timeline-container').timelineMe({
+                if(data.total_rows == 0){
+                	$('#loadmore').addClass('disabled');
+                	$('#loadmore').addClass('grey');
+                	$('#loadmore').html('Has cargado todos');
+                }else if (data.total_rows == limit){
+                	$('#loadmore').show();
+                }
+
+                $('#timeline-container-'+step).timelineMe({
                   labelClass: 'labelclass',
                   shortContentClass: 'card',
                   fullContentClass: 'card',
@@ -179,13 +195,12 @@
                   showLessClass: 'row',
                   items: items
                 });
+
                 Materialize.fadeInImage('#tl-meta');        
 		    });
 		}
 		
 		$(function() {
-            var step = 0;
-            var limit = 15;	
             var url = "{{uri_for('materialize-report-categories')}}";
         
             $.ajax({
@@ -199,11 +214,15 @@
                 getData(step,limit);
             });                
             
-            $('#loadmore').click(function(){
-                $('#tl-meta').empty();
-                $('#tl-meta').append('<div id="timeline-container" class="row"></div>');
-                step += 1;
-                getData(step*limit, limit);
+            $('#loadmore').click(function(){                
+                if($('#loadmore').html().indexOf('cargado') == -1){
+	                step += 1;
+                	$('#loadmore').html('Ver siguientes 5 reportes');
+                	$('#loadmore').removeClass('disabled');
+                	$('#loadmore').removeClass('grey');
+	                $('#tl-meta').append('<div class="divider"></div><div id="timeline-container-'+step+'" class="row"></div>');
+                	getData(step*limit, limit);
+                } 
             });
         
         });

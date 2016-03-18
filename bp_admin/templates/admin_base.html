@@ -176,6 +176,26 @@
                     height: 15px;
                     margin-top: 15px;
                 }
+
+                .dropdown-content li > a, .dropdown-content li > span{
+                    color: {{brand_secondary_color}}!important;
+                }
+                                
+                .picker__day--selected{
+                    background-color: {{brand_color}}!important;
+                }
+
+                .picker__date-display{
+                    background-color: {{brand_color}}!important;
+                }
+
+                .picker__weekday-display{
+                    background-color: {{brand_color}}!important;
+                }
+                
+                .picker__close, .picker__today{
+                    color: {{brand_color}}!important;
+                }
              
             </style>
             {% block page_css %}{% endblock %}
@@ -519,7 +539,7 @@
             <!-- jQuery Library -->
             <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
             <!--materialize js-->
-            <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+            <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.js"></script>
             <!--scrollbar-->
             <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
             <!--plugins.js - Some Specific JS codes for Plugin Settings-->

@@ -77,21 +77,21 @@
                     <a data-hover="false" id='statusbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='statusdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{ddfillstat}}</a>
                     <!-- Dropdown Structure -->
                     <ul id='statusdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Pendientes</a></li>
-                        {% if user_is_callcenter %}
+                        {% if 'callcenter' in path %}
                         <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Todos</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Abierto</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Abiertos</a></li>
                         {% endif %}
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Pendientes</a></li>
                         <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En espera</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Asignado</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Rechazado</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En proceso</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Resuelto</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Fallo</a></li>
                         <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Respondido</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Spam</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Archivado</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Olvidado</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En proceso</a></li>
+                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Asignado</a></li>
+                        <li> <a class="amber-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Rechazado</a></li>
+                        <li> <a class="green-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Resuelto</a></li>
+                        <li> <a class="red-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Fallo</a></li>
+                        <li> <a class="red-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Spam</a></li>
+                        <li> <a class="grey-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Archivado</a></li>
+                        <li> <a class="grey-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Olvidado</a></li>
                        </ul>                
                 </div>
             </div>

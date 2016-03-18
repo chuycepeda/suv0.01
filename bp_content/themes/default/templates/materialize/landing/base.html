@@ -144,6 +144,25 @@
 				.side-nav .collapsible-body li a:hover {
 				    background: rgba(221, 221, 221, 0.35);
 				}
+				.dropdown-content li > a, .dropdown-content li > span{
+					color: {{brand_secondary_color}}!important;
+				}
+
+                .picker__day--selected{
+                    background-color: {{brand_color}}!important;
+                }
+
+                .picker__date-display{
+                    background-color: {{brand_color}}!important;
+                }
+
+                .picker__weekday-display{
+                    background-color: {{brand_color}}!important;
+                }
+                
+                .picker__close, .picker__today{
+                    color: {{brand_color}}!important;
+                }
 
 	    	</style>
 		    {% block page_css %}
@@ -189,7 +208,9 @@
         
 		{% block navbar %}
 			<!-- START NAVBAR -->
-			<nav style="background-color: transparent;position: fixed;border-bottom: none; z-index: 9999999;" class="z-depth-1">
+            <div class="navbar-fixed">
+
+			<nav style="background-color: transparent;" class="z-depth-1">
 				<div class="nav-wrapper" style="background:white;">
 				  <a href="{{uri_for("landing")}}" class="brand-logo">
 				  	<img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:60px; {% endif %}">
@@ -295,8 +316,8 @@
 			                        </li>
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a>
 			                        </li>
-			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a>
-			                        </li>
+			                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a>
+			                        </li> -->
 				            </ul>
 				            <li class="nav-transparency" {% if path == uri_for('materialize-transparency-budget-new') or path == uri_for('materialize-transparency-budget') or path == uri_for('materialize-transparency-city') or path == uri_for('materialize-transparency-init') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
 		                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="transparency-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Transparencia{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
@@ -316,15 +337,15 @@
 			                        </li>
                             	  {% endif %}
                             	  {% if has_transparency %}
-			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a>
-			                        </li>
+			                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a>
+			                        </li> -->
                             	  {% endif %}
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
 			                        </li>
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
 			                        </li>
 				            </ul>
-						    <li class="nav-user" style="padding-left: 30px;{% if path == uri_for('materialize-reports') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-settings-referrals') or path == uri_for('materialize-settings-account') or path == uri_for('materialize-referrals') %}border-bottom: 5px solid {{brand_secondary_color}};{% endif %}">
+						    <li class="nav-user" style="padding-left: 30px;{% if path == uri_for('materialize-reports') or path == uri_for('materialize-petitions') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-settings-referrals') or path == uri_for('materialize-settings-account') or path == uri_for('materialize-referrals') %}border-bottom: 5px solid {{brand_secondary_color}};{% endif %}">
 		                        	{% if has_picture %}
 										<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
 												<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
@@ -377,7 +398,7 @@
 												  <li><a href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a></li>
                             	  				  {% endif %}
                             	  				  {% if has_transparency %}
-												  <li><a href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a></li>
+												  <!-- <li><a href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a></li> -->
                             	  				  {% endif %}
 							                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
 							                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
@@ -432,7 +453,7 @@
 			                                    <ul>
 												  <li><a href="{{ uri_for("materialize-transparency-city") }}">Conoce {{city_name}}</a></li>
 							                      <li><a href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a></li>
-							                      <li><a href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a></li>
+							                      <!-- <li><a href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a></li> -->
 			                                    </ul>
 			                                </div>
 			                            </li>
@@ -490,6 +511,8 @@
 				  </ul>
 				</div>
 			</nav>
+
+			</div>
 			<!-- END NAVBAR -->
 		{% endblock %}
 
@@ -624,7 +647,7 @@
                   {% if path != uri_for('materialize-organization-directory') %}<li><a href="{{ uri_for('materialize-organization-directory') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="directorio"><i class="large mdi-communication-quick-contacts-dialer"></i></a></li>{% endif %}
                   {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="contáctanos"><i class="large mdi-communication-email"></i></a></li>{% endif %}
                   {% if path != uri_for('landing-map') and has_reports %}<li><a href="{{ uri_for('landing-map') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver mapa"><i class="large mdi-social-public"></i></a></li>{% endif %}
-                  <li><a href="{{ uri_for('materialize-transparency-budget-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="proponer presupuesto"><i class="large mdi-maps-local-pizza"></i></a></li>
+                  <li><a href="{{ uri_for('materialize-transparency-init') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver compromisos"><i class="large mdi-action-visibility"></i></a></li>
                   <li><a href="{{ uri_for('materialize-petition-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear petición"><i class="large mdi-content-create"></i></a></li>
                   <li><a href="{{ uri_for('materialize-report-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear reporte"><i class="large mdi-maps-place"></i></a></li>
                 </ul>
@@ -824,7 +847,7 @@
 			<!-- jQuery Library -->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
 		    <!--materialize js-->
-		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.js"></script>
 		    <!--scrollbar-->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
@@ -885,7 +908,6 @@
 					    $('.button-collapse').sideNav({
 					      edge: 'right'
 					    });
-						$('.modal-trigger').leanModal();
 						$('.tooltipped').tooltip({delay: 50});
 					    $('.parallax').parallax();
 						$(".menu-item").click(function(){
@@ -1258,7 +1280,7 @@
 		                            type: 'cartodb',
 		                            sublayers: [{
 		                                sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
-		                                cartocss: "#" + city_mun_table_name + "{line-color: #EB332C;line-width: 2;line-opacity: 1;}"
+		                                cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
 
 		                            },{
 		                                sql: city_query,
@@ -1970,7 +1992,7 @@
 	                            type: 'cartodb',
 	                            sublayers: [{
 	                                sql: "SELECT " + cic_mun_table_name + ".* FROM " + cic_mun_table_name + " WHERE " + cic_mun_table_name + ".name IN ('" + cic_polygon_name + "')",
-	                                cartocss: "#" + cic_mun_table_name + "{line-color: #EB332C;line-width: 2;line-opacity: 1;}"
+	                                cartocss: "#" + cic_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
 
 	                            },{
 	                                sql: cic_query,
