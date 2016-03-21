@@ -66,14 +66,14 @@ config = {
     'facebook_appID': '201422020200516',
     'indicoio_apikey': 'e1e494fc522650381efc67d23e515692',  
     #cartodb integration
-    'map_center_lat': 25.683956577519417, 
-    'map_center_lng': -100.20524472216799,
+    'map_center_lat': 25.6858634, 
+    'map_center_lng': -100.3159498,
     'cartodb_user': 'onesmartcity',
     'cartodb_apikey': '2dd2b08fe09c23bc977b051a85b2d6d725a58a54',
     'cartodb_reports_table': 'public_reports',
     'cartodb_category_dict_table': 'cat_dict',
     'cartodb_polygon_table': 'mun_poly',
-    'cartodb_polygon_name': 'GPE',
+    'cartodb_polygon_name': 'MTY',
     'cartodb_cic_user': 'cicadmin',
     'cartodb_cic_reports_table': 'nl_public',
     # contact page email settings
