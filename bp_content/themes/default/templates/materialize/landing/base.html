@@ -56,7 +56,7 @@
   					  transform: scale(0.8);
 				}
 				html, body { height: 100%; margin: 0; padding: 0; }
-				#map {height: 95%}
+				#map {height: 90%}
 				.spacer{margin-bottom: 35px;}
 
 				/*BRANDING*/
@@ -618,6 +618,7 @@
 		                    	
 		                    </div>
 		                    <div class="container row" style="margin-top:40px;">
+        						<p class="center"><img src="{{brand_logo}}" style="margin-top:3px; margin-left:5px; height:60px; "></p><br>
 		                    	{{right_sidenav_msg}}
 		                    </div>
 		                    {% if is_mobile %}
@@ -1260,7 +1261,7 @@
 							   
 
 							// CITY LAYERS
-							var city_query= "SELECT * FROM " + city_table_name + " WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false";	    
+							var city_query= "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE " + city_table_name + ".status not in ('spam', 'archived', 'forgot') AND " + city_table_name + ".pvt = false AND ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";	   
 	                        var city_interactivity = ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title"];
 							$.ajax({
 				                url: "{{ uri_for('materialize-report-categories') }}",
@@ -1723,7 +1724,7 @@
 						{% endif %}
 	                    
 	                    function updateCounters(q){
-	                        var nq = q.replace('SELECT *', 'SELECT count(*)');
+	                        var nq = q.replace("SELECT " + city_table_name + ".* FROM ", "SELECT count(" + city_table_name + ".*) FROM ");
 	                        city_sql.execute(nq).done(function(data) {
 						        
 						        var add = 0;
@@ -1740,7 +1741,7 @@
 	    				function Q(){
 	                		var cCss;
 	                		var auxWhere = true;
-	        				var q = "SELECT * FROM " + city_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false";
+	        				var q = "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false AND ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";
 	        				//Zone
 	        				if (zoned){
 	        					var coof = "{{address_from_coord}}";
@@ -2019,8 +2020,8 @@
 							    });  
 	                        });    
 
-							// GPE LAYERS
-							var city_query= "SELECT * FROM " + city_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false";	    
+							// CITY LAYERS
+							var city_query= "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE " + city_table_name + ".status not in ('spam', 'archived', 'forgot') AND " + city_table_name + ".pvt = false AND ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";	 
 	                        var city_interactivity = ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title"];
 							$.ajax({
 				                url: "{{ uri_for('materialize-report-categories') }}",
@@ -2500,7 +2501,7 @@
 						{% endif %}
 	                    
 	                    function updateCounters(q){
-	                        var nq = q.replace('SELECT *', 'SELECT count(*)');
+	                        var nq = q.replace("SELECT " + city_table_name + ".* FROM ", "SELECT count(" + city_table_name + ".*) FROM ");
 	                        city_sql.execute(nq).done(function(data) {
 						        
 						        var add = 0;
@@ -2519,7 +2520,7 @@
 	    				function Q(){
 	                		var cCss;
 	                		var auxWhere = true;
-	        				var q = "SELECT * FROM " + city_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false";
+	        				var q = "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + "  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false AND ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";
 
 	                		//Hide CIC
 		                    if(sublayers[1]) sublayers[1].hide();

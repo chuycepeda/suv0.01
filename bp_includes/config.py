@@ -39,7 +39,6 @@ config = {
     'video_url':  'https://www.youtube.com/embed/RX7JMnsI7K0',
     'video_playlist':  'https://www.youtube.com/watch?v=FxozM2hAHXE',
     'right_sidenav_msg': unicode("""
-        <p class="center"><img src="/default/materialize/images/favicon/rhexlogob.png" style="margin-top:3px; margin-left:5px; height:60px; "></p>
         <p>
             A través de tu portal de atención, puedes contribuir a transformar Mi Ciudad en la ciudad que todos queremos. 
         </p>

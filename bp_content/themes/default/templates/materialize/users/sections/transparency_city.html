@@ -67,8 +67,8 @@
                     <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
 	                    <div class="collapsible-body white">
 	                    	<p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="check_alcalde" checked>
-		                    	<label for="check_alcalde">Vía {{app_name}}: <span style="color:{{brand_secondary_color}}" id="c_alcalde"></span></label>
+		                    	<input type="checkbox" class="filled-in layerControl" id="check_polygon" checked>
+		                    	<label for="check_polygon">Polígono</label>
 		                    </p>
 	                    </div>
                   </li>
@@ -87,17 +87,12 @@
     	var city_polygon_name = '{{cartodb_polygon_name}}'
 		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
 		var sublayers = [];
-		var zoned = false;
-		var sourceurl = "{{cartodb_markers_url}}";
-		var city_catMarkers = [];
-        var reportDict;
         
 		/* MAPS RELATED */
 		var panorama, sv = new google.maps.StreetViewService();
 		var mapCenter = [{{lat}},{{lng}}] , map;
 		google.maps.event.addDomListener(window,'load', init);
         var query;                    
-		
 		
 		function init(){
 			var mapOptions = {
@@ -142,6 +137,33 @@
 			var centerControl = new CenterControl(centerControlDiv, map);
 			centerControlDiv.index = 1;
 			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
+
+
+			// CITY LAYERS
+			layerSource = {
+                user_name: city_user,
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
+                    cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+                }]
+            };
+            cartodb.createLayer(map,layerSource)
+            .on('done', function(layer) {
+			    map.overlayMapTypes.setAt(0, layer);
+                for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                   sublayers[i] = layer.getSubLayer(i);
+                   console.log("Congrats, you added sublayer #" + i + "!");
+                }
+            }); 
+
+
+            $('.layerControl').change(function() {
+                if (this.id == 'check_polygon'){
+                    if (this.checked) sublayers[0].show();
+                    else sublayers[0].hide();
+                }
+            });
 			   
 		}
 
