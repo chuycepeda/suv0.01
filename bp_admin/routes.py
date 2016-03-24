@@ -30,6 +30,10 @@ _routes = [
     RedirectRoute('/admin/topics/', operator.AdminTopicsHandler, name='admin-topics', strict_slash=True),
     RedirectRoute('/admin/topics/<topic_id>/', operator.AdminTopicEditHandler, name='admin-topic-edit', strict_slash=True, handler_method='edit'),
 
+    # CONFIG Initiatives
+    RedirectRoute('/admin/areas/', operator.AdminAreasHandler, name='admin-areas', strict_slash=True),
+    RedirectRoute('/admin/areas/<area_id>/', operator.AdminAreaEditHandler, name='admin-area-edit', strict_slash=True, handler_method='edit'),
+    
     # CONFIG Organization
     RedirectRoute('/admin/organization/', operator.AdminOrganizationHandler, name='admin-organization', strict_slash=True),
     RedirectRoute('/admin/organization/secretary/<secretary_id>/', operator.AdminOrganizationSecretaryHandler, name='admin-secretary-edit', strict_slash=True, handler_method='edit'),
@@ -41,12 +45,17 @@ _routes = [
     RedirectRoute('/admin/callcenter/<operator_id>/', operator.AdminCallCenterOperatorHandler, name='admin-callcenter-edit', strict_slash=True, handler_method='edit'),
     
     # OPERATIONS Reports
-    RedirectRoute('/admin/reports/', operator.AdminReportsHandler, name='admin-reports', strict_slash=True),
     RedirectRoute('/admin/map/', operator.AdminMapHandler, name='admin-map', strict_slash=True),
+    RedirectRoute('/admin/reports/', operator.AdminReportsHandler, name='admin-reports', strict_slash=True),
     RedirectRoute('/admin/reports/<report_id>/', operator.AdminReportEditHandler, name='admin-report-edit', strict_slash=True, handler_method='edit'),
     
     # OPERATIONS Petitions
     RedirectRoute('/admin/petitions/', operator.AdminPetitionsHandler, name='admin-petitions', strict_slash=True),
+    RedirectRoute('/admin/petitions/<petition_id>/', operator.AdminPetitionsEditHandler, name='admin-petitions-edit', strict_slash=True, handler_method='edit'),
+
+    # OPERATIONS Initiatives
+    RedirectRoute('/admin/initiatives/', operator.AdminInitiativesHandler, name='admin-initiatives', strict_slash=True),
+    RedirectRoute('/admin/initiatives/<init_id>/', operator.AdminInitiativeEditHandler, name='admin-initiative-edit', strict_slash=True, handler_method='edit'),
     
     # BLOG
     RedirectRoute('/admin/blog/', blog.AdminBlogHandler, name='admin-blog', strict_slash=True),

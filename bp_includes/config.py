@@ -73,6 +73,7 @@ config = {
     'cartodb_category_dict_table': 'cat_dict',
     'cartodb_polygon_table': 'mun_poly',
     'cartodb_polygon_name': 'MTY',
+    'cartodb_polygon_full_name': 'Monterrey',
     'cartodb_cic_user': 'cicadmin',
     'cartodb_cic_reports_table': 'nl_public',
     # contact page email settings

@@ -68,7 +68,35 @@
 	                    <div class="collapsible-body white">
 	                    	<p style="padding: 8px;">
 		                    	<input type="checkbox" class="filled-in layerControl" id="check_polygon" checked>
-		                    	<label for="check_polygon">Polígono</label>
+		                    	<label for="check_polygon">Polígono territorial</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="1" checked>
+		                    	<label for="1">Secciones electorales</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="2" checked>
+		                    	<label for="2">Distritos electorales</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="3" checked>
+		                    	<label for="3">Unidades económicas</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="4" checked>
+		                    	<label for="4">AGEBs urbanos - Vivienda</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="5" checked>
+		                    	<label for="5">AGEBs urbanos - Población</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="6" checked>
+		                    	<label for="6">AGEBs urbanos - Educación</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="7" checked>
+		                    	<label for="7">AGEBs urbanos - Economía</label>
 		                    </p>
 	                    </div>
                   </li>
@@ -84,6 +112,7 @@
     	var city_user = '{{cartodb_user}}';
     	var city_table_name = '{{cartodb_reports_table}}';
     	var city_mun_table_name = '{{cartodb_polygon_table}}';
+    	var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
     	var city_polygon_name = '{{cartodb_polygon_name}}'
 		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
 		var sublayers = [];
@@ -158,10 +187,50 @@
             }); 
 
 
+            // MEXICO LAYERS
+			layerSource = {
+                user_name: 'mexico',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT nl_secciones.* FROM nl_secciones, pais_municipios WHERE ST_Intersects(nl_secciones.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    cartocss: "#nl_secciones{line-color: #FFD528;line-width: 3;line-opacity: 1;}"
+                },{
+                    sql: "SELECT nl_distritos.* FROM nl_distritos, pais_municipios WHERE ST_Intersects(nl_distritos.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    cartocss: "#nl_distritos{line-color: #FFAB1F;line-width: 3;line-opacity: 1;}"
+                },{
+                    sql: "SELECT nl_denue.* FROM nl_denue, pais_municipios WHERE ST_Intersects(nl_denue.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    cartocss: "#nl_denue{marker-fill: #FF7E15;marker-line-color: #FFFFFF; line-width: 3;line-opacity: 1;}"
+                },{
+                    sql: "SELECT nl_ageb_urb_viv.* FROM nl_ageb_urb_viv, pais_municipios WHERE ST_Intersects(nl_ageb_urb_viv.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    cartocss: "#nl_ageb_urb_viv{line-color: #69B1D8;line-width: 3;line-opacity: 1;}"
+                },{
+                    sql: "SELECT nl_ageb_urb_pob.* FROM nl_ageb_urb_pob, pais_municipios WHERE ST_Intersects(nl_ageb_urb_pob.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    cartocss: "#nl_ageb_urb_pob{line-color: #3A6698;line-width: 3;line-opacity: 1;}"
+                },{
+                    sql: "SELECT nl_ageb_urb_edu.* FROM nl_ageb_urb_edu, pais_municipios WHERE ST_Intersects(nl_ageb_urb_edu.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    cartocss: "#nl_ageb_urb_edu{line-color: #BA58DA;line-width: 3;line-opacity: 1;}"
+                },{
+                    sql: "SELECT nl_ageb_urb_eco.* FROM nl_ageb_urb_eco, pais_municipios WHERE ST_Intersects(nl_ageb_urb_eco.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    cartocss: "#nl_ageb_urb_eco{line-color: #56107E;line-width: 3;line-opacity: 1;}"
+                }]
+            };
+            cartodb.createLayer(map,layerSource)
+            .on('done', function(layer) {
+			    map.overlayMapTypes.setAt(1, layer);
+                for (var i = 1, j =0; j < layer.getSubLayerCount(); i++, j++) {
+                   sublayers[i] = layer.getSubLayer(j);
+                   console.log("Congrats, you added sublayer #" + i + "!");
+                }
+            }); 
+
+
             $('.layerControl').change(function() {
                 if (this.id == 'check_polygon'){
                     if (this.checked) sublayers[0].show();
                     else sublayers[0].hide();
+                }else{
+                	if (this.checked) sublayers[parseInt(this.id)].show();
+                    else sublayers[parseInt(this.id)].hide();
                 }
             });
 			   

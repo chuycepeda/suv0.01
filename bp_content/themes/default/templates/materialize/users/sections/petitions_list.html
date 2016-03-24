@@ -1,7 +1,7 @@
 {% extends landing_layout %}
 
 <!-- ADD PAGE HEAD ELEMENTS -->
-{% block title %}<title>{{app_name}} » Lista de Peticiones</title>{% endblock %}
+{% block title %}<title>{{app_name}} » Lista de Propuestas</title>{% endblock %}
    
 {% block page_css %}
  	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -66,7 +66,7 @@
 <div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
 	<div class="section no-pad-bot">
 	  <div class="container">
-	    <h2 class="header center brand-color-text" style="margin-top:85px;">Peticiones</h2>        
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Propuestas</h2>        
 	  </div>
 	</div>
 </div>
@@ -79,7 +79,7 @@
 		        <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200">Tu espacio digital para preguntar, proponer, sumar voces y recibir respuestas.</h3>
 		        <div class="col card-panel s12 m2 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('materialize-petition-new')}}";'>
 		          <h2 class="grey-text"><i class="mdi-content-create" style="font-size:34px"></i></h2>
-                  <h5 class="brand-color-text" style="font-family: roboto-thin;">Crea una petición</h5>
+                  <h5 class="brand-color-text" style="font-family: roboto-thin;">Crea una propuesta</h5>
                 </div>
 	    	</div>
 	    	<div class="row">
@@ -113,7 +113,7 @@
 	  						<h3 class="truncate" style="margin: 3rem 0 1rem 0; text-align: left; width: 80%;">Title</h3>
 	  						<p style="margin-left: 2px; text-align: left;">Description</p>
 	  						<div class="chip white-text" style="margin-top: 20px; text-align: left;">Topic</div>
-	  						<a class="btn-floating btn-move-up waves-effect waves-light amber right tooltipped" data-position="top" data-delay="50" data-tooltip="Petición oficial" style="top: -80px;">
+	  						<a class="btn-floating btn-move-up waves-effect waves-light amber right tooltipped" data-position="top" data-delay="50" data-tooltip="Propuesta oficial" style="top: -80px;">
                         		<i class="mdi-action-verified-user"></i>
                       		</a>
 	                      </div>

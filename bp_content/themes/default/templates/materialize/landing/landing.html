@@ -271,14 +271,14 @@
                             {% if has_petitions %}
 		                    <!-- PETITIONS DROPDOWN -->
 								<ul id="petitions-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver propuestas</a>
 				                        </li>
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Crear petición</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Crear propuesta</a>
 				                        </li>
 				                      
 					            </ul>
 					            <li class="nav-petitions" {% if path == uri_for('materialize-petition-new') or path == uri_for('materialize-petition-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
-			                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="petitions-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Peticiones {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
+			                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="petitions-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Propuestas {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                    </li>	
                             {% endif %}
 
@@ -306,7 +306,7 @@
 				                        </li>
                                       {% endif %}
                                       {% if has_petitions %}
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petitions") }}">Mis propuestas</a>
 				                        </li>
                                       {% endif %}
                                       {% if has_transparency %}
@@ -372,10 +372,10 @@
 												  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
                         						  {% endif %}
                         						  {% if has_petitions %}
-												  <li><a href="{{ uri_for("materialize-petitions") }}">Mis peticiones</a></li>
+												  <li><a href="{{ uri_for("materialize-petitions") }}">Mis propuestas</a></li>
                         						  {% endif %}
                         						  {% if has_transparency %}
-												  <li><a href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a></li>
+												  <!-- <li><a href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a></li> -->
                             	  				  {% endif %}
 							                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
 							                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
@@ -408,11 +408,11 @@
 			                    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
 			                            <li class="bold">
-									    	<a class="collapsible-header waves-effect waves-light">Peticiones<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
+									    	<a class="collapsible-header waves-effect waves-light">Propuestas<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
-												  <li><a href="{{ uri_for("materialize-petition-cardlist") }}">Ver peticiones</a></li>
-							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Crear petición</a></li>
+												  <li><a href="{{ uri_for("materialize-petition-cardlist") }}">Ver propuestas</a></li>
+							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Crear propuesta</a></li>
 			                                    </ul>
 			                                </div>
 			                            </li>
@@ -456,7 +456,7 @@
 				    <div class="row center">
 				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a</h3>
 				      <h1 class="header col s12 white-text" style="font-family:Novecentowide-Bold;">{{app_name}}</h1>
-					  <h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" {% if not is_mobile %}style="font-size:2.2rem;"{% else %}style="font-size:1.5rem;"{% endif %}>Un espacio en el que podrás mandar reportes, peticiones y sugerencias que serán respondidas por tu alcalde.</h3>
+					  <h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" {% if not is_mobile %}style="font-size:2.2rem;"{% else %}style="font-size:1.5rem;"{% endif %}>Un espacio en el que podrás mandar reportes, peticiones y propuestas que serán respondidas por tu alcalde.</h3>
 				    </div>
 				    <div class="row center">
 				    </div>
@@ -479,7 +479,7 @@
 				        <h2 class="center brand-color-text"><i class="mdi-editor-insert-emoticon" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">¿Cómo funciona?</h5>
 
-				        <p class="center light" style="font-size: 18px;">{{app_name}} es un mecanismo de reporte digital de {{city_name}}. Al crear una cuenta podrás enviar reportes y peticiones sobre las necesidades de {{city_name}} que serán registradas en tu historial, y te enviaremos notificaciones de avance hasta dar solución.</p>
+				        <p class="center light" style="font-size: 18px;">{{app_name}} es un mecanismo de reporte digital de {{city_name}}. Al crear una cuenta podrás enviar reportes y propuestas sobre las necesidades de {{city_name}} que serán registradas en tu historial, y te enviaremos notificaciones de avance hasta dar solución.</p>
 				      </div>
 				    </div>
 
@@ -497,7 +497,7 @@
 				        <h2 class="center brand-color-text"><i class="mdi-action-favorite-outline" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Sé parte del cambio</h5>
 
-				        <p class="center light" style="font-size: 18px;">Reportes, peticiones y transparencia en un sólo lugar. Ayúdanos a conocer las necesidades de {{city_name}}, juntos lograremos el cambio que estas esperando. En tus manos tienes la herramienta digital que está por transformar {{city_name}} en una ciudad inteligente.</p>
+				        <p class="center light" style="font-size: 18px;">Reportes, propuestas y transparencia en un sólo lugar. Ayúdanos a conocer las necesidades de {{city_name}}, juntos lograremos el cambio que estas esperando. En tus manos tienes la herramienta digital que está por transformar {{city_name}} en una ciudad inteligente.</p>
 				      </div>
 				    </div>
 				  </div>
@@ -645,14 +645,14 @@
 	                      <a style="margin-bottom:30px;" href="{{uri_for("materialize-report-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Reportes</a>
                             {% endif %}
                             {% if has_petitions %}
-                          <a style="margin-bottom:30px;" href="{{uri_for("materialize-petition-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Peticiones</a>
+                          <a style="margin-bottom:30px;" href="{{uri_for("materialize-petition-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Propuestas</a>
                             {% endif %}
 	                      {% endif %}
 	                  </div>
 				      {% if not user_id %}
 	                  <div class="col s12 center">
 	                  	<p>Ingresa con tu cuenta para dar seguimiento a tu reporte en tiempo real.</p>
-	                  	<p>Si no tienes una cuenta, regístrate para poder enviar tus peticiones, solicitudes, sugerencias o comentarios a tu alcalde.</p>
+	                  	<p>Si no tienes una cuenta, regístrate para poder enviar tus reportes, peticiones y propuestas a tu alcalde.</p>
 	                  </div>
 	                  {% endif %}
 				    </div>
@@ -669,7 +669,7 @@
 				    <div class="col s12 m9">
 				      <h5 class="white-text">Acerca de</h5>
 				      <p class="grey-text text-lighten-4" style="    margin-top: 3%;">
-				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones, solicitudes y sugerencias que serán respondidas por tu alcalde. En este espacio esperamos compartir, dialogar y cooperar para juntos producir el gobierno y la ciudad inteligente que deseas. Te damos la bienvenida al acercamiento y la transparencia como nunca antes lo habías visto.
+				      	{{app_name}} es un espacio digital de {{city_name}} en el que podrás mandar y dar seguimiento a reportes, peticiones y propuestas que serán respondidas por tu alcalde. En este espacio esperamos compartir, dialogar y cooperar para juntos producir el gobierno y la ciudad inteligente que deseas. Te damos la bienvenida al acercamiento y la transparencia como nunca antes lo habías visto.
 				      </p>
 				    </div>
 				    <div class="col s12 m2 offset-m1" style="margin-top:12px;">

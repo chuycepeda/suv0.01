@@ -332,8 +332,9 @@
                                                     <ul>
                                                         <li {% if uri_for('admin-brand') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-brand') }}">Marca</a></li>
                                                         <li {% if uri_for('admin-categories') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">Categorías de reporte</a></li>
-                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">Temas de petición</a></li>
-                                                        <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Secretarías</a></li>
+                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">Temas para propuestas</a></li>
+                                                        <li {% if uri_for('admin-areas') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-areas') }}">Áreas de compromiso</a></li>
+                                                        <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización</a></li>
                                                         <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención ciudadana</a></li>
                                                     </ul>
                                                </div>
@@ -348,8 +349,8 @@
                                             <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-stats-reports') or path == uri_for('admin-stats-organization') %}active{% endif %}"><i class="mdi-action-assessment grey-text left"></i>Estadísticas</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                        <li {% if path == uri_for('admin-stats-reports') %}class="active"{% endif %}><a href="{{ uri_for('admin-stats-reports') }}">I. De reportes</a></li>
-                                                        <li {% if path == uri_for('admin-stats-organization') %}class="active"{% endif %}><a href="{{ uri_for('admin-stats-organization') }}">II. De desempeño</a></li>
+                                                        <li {% if path == uri_for('admin-stats-reports') %}class="active"{% endif %}><a href="{{ uri_for('admin-stats-reports') }}">Reportes</a></li>
+                                                        <li {% if path == uri_for('admin-stats-organization') %}class="active"{% endif %}><a href="{{ uri_for('admin-stats-organization') }}">Desempeño</a></li>
                                                     </ul>
                                                </div>
                                             </li>
@@ -360,12 +361,13 @@
 
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-map') or path == uri_for('admin-reports') or path == uri_for('admin-petitions') %}active{% endif %}"><i class="mdi-action-receipt grey-text left"></i>Reportes y peticiones</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-map') or path == uri_for('admin-reports') or path == uri_for('admin-petitions') %}active{% endif %}"><i class="mdi-action-assignment grey-text left"></i>Gestión</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                        <li {% if path == uri_for('admin-map') %}class="active"{% endif %}><a href="{{ uri_for('admin-map') }}">I. Mapa</a></li>
-                                                        <li {% if path == uri_for('admin-reports') %}class="active"{% endif %}><a href="{{ uri_for('admin-reports') }}">II. Reportes</a></li>
-                                                        <li {% if path == uri_for('admin-petitions') %}class="active"{% endif %}><a href="{{ uri_for('admin-petitions') }}">III. Peticiones</a></li>
+                                                        <li {% if path == uri_for('admin-map') %}class="active"{% endif %}><a href="{{ uri_for('admin-map') }}">Ver mapa</a></li>
+                                                        <li {% if path == uri_for('admin-reports') %}class="active"{% endif %}><a href="{{ uri_for('admin-reports') }}">Reportes</a></li>
+                                                        <li {% if path == uri_for('admin-petitions') %}class="active"{% endif %}><a href="{{ uri_for('admin-petitions') }}">Propuestas</a></li>
+                                                        <li {% if path == uri_for('admin-initiatives') %}class="active"{% endif %}><a href="{{ uri_for('admin-initiatives') }}">Compromisos</a></li>
                                                     </ul>
                                                </div>
                                             </li>
@@ -380,9 +382,9 @@
                                             <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-users-list') or path == uri_for('admin-logs-emails') or path == uri_for('admin-logs-visits') %}active{% endif %}"><i class="mdi-action-favorite-outline grey-text left"></i>Uso de la plataforma</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                       <li {% if path == uri_for('admin-users-list') %}class="active"{% endif %}><a href="{{ uri_for('admin-users-list') }}">I. Usuarios</a></li>
-                                                       <li {% if path == uri_for('admin-logs-visits') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-visits') }}">II. Visitas</a></li>
-                                                       <li {% if path == uri_for('admin-logs-emails') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-emails') }}">III. Correos</a></li>
+                                                       <li {% if path == uri_for('admin-users-list') %}class="active"{% endif %}><a href="{{ uri_for('admin-users-list') }}">Usuarios</a></li>
+                                                       <li {% if path == uri_for('admin-logs-visits') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-visits') }}">Visitas</a></li>
+                                                       <li {% if path == uri_for('admin-logs-emails') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-emails') }}">Correos</a></li>
                                                     </ul>
                                                </div>
                                             </li>

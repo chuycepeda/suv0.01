@@ -1,5 +1,5 @@
 {% extends landing_layout %}
-{% block title %}<title>{{app_name}} » Nueva Petición</title>{% endblock %}
+{% block title %}<title>{{app_name}} » Nueva Propuesta</title>{% endblock %}
 
 {% block page_css %}
 	<link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
@@ -16,7 +16,7 @@
 <div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
 	<div class="section no-pad-bot">
 	  <div class="container">
-	    <h2 class="header center brand-color-text" style="margin-top:85px;">Crear una petición</h2>        
+	    <h2 class="header center brand-color-text" style="margin-top:85px;">Crear una propuesta</h2>        
 	  </div>
 	</div>
 </div>
@@ -63,7 +63,7 @@
                                         <div id="test1" class="col s12">
                                             <div class="row">
                                               <!-- STEP I: tema y título -->
-                                                <h3 id="step_i"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200">¿De qué trata tu petición? Con menos de 50 palabras completa la oración: "Hago esta petición al gobierno de {{city_name}} porque...</h3>
+                                                <h3 id="step_i"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200">¿De qué trata tu propuesta? Con menos de 50 palabras completa la oración: "Hago esta propuesta al gobierno de {{city_name}} porque...</h3>
                                             </div>
                                             <div class="row">
                                                   <div class="input-field col s12 l6">
@@ -92,7 +92,7 @@
                                               <div class="input-field col s12 l6">
                                                   <i class="mdi-maps-map prefix brand-color-text brand-color-text"></i>
                                                   <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
-                                                  <label for="description">Asunto de la petición (se breve, más adelante nos das detalle)</label>
+                                                  <label for="description">Asunto de la propuesta (se breve, más adelante nos das detalle)</label>
                                               </div>
                                             </div> 
                                             <div class="row">
@@ -106,19 +106,19 @@
                                         <div id="test2" class="col s12">
                                           <div class="row">
                                               <!-- STEP II: similars -->
-                                              <h3 id="step_ii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">Antes de continuar te recomendamos revisar estas peticiones. Si no te parecen similares, haz clic en el botón de continuar.</h3>                                        
+                                              <h3 id="step_ii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">Antes de continuar te recomendamos revisar estas propuestas. Si no te parecen similares, haz clic en el botón de continuar.</h3>                                        
                                           </div>
                                         </div>
                                         <div id="test3" class="col s12">
                                           <div class="row">
                                               <!-- STEP III: description -->
-                                              <h3 id="step_iii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Cuál es tu petición? Describe tu petición con lujo de detalle en el tema que seleccionaste. </h3>
+                                              <h3 id="step_iii"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Cuál es tu propuesta? Describe tu idea con lujo de detalle en el tema que seleccionaste. </h3>
                                           </div>
                                         </div>
                                         <div id="test4" class="col s12">
                                           <div class="row">
                                               <!-- STEP IV: summary and publish -->
-                                              <h3 id="step_iv"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Todo en orden? Revisa tu petición y has clic en publicar para comenzar a sumar voces.</h3>
+                                              <h3 id="step_iv"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Todo en orden? Revisa tu propuesta y has clic en publicar para comenzar a sumar voces.</h3>
                                           </div>
                                         </div>
                                   </form>

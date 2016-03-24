@@ -100,7 +100,7 @@
                     <input type="hidden" name="delete" id="delete" value="no">
                   <div class="row margin">
                     <div class="input-field col s12">
-                      <i class="mdi-action-account-balance-wallet prefix brand-color-text"></i>
+                      <i class="mdi-action-account-balance prefix brand-color-text"></i>
                       <input id="agename" name="agename" type="text" value="{{agency.name}}">
                       <label for="agename" class="center-align">Nombre de la Dependencia</label>
                     </div>
@@ -128,14 +128,14 @@
                   </div>
                   <div class="row margin">
                     <div class="input-field col s12 l6">
-                        <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;"></i>
+                        <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;margin-left:5px;"></i>
                         <input type="hidden" id="agegroupcat" name="agegroupcat" value="{{agency.get_group_name()}}">
                         <label for="agegroupcat" class="center-align" style="margin-left:45px;">Grupo de categorías:</label><br><br>
                         <!-- Dropdown Trigger -->
-                        <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;margin-left:45px;">
+                        <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate left' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">
                             {{agency.get_group_name()}}
                         </a>
-                        <blockquote id="subcats" class="grey-text text-lighten-1" style="margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};"></blockquote>
+                        <blockquote id="subcats" class="grey-text text-lighten-1 left" style="margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};"></blockquote>
                         <!-- Dropdown Structure -->
                         <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
                     </div>

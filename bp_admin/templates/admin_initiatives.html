@@ -26,6 +26,7 @@
         left: 5px;
         top: 5px;
     }
+    
     .image{
           -webkit-transform: scale(0.55);
           transform: scale(0.55);
@@ -55,7 +56,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">Temas <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar<i class="mdi-action-note-add left"></i></a></li>
+                <li class="active">Compromisos abiertos <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar compromiso<i class="mdi-action-note-add left"></i></a></li>
                 
             </ol>
           </div>
@@ -72,34 +73,34 @@
       <div class="section">
        <div class="row" style="margin-top:30px">
             <div class="row">
-              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega los temas para que la ciudadanía organice sus propuestas.</h3>
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega aquí los compromisos que deseas abrir a la ciudadanía.</h3>
             </div>
             <table id="data-table-simple" class="responsive-table hoverable centered display">
                 <thead style="font-family:roboto; color:#777777;">
                   <tr class="brand-color white-text">
                       <th>✎</th>
-                      <th>Tema</th>
-                      <th>Color</th>
+                      <th>Área</th>
+                      <th>Compromiso</th>
                       <th>Icono</th>
-                      <th>Vigencia (días)</th>
-                      <th>Firmas necesarias</th>
-                      <th>Requiere imagen</th>
+                      <th>Métrica</th>
+                      <th>Estado</th>
+                      <th>Líder</th>
                   </tr>
                 </thead>
                 <tbody id="report_table" style="font-family:roboto-light;">
-                    {% for topic in topics %}
+                    {% for initiative in initiatives %}
                       <tr>
                           <td>
                               <div>    
-                                  <a class="icon" href="{{ uri_for('admin-topic-edit', topic_id=topic.get_id()) }}" >Editar</a>
+                                  <a class="icon" href="{{ uri_for('admin-initiative-edit', init_id=initiative.get_id()) }}" >Editar compromiso</a>
                               </div>
                           </td>
-                          <td>{{topic.name}}</td>
-                          <td><div class="color-box" style="background-color: #{{topic.color}};"></div>#{{topic.color}}</td>
-                          <td><a class="image" style="background-color: #{{topic.color}};  -webkit-mask: url({{topic.icon_url}}) no-repeat 50% 50%;"></a></td>
-                          <td>{{topic.benchmark}}</td>
-                          <td>{{topic.trigger}}</td>
-                          <td>{% if topic.requires_image %}Sí{% else %}No{% endif %}</td>
+                          <td>{{initiative.get_area_name()}}</td>
+                          <td>{{initiative.name}}</td>
+                          <td><a class="image" style="background-color: #{{initiative.color}};  -webkit-mask: url({{initiative.icon_url}}) no-repeat 50% 50%;"></a></td>
+                          <td>{{initiative.value}}</td>
+                          <td>{{initiative.get_status()}}</td>
+                          <td>{{initiative.lead}}</td>
                       </tr>
                     {% endfor %}
                 </tbody>
@@ -117,20 +118,47 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <div class="row">
           <div class="input-field col s12 center">
-            <p class="center login-form-text">Agrega un nuevo tema para propuestas llenando la siguiente forma</p>
+            <p class="center login-form-text">Agrega un de compromiso llenando la siguiente forma</p>
           </div>
         </div>
         <div class="row margin">
           <div class="input-field col s12">
-            <i class="mdi-action-class prefix brand-color-text"></i>
-            <input id="name" name="name" type="text">
-            <label for="name" class="center-align">Nombre del tema</label>
+            <i class="mdi-action-picture-in-picture prefix brand-color-text"></i>
+            <input id="name" name="name" type="text" />
+            <label for="name" class="center-align">Título del compromiso</label>
           </div>
         </div>
         <div class="row margin">
-            <i class="mdi-image-colorize left brand-color-text" style="margin-left: 22px;"></i>
-            <p class="grey-text">Haz clic en el recuadro y selecciona un color</p>
-            <input id="color" name="color" type="color" style="height: 45px;" value="{{brand_secondary_color}}">
+          <div class="input-field col s12">
+              <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;margin-left: 5px;"></i>
+              <input type="hidden" id="agegroupcat" name="agegroupcat" />
+              <label for="agegroupcat" class="center-align" style="margin-left:45px;">Área del compromiso:</label><br><br>
+              <!-- Dropdown Trigger -->
+              <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate left' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;"></a>
+              <!-- Dropdown Structure -->
+              <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12" style="margin-top:30px;">
+            <i class="mdi-social-person prefix brand-color-text"></i>
+            <input id="lead" name="lead" type="text" />
+            <label for="lead" class="center-align">Persona que lo lidera</label>
+          </div>
+        </div>
+        <div class="row margin">
+            <div class="input-field col s12">
+                <i class="mdi-action-description prefix brand-color-text"></i>
+                <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+                <label for="description">Descripción del compromiso (Escribe aquí ¿De qué se trata?)</label>
+            </div>
+        </div> 
+        <div class="row margin">
+            <div class="input-field col s12">
+                <i class="mdi-action-announcement prefix brand-color-text"></i>
+                <textarea id="relevance" name="relevance" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+                <label for="relevance">Relevancia del compromiso (Escribe aquí ¿Porqué es importante?)</label>
+            </div>
         </div>
         <div class="row margin">
             <div class="input-field col s12">
@@ -464,25 +492,7 @@
               </div>
             </div>
         </div>
-        <div class="row margin">
-          <div class="input-field col s12">
-            <i class="mdi-av-timer prefix brand-color-text"></i>
-            <input id="subbenchmark" name="subbenchmark" type="number" value="">
-            <label for="subbenchmark" class="center-align">Días de vigencia</label>
-          </div>
-          <div class="input-field col s12">
-            <i class="mdi-social-group-add prefix brand-color-text"></i>
-            <input id="subtrigger" name="subtrigger" type="number" value="">
-            <label for="subtrigger" class="center-align">Firmas necesarias</label>
-          </div>
-        </div>
-        <div class="row margin" style="text-align: left;margin-left: -2px;">
-          <div class="input-field col s12">
-            <i class="mdi-image-camera-alt prefix brand-color-text"></i>
-            <input name="subimagereq" type="checkbox" class="filled-in" id="filled-in-box">
-            <label for="filled-in-box">Requiere imagen</label>
-          </div>
-        </div>  
+
         <div class="row">
           <div class="input-field col s12">
             <a class="btn-large waves-effect waves-light col s12 brand-color white-text" style="cursor:pointer;" onclick="sendForm('form_add');">Agregar</a>
@@ -501,17 +511,45 @@
 {% block page_scripts %}
 <script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
+  var url = "{{ uri_for('materialize-transparency-areas') }}";
+  var reportDict;
+
+  $.ajax({
+      url: url,
+      type: 'GET',
+      success: function(data) { 
+          console.log(data)
+      }
+  }).done(function(data) {
+      reportDict = data;
+      var html='';
+      var abcList = [];
+      for (var x in reportDict){
+        abcList.push(x);
+    }
+    abcList.sort();
+      for (var i=0,j=abcList.length;i<j;i++){
+        html += '<li> <a class="brand-color-text" href="#" onclick="document.getElementById(\'catGroupbtn\').innerHTML=this.innerHTML; document.getElementById(\'agegroupcat\').value=(this.innerHTML).trim(); return false;">'+ abcList[i] +'</a></li>';
+    }
+    document.getElementById('catGroupdd').innerHTML = html;
+    if ($('#catGroupbtn').hasClass('disabled')) $('#catGroupbtn').removeClass('disabled');
+  });
+
+</script>
+<script type="text/javascript">
   
     function sendForm(form){
       document.getElementById('name').value = cleanUpSpecialChars(document.getElementById('name').value);
       if (document.getElementById('name').value==""){
          Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre por favor.</span>',4500);
-      }else if(document.getElementById('color').value==""){
-         Materialize.toast('<span class="toast-warning">Oops! Llena el campo de color por favor.</span>',4500);
-      }else if(document.getElementById('subbenchmark').value==""){
-        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de días por favor.</span>',4500);
-      }else if(document.getElementById('subtrigger').value==""){
-        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de firmas por favor.</span>',4500);
+      }else if(document.getElementById('agegroupcat').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Selecciona el área por favor.</span>',4500);
+      }else if(document.getElementById('lead').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Escribe por favor quién lidera este compromiso.</span>',4500);
+      }else if(document.getElementById('description').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Escribe por favor una descripción.</span>',4500);
+      }else if(document.getElementById('relevance').value==""){
+        Materialize.toast('<span class="toast-warning">Oops! Escribe por favor porqué es relevante.</span>',4500);
       }else if(document.getElementById('subicon').value==""){
         Materialize.toast('<span class="toast-warning">Oops! Selecciona un icono por favor.</span>',4500);
       }else{
@@ -539,11 +577,11 @@
             paging: true,
             "lengthMenu": [[250], [250]],
             "language": {
-              "lengthMenu": "Mostrar _MENU_ temas por página",
+              "lengthMenu": "Mostrar _MENU_ compromisos por página",
               "search": "Buscar:",
-              "zeroRecords": "Ningún tema encontrado",
-              "info": "Mostrando _START_ a _END_ de _TOTAL_ temas",
-              "infoFiltered": "(filtrando sobre _MAX_ temas)",
+              "zeroRecords": "Ningún compromiso encontrado",
+              "info": "Mostrando _START_ a _END_ de _TOTAL_ compromisos",
+              "infoFiltered": "(filtrando sobre _MAX_ compromisos)",
               "paginate": {
                   "first":      "Inicio",
                   "last":       "Final",

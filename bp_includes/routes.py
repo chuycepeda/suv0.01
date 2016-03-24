@@ -57,6 +57,7 @@ _routes = [
     RedirectRoute('/transparency/budget/', handlers.MaterializeTransparencyBudgetHandler, name='materialize-transparency-budget', strict_slash=True),
     RedirectRoute('/transparency/budget/new/', handlers.MaterializeTransparencyBudgetNewHandler, name='materialize-transparency-budget-new', strict_slash=True),
     RedirectRoute('/transparency/init/', handlers.MaterializeTransparencyInitiativesHandler, name='materialize-transparency-init', strict_slash=True),
+    RedirectRoute('/transparency/areas/', handlers.MaterializeAreasHandler, name='materialize-transparency-areas', strict_slash=True),
 
     # User: all
     RedirectRoute('/user/welcome/', handlers.MaterializeWelcomeRequestHandler, name='materialize-welcome', strict_slash=True),

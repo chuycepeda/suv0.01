@@ -4076,6 +4076,7 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         
         return self.render_template('materialize/users/sections/transparency_city.html', **params)
@@ -4117,7 +4118,6 @@ class MaterializeTransparencyBudgetNewHandler(BaseHandler):
         ####------------------------------------------------------------------####
         
         return self.render_template('materialize/users/sections/transparency_budget_new.html', **params)
-
 
 class MaterializeTransparencyInitiativesHandler(BaseHandler):
     """
@@ -4494,6 +4494,28 @@ class MaterializeTopicsHandler(BaseHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))
 
+class MaterializeAreasHandler(BaseHandler):
+    def get(self):
+        if not self.has_transparency:
+            self.abort(403)
+
+        reportDict = {}
+        q = self.request.get('q') if self.request.get('q') else False
+        o = self.request.get('o') if self.request.get('o') else False
+        logging.info(q)
+        logging.info(o)
+
+        area = models.Area.query()
+        for area in area:
+            reportDict[area.name] = {
+                    'name': area.name,
+                    'color': area.color,
+                    'icon_url': area.icon_url
+                }
+        
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
 
 # ------------------------------------------------------------------------------------------- #
 """                                     REST API HANDLERS                                   """

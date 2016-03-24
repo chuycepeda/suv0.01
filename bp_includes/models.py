@@ -445,9 +445,9 @@ class Agency(ndb.Model):
     def get_group_name(self):
         if self.group_category_id:
             group = GroupCategory.get_by_id(long(self.group_category_id))
-            return group.name
-        else:
-            return ""
+            if group:
+                return group.name
+        return ""
 
     def get_id(self):
         return self._key.id() 
@@ -724,16 +724,16 @@ class Petition(ndb.Model):
 
             runway = min_benchmark - diff
             if runway > 0:
-                return u"A esta petición le restan %s días para expirar." % runway
+                return u"A esta propuesta le restan %s días para expirar." % runway
             else:
-                return u"Esta petición expiró hace %s días." % abs(runway)
+                return u"Esta propuesta expiró hace %s días." % abs(runway)
         elif self.status == 'triggered':
-            return u"Esta petición está en espera de ser respondida." % runway
+            return u"Esta propuesta está en espera de ser respondida." % runway
         elif self.status == 'responded':
-            return u"Esta petición ya ha sido respondida." % runway
+            return u"Esta propuesta ya ha sido respondida." % runway
 
 class Topic(ndb.Model):
-    name = ndb.StringProperty()
+    name = ndb.StringProperty(required = True)
     color = ndb.StringProperty(required = True, default = "AEAEAE")
     icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         
     requires_image = ndb.BooleanProperty(default = False)                                                                               
@@ -764,6 +764,64 @@ class Comments(ndb.Model):
 
 #--------------------------------------- ENDOF   P E T I T I O N   M O D E L --------------------------------------------------------          
 
+
+#--------------------------------------- T R A N S P A R E N C Y      M O D E L -------------------------------------------------------------
+class Initiative(ndb.Model):
+    name = ndb.StringProperty(required = True)
+    color = ndb.StringProperty(required = True, default = "AEAEAE")
+    icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")
+    value = ndb.StringProperty(required = True, default = "0")
+    status = ndb.StringProperty(required = True, default = "open", choices=['open', 'measuring', 'delayed', 'near', 'completed'])
+    lead = ndb.StringProperty()
+    description = ndb.TextProperty()
+    relevance = ndb.TextProperty()
+    area_id = ndb.IntegerProperty(required = True)
+
+    @classmethod
+    def get_by_name(cls, name):
+        return cls.query(cls.name == name).get()                                                                            
+
+    @classmethod
+    def get_by_area_id(cls, area_id):
+        return cls.query(cls.area_id == area_id).get()                                                                                      
+
+    def get_id(self):
+        return self._key.id()
+
+    def get_status(self):
+        if self.status == 'open':
+            return 'Iniciado'        
+        if self.status == 'measuring':
+            return 'En progreso'
+        if self.status == 'delayed':
+            return 'Retrasado'
+        if self.status == 'near':
+            return 'A punto de cumplir'
+        if self.status == 'completed':
+            return 'Cumplido'
+
+    def get_area_name(self):
+        if self.area_id:
+            area = Area.get_by_id(long(self.area_id))
+            if area:
+                return area.name
+        return ""
+
+class Area(ndb.Model):
+    name = ndb.StringProperty(required = True)
+    color = ndb.StringProperty(required = True, default = "AEAEAE")
+    icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")
+
+    @classmethod
+    def get_by_name(cls, name):
+        return cls.query(cls.name == name).get()                                                                            
+
+    def get_id(self):
+        return self._key.id()
+
+
+
+#--------------------------------------- ENDOF   T R A N S P A R E N C Y   M O D E L --------------------------------------------------------          
 
 
 
