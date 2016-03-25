@@ -84,7 +84,7 @@
                         </div>
                         <div class="right">
                           <p>
-                            <input type="checkbox" class="filled-in" id="filled-in-box" checked="{{user.activated}}" name="activated">
+                            <input type="checkbox" class="filled-in" id="filled-in-box" {% if user.activated %}checked=""{% endif %} name="activated">
                             <label for="filled-in-box">Activado</label>
                           </p>
                         </div>

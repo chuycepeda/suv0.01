@@ -4507,6 +4507,7 @@ class MaterializeAreasHandler(BaseHandler):
         q = self.request.get('q') if self.request.get('q') else False
         o = self.request.get('o') if self.request.get('o') else False
         area_id = self.request.get('area_id') if self.request.get('area_id') else False
+        init_id = self.request.get('init_id') if self.request.get('init_id') else False
         logging.info(q)
         logging.info(o)
 
@@ -4515,18 +4516,42 @@ class MaterializeAreasHandler(BaseHandler):
                 'html': 'error in area id number request'
             }
             html = ''
-
+            empty = True
             initiatives = models.Initiative.query(models.Initiative.area_id == int(area_id))
             for initiative in initiatives:
-                
-                html += '<div class="card col m2 hoverable" style="border: 1px solid %s%s"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s%s;  -webkit-mask: url(%s) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s%s;">%s</span><div class="col s12" style="margin-bottom:18px; border-radius:2px; margin-top:25px;">' % ("#",initiative.color, "#", initiative.color, initiative.icon_url, "%", "%", "#", initiative.color, initiative.name)
+                empty = False
+                html += '<div class="card col m2 hoverable" onclick="loadDetail(%s)"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s%s;  -webkit-mask: url(%s) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s%s;">%s</span><div class="col s12" style="margin-bottom:18px; border-radius:2px; margin-top:25px;">' % (initiative.get_id(), "#", initiative.color, initiative.icon_url, "%", "%", "#", initiative.color, initiative.name)
                 
                 if initiative.status == 'completed':
                     html += '<a class="btn-floating btn-move-up waves-effect waves-light green right tooltipped" data-position="top" data-delay="50" data-tooltip="Cumplido" style="top: 25px;left: 10px;"><i class="mdi-action-verified-user"></i></a>'
                 
                 html += '<div class="col s10 offset-s1 valign-wrapper center grey-text" style="height:100px; margin-bottom:20px;border: 8px solid %s%s; border-radius: 4px;"><span class="col s12 center flow-text">%s</span></div><p class="col s12 center" style="color:%s%s;">%s</p></div></div><div class="card-action"></div></div>' % ("#",initiative.get_status_color(), initiative.value, "#", initiative.get_status_color(), initiative.get_status())
+
+            if empty:
+                html += '<div class="card col m2 hoverable"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s9b9b9b;  -webkit-mask: url(http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/zoom-out.svg) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s9b9b9b;">No hay compromisos</span></div><div class="card-action"></div></div>' % ("#", "%" , "%", "#")
             
             reportDict['initiatives']['html'] = html
+        
+        elif init_id:
+            reportDict['initiatives'] = {
+                'initiative': 'error in init id number request'
+            }
+            html = ''
+            initiative = models.Initiative.get_by_id(int(init_id))
+            if initiative:
+                reportDict['initiatives']['initiative'] = {
+                    'name' : initiative.name,
+                    'color' : initiative.color,
+                    'icon_url' : initiative.icon_url,
+                    'value' : initiative.value,
+                    'lead' : initiative.lead,
+                    'description' : initiative.description,
+                    'relevance' : initiative.relevance,
+                    'status' : initiative.get_status(),
+                    'status_color' : initiative.get_status_color(),
+                    'area' : initiative.get_area_name()
+                }
+
         else:
             area = models.Area.query()
             for area in area:

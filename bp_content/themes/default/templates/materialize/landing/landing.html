@@ -238,6 +238,10 @@
 				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item" style="color: #1D1C1C;margin-left: 20px;margin-right: 20px;">Ingresar</a></li>
 				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn brand-color" style="color:white; margin-left: 20px;margin-right: 20px;">Crear Cuenta</a></li>
 				    {% else %}
+						{% if user_is_admin %}
+				    	<li id="nav-admin"><a href="{{uri_for("admin")}}" class="menu-item brand-secondary-color white-text" style="margin-left: 20px;margin-right: 20px;">Administrador</a></li>
+						{% endif %}
+
                         {% if has_reports %}
 
 					    {% if user_is_callcenter %}
@@ -345,6 +349,11 @@
 				    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingresar</a></li>
 				    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white-text brand-color">Crear Cuenta</a></li>
 				    {% else %}
+						{% if user_is_admin %}
+				    	<li id="nav-admin"><a href="{{uri_for("admin")}}" class="menu-item brand-secondary-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Administrador</a></li>
+					     <li class="divider"></li>
+						{% endif %}
+
                         {% if has_reports %}
 				    	{% if user_is_callcenter %}
 				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
@@ -884,6 +893,11 @@
 						};
 						BrowserDetect.init();
 
+						{% if user_is_admin %}
+						 console.log("he's an admin!!")
+						{% else %}
+						 console.log("he's not an admin!!")
+						{% endif %}
 						{% if user_is_secretary %}
 						 console.log("he's a secretary!!")
 						{% else %}

@@ -15,6 +15,7 @@ from bp_includes import models
 from bp_includes.lib import utils, i18n, jinja_bootstrap
 from babel import Locale
 import logging
+from google.appengine.api import users as g_users #https://cloud.google.com/appengine/docs/python/refdocs/modules/google/appengine/api/users#get_current_user
 
 class ViewClass:
     """
@@ -140,6 +141,12 @@ class BaseHandler(webapp2.RequestHandler):
     @webapp2.cached_property
     def user_id(self):
         return str(self.user['user_id']) if self.user else None
+
+    @webapp2.cached_property
+    def user_is_admin(self):
+        if self.user:
+            return g_users.is_current_user_admin()
+        return False
 
     @webapp2.cached_property
     def user_is_secretary(self):
@@ -390,6 +397,7 @@ class BaseHandler(webapp2.RequestHandler):
             'brand_secondary_color': self.brand['brand_secondary_color'],
             'brand_tertiary_color': self.brand['brand_tertiary_color'],
             'user_id': self.user_id,
+            'user_is_admin': self.user_is_admin,
             'user_is_secretary': self.user_is_secretary,
             'user_is_agent': self.user_is_agent,
             'user_is_operator': self.user_is_operator,

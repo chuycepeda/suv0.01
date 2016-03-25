@@ -127,7 +127,6 @@
     function loadInits(id){
     	  var html = '';
 		  var url = "{{ uri_for('materialize-transparency-areas') }}?area_id="+id;
-		  var reportDict;
 
 		  $.ajax({
 		      url: url,
@@ -137,10 +136,27 @@
 		      }
 		  }).done(function(data) {
 		      document.getElementById('tab-content').innerHTML = data.initiatives.html;
+          	  Materialize.fadeInImage('#tab-content');        
 		  });
+          
 
 	}
 
-	loadInits('{{first_area.get_id()}}')
+	loadInits('{{first_area.get_id()}}');
+
+	function loadDetail(id){
+		 var html = '';
+		  var url = "{{ uri_for('materialize-transparency-areas') }}?init_id="+id;
+
+		  $.ajax({
+		      url: url,
+		      type: 'GET',
+		      success: function(data) { 
+		          console.log(data);
+		      }
+		  }).done(function(data) {
+		      
+		  });
+	}
 </script>
 {% endblock %}

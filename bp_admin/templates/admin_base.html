@@ -361,13 +361,13 @@
 
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-map') or path == uri_for('admin-reports') or path == uri_for('admin-petitions') or path == uri_for('admin-initiatives') %}active{% endif %}"><i class="mdi-action-assignment grey-text left"></i>Gestión</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-map') or uri_for('admin-reports') in path or uri_for('admin-petitions') in path or uri_for('admin-initiatives') in path %}active{% endif %}"><i class="mdi-action-assignment grey-text left"></i>Gestión</a>
                                                <div class="collapsible-body">
                                                     <ul>
                                                         <li {% if path == uri_for('admin-map') %}class="active"{% endif %}><a href="{{ uri_for('admin-map') }}">Ver mapa</a></li>
-                                                        <li {% if path == uri_for('admin-reports') %}class="active"{% endif %}><a href="{{ uri_for('admin-reports') }}">Reportes</a></li>
-                                                        <li {% if path == uri_for('admin-petitions') %}class="active"{% endif %}><a href="{{ uri_for('admin-petitions') }}">Propuestas</a></li>
-                                                        <li {% if path == uri_for('admin-initiatives') %}class="active"{% endif %}><a href="{{ uri_for('admin-initiatives') }}">Compromisos</a></li>
+                                                        <li {% if uri_for('admin-reports') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-reports') }}">Reportes</a></li>
+                                                        <li {% if uri_for('admin-petitions') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-petitions') }}">Propuestas</a></li>
+                                                        <li {% if uri_for('admin-initiatives') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-initiatives') }}">Compromisos</a></li>
                                                     </ul>
                                                </div>
                                             </li>
@@ -379,12 +379,12 @@
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
                                             
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-users-list') or path == uri_for('admin-logs-emails') or path == uri_for('admin-logs-visits') %}active{% endif %}"><i class="mdi-action-favorite-outline grey-text left"></i>Uso de la plataforma</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if uri_for('admin-users-list') in path or uri_for('admin-logs-emails') in path or uri_for('admin-logs-visits') in path %}active{% endif %}"><i class="mdi-action-favorite-outline grey-text left"></i>Uso de la plataforma</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                       <li {% if path == uri_for('admin-users-list') %}class="active"{% endif %}><a href="{{ uri_for('admin-users-list') }}">Usuarios</a></li>
-                                                       <li {% if path == uri_for('admin-logs-visits') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-visits') }}">Visitas</a></li>
-                                                       <li {% if path == uri_for('admin-logs-emails') %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-emails') }}">Correos</a></li>
+                                                       <li {% if uri_for('admin-users-list') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-users-list') }}">Usuarios</a></li>
+                                                       <li {% if uri_for('admin-logs-visits') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-visits') }}">Visitas</a></li>
+                                                       <li {% if uri_for('admin-logs-emails') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-logs-emails') }}">Correos</a></li>
                                                     </ul>
                                                </div>
                                             </li>
@@ -468,6 +468,60 @@
                                 <!--start container-->
                                 <div class="container">
                                     {% block page_content %}
+
+                                        <div class="section">
+                                            <div class="container" style="margin-top:-60px">
+                                                <div style="margin-bottom: 60px;">
+                                                    <div class="section no-pad-bot">
+                                                      <div class="container">
+                                                        <h2 class="header center brand-color-text" style="margin-top:85px;">¡Hola {{nickname}}!</h2>        
+                                                        <h3 class="center col s12 m7 offset-m1 grey-text" style="font-weight: 200">¿Qué tal tu <span id="today"></span>, listo para administrar tu plataforma?</h3>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                                {% if has_reports %}
+                                                <div class="row">
+                                                    <div class="center col s12 m6 offset-m1">
+                                                        <h3 class="brand-secondary-color-text" style="font-weight: 400"><i class="mdi-maps-place" style="font-size:34px"></i> Administrar reportes</h3>
+                                                        <h3 class="grey-text" style="font-weight: 200; line-height: 45px;">Administra reportes y solicitudes de apoyo para brindar soluciones.</h3>
+                                                    </div>
+                                                    <div class="col card-panel s12 m2 offset-m1 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('admin-reports')}}";'>
+                                                      <h2 class="grey-text"><i class="mdi-maps-place" style="font-size:34px"></i></h2>
+                                                      <h5 class="brand-color-text" style="font-family: roboto-thin;">Ver reportes</h5>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if has_petitions %}
+                                                <div class="row"><div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div></div>
+                                                <div class="row">
+                                                    <div class="col card-panel s12 m2 offset-m1 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('admin-petitions')}}";'>
+                                                      <h2 class="grey-text"><i class="mdi-content-create" style="font-size:34px"></i></h2>
+                                                      <h5 class="brand-color-text" style="font-family: roboto-thin;">Ver propuestas</h5>
+                                                    </div>
+                                                    <div class="center col s12 m6 offset-m1">
+                                                        <h3 class="brand-secondary-color-text" style="font-weight: 400"><i class="mdi-content-create" style="font-size:34px"></i> Administrar propuestas</h3>
+                                                        <h3 class="grey-text" style="font-weight: 200; line-height: 45px;">Administra las propuestas y brinda respuestas.</h3>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if has_transparency %}
+                                                <div class="row"><div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div></div>
+                                                <div class="row">
+                                                    <div class="center col s12 m6 offset-m1">
+                                                        <h3 class="brand-secondary-color-text" style="font-weight: 400"><i class="mdi-action-visibility" style="font-size:34px"></i> Administrar compromisos</h3>
+                                                        <h3 class="grey-text" style="font-weight: 200; line-height: 45px;">Administra el progreso de los compromisos oficiales.</h3>
+                                                    </div>
+                                                    <div class="col card-panel s12 m2 offset-m1 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('admin-initiatives')}}";'>
+                                                      <h2 class="grey-text"><i class="mdi-action-visibility" style="font-size:34px"></i></h2>
+                                                      <h5 class="brand-color-text" style="font-family: roboto-thin;">Ver compromisos</h5>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+
+
                                     {% endblock %}
 
                                     {% block page_floatings %}
@@ -735,7 +789,21 @@
                 {% endif %}
             {% endif %}
 
-            {% block page_scripts %}{% endblock %}
+            {% block page_scripts %}
+                <script type="text/javascript">
+                    var d = new Date();
+                    var weekday = new Array(7);
+                    weekday[0]=  "Domingo";
+                    weekday[1] = "Lunes";
+                    weekday[2] = "Martes";
+                    weekday[3] = "Miércoles";
+                    weekday[4] = "Jueves";
+                    weekday[5] = "Viernes";
+                    weekday[6] = "Sábado";
+                    var n = weekday[d.getDay()];
+                    $('#today').html(n);
+                </script>
+            {% endblock %}
             
 
         {% endblock %}

@@ -14,7 +14,9 @@ from google.appengine.api import users as g_users #https://cloud.google.com/appe
 
 class AdminRequestHandler(BaseHandler):
     def get(self):
-        self.redirect(self.uri_for('admin-stats-reports'))
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        return self.render_template('admin_base.html', **params)
 
 class AdminStatsReportsHandler(BaseHandler):
     def get(self):
