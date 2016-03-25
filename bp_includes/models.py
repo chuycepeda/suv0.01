@@ -800,6 +800,18 @@ class Initiative(ndb.Model):
         if self.status == 'completed':
             return 'Cumplido'
 
+    def get_status_color(self):
+        if self.status == 'open':
+            return '9e9e9e' #grey    
+        if self.status == 'measuring':
+            return '03a9f4' #light-blue
+        if self.status == 'delayed':
+            return 'ffc107' #amber
+        if self.status == 'near':
+            return '69f0ae' #green accent-2
+        if self.status == 'completed':
+            return '4caf50' #green
+
     def get_area_name(self):
         if self.area_id:
             area = Area.get_by_id(long(self.area_id))

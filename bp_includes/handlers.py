@@ -4135,6 +4135,10 @@ class MaterializeTransparencyInitiativesHandler(BaseHandler):
         else:
             params = {}
         ####------------------------------------------------------------------####
+
+        params['areas'] = models.Area.query()
+        params['first_area'] = models.Area.query().get()
+
         
         return self.render_template('materialize/users/sections/transparency_init.html', **params)
 
@@ -4502,16 +4506,35 @@ class MaterializeAreasHandler(BaseHandler):
         reportDict = {}
         q = self.request.get('q') if self.request.get('q') else False
         o = self.request.get('o') if self.request.get('o') else False
+        area_id = self.request.get('area_id') if self.request.get('area_id') else False
         logging.info(q)
         logging.info(o)
 
-        area = models.Area.query()
-        for area in area:
-            reportDict[area.name] = {
-                    'name': area.name,
-                    'color': area.color,
-                    'icon_url': area.icon_url
-                }
+        if area_id:
+            reportDict['initiatives'] = {
+                'html': 'error in area id number request'
+            }
+            html = ''
+
+            initiatives = models.Initiative.query(models.Initiative.area_id == int(area_id))
+            for initiative in initiatives:
+                
+                html += '<div class="card col m2 hoverable" style="border: 1px solid %s%s"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s%s;  -webkit-mask: url(%s) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s%s;">%s</span><div class="col s12" style="margin-bottom:18px; border-radius:2px; margin-top:25px;">' % ("#",initiative.color, "#", initiative.color, initiative.icon_url, "%", "%", "#", initiative.color, initiative.name)
+                
+                if initiative.status == 'completed':
+                    html += '<a class="btn-floating btn-move-up waves-effect waves-light green right tooltipped" data-position="top" data-delay="50" data-tooltip="Cumplido" style="top: 25px;left: 10px;"><i class="mdi-action-verified-user"></i></a>'
+                
+                html += '<div class="col s10 offset-s1 valign-wrapper center grey-text" style="height:100px; margin-bottom:20px;border: 8px solid %s%s; border-radius: 4px;"><span class="col s12 center flow-text">%s</span></div><p class="col s12 center" style="color:%s%s;">%s</p></div></div><div class="card-action"></div></div>' % ("#",initiative.get_status_color(), initiative.value, "#", initiative.get_status_color(), initiative.get_status())
+            
+            reportDict['initiatives']['html'] = html
+        else:
+            area = models.Area.query()
+            for area in area:
+                reportDict[area.name] = {
+                        'name': area.name,
+                        'color': area.color,
+                        'icon_url': area.icon_url
+                    }
         
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers['Content-Type'] = 'application/json'
