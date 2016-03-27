@@ -117,15 +117,12 @@
                                 <a data-hover="false" id='statusbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='statusdd' style="min-width: 250px; min-height: 45px; line-height: 45px; margin-left: 15px;">{{report.get_status()}}</a>
                                 <!-- Dropdown Structure -->
                                 <ul id='statusdd' class='dropdown-content' style="max-height: 250px; margin-left: 15px; font-weight: bolder;">
-                                    <!-- COMMENTED STATUS BELONG TO OPERATORS -->
                                     <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; getStatus((this.innerHTML).trim()); return false;">Asignado</a></li>
-                                    <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; getStatus((this.innerHTML).trim()); return false;">En proceso</a></li> 
-                                    <li><a class="waves-effect waves-light green-text modal-trigger" href="#modal_solved" style="margin-top:8px;">Resuelto<i class="mdi-action-assignment-turned-in right"></i></a> </li>  
-                                     <li><a class="waves-effect waves-light red-text modal-trigger" href="#modal_failed" style="margin-top:8px;">Fallo<i class="mdi-action-assignment-late right"></i></a> </li> 
-                                    <li><a class="waves-effect waves-light grey-text modal-trigger" href="#modal_delete" style="margin-top:8px;">Archivado<i class="mdi-action-delete right"></i></a> </li>
+                                    <li><a class="waves-effect waves-light amber-text text-lighten-1 modal-trigger" href="#modal_rejected" style="margin-top:8px;">Rechazado<i class="mdi-action-settings-backup-restore right"></i></a></li> 
+                                    <li><a class="waves-effect waves-light green-text text-lighten-1 modal-trigger" href="#modal_solved" style="margin-top:8px;">Resuelto<i class="mdi-action-assignment-turned-in right"></i></a> </li>                      
+                                    <li><a class="waves-effect waves-light red-text text-lighten-1 modal-trigger" href="#modal_failed" style="margin-top:8px;">Fallo<i class="mdi-action-assignment-late right"></i></a> </li>
                                     <li>  <a class="waves-effect waves-light red-text text-lighten-2 modal-trigger" href="#modal_spam" style="margin-top:8px;">Spam<i class="mdi-action-bug-report right"></i></a> </li>
-                                    <!-- <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; getStatus((this.innerHTML).trim()); return false;">Rechazado</a></li>  -->    
-                                    <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; getStatus((this.innerHTML).trim()); return false;">Olvidado</a></li>                                                                                                                                    
+                                    <li><a class="waves-effect waves-light grey-text text-lighten-2 modal-trigger" href="#modal_delete" style="margin-top:8px;">Archivar<i class="mdi-action-delete right"></i></a> </li>                                                                                                                                    
                                 </ul>                
                             </div>
 
