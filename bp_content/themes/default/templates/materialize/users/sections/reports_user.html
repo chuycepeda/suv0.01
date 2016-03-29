@@ -40,8 +40,9 @@
 	<div class="section">
 		<div class="container">
 			<div class="row">
+				<div class="col s12 m10 offset-m1">
 				{% for idx, title, when, address_from_coord, address_from, description, status, image_url, group, category, cdb_id, req_deletion, color, rating, follows, log_count, kind in reports %}
-		            <div class="col s12 m6 l3" id="panel_{{idx}}">
+		            <div class="col s12 m6 l4" id="panel_{{idx}}" style="height: 600px;padding: 20px;">
 		                <div class="map-card">
 		                    <div class="card">
 		                        <div class="card-image waves-effect waves-block waves-light">
@@ -65,10 +66,10 @@
 										</span>
 		                            </p>
 		                            {% endif %}	                            
-		                            {% if cdb_id != -1 %}<p class="activator" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-receipt brand-color-text"></i>Ticket: <span class="brand-secondary-color-text">{{cdb_id}}</span> <span class="grey-text text-lighten-2 activator">(haz clic aquí para ver el detalle)</span></p>
+		                            {% if cdb_id != -1 %}<p class="activator" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-receipt brand-color-text"></i>Ticket: <span class="brand-secondary-color-text">{{cdb_id}}</span> <span class="grey-text text-lighten-2 activator">(clic aquí para ver a detalle)</span></p>
 		                            {% else %} <p class="blog-post-content activator" style="cursor: pointer">Haz clic aquí para ver el detalle.</p>{% endif %}
 									
-									{% if log_count > 0 %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes brand-color-text"></i>Comentarios: <span class="brand-secondary-color-text">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(haz clic aquí para verlos)</a></p>
+									{% if log_count > 0 %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes brand-color-text"></i>Comentarios: <span class="brand-secondary-color-text">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(clic aquí para verlos)</a></p>
 		                            {% endif %}
 									<div class="divider" style="margin-top:8px; margin-bottom:8px;"></div>
 									<div class="col s6 center">
@@ -91,7 +92,7 @@
 		                            {% if status == 'Resuelto' %}
 		                            <p><i style="padding:8px;" class="mdi-action-star-rate brand-color-text"></i>Calificación: <span class="brand-secondary-color-text">{{rating}}</span></p>
 		                            {% endif %}
-		                            <p><i style="padding:8px;" class="mdi-social-group-add brand-color-text"></i>Seguidores: <span class="brand-secondary-color-text">{{follows}}</span></p>
+		                            <p><i style="padding:8px;" class="mdi-action-favorite brand-color-text"></i>Likes: <span class="brand-secondary-color-text">{{follows}}</span></p>
 		                            {% if kind == 'own' %}
 		                            	<div class="col s12 center" style="padding-top: 20px;">
 			                            	<div class="divider" style="    margin-bottom: 10px;"></div>
@@ -109,6 +110,7 @@
 		            </div>
 		            <input type="text" id = "{{idx|safe}}" class="data" value="{{ address_from_coord|safe }}" icon="http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%20|{{color}}"hidden>
 				{% endfor %}
+				</div>
 				<div id="modal_delete" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
 		            <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
 		            <div class="modal-content">

@@ -56,7 +56,8 @@ _routes = [
     RedirectRoute('/transparency/city/', handlers.MaterializeTransparencyCityHandler, name='materialize-transparency-city', strict_slash=True),
     RedirectRoute('/transparency/budget/', handlers.MaterializeTransparencyBudgetHandler, name='materialize-transparency-budget', strict_slash=True),
     RedirectRoute('/transparency/budget/new/', handlers.MaterializeTransparencyBudgetNewHandler, name='materialize-transparency-budget-new', strict_slash=True),
-    RedirectRoute('/transparency/init/', handlers.MaterializeTransparencyInitiativesHandler, name='materialize-transparency-init', strict_slash=True),
+    RedirectRoute('/transparency/initiatives/', handlers.MaterializeTransparencyInitiativesHandler, name='materialize-transparency-init', strict_slash=True),
+    RedirectRoute('/transparency/initiatives/<initiative_id>/', handlers.MaterializeTransparencyInitiativeHandler, name='materialize-transparency-initiative', strict_slash=True, handler_method='edit'),
     RedirectRoute('/transparency/areas/', handlers.MaterializeAreasHandler, name='materialize-transparency-areas', strict_slash=True),
 
     # User: all

@@ -55,15 +55,18 @@ config = {
     'has_transparency': True,
     'has_social_media': True,
     'has_cic': True,
+    # get your own recaptcha keys by registering at http://www.google.com/recaptcha/
+    'captcha_public_key': "6LcMfv0SAAAAAGMJ9i-g5aJhXFvSHpPsqDLOHTUD",
+    'captcha_private_key': "6LcMfv0SAAAAALMUmCmFt5NOAw_ZTHabWRHAFJI6",
     # application on social media
     'twitter_url': 'https://twitter.com/miciudadenlinea',
     'facebook_url': 'https://www.facebook.com/miciudadenlinea',
-    'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com',
-    'twitter_appID': '201422020200516',
-    'twitter_handle': 'ciudadguadalupe',
-    'facebook_handle':'GuadalupeNuevoLeon',
-    'facebook_appID': '201422020200516',
-    'indicoio_apikey': 'e1e494fc522650381efc67d23e515692',  
+    'twitter_handle': 'mtygob',
+    'facebook_handle':'mtygob',
+    'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com', #get it new from https://console.cloud.google.com/apis/credentials?project=<APP_ID>
+    'twitter_appID': '678306982604894208', #get it new from https://twitter.com/settings/widgets
+    'facebook_appID': '201422020200516', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/201422020200516/settings/advanced/
+    'indicoio_apikey': 'e1e494fc522650381efc67d23e515692', #get it new from https://indico.io/dashboard/
     #cartodb integration
     'map_center_lat': 25.6858634, 
     'map_center_lng': -100.3159498,
@@ -144,10 +147,6 @@ config = {
     # Enable Federated login (OpenID and OAuth)
     # Google App Engine Settings must be set to Authentication Options: Federated Login
     'enable_federated_login': True,
-
-    # get your own recaptcha keys by registering at http://www.google.com/recaptcha/
-    'captcha_public_key': "6LcMfv0SAAAAAGMJ9i-g5aJhXFvSHpPsqDLOHTUD",
-    'captcha_private_key': "6LcMfv0SAAAAALMUmCmFt5NOAw_ZTHabWRHAFJI6",
 
     # Password AES Encryption Parameters
     # aes_key must be only 16 (*AES-128*), 24 (*AES-192*), or 32 (*AES-256*) bytes (characters) long.

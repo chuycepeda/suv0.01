@@ -1,34 +1,44 @@
 {% extends 'admin_base.html' %}
 {% block page_css %}
-<style type="text/css">
-    td {
-    padding: 3px!important;
-    padding-top:7px!important;
-    }
-    thead {
-    border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
-    }
-    select {
-    display: block!important;
-    }
-    .dataTables_length{
-    display: none!important;
-    }
-    .image{
-    -webkit-transform: scale(0.55);
-    transform: scale(0.55);
-    display: inline-block;
-    vertical-align: top;
-    width: 60px;
-    height: 70px;
-    max-width: 60px;
-    max-height: 70px;
-    border-radius: 3px;
-    line-height: 60px;
-    background-repeat: no-repeat;
-    background-position: center;
-    }
-</style>
+    <style type="text/css">
+        td {
+        padding: 3px!important;
+        padding-top:7px!important;
+        }
+        thead {
+        border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
+        }
+        select {
+        display: block!important;
+        }
+        .dataTables_length{
+        display: none!important;
+        }
+        .image{
+        -webkit-transform: scale(0.55);
+        transform: scale(0.55);
+        display: inline-block;
+        vertical-align: top;
+        width: 60px;
+        height: 70px;
+        max-width: 60px;
+        max-height: 70px;
+        border-radius: 3px;
+        line-height: 60px;
+        background-repeat: no-repeat;
+        background-position: center;
+        }
+    </style>
+    <link href="/default/materialize/css/plugins/dropify/dropify.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <style>
+      .dropify-message p{
+        text-align: center!important;
+      }
+      h3{
+          line-height: 60px;
+          letter-spacing: 0.2px;
+        }
+    </style>
 {% endblock %}
 {% block breadcrums %}
 <!--
@@ -91,14 +101,23 @@
                             </a>
                             <!-- Dropdown Structure -->
                             <ul id='statusGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
-                                <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='open'; return false;">Iniciado</a></li>
-                                <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='measuring'; return false;">En proceso</a></li>
-                                <li> <a class="red-text text-lighten-1 " href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='delayed'; return false;">Retrasado</a></li>
-                                <li> <a class="amber-text text-lighten-1 " href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='near'; return false;">A punto de cumplir</a></li>
-                                <li> <a class="green-text text-lighten-1" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='completed'; return false;">Cumplido</a></li>
+                                <li> <a style="color:#9e9e9e!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='open'; return false;">Iniciado</a></li>
+                                <li> <a style="color:#ffc107!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='delayed'; return false;">Retrasado</a></li>
+                                <li> <a style="color:#03a9f4!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='measuring'; return false;">En proceso</a></li>
+                                <li> <a style="color:#8bc34a!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='near'; return false;">A punto de cumplir</a></li>
+                                <li> <a style="color:#4caf50!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='completed'; return false;">Cumplido</a></li>
                             </ul>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="input-field col s12 l6" style="    margin-bottom: 35px;">
+                            <i class="mdi-image-image prefix brand-color-text brand-color-text"></i>
+                            <label for="when">Adjunta una imagen para su página de detalles.</label>
+                        </div>
+                       <div class="input-field col s12">
+                        <input type="file" id="input-file-now" name="file" class="dropify" data-default-file="" />
+                       </div>
+                     </div>  
                     <div class="divider" style="margin-top:30px;margin-bottom: 30px"></div>
                     <h5>Actualiza la información del compromiso:</h5>
 
@@ -854,6 +873,19 @@
 {% block page_floatings %}
 {% endblock %}
 {% block page_scripts %}
+<script type="text/javascript" src="/default/materialize/js/plugins/dropify/dropify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+    $('.dropify').dropify({
+                messages: {
+                    default: 'Arrasta una foto o has clic aquí para adjuntarla.',
+                    replace: 'Arrastra o has clic para reemplazar tu adjunto',
+                    remove:  'Remover',
+                    error:   'Oops!, este archivo es demasiado pesado.'
+                }
+            });
+    });
+</script>
 <script type="text/javascript">
   var url = "{{ uri_for('materialize-transparency-areas') }}";
   var reportDict;

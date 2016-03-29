@@ -650,11 +650,16 @@
 	                      <a style="margin-bottom:30px;" href="#modal2" class="modal-trigger menu-item  waves-effect waves-light brand-color white-text btn-large ">Crear Cuenta</a>
 	                      {% else %}
                             {% if has_reports %}
-	                      <a style="margin-bottom:30px;" href="{{uri_for("landing-map")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Mapa</a>
-	                      <a style="margin-bottom:30px;" href="{{uri_for("materialize-report-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Reportes</a>
+	                            {% if not has_petitions or not has_transparency %}
+		                      		<a style="margin-bottom:30px;" href="{{uri_for("landing-map")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Mapa</a>
+	                            {% endif %}
+	                      		<a style="margin-bottom:30px;" href="{{uri_for("materialize-report-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Reportes</a>
                             {% endif %}
                             {% if has_petitions %}
-                          <a style="margin-bottom:30px;" href="{{uri_for("materialize-petition-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Propuestas</a>
+                          		<a style="margin-bottom:30px;" href="{{uri_for("materialize-petition-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Propuestas</a>
+                            {% endif %}
+                            {% if has_transparency %}
+                          		<a style="margin-bottom:30px;" href="{{uri_for("materialize-transparency-init")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Compromisos</a>
                             {% endif %}
 	                      {% endif %}
 	                  </div>

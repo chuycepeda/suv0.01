@@ -145,18 +145,7 @@
 	loadInits('{{first_area.get_id()}}');
 
 	function loadDetail(id){
-		 var html = '';
-		  var url = "{{ uri_for('materialize-transparency-areas') }}?init_id="+id;
-
-		  $.ajax({
-		      url: url,
-		      type: 'GET',
-		      success: function(data) { 
-		          console.log(data);
-		      }
-		  }).done(function(data) {
-		      
-		  });
+         window.location.href = '{{uri_for("materialize-transparency-init")}}'+id+'/';
 	}
 </script>
 {% endblock %}

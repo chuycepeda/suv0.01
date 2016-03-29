@@ -3468,6 +3468,8 @@ class MaterializeReportsEditRequestHandler(BaseHandler):
                     return self.get(report_id=report_id)                    
             else:
                 cartoUpdate(self, user_report.key.id())
+                message = _(messages.saving_success)
+                self.add_message(message, 'success')
                 return self.redirect_to('materialize-reports')
 
 
@@ -4081,44 +4083,6 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         
         return self.render_template('materialize/users/sections/transparency_city.html', **params)
 
-class MaterializeTransparencyBudgetHandler(BaseHandler):
-    """
-    Handler for materialized petition success
-    """  
-    @user_required
-    def get(self):
-        """ Returns a simple HTML for materialize transparency budget"""
-        if not self.has_transparency:
-            self.abort(403)
-
-        ####-------------------- P R E P A R A T I O N S --------------------####
-        if self.user:
-            params, user_info = disclaim(self)
-        else:
-            params = {}
-        ####------------------------------------------------------------------####
-        
-        return self.render_template('materialize/users/sections/transparency_budget.html', **params)
-
-class MaterializeTransparencyBudgetNewHandler(BaseHandler):
-    """
-    Handler for materialized petition success
-    """  
-    @user_required
-    def get(self):
-        """ Returns a simple HTML for materialize transparency budget new proposal"""
-        if not self.has_transparency:
-            self.abort(403)
-
-        ####-------------------- P R E P A R A T I O N S --------------------####
-        if self.user:
-            params, user_info = disclaim(self)
-        else:
-            params = {}
-        ####------------------------------------------------------------------####
-        
-        return self.render_template('materialize/users/sections/transparency_budget_new.html', **params)
-
 class MaterializeTransparencyInitiativesHandler(BaseHandler):
     """
     Handler for materialized petition success
@@ -4140,9 +4104,73 @@ class MaterializeTransparencyInitiativesHandler(BaseHandler):
         params['first_area'] = models.Area.query().get()
 
         
-        return self.render_template('materialize/users/sections/transparency_init.html', **params)
+        return self.render_template('materialize/users/sections/transparency_inits.html', **params)
+
+class MaterializeTransparencyInitiativeHandler(BaseHandler):
+    @user_required
+    def edit(self, initiative_id):
+        if not self.has_transparency:
+            self.abort(403)
 
 
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+
+        try:
+            initiative = models.Initiative.get_by_id(long(initiative_id))
+            if initiative:
+                params['initiative'] = initiative
+                return self.render_template('materialize/users/sections/transparency_initiative.html', **params)
+            else:
+                self.abort(404)
+        except ValueError:
+            self.abort(404)
+
+
+        
+#unused
+class MaterializeTransparencyBudgetHandler(BaseHandler):
+    """
+    Handler for materialized petition success
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize transparency budget"""
+        if not self.has_transparency:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        return self.render_template('materialize/users/sections/transparency_budget.html', **params)
+
+#unused
+class MaterializeTransparencyBudgetNewHandler(BaseHandler):
+    """
+    Handler for materialized petition success
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize transparency budget new proposal"""
+        if not self.has_transparency:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        return self.render_template('materialize/users/sections/transparency_budget_new.html', **params)
 
 
 # ------------------------------------------------------------------------------------------- #
@@ -4520,7 +4548,7 @@ class MaterializeAreasHandler(BaseHandler):
             initiatives = models.Initiative.query(models.Initiative.area_id == int(area_id))
             for initiative in initiatives:
                 empty = False
-                html += '<div class="card col m2 hoverable" onclick="loadDetail(%s)"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s%s;  -webkit-mask: url(%s) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s%s;">%s</span><div class="col s12" style="margin-bottom:18px; border-radius:2px; margin-top:25px;">' % (initiative.get_id(), "#", initiative.color, initiative.icon_url, "%", "%", "#", initiative.color, initiative.name)
+                html += '<div class="card col s12 m3 hoverable" onclick="loadDetail(%s)"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s%s;  -webkit-mask: url(%s) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s%s;">%s</span><div class="col s12" style="margin-bottom:18px; border-radius:2px; margin-top:25px;">' % (initiative.get_id(), "#", initiative.color, initiative.icon_url, "%", "%", "#", initiative.color, initiative.name)
                 
                 if initiative.status == 'completed':
                     html += '<a class="btn-floating btn-move-up waves-effect waves-light green right tooltipped" data-position="top" data-delay="50" data-tooltip="Cumplido" style="top: 25px;left: 10px;"><i class="mdi-action-verified-user"></i></a>'
@@ -4543,6 +4571,7 @@ class MaterializeAreasHandler(BaseHandler):
                     'name' : initiative.name,
                     'color' : initiative.color,
                     'icon_url' : initiative.icon_url,
+                    'image_url' : initiative.image_url,
                     'value' : initiative.value,
                     'lead' : initiative.lead,
                     'description' : initiative.description,

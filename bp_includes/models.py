@@ -771,6 +771,7 @@ class Initiative(ndb.Model):
     name = ndb.StringProperty(required = True)
     color = ndb.StringProperty(required = True, default = "AEAEAE")
     icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")
+    image_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png")
     value = ndb.StringProperty(required = True, default = "0")
     status = ndb.StringProperty(required = True, default = "open", choices=['open', 'measuring', 'delayed', 'near', 'completed'])
     lead = ndb.StringProperty()
@@ -809,7 +810,7 @@ class Initiative(ndb.Model):
         if self.status == 'delayed':
             return 'ffc107' #amber
         if self.status == 'near':
-            return '69f0ae' #green accent-2
+            return '8bc34a' #light-green
         if self.status == 'completed':
             return '4caf50' #green
 
@@ -819,6 +820,16 @@ class Initiative(ndb.Model):
             if area:
                 return area.name
         return ""
+
+    def get_human_updated_date(self):
+        d1 = datetime.datetime(self.updated.year,self.updated.month,self.updated.day)
+        d2 = datetime.datetime(datetime.date.today().year,datetime.date.today().month,datetime.date.today().day)
+        diff = (d2-d1).days
+        return "Hace " + str(diff) + " dias"
+
+    def get_updated_date(self):
+        return datetime.date(self.updated.year,self.updated.month,self.updated.day).strftime("%Y-%m-%d")
+
 
 class Area(ndb.Model):
     name = ndb.StringProperty(required = True)

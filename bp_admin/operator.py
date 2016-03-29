@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 import webapp2, json
+from webapp2_extras.i18n import gettext as _
 from google.appengine.datastore.datastore_query import Cursor
+from google.appengine.ext import ndb, blobstore
+from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import ndb
-from collections import OrderedDict, Counter
-from wtforms import fields  
-from bp_includes import forms, models, handlers, messages
-from bp_includes.lib.basehandler import BaseHandler
-from datetime import datetime, date, time, timedelta
-import logging
 from google.appengine.api import taskqueue
 from google.appengine.api import users as g_users #https://cloud.google.com/appengine/docs/python/refdocs/modules/google/appengine/api/users#get_current_user
-from bp_includes.lib.cartodb import CartoDBAPIKey, CartoDBException
 from google.appengine.api import urlfetch
 import urllib
+import logging
+from collections import OrderedDict, Counter
+from wtforms import fields  
+from datetime import datetime, date, time, timedelta
+from bp_includes import forms, models, handlers, messages
+from bp_includes.lib.cartodb import CartoDBAPIKey, CartoDBException
 from bp_includes.lib.decorators import taskqueue_method
-
-
+from bp_includes.lib.basehandler import BaseHandler
 
 
 class AdminBrandHandler(BaseHandler):
@@ -1489,6 +1490,18 @@ class AdminPetitionsEditHandler(BaseHandler):
     INITIATIVES HANDLERS
 
 """
+def inverse_initiative_status(_stat):
+    if _stat == 'Iniciado':
+        return 'open'        
+    if _stat == 'En progreso':
+        return 'measuring'
+    if _stat == 'Retrasado':
+        return 'delayed'
+    if _stat == 'A punto de cumplir':
+        return 'near'
+    if _stat == 'Cumplido':
+        return 'completed'
+
 class AdminInitiativesHandler(BaseHandler):
     def get(self):
         params = {}
@@ -1564,7 +1577,7 @@ class AdminInitiativeEditHandler(BaseHandler):
                     relevance = self.request.get('relevance')
                     area_name = self.request.get('agegroupcat')
                     value = self.request.get('metric')
-                    status = self.request.get('status')
+                    status = inverse_initiative_status(self.request.get('status'))
 
                     _initiative = models.Initiative.query(models.Initiative.name == name).get()
                     if _initiative is not None and int(_initiative.key.id()) != int(init_id):
@@ -1584,6 +1597,42 @@ class AdminInitiativeEditHandler(BaseHandler):
                         initiative.status = status
                         initiative.area_id = area.key.id()
                         initiative.put()
+
+                        if hasattr(self.request.POST['file'], 'filename'):
+                            #create attachment
+                            from google.appengine.api import urlfetch
+                            from poster.encode import multipart_encode, MultipartParam
+                            
+                            urlfetch.set_default_fetch_deadline(45)
+
+                            payload = {}
+                            upload_url = blobstore.create_upload_url('/admin/initiatives/image/upload/%s' %(initiative.key.id()))
+                            file_data = self.request.POST['file']
+                            payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                     filetype=file_data.type,
+                                                                     fileobj=file_data.file)
+                            data,headers= multipart_encode(payload)
+                            t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                            
+                            logging.info('t.content: %s' % t.content)
+                            
+                            if t.content == 'success':
+                                message = _(messages.saving_success)
+                                self.add_message(message, 'success')
+                                return self.redirect_to("admin-initiative-edit", init_id=init_id)
+                                
+                            else:
+                                message = _(messages.attach_error)
+                                self.add_message(message, 'danger')            
+                                return self.redirect_to("admin-initiative-edit", init_id=init_id)
+                                                  
+                        else:
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')
+                            return self.redirect_to("admin-initiative-edit", init_id=init_id)
+                            
+
+
                         self.add_message(messages.saving_success, 'success')
 
                 return self.redirect_to("admin-initiatives")
@@ -1602,6 +1651,24 @@ class AdminInitiativeEditHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         return self.render_template('admin_initiative_edit.html', **params)
 
+class AdminInitiativeImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self, initiative_id):
+        try:
+            if not self.has_reports:
+                self.abort(403)
+            logging.info(self.get_uploads()[0])
+            logging.info('attaching file to initiative_id: %s' %initiative_id)
+            upload = self.get_uploads()[0]
+            initiative = models.Initiative.get_by_id(long(initiative_id))
+            # initiative.attachment = upload.key()
+            initiative.image_url = self.uri_for('blob-serve', photo_key = upload.key(), _full=True)
+            initiative.put()
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('success')
+        except Exception as e:
+            logging.error('something went wrong: %s' % e)
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('error')
 
 
 """

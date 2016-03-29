@@ -647,7 +647,7 @@
 		{% block page_floatings %}
 			{% if path != uri_for('materialize-report-new') and path != uri_for('materialize-petition-new') %}
 			<!-- Floating Action Button -->
-            <div class="fixed-action-btn active" style="bottom: 65px; right: 60px;">
+            <div class="fixed-action-btn active" style="bottom: 60px; right: 10px;">
                 <a class="btn-floating btn-large brand-color">
                   <i class="large mdi-content-add"></i>
                 </a>
@@ -771,12 +771,12 @@
 	            </div>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-receipt brand-color-text"></i>Ticket: <span id="report_cartodb_id" class="brand-secondary-color-text"></span></p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-book brand-color-text"></i>Estado: <span id="report_status" class="brand-secondary-color-text"></span></p>
-		        <p class="col s12 m4"><i style="padding:8px;" class="mdi-social-group-add brand-color-text"></i>Seguidores: 
+		        <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-favorite brand-color-text"></i>Likes: 
 		        <span id="report_followers" class="brand-secondary-color-text"></span>
 				{% if user_id %}
-                <a href="#" id="followBtn" class="waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Seguir este reporte te permite ver su historial de cambios y sumarte a la conversación."   style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;" onclick="followReport(this)">Seguir</a>
+                <a href="#" id="followBtn" class="waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Dar like este reporte te permite seguir su historial de cambios en tus reportes."   style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;border-radius: 22px;" onclick="followReport(this)"><i class="mdi-action-favorite white-text"></i></a>
                 {% else %}
-					<a href="{{ uri_for('login') }}" class="modal-trigger menu-item waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Seguir este reporte te permite ver su historial de cambios y sumarte a la conversación." style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;" >Seguir</a></li>
+					<a href="{{ uri_for('login') }}" class="modal-trigger menu-item waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Dar like a este reporte te permite seguir su historial de cambios en tus reportes." style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;border-radius: 22px;" ><i class="mdi-action-favorite white-text"></i></a></li>
                 {% endif %}
 		        </p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-event brand-color-text"></i>Fecha: <span id="report_date" class="brand-secondary-color-text"></span></p>
@@ -1543,7 +1543,7 @@
 							});
 							$('#report_status').html(getStatus(data.status));
 							$('#report_via').html(getVia(data.via));
-							$('#followBtn').html('Seguir');
+							$('#followBtn').html('<i class="mdi-action-favorite white-text"></i>');
 
 							$('#modal3').openModal();
 							loadComments($('#report_ticket').val());
@@ -1679,7 +1679,7 @@
 
 						function followReport(elem){
 							var kind;
-							if (elem.innerHTML.indexOf('Seguir') >= 0){
+							if (elem.innerHTML.indexOf('<i class="mdi-action-favorite white-text"></i>) >= 0){
 								kind = 'follow';
 							}
 							else if (elem.innerHTML.indexOf('Dejar de seguir') >= 0){
@@ -1701,10 +1701,10 @@
 				            }).done(function(data) {
 				            	console.log(data);
 				            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('Seguir','Dejar de seguir');
+				            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite white-text"></i>','Dejar de seguir');
 				            	}
 				            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('Dejar de seguir', 'Seguir');
+				            		elem.innerHTML = elem.innerHTML.replace('Dejar de seguir', '<i class="mdi-action-favorite white-text"></i>');
 				            	}
 				            	var qry = "SELECT follows FROM " + city_table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
 								city_sql.execute(qry).done(function(data) {
@@ -2318,7 +2318,7 @@
 							});
 							$('#report_status').html(getStatus(data.status));
 							$('#report_via').html(getVia(data.via));
-							$('#followBtn').html('Seguir');
+							$('#followBtn').html('<i class="mdi-action-favorite white-text"></i>');
 
 							$('#modal3').openModal();
 							loadComments($('#report_ticket').val());
@@ -2456,7 +2456,7 @@
 
 						function followReport(elem){
 							var kind;
-							if (elem.innerHTML.indexOf('Seguir') >= 0){
+							if (elem.innerHTML.indexOf('<i class="mdi-action-favorite white-text"></i>') >= 0){
 								kind = 'follow';
 							}
 							else if (elem.innerHTML.indexOf('Dejar de seguir') >= 0){
@@ -2478,10 +2478,10 @@
 				            }).done(function(data) {
 				            	console.log(data);
 				            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('Seguir','Dejar de seguir');
+				            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite white-text"></i>','Dejar de seguir');
 				            	}
 				            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('Dejar de seguir', 'Seguir');
+				            		elem.innerHTML = elem.innerHTML.replace('Dejar de seguir', '<i class="mdi-action-favorite white-text"></i>');
 				            	}
 				            	var qry = "SELECT follows FROM " + city_table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
 								city_sql.execute(qry).done(function(data) {

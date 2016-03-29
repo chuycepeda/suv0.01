@@ -396,7 +396,7 @@ header .brand-logo {
 }
 
 header .brand-logo img {
-  width: 172px;
+  margin-top:-10px!important;
 }
 
 @media only screen and (max-width: 992px) {

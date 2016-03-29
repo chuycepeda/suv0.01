@@ -56,6 +56,7 @@ _routes = [
     # OPERATIONS Initiatives
     RedirectRoute('/admin/initiatives/', operator.AdminInitiativesHandler, name='admin-initiatives', strict_slash=True),
     RedirectRoute('/admin/initiatives/<init_id>/', operator.AdminInitiativeEditHandler, name='admin-initiative-edit', strict_slash=True, handler_method='edit'),
+    RedirectRoute('/admin/initiatives/image/upload/', operator.AdminInitiativeImageUploadHandler, name='admin-initiative-image-upload', strict_slash=True),
     
     # BLOG
     RedirectRoute('/admin/blog/', blog.AdminBlogHandler, name='admin-blog', strict_slash=True),
