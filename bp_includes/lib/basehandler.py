@@ -134,6 +134,18 @@ class BaseHandler(webapp2.RequestHandler):
         return self.app.config.get('has_cic')
 
     @webapp2.cached_property
+    def google_clientID(self):
+        return self.app.config.get('google_clientID')
+
+    @webapp2.cached_property
+    def facebook_appID(self):
+        return self.app.config.get('facebook_appID')
+
+    @webapp2.cached_property
+    def twitter_appID(self):
+        return self.app.config.get('twitter_appID')
+
+    @webapp2.cached_property
     def user(self):
 
         return self.auth.get_user_by_session()
@@ -425,7 +437,10 @@ class BaseHandler(webapp2.RequestHandler):
             'has_petitions': self.has_petitions,
             'has_transparency': self.has_transparency,
             'has_social_media': self.has_social_media,
-            'has_cic': self.has_cic
+            'has_cic': self.has_cic,
+            'google_clientID': self.google_clientID,
+            'facebook_appID': self.facebook_appID,
+            'twitter_appID': self.twitter_appID
         })
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):

@@ -128,7 +128,7 @@
 				                        <div class="row">
 				                            <div class="col col s4 m4 l4">
 												{% if has_picture %}
-													<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244);">
+													<img src="{{user_picture_url}}" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244);">
 												{% else %}
 				                                	<span class="circle red lighten-1" style="width: 42px;   height: 42px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; margin-top: 10px;margin-left: 10px;">{{ name_i }}</span>
 												{% endif %}

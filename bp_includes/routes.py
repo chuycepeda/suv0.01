@@ -67,6 +67,7 @@ _routes = [
     RedirectRoute('/user/reports/<report_id>/', handlers.MaterializeReportsEditRequestHandler, name='materialize-reports-edit', strict_slash=True),
     RedirectRoute('/user/petitions/', handlers.MaterializePetitionsRequestHandler, name='materialize-petitions', strict_slash=True),
     RedirectRoute('/user/settings/profile/', handlers.MaterializeSettingsProfileRequestHandler, name='materialize-settings-profile', strict_slash=True),
+    RedirectRoute('/user/settings/social/', handlers.MaterializeSettingsSocialRequestHandler, name='materialize-settings-social', strict_slash=True),
     RedirectRoute('/user/settings/email/', handlers.MaterializeSettingsEmailRequestHandler, name='materialize-settings-email', strict_slash=True),
     RedirectRoute('/user/settings/password/', handlers.MaterializeSettingsPasswordRequestHandler, name='materialize-settings-password', strict_slash=True),
     RedirectRoute('/user/settings/delete/', handlers.MaterializeSettingsDeleteRequestHandler, name='materialize-settings-delete', strict_slash=True),

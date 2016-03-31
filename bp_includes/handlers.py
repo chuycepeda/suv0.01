@@ -75,7 +75,7 @@ def disclaim(_self, **kwargs):
     _params['gender'] = user_info.gender if user_info.gender != None else ""
     _params['scholarity'] = user_info.scholarity if user_info.scholarity != None else ""
     _params['birth'] = user_info.birth.strftime("%Y-%m-%d") if user_info.birth != None else ""
-    _params['has_picture'] = True if user_info.picture is not None else False
+    _params['has_picture'] = True if user_info.get_image_url() != -1 else False
     _params['has_address'] = True if user_info.address is not None else False
     _params['address_from'] = False
     if _params['has_address']:
@@ -86,6 +86,8 @@ def disclaim(_self, **kwargs):
         _params['address_from'] = user_info.address.address_from
     if not _params['has_picture']:
         _params['disclaim'] = True
+    else:
+        _params['user_picture_url'] = user_info.get_image_url()
     _params['link_referral'] = user_info.link_referral
     _params['date'] = date.today().strftime("%Y-%m-%d")
 
@@ -1819,6 +1821,65 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
     def form(self):
         f = forms.SettingsProfileForm(self)
         return f
+
+class MaterializeSettingsSocialRequestHandler(BaseHandler):
+    @user_required
+    def post(self):
+        _user_id = int(self.request.get('user_id'))
+
+        if not self.user_id or int(self.user_id) != _user_id:
+            self.abort(403)
+
+        reportDict = {}
+
+        kind = self.request.get('kind')
+        first_name = self.request.get('first_name')
+        last_name = self.request.get('last_name')
+        gender = self.request.get('gender')
+        picture = self.request.get('picture')
+        cover = self.request.get('cover')
+        social_id = self.request.get('id')
+
+        try:
+            if kind == 'google':
+                social = models.UserGOOG.query(models.UserGOOG.user_id == _user_id).get()
+                if social is None:
+                    social = models.UserGOOG()
+                if social_id != 'none':
+                    user_info = self.user_model.get_by_id(long(self.user_id))
+                    user_info.google_ID = str(social_id)
+                    user_info.put()
+
+            if kind == 'facebook':
+                social = models.UserFB.query(models.UserFB.user_id == _user_id).get()
+                if social is None:
+                    social = models.UserFB()
+                if social_id != 'none':
+                    user_info = self.user_model.get_by_id(long(self.user_id))
+                    user_info.facebook_ID = str(social_id)
+                    user_info.put()
+                age_range = self.request.get('age_range')
+                social.age_range = int(age_range) if age_range != 'none' else social.age_range
+
+            social.user_id = _user_id
+
+            social.first_name = first_name if first_name != 'none' else social.first_name
+            social.last_name = last_name if last_name != 'none' else social.last_name
+            social.gender = gender if gender != 'none' else social.gender
+            social.picture = picture if picture != 'none' else social.picture
+            social.cover = cover if cover != 'none' else social.cover
+            social.put()
+            reportDict['status'] = 'success'
+            reportDict['contents'] = 'user social profile for kind %s has been saved' % kind
+
+        except Exception as e:
+            reportDict['status'] = 'error'
+            reportDict['contents'] = '%s' % e
+            pass
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
 
 class MaterializeSettingsAddressRequestHandler(BaseHandler):
     """

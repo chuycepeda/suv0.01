@@ -248,7 +248,7 @@
 				    <li class="nav-user">
                         	{% if has_picture %}
 								<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
-										<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
+										<div style="position: absolute;left: 0px;"><img src="{{user_picture_url}}" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
 										<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} <i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span>
 		                        </a>
 							{% else %}
@@ -289,7 +289,7 @@
                             <li class="bold">
                             	<a class="collapsible-header waves-effect waves-cyan">
 						    	{% if has_picture %}
-									<img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:45px">
+									<img src="{{user_picture_url}}" alt="" class="circle responsive-img valign profile-image" style="margin-top:6px;border: 1px solid rgb(3, 169, 244); height:45px">
 								{% else %}
 		                        	<span class="circle red lighten-1" style="width: 45px;   height: 45px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; margin-top: 10px;margin-left: 10px;">{{ name_i }}</span>
 								{% endif %}

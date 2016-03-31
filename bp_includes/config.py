@@ -30,8 +30,8 @@ config = {
     'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
     'app_id': 'one-smart-city-demo',
     # application branding 
-    'brand_logo': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogob.png',
-    'brand_favicon': 'http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogob.png',
+    'brand_logo': 'http://onesmart.city/default/materialize/images/_logo.png',
+    'brand_favicon': 'http://onesmart.city/default/materialize/images/_logo.png',
     'brand_color' : '#59BAB9',
     'brand_secondary_color' : '#00273D',
     'brand_tertiary_color' : '#EAEAEA',
@@ -65,7 +65,7 @@ config = {
     'facebook_handle':'mtygob',
     'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com', #get it new from https://console.cloud.google.com/apis/credentials?project=<APP_ID>
     'twitter_appID': '678306982604894208', #get it new from https://twitter.com/settings/widgets
-    'facebook_appID': '201422020200516', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/201422020200516/settings/advanced/
+    'facebook_appID': '523620084480399', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/201422020200516/settings/advanced/
     'indicoio_apikey': 'e1e494fc522650381efc67d23e515692', #get it new from https://indico.io/dashboard/
     #cartodb integration
     'map_center_lat': 25.6858634, 

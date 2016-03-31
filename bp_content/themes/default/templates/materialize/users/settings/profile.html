@@ -31,6 +31,7 @@
 
 {% block page_components %}
     <link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import">
+    <link href="/boilerplate/webcomponents/bower_components/google-signin/google-signin.html"rel="import" >
 {% endblock %}
 
 {% block header_content %}
@@ -66,14 +67,29 @@
         		                    <label class="controls">
         		                    <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Clic para subir imagen.</span>
         		                        {% if has_picture %}
-        		                        	<img id="blah" src="/media/serve/profile/{{user_id}}/" alt="your image" class="circle responsive-img valign z-depth-1" style="max-height:150px; cursor:pointer;border: 1px solid #005761;"/>
+        		                        	<img id="blah" src="{{user_picture_url}}" alt="your image" class="circle responsive-img valign z-depth-1" style="max-height:150px; cursor:pointer;border: 1px solid #005761;"/>
         		                        {% else %}
         		                        	<img id="blah" src="" alt="your image" class="circle responsive-img valign valign z-depth-1" style="max-height:150px; cursor:pointer;display:none;"/>
         		                        	<div id="initial" class="circle red lighten-1" style="width: 110px;   height: 110px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; position: relative; cursor:pointer;"><span style="position: absolute;top: 25px;left: 42px;font-size: 40px;">{{ name_i }}</span></div>
         		                        {% endif %}
         		                        <input class="btn btn-success" type='file' id="picture" name="picture" style="display:none;"/>
         		                    </label>
-        		                </div>                      
+        		                </div> 
+
+                                {% if google_clientID != '' or facebook_appID != '' %}
+                                <div class="divider" style="margin-bottom: 10px;"></div>
+                                <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Conecta tus redes sociales.</span>
+                                {% endif %}     
+                                {% if google_clientID != '' %}
+                                <div class="row" style="margin-bottom: 14px; margin-top: 14px;">
+                                    <google-signin  class="left" clientId="{{google_clientID}}" scopes="https://www.googleapis.com/auth/plus.me" labelSignin="Connect profile" labelSignout="Disconnect"width="wide" height="tall" style="max-width:290px;"></google-signin>
+                                </div>      
+                                {% endif %}     
+                                {% if facebook_appID != '' %}
+                                <div class="col s12">
+                                    <div class="left fb-login-button" style="margin-left: -18px;" data-max-rows="3" data-size="large" data-show-faces="true" data-auto-logout-link="true" scope="public_profile,user_friends,email" onlogin="checkFBLogin();"></div>
+                                </div>      
+                                {% endif %}                        
         				</div>
         
         	            <div class="col s12 m9">
@@ -406,4 +422,151 @@
             document.getElementById("form_edit_profile").submit()
 		});
 	</script>
+    {% if google_clientID != '' %}
+        <!-- DOC: https://elements.polymer-project.org/elements/google-signin -->
+        <script type="text/javascript">
+              var first_time = true, go_accessToken = '';
+              document.querySelector('google-signin').addEventListener('google-signin-success', function(e) {
+                console.log(e.type, e.detail.result, e.detail.gapi);
+                go_accessToken = e.detail.result.access_token;
+                if (first_time){                    
+                    url = 'https://content.googleapis.com/plus/v1/people/me?access_token='+go_accessToken;
+                    $.get(url,
+                        function(data){
+                            console.log('go_user', data);
+
+                            $.ajax({
+                                url: "{{ uri_for('materialize-settings-social') }}",
+                                type: 'POST',
+                                data: { 
+                                    'user_id': {{user_id}},
+                                    '_csrf_token': '{{ csrf_token() }}',
+                                    'kind': 'google',
+                                    'id':data.id,
+                                    'first_name':data.name.givenName || "none",
+                                    'last_name':data.name.familyName || "none",
+                                    'gender':data.gender || "none",
+                                    'picture':data.image.url || "none",
+                                    'cover':data.cover.coverPhoto.url || "none"
+                                }
+                            }).done(function(response) {
+                                console.log("social saving for google response:", response);
+                            });
+                        }
+                    );
+                }
+                first_time = !first_time;
+              });
+        </script>
+    {% endif %}
+    {% if facebook_appID != '' %}
+        <!-- DOC: https://developers.facebook.com/docs/facebook-login/web/login-button -->
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId={{facebook_appID}}";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+        <script>
+            var fb_accessToken = '';
+            $(document).ready(function() {
+                $.ajaxSetup({ cache: true });
+            });
+
+            function checkFBLogin() {
+                FB.getLoginStatus(function(response) {
+                    if (response.status === 'connected') {
+                        var uid = response.authResponse.userID;
+                        fb_accessToken = response.authResponse.accessToken;
+                        //GET User: https://developers.facebook.com/docs/graph-api/reference/user/
+                        FB.api(
+                            "/me",
+                            {
+                              fields: ['id','about','age_range','bio','birthday','education','email','first_name','gender','hometown','inspirational_people','last_name','link','location','locale','middle_name','name','relationship_status','religion','significant_other','quotes','timezone','work','cover']
+                            },
+                            function (response) {
+                              if (response && !response.error) {
+                                console.log('fb_user', response);
+
+                                $.ajax({
+                                    url: "{{ uri_for('materialize-settings-social') }}",
+                                    type: 'POST',
+                                    data: { 
+                                        'user_id': {{user_id}},
+                                        '_csrf_token': '{{ csrf_token() }}',
+                                        'kind': 'facebook',
+                                        'id':response.id,
+                                        'age_range':response.age_range.min || "none",
+                                        'first_name':response.first_name || "none",
+                                        'last_name':response.last_name || "none",
+                                        'gender':response.gender || "none",
+                                        'picture': "none",
+                                        'cover':response.cover.source || "none"
+                                    }
+                                }).done(function(response) {
+                                    console.log("social saving for facebook user response:", response);
+
+                                    if (response.status =='success'){
+                                        //GET User Picture: https://developers.facebook.com/docs/graph-api/reference/user/picture/
+                                        FB.api(
+                                            "/me/picture",
+                                            { 
+                                              "type": "large" 
+                                            },
+                                            function (response) {
+                                              if (response && !response.error) {
+                                                console.log('fb_pic', response);
+
+                                                $.ajax({
+                                                    url: "{{ uri_for('materialize-settings-social') }}",
+                                                    type: 'POST',
+                                                    data: { 
+                                                        'user_id': {{user_id}},
+                                                        '_csrf_token': '{{ csrf_token() }}',
+                                                        'kind': 'facebook',
+                                                        'id':'none',
+                                                        'age_range': 'none',
+                                                        'first_name': 'none',
+                                                        'last_name': 'none',
+                                                        'gender': 'none',
+                                                        'picture': response.data.url || "none",
+                                                        'cover': 'none'
+                                                    }
+                                                }).done(function(response) {
+                                                    console.log("social saving for facebook picture response:", response);
+                                                });
+                                              }
+                                            }
+                                        );
+
+                                    }
+                                });
+                              }
+                            }
+                        );
+
+                        
+
+                        //GET User Friends: https://developers.facebook.com/docs/graph-api/reference/v2.5/user/friends
+                        // FB.api(
+                        //     "/me/friends",
+                        //     function (response) {
+                        //       if (response && !response.error) {
+                        //         console.log('fb_friends', response);
+
+                        //         /*
+
+                        //             TO-DO: WHY DON'T WE SAVE SOMETHING INTO OUR GOOGLE DATASTORE ?
+
+                        //         */                          
+                        //       }
+                        //     }
+                        // );
+                    }
+                });
+            }
+        </script>
+    {% endif %}
 {% endblock %}

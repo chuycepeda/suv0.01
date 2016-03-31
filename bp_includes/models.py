@@ -52,7 +52,9 @@ class User(User):
     last_name2 = ndb.StringProperty()                                                              #: User Last Name 
     email = ndb.StringProperty()                                                                   #: User email
     phone = ndb.StringProperty()                                                                   #: User phone
-    twitter_handle = ndb.StringProperty()                                                          #: User twitter handle for notification purposes
+    twitter_handle = ndb.StringProperty()                                                          #: User twitter handle for future notification purposes
+    facebook_ID = ndb.StringProperty()                                                             #: User facebook ID for profile purposes
+    google_ID = ndb.StringProperty()                                                               #: User google ID for profile purposes
     address = ndb.StructuredProperty(Address)                                                      #: User georeference
     password = ndb.StringProperty()                                                                #: Hashed password. Only set for own authentication.    
     birth = ndb.DateProperty()                                                                     #: User birthday.
@@ -106,6 +108,13 @@ class User(User):
     def get_image_url(self):
         if self.picture:
             return "/media/serve/profile/%s/" % self._key.id()
+        elif self.facebook_ID is not None or self.google_ID is not None:
+            if self.facebook_ID is not None:
+                social = UserFB.query(UserFB.user_id == int(self._key.id())).get()
+            elif self.google_ID is not None:
+                social = UserGOOG.query(UserGOOG.user_id == int(self._key.id())).get()
+            if social is not None:
+                return social.picture if social.picture is not None else -1
         else:
             return -1
 
@@ -136,6 +145,26 @@ class User(User):
     def get_reports_count(self):
         reports = Report.query(Report.user_id == int(self.key.id()))
         return reports.count()
+
+class UserFB(ndb.Model):
+    user_id = ndb.IntegerProperty(required = True)
+    age_range = ndb.IntegerProperty()
+    first_name = ndb.StringProperty()
+    last_name = ndb.StringProperty()
+    gender = ndb.StringProperty()
+    picture = ndb.StringProperty()
+    cover = ndb.StringProperty()
+
+class UserGOOG(ndb.Model):
+    user_id = ndb.IntegerProperty(required = True)
+    first_name = ndb.StringProperty()
+    last_name = ndb.StringProperty()
+    gender = ndb.StringProperty()
+    picture = ndb.StringProperty()
+    cover = ndb.StringProperty()
+
+
+
 #--------------------------------------- ENDOF   U S E R    M O D E L -----------------------------------------------------------   
 
 

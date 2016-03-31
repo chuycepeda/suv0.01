@@ -351,7 +351,7 @@
 						    <li class="nav-user" style="padding-left: 30px;{% if path == uri_for('materialize-reports') or path == uri_for('materialize-petitions') or path == uri_for('materialize-settings-profile') or path == uri_for('materialize-settings-referrals') or path == uri_for('materialize-settings-account') or path == uri_for('materialize-referrals') %}border-bottom: 5px solid {{brand_secondary_color}};{% endif %}">
 		                        	{% if has_picture %}
 										<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="profile-dropdown" style="    height: 56px; margin-top: 8px;    line-height: 1.5rem;    position: relative;">
-												<div style="position: absolute;left: 0px;"><img src="/media/serve/profile/{{user_id}}/" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
+												<div style="position: absolute;left: 0px;"><img src="{{user_picture_url}}" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px"></div>
 												<span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{{name}} {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span>
 				                        </a>
 									{% else %}
