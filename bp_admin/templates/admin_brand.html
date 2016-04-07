@@ -29,9 +29,20 @@
               <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Personaliza tu plataforma con tus propias imágenes, mensajes y marca.</h3>
             </div>
             <div class="card-panel" style="margin-bottom:30px;">
+                <div class="row container">
+                  <div class="col s12 m12 l12 offset-l8">
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn" id="clear_form">Limpiar campos
+                      <i class="mdi-communication-clear-all right"></i>
+                    </a>
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn" id="submit_brand_formUp">
+                      <i class="mdi-content-save"></i>
+                    </a>  
+                  </div>                         
+                </div>
+
                 <form id="form_brand" action="{{ url|safe }}" method="post">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
- 
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
                   <div class="row margin">
                     <div class="input-field col s12">
                       <i class="mdi-hardware-phonelink prefix brand-color-text"></i>
@@ -106,10 +117,10 @@
                     </div>
                   </div>
 
-                  <div class="row container" style="padding:25px;     padding-left: 55px!important;">
-                    <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_brand_form" >Guardar Cambios
+                  <div class="row container" style="padding:25px; padding-left: 55px!important;">
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_brand_form" >Guardar Cambios
                       <i class="mdi-content-send right"></i>
-                    </button>                          
+                    </a>                          
                   </div>
                 </form>
             </div>           
@@ -124,9 +135,28 @@
 
 
 {% block page_scripts %}
+<script src="/{{theme}}/materialize/js/makeAJAX.js"></script>
 <script type="text/javascript">
-    document.querySelector('#submit_brand_form').addEventListener('click', function() { 
-        document.getElementById("form_brand").submit();
+    //Selector to clear form
+    document.querySelector('#clear_form').addEventListener('click', function() {
+        $("form#form_brand :input").each(function(){
+          $(this).val('');
+        });
     });
+        
+    //Get Selectors
+    var submitBtn = document.querySelector('#submit_brand_form');
+    var submitBtnUp = document.querySelector('#submit_brand_formUp');
+    
+    //Add Events
+    submitBtn.addEventListener('click', function() {
+      var url = '{{ path }}';
+      makeMeAJAX(url,"POST","form_brand",$(this));
+    });
+    submitBtnUp.addEventListener('click', function() {
+      var url = '{{ path }}';
+      makeMeAJAX(url,"POST","form_brand",$(this));
+    });    
+
 </script>
 {% endblock %}

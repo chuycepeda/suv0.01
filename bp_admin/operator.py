@@ -76,9 +76,11 @@ class AdminBrandHandler(BaseHandler):
             brand.brand_tertiary_color = self.request.get('brand_tertiary_color') 
 
             brand.put()
-
-            self.add_message(messages.saving_success, 'success')
-            return self.get()
+            a = {'response': messages.saving_success}
+            self.response.headers['Content-Type'] = 'application/json'
+            self.response.write(json.dumps(a))  
+            #self.add_message(messages.saving_success, 'success')
+            #return self.get()
         except Exception as e:
             logging.info('error in branding post: %s' % e)
             self.add_message(messages.saving_error, 'danger')
