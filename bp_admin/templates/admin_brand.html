@@ -31,15 +31,15 @@
               <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Personaliza tu plataforma con tus propias imágenes, mensajes y marca.</h3>
             </div>
             <div class="card-panel" style="margin-bottom:30px;">
-                <div class="row container">
-                  <div class="col s12 m12 l12 offset-l8">
-                    <a class="waves-effect waves-light brand-secondary-color white-text btn" id="clear_form">Limpiar campos
+                <div class="row container" style="padding:25px; padding-left: 55px!important;">
+
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn tooltipped right" data-position="top" data-delay="50" data-tooltip="Quick save" id="submit_brand_formUp" style="margin-left: 20px;">  <i class="mdi-content-save"></i>
+                    </a>  
+
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn right" id="clear_form">Limpiar campos
                       <i class="mdi-communication-clear-all right"></i>
                     </a>
-                    <a class="waves-effect waves-light brand-secondary-color white-text btn tooltipped" data-position="top" data-delay="50" data-tooltip="Quick save" id="submit_brand_formUp">
-                      <i class="mdi-content-save"></i>
-                    </a>  
-                  </div>                         
+
                 </div>
 
                 <form id="form_brand" action="{{ url|safe }}" method="post">
@@ -96,16 +96,16 @@
                   </div>
 
                   <div class="row margin">
-                    <div class="input-field col s12 m9" style="margin-top: 30px;">
+                    <div class="input-field col s12" style="margin-top: 30px;">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="brand_logo" name="brand_logo" type="text" value="{{brand_logo}}">
                       <label for="brand_logo" class="center-align">URL de tu logo (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
-                    <div class="col s12 m3">
+                    <div class="col s12 m3" id"logo_view" style="margin-left: 45px;">
                       <div class="card-panel grey lighten-5 z-depth-1">
                         <div class="row center">
                           <div class="col s12">
-                            <img src="{{brand_logo}}" alt="" class=" responsive-img valign" style="height: 60px;">
+                            <img id="logo1" src="{{brand_logo}}" alt=" Por favor escribe una URL válida " class=" responsive-img valign" style="height: 60px;">
                           </div>
                         </div>
                       </div>
@@ -113,22 +113,22 @@
                   </div>
 
                   <div class="row margin">
-                    <div class="input-field col s12 m6">
+                    <div class="input-field col s12">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="city_splash" name="city_splash" type="text" value="{{city_splash}}">
                       <label for="city_splash" class="center-align">URL de imagen principal (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
-                    <div class="col s12 m6">
+                    <div class="col s12 m6" id"splash_view" style="margin-left: 45px;">
                       <div class="card-panel grey lighten-5 z-depth-1">
                         <div class="row valign-wrapper">
                           <div class="col m6">
-                            <img src="{{city_splash}}" alt=" Splash 1 " id="splash1" class="responsive-img valign" style="display: block; -webkit-filter: brightness({{city_splash_light}}%);">
+                            <img src="{{city_splash}}" alt=" Por favor escribe una URL válida " id="splash1" class="responsive-img valign" style="display: block; -webkit-filter: brightness({{city_splash_light}}%);">
                           </div>
-                          <div class="col m6">
+                          <div class="col m6" id="light1">
                             <span >
                                 <input type="text" id="city_splash_light" name="city_splash_light" ></input>
                             </span>
-                            <span class="black-text">Ajusta el brillo de la imagen</span>
+                            <span class="black-text">Si gustas, ajusta el brillo de la imagen.</span>
                           </div>
                         </div>
                       </div>
@@ -136,22 +136,22 @@
                   </div>
 
                   <div class="row margin">
-                    <div class="input-field col s12 m6">
+                    <div class="input-field col s12">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="city_splash_secondary" name="city_splash_secondary" type="text" value="{{city_splash_secondary}}">
                       <label for="city_splash_secondary" class="center-align">URL de tu imagen secundaria (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
-                    <div class="col s12 m6">
+                    <div class="col s12 m6" id"second_splash_view" style="margin-left: 45px;">
                       <div class="card-panel grey lighten-5 z-depth-1">
                         <div class="row valign-wrapper">
                           <div class="col m6">
-                            <img src="{{city_splash_secondary}}" alt=" Splash 2 " id="splash2" class="responsive-img valign" style="display: block; -webkit-filter:brightness({{city_splash_secondary_light}}%);">
+                            <img src="{{city_splash_secondary}}" alt="  Por favor escribe una URL válida " id="splash2" class="responsive-img valign" style="display: block; -webkit-filter:brightness({{city_splash_secondary_light}}%);">
                           </div>
-                          <div class="col m6">
+                          <div class="col m6" id="light2">
                             <span class="range-field">
                                 <input type="text" id="city_splash_secondary_light" name="city_splash_secondary_light" ></input>
                             </span>
-                            <span class="black-text">Ajusta el brillo de la imagen</span>
+                            <span class="black-text">Si gustas, ajusta el brillo de la imagen.</span>
                           </div>
                         </div>
                       </div>
@@ -183,21 +183,53 @@
     //Selector to clear form
     document.querySelector('#clear_form').addEventListener('click', function() {
         $("form#form_brand :input").each(function(){
-          if ($(this).attr('name') != "_csrf_token" && $(this).attr('type') != 'color') $(this).val('');
+          if ($(this).attr('name') != "_csrf_token") $(this).val('');
         });
     });
         
     //Get Selectors
     var submitBtn = document.querySelector('#submit_brand_form');
     var submitBtnUp = document.querySelector('#submit_brand_formUp');
+    var brand_logoUrl = document.querySelector('#brand_logo');
+    var brand_logoImg = document.querySelector('#logo1');
+    var city_splashUrl = document.querySelector('#city_splash');
+    var city_splashImg = document.querySelector('#splash1');
+    var city_secondUrl = document.querySelector('#city_splash_secondary');
+    var city_secondImg = document.querySelector('#splash2');
     
     //Add Events
     submitBtnUp.addEventListener('click', function() {
-      var url = '{{ path }}';
-      makeMeAJAX(url,"POST","form_brand",$(this),false);
+      // var url = '{{ path }}';
+      // makeMeAJAX(url,"POST","form_brand",$(this),false);
+      document.getElementById("form_brand").submit();
     });    
     submitBtn.addEventListener('click', function() {
       document.getElementById("form_brand").submit();
+    });
+    brand_logoUrl.addEventListener('change', function() {
+      $('#logo1').attr('src',brand_logoUrl.value);
+      $('#brand_logo').css('color','#000000');
+    });
+    brand_logoImg.addEventListener('error', function() {
+      $('#brand_logo').css('color','#F76E78');
+    });
+    city_splashUrl.addEventListener('change', function() {
+      $('#splash1').attr('src',city_splashUrl.value);
+      $('#city_splash').css('color','#000000');
+      $('#light1').show();
+    });
+    city_splashImg.addEventListener('error', function() {
+      $('#city_splash').css('color','#F76E78');
+      $('#light1').hide();
+    });
+    city_secondUrl.addEventListener('change', function() {
+      $('#splash2').attr('src',city_secondUrl.value);
+      $('#city_splash_secondary').css('color','#000000');
+      $('#light2').show();
+    });
+    city_secondImg.addEventListener('error', function() {
+      $('#city_splash_secondary').css('color','#F76E78');
+      $('#light2').hide();
     });
 
     $("#city_splash_light").ionRangeSlider({
