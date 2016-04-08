@@ -1,6 +1,9 @@
 {% extends 'admin_base.html' %}
 
 {% block page_css %}
+<link href="/{{theme}}/materialize/css/plugins/ionRangeSlider/css/ion.rangeSlider.css" type="text/css" rel="stylesheet" media="screen,projection">
+<!--Flat Skin-->
+<link href="/{{theme}}/materialize/css/plugins/ionRangeSlider/css/ion.rangeSlider.skinFlat.css" type="text/css" rel="stylesheet" media="screen,projection">
 {% endblock %}
 
 {% block breadcrums %}
@@ -11,7 +14,6 @@
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
                 <li class="active"><a href="{{ uri_for('admin-brand') }}">Marca</a></li>
-                
             </ol>
           </div>
         </div>
@@ -86,14 +88,6 @@
                   </div>
 
                   <div class="row margin">
-                    <div class="input-field col s12" style="margin-top: 30px;">
-                      <i class="mdi-image-image prefix brand-color-text"></i>
-                      <input id="brand_logo" name="brand_logo" type="text" value="{{brand_logo}}">
-                      <label for="brand_logo" class="center-align">URL de tu logo (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
-                    </div>
-                  </div>
-
-                  <div class="row margin">
                     <div class="input-field col s12">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="brand_favicon" name="brand_favicon" type="text" value="{{brand_favicon}}">
@@ -102,18 +96,65 @@
                   </div>
 
                   <div class="row margin">
-                    <div class="input-field col s12">
+                    <div class="input-field col s12 m9" style="margin-top: 30px;">
+                      <i class="mdi-image-image prefix brand-color-text"></i>
+                      <input id="brand_logo" name="brand_logo" type="text" value="{{brand_logo}}">
+                      <label for="brand_logo" class="center-align">URL de tu logo (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                    </div>
+                    <div class="col s12 m3">
+                      <div class="card-panel grey lighten-5 z-depth-1">
+                        <div class="row center">
+                          <div class="col s12">
+                            <img src="{{brand_logo}}" alt="" class=" responsive-img valign" style="height: 60px;">
+                          </div>
+                        </div>
+                      </div>
+                    </div> 
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12 m6">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="city_splash" name="city_splash" type="text" value="{{city_splash}}">
                       <label for="city_splash" class="center-align">URL de imagen principal (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
+                    <div class="col s12 m6">
+                      <div class="card-panel grey lighten-5 z-depth-1">
+                        <div class="row valign-wrapper">
+                          <div class="col m6">
+                            <img src="{{city_splash}}" alt=" Splash 1 " id="splash1" class="responsive-img valign" style="display: block; -webkit-filter: brightness({{city_splash_light}}%);">
+                          </div>
+                          <div class="col m6">
+                            <span >
+                                <input type="text" id="city_splash_light" name="city_splash_light" ></input>
+                            </span>
+                            <span class="black-text">Ajusta el brillo de la imagen</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="row margin">
-                    <div class="input-field col s12">
+                    <div class="input-field col s12 m6">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="city_splash_secondary" name="city_splash_secondary" type="text" value="{{city_splash_secondary}}">
                       <label for="city_splash_secondary" class="center-align">URL de tu imagen secundaria (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                    </div>
+                    <div class="col s12 m6">
+                      <div class="card-panel grey lighten-5 z-depth-1">
+                        <div class="row valign-wrapper">
+                          <div class="col m6">
+                            <img src="{{city_splash_secondary}}" alt=" Splash 2 " id="splash2" class="responsive-img valign" style="display: block; -webkit-filter:brightness({{city_splash_secondary_light}}%);">
+                          </div>
+                          <div class="col m6">
+                            <span class="range-field">
+                                <input type="text" id="city_splash_secondary_light" name="city_splash_secondary_light" ></input>
+                            </span>
+                            <span class="black-text">Ajusta el brillo de la imagen</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -136,7 +177,9 @@
 
 {% block page_scripts %}
 <script src="/{{theme}}/materialize/js/makeAJAX.js"></script>
+<script src="/{{theme}}/materialize/js/plugins/ionRangeSlider/js/ion.rangeSlider.js"></script>
 <script type="text/javascript">
+    
     //Selector to clear form
     document.querySelector('#clear_form').addEventListener('click', function() {
         $("form#form_brand :input").each(function(){
@@ -156,6 +199,25 @@
     submitBtn.addEventListener('click', function() {
       document.getElementById("form_brand").submit();
     });
+
+    $("#city_splash_light").ionRangeSlider({
+        min: 0,
+        max: 100,
+        from: {{city_splash_light}},
+        onChange: function (data) {
+            $('#splash1').css( "-webkit-filter", "brightness("+data.from+"%)");
+        },
+    });
+    $("#city_splash_secondary_light").ionRangeSlider({
+        min: 0,
+        max: 100,
+        from: {{city_splash_secondary_light}},
+        onChange: function (data) {
+            $('#splash2').css( "-webkit-filter", "brightness("+data.from+"%)");
+        },
+    });
+
+
 
 </script>
 {% endblock %}

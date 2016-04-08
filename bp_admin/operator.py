@@ -34,7 +34,9 @@ class AdminBrandHandler(BaseHandler):
             params['city_name'] = self.app.config.get('city_name') if brand.city_name == '' else brand.city_name 
             params['city_slogan'] = self.app.config.get('city_slogan') if brand.city_slogan == '' else brand.city_slogan 
             params['city_splash'] = self.app.config.get('city_splash') if brand.city_splash == '' else brand.city_splash 
+            params['city_splash_light'] = self.app.config.get('city_splash_light') if brand.city_splash_light == '' else brand.city_splash_light
             params['city_splash_secondary'] = self.app.config.get('city_splash_secondary') if brand.city_splash_secondary == '' else brand.city_splash_secondary 
+            params['city_splash_secondary_light'] = self.app.config.get('city_splash_secondary_light') if brand.city_splash_secondary_light == '' else brand.city_splash_secondary_light 
             params['brand_logo'] = self.app.config.get('brand_logo') if brand.brand_logo == '' else brand.brand_logo 
             params['brand_favicon'] = self.app.config.get('brand_favicon') if brand.brand_favicon == '' else brand.brand_favicon 
             params['brand_color'] = self.app.config.get('brand_color') if brand.brand_color == '' else brand.brand_color 
@@ -46,7 +48,9 @@ class AdminBrandHandler(BaseHandler):
             params['city_name'] = self.app.config.get('city_name')
             params['city_slogan'] = self.app.config.get('city_slogan')
             params['city_splash'] = self.app.config.get('city_splash')
+            params['city_splash_light'] = self.app.config.get('city_splash_light')
             params['city_splash_secondary'] = self.app.config.get('city_splash_secondary')
+            params['city_splash_secondary_light'] = self.app.config.get('city_splash_secondary_light')
             params['brand_logo'] = self.app.config.get('brand_logo')
             params['brand_favicon'] = self.app.config.get('brand_favicon')
             params['brand_color'] = self.app.config.get('brand_color')
@@ -69,7 +73,9 @@ class AdminBrandHandler(BaseHandler):
             brand.city_name = self.request.get('city_name') 
             brand.city_slogan = self.request.get('city_slogan') 
             brand.city_splash = self.request.get('city_splash') 
+            brand.city_splash_light = self.request.get('city_splash_light') 
             brand.city_splash_secondary = self.request.get('city_splash_secondary') 
+            brand.city_splash_secondary_light = self.request.get('city_splash_secondary_light') 
             brand.brand_logo = self.request.get('brand_logo') 
             brand.brand_favicon = self.request.get('brand_favicon') 
             brand.brand_color = self.request.get('brand_color') 

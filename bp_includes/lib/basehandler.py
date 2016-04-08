@@ -350,7 +350,9 @@ class BaseHandler(webapp2.RequestHandler):
             params['city_name'] = self.app.config.get('city_name') if brand.city_name == '' else brand.city_name 
             params['city_slogan'] = self.app.config.get('city_slogan') if brand.city_slogan == '' else brand.city_slogan 
             params['city_splash'] = self.app.config.get('city_splash') if brand.city_splash == '' else brand.city_splash 
+            params['city_splash_light'] = self.app.config.get('city_splash_light') if brand.city_splash_light == '' else brand.city_splash_light 
             params['city_splash_secondary'] = self.app.config.get('city_splash_secondary') if brand.city_splash_secondary == '' else brand.city_splash_secondary 
+            params['city_splash_secondary_light'] = self.app.config.get('city_splash_secondary_light') if brand.city_splash_secondary_light == '' else brand.city_splash_secondary_light 
             params['brand_logo'] = self.app.config.get('brand_logo') if brand.brand_logo == '' else brand.brand_logo 
             params['brand_favicon'] = self.app.config.get('brand_favicon') if brand.brand_favicon == '' else brand.brand_favicon 
             params['brand_color'] = self.app.config.get('brand_color') if brand.brand_color == '' else brand.brand_color 
@@ -361,7 +363,9 @@ class BaseHandler(webapp2.RequestHandler):
             params['city_name'] = self.app.config.get('city_name')
             params['city_slogan'] = self.app.config.get('city_slogan')
             params['city_splash'] = self.app.config.get('city_splash')
+            params['city_splash_light'] = self.app.config.get('city_splash_light')            
             params['city_splash_secondary'] = self.app.config.get('city_splash_secondary')
+            params['city_splash_secondary_light'] = self.app.config.get('city_splash_secondary_light')
             params['brand_logo'] = self.app.config.get('brand_logo')
             params['brand_favicon'] = self.app.config.get('brand_favicon')
             params['brand_color'] = self.app.config.get('brand_color')
@@ -403,6 +407,8 @@ class BaseHandler(webapp2.RequestHandler):
             'city_slogan': self.brand['city_slogan'],
             'city_splash': self.brand['city_splash'],
             'city_splash_secondary': self.brand['city_splash_secondary'],
+            'city_splash_light': self.brand['city_splash_light'],
+            'city_splash_secondary_light': self.brand['city_splash_secondary_light'],
             'brand_logo': self.brand['brand_logo'],
             'brand_favicon': self.brand['brand_favicon'],
             'brand_color': self.brand['brand_color'],

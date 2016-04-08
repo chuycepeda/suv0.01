@@ -27,7 +27,9 @@ config = {
     'city_url':  'http://onesmart.city',
     'city_slogan':  unicode('Slogan de Mi Ciudad','utf-8'),
     'city_splash':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/city.jpeg',
+    'city_splash_light':  '45',
     'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
+    'city_splash_secondary_light':  '45',
     'app_id': 'one-smart-city-demo',
     # application branding 
     'brand_logo': 'http://onesmart.city/default/materialize/images/_logo.png',

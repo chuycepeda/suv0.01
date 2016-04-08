@@ -79,33 +79,33 @@ handlers:
   upload: bp_includes/static/fonts/(.*\.(eot|svg|ttf|woff))
 
 # @bp_content - materialize styles
-- url: /(\w*)/materialize/css/(.*\.(css|map|scss))$
+- url: /(\w*)/materialize/css/(.*\.(css|map|scss|png))$
   static_files: bp_content/themes/\1/static/materialize/css/\2
-  upload: bp_content/themes/(\w*)/static/materialize/css/(.*\.(css|map|scss))$
+  upload: bp_content/themes/(\w*)/static/materialize/css/(.*\.(css|map|scss|png))$
 
-- url: /(\w*)/materialize/css/(\w*)/(\w-*)/(.*\.(css|map|scss))$
+- url: /(\w*)/materialize/css/(\w*)/(\w-*)/(.*\.(css|map|scss|png))$
   static_files: bp_content/themes/\1/static/materialize/css/\2/\3/\4
-  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/(.*\.(css|map|scss))$
+  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/(.*\.(css|map|scss|png))$
 
-- url: /(\w*)/materialize/css/(\w*)/(\w-*)/scss/(.*\.(css|map|scss))$
+- url: /(\w*)/materialize/css/(\w*)/(\w-*)/scss/(.*\.(css|map|scss|png))$
   static_files: bp_content/themes/\1/static/materialize/css/\2/\3/\4
-  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/scss/(.*\.(css|map|scss))$
+  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/scss/(.*\.(css|map|scss|png))$
 
-- url: /(\w*)/materialize/css/(\w*)/(\w-*)/scss/(\w*)/(.*\.(css|map|scss))$
+- url: /(\w*)/materialize/css/(\w*)/(\w-*)/scss/(\w*)/(.*\.(css|map|scss|png))$
   static_files: bp_content/themes/\1/static/materialize/css/\2/\3/\4/\5
-  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/scss/(\w*)/(.*\.(css|map|scss))$
+  upload: bp_content/themes/(\w*)/static/materialize/css/(\w*)/(\w-*)/scss/(\w*)/(.*\.(css|map|scss)|png)$
 
-- url: /(\w*)/materialize/sass/(.*\.(css|map|scss))$
+- url: /(\w*)/materialize/sass/(.*\.(css|map|scss|png))$
   static_files: bp_content/themes/\1/static/materialize/sass/\2
-  upload: bp_content/themes/(\w*)/static/materialize/sass/(.*\.(css|map|scss))$
+  upload: bp_content/themes/(\w*)/static/materialize/sass/(.*\.(css|map|scss|png))$
 
-- url: /(\w*)/materialize/sass/(\w*)/(.*\.(css|map|scss))$
+- url: /(\w*)/materialize/sass/(\w*)/(.*\.(css|map|scss|png))$
   static_files: bp_content/themes/\1/static/materialize/sass/\2/\3
-  upload: bp_content/themes/(\w*)/static/materialize/sass/(\w*)/(.*\.(css|map|scss))$
+  upload: bp_content/themes/(\w*)/static/materialize/sass/(\w*)/(.*\.(css|map|scss|png))$
 
-- url: /(\w*)/materialize/sass/(\w*)/(\w*)/(.*\.(css|map|scss))$
+- url: /(\w*)/materialize/sass/(\w*)/(\w*)/(.*\.(css|map|scss|png))$
   static_files: bp_content/themes/\1/static/materialize/sass/\2/\3/\4
-  upload: bp_content/themes/(\w*)/static/materialize/sass/(\w*)/(\w*)/(.*\.(css|map|scss))$
+  upload: bp_content/themes/(\w*)/static/materialize/sass/(\w*)/(\w*)/(.*\.(css|map|scss|png))$
 
 # @bp_content - materialize scripts
 - url: /(\w*)/materialize/js/(.*\.js)$
