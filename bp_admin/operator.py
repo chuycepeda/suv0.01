@@ -64,6 +64,7 @@ class AdminBrandHandler(BaseHandler):
             if brand is None:
                 brand = models.Brand()
 
+            source = self.request.get('source')
             brand.app_name = self.request.get('app_name') 
             brand.city_name = self.request.get('city_name') 
             brand.city_slogan = self.request.get('city_slogan') 
@@ -74,13 +75,14 @@ class AdminBrandHandler(BaseHandler):
             brand.brand_color = self.request.get('brand_color') 
             brand.brand_secondary_color = self.request.get('brand_secondary_color') 
             brand.brand_tertiary_color = self.request.get('brand_tertiary_color') 
-
             brand.put()
-            a = {'response': messages.saving_success}
-            self.response.headers['Content-Type'] = 'application/json'
-            self.response.write(json.dumps(a))  
-            #self.add_message(messages.saving_success, 'success')
-            #return self.get()
+            if source == 'AJAX':
+                a = {'response': messages.saving_success}
+                self.response.headers['Content-Type'] = 'application/json'
+                self.response.write(json.dumps(a))  
+            else:
+                self.add_message(messages.saving_success, 'success')
+                return self.get()
         except Exception as e:
             logging.info('error in branding post: %s' % e)
             self.add_message(messages.saving_error, 'danger')

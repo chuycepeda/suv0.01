@@ -3,15 +3,21 @@ Must haves:
 - Materialized Framework
 - Jquery before makeMeAJAX is called
 - All inputs must be inside target form
+- Use <a> tag for submit button NOT <button>
+ - url: Destination or target URL for request
+ - httpType: POST, GET, etc
+ - targetForm: The forms ID
+ - btn: Button JQuery element use $(this)
+ - reload: Boolean for page reloading or not
 */
 
-function makeMeAJAX(url,httpType,targetForm,btn){
+function makeMeAJAX(url,httpType,targetForm,btn,reload){
     //If submit btn is disable return and dont do AJAX on click
     if (btn.hasClass('disabled')) return false;
     //Add disable class
     btn.addClass('disabled');
     //Get all input values from form
-    var data={};
+    var data={'source':'AJAX'};
     $("form#"+targetForm+" :input").each(function(){
         if ($(this).attr('name')) data[$(this).attr('name')]=$(this).val();
     });
@@ -25,9 +31,10 @@ function makeMeAJAX(url,httpType,targetForm,btn){
         var _msg = '<span class="brand-color-text">'+result.response+'</span>';
         Materialize.toast(_msg, 3500);
         console.log(result);
+        if (reload) setTimeout(function(){location.reload()},1500);
     }).fail(function( error ) {
         btn.removeClass('disabled');
-        var _msg = 'Code: '+error.status+' Response: '+error.statusText;
+        var _msg = '<span class="brand-secondary-color-text">Error code: '+error.status+' Response: '+error.statusText+'</span>';
         Materialize.toast(_msg, 3500);
         console.log(error);    
     });

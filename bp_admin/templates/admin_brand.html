@@ -34,7 +34,7 @@
                     <a class="waves-effect waves-light brand-secondary-color white-text btn" id="clear_form">Limpiar campos
                       <i class="mdi-communication-clear-all right"></i>
                     </a>
-                    <a class="waves-effect waves-light brand-secondary-color white-text btn" id="submit_brand_formUp">
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn tooltipped" data-position="top" data-delay="50" data-tooltip="Quick save" id="submit_brand_formUp">
                       <i class="mdi-content-save"></i>
                     </a>  
                   </div>                         
@@ -140,7 +140,7 @@
     //Selector to clear form
     document.querySelector('#clear_form').addEventListener('click', function() {
         $("form#form_brand :input").each(function(){
-          $(this).val('');
+          if ($(this).attr('name') != "_csrf_token" && $(this).attr('type') != 'color') $(this).val('');
         });
     });
         
@@ -149,14 +149,13 @@
     var submitBtnUp = document.querySelector('#submit_brand_formUp');
     
     //Add Events
-    submitBtn.addEventListener('click', function() {
-      var url = '{{ path }}';
-      makeMeAJAX(url,"POST","form_brand",$(this));
-    });
     submitBtnUp.addEventListener('click', function() {
       var url = '{{ path }}';
-      makeMeAJAX(url,"POST","form_brand",$(this));
+      makeMeAJAX(url,"POST","form_brand",$(this),false);
     });    
+    submitBtn.addEventListener('click', function() {
+      document.getElementById("form_brand").submit();
+    });
 
 </script>
 {% endblock %}
