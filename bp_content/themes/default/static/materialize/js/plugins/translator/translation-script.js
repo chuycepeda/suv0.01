@@ -7,16 +7,19 @@
 function switchLanguage() {
 
     var userLang = navigator.language || navigator.userLanguage;
-    var language = 'en';
-    if(userLang == 'fr') language = 'fr';
-    if(userLang == 'es') language = 'es';
+    var language = 'es';
+    // if(userLang == 'fr') language = 'fr';
+    if(userLang == 'en') language = 'en';
 
     /* If user has selected a language, we apply it */
     if ($.cookie('app-language')) {
         var language = $.cookie('app-language'); 
+        if(language == 'en') {
+            $('#tr-flag').attr("src", "/default/materialize/images/flags/US.png");
+        }
     }
     /* We get current language on page load */
-    $("[data-translate]").jqTranslate('js/plugins/translator/translate', {
+    $("[data-translate]").jqTranslate('default/materialize/js/plugins/translator/translate', {
         forceLang: language
     });
 
@@ -24,7 +27,7 @@ function switchLanguage() {
     $('#switch-lang').on('change', function(e) {
         e.preventDefault();
         language = $(this).val();
-        $("[data-translate]").jqTranslate('js/plugins/translator/translate', {
+        $("[data-translate]").jqTranslate('default/materialize/js/plugins/translator/translate', {
             forceLang: language
         });
 

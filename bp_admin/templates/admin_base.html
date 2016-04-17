@@ -640,7 +640,6 @@
 				</script>
                 {% endblock %}
 	        {%endif%}
-
             
             {% block onload_methods %}
                 <script>
@@ -779,8 +778,6 @@
                 </script>
             {% endblock %}
 
-
-
             {% if locale_language_id != "en" %}
                 {% if locale_iso.language == "pt" and locale_iso.territory == "BR" %}
                     <script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_iso.language }}_{{ locale_iso.territory }}.js"></script>
@@ -788,6 +785,30 @@
                     <script src="/boilerplate/js/libs/jquery_validation/localization/messages_{{ locale_language_id }}.js"></script>
                 {% endif %}
             {% endif %}
+
+            {% block translations %}
+                
+                <script src="/{{theme}}/materialize/js/plugins/jquery/jquery.cookies.min.js"></script>
+                <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/translator/jqueryTranslator.min.js"></script>
+                <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/translator/translation-script.js"></script>
+                <script>
+                    
+
+                    function forceLang(lang){
+                        if (lang == 'en') $('#tr-flag').attr("src", "/default/materialize/images/flags/US.png");
+                        if (lang == 'es') $('#tr-flag').attr("src", "/default/materialize/images/flags/Mexico.png");
+                        $("[data-translate]").jqTranslate('default/materialize/js/plugins/translator/translate', {
+                            forceLang: lang
+                        });
+
+                        /* We save language inside a cookie */
+                        $.cookie('app-language', lang);
+                        $.cookie('app-language', lang, { path: '/' });
+                    }
+
+
+                </script>
+            {% endblock %}
 
             {% block page_scripts %}
                 <script type="text/javascript">
