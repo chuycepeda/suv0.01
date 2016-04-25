@@ -331,11 +331,19 @@
                                                <div class="collapsible-body">
                                                     <ul>
                                                         <li {% if uri_for('admin-brand') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-brand') }}">Marca</a></li>
-                                                        <li {% if uri_for('admin-categories') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">Categorías de reporte</a></li>
-                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">Temas para propuestas</a></li>
-                                                        <li {% if uri_for('admin-areas') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-areas') }}">Áreas de compromiso</a></li>
+                                                {% if has_reports %}
+                                                        <li {% if uri_for('admin-categories') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">Reportes</a></li>
+                                                {% endif %}
+                                                {% if has_petitions %}
+                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">Propuestas</a></li>
+                                                {% endif%}
+                                                {% if has_transparency %}
+                                                        <li {% if uri_for('admin-areas') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-areas') }}">Compromisos</a></li>
+                                                {% endif %}
+                                                {% if has_reports %}
                                                         <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización</a></li>
                                                         <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención ciudadana</a></li>
+                                                {% endif %}
                                                     </ul>
                                                </div>
                                             </li>
@@ -349,8 +357,10 @@
                                             <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-stats-reports') or path == uri_for('admin-stats-organization') %}active{% endif %}"><i class="mdi-action-assessment grey-text left"></i>Estadísticas</a>
                                                <div class="collapsible-body">
                                                     <ul>
+                                                    {% if has_reports %}
                                                         <li {% if path == uri_for('admin-stats-reports') %}class="active"{% endif %}><a href="{{ uri_for('admin-stats-reports') }}">Reportes</a></li>
                                                         <li {% if path == uri_for('admin-stats-organization') %}class="active"{% endif %}><a href="{{ uri_for('admin-stats-organization') }}">Desempeño</a></li>
+                                                    {% endif %}
                                                     </ul>
                                                </div>
                                             </li>
@@ -361,13 +371,20 @@
 
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-map') or uri_for('admin-reports') in path or uri_for('admin-petitions') in path or uri_for('admin-initiatives') in path %}active{% endif %}"><i class="mdi-action-assignment grey-text left"></i>Gestión</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-map') or uri_for('admin-reports') in path or uri_for('admin-petitions') in path or uri_for('admin-initiatives') in path or uri_for('admin-geom') in path %}active{% endif %}"><i class="mdi-action-assignment grey-text left"></i>Gestión</a>
                                                <div class="collapsible-body">
                                                     <ul>
-                                                        <li {% if path == uri_for('admin-map') %}class="active"{% endif %}><a href="{{ uri_for('admin-map') }}">Ver mapa</a></li>
-                                                        <li {% if uri_for('admin-reports') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-reports') }}">Reportes</a></li>
+                                                    {% if has_reports %}
+                                                        <li {% if uri_for('admin-reports') in path or path == uri_for('admin-map') %}class="active"{% endif %}><a href="{{ uri_for('admin-reports') }}">Reportes</a></li>
+                                                    {% endif %}
+                                                    {% if has_petitions %}
                                                         <li {% if uri_for('admin-petitions') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-petitions') }}">Propuestas</a></li>
+                                                    {% endif %}
+                                                    {% if has_transparency %}
                                                         <li {% if uri_for('admin-initiatives') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-initiatives') }}">Compromisos</a></li>
+                                                        <li {% if uri_for('admin-geom') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-geom') }}">Geomática</a></li>
+                                                    {% endif %}
+
                                                     </ul>
                                                </div>
                                             </li>
@@ -797,7 +814,7 @@
                     function forceLang(lang){
                         if (lang == 'en') $('#tr-flag').attr("src", "/default/materialize/images/flags/US.png");
                         if (lang == 'es') $('#tr-flag').attr("src", "/default/materialize/images/flags/Mexico.png");
-                        $("[data-translate]").jqTranslate('default/materialize/js/plugins/translator/translate', {
+                        $("[data-translate]").jqTranslate('/default/materialize/js/plugins/translator/translate', {
                             forceLang: lang
                         });
 

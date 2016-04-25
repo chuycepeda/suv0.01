@@ -606,6 +606,114 @@ class AdminAreaEditHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         return self.render_template('admin_area_edit.html', **params)
 
+"""
+    GEOM
+"""
+class AdminGeomHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['group_color'] = self.app.config.get('brand_secondary_color')
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+        return self.render_template('admin_geom.html', **params)
+    
+    def post(self):
+        name = self.request.get('name').strip()
+        sector = self.request.get('catGroup')
+        category = self.request.get('subCat')
+        kind = self.request.get('kind')
+        locality = self.request.get('locality')
+        leader = self.request.get('lead')
+        agency = self.request.get('agency')
+        fund_source = self.request.get('source')
+        amount = self.request.get('amount')
+        description = self.request.get('description')
+        identifier = self.request.get('identifier')
+        exec_date = self.request.get('exec_date')
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord').split(',')
+        image_url = self.request.get('poi_image')
+
+        from google.appengine.api import urlfetch
+        import urllib
+        api_key = self.app.config.get('cartodb_apikey')
+        cartodb_domain = self.app.config.get('cartodb_user')
+        cartodb_table = self.app.config.get('cartodb_pois_table')
+        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+            message = _(messages.saving_success)
+            self.add_message(message, 'success')
+        except Exception as e:
+            logging.info('error in cartodb INSERT request: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            pass
+
+        return self.get()  
+
+class AdminGeomEditHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        return self.render_template('admin_geom_edit.html', **params)
+    
+    def post(self):
+        reportDict = {}
+        name = self.request.get('name').strip()
+        sector = self.request.get('catGroup')
+        category = self.request.get('subCat')
+        kind = self.request.get('kind')
+        locality = self.request.get('locality')
+        leader = self.request.get('lead')
+        agency = self.request.get('agency')
+        fund_source = self.request.get('source')
+        amount = self.request.get('amount')
+        description = self.request.get('description')
+        identifier = self.request.get('identifier')
+        exec_date = self.request.get('exec_date')
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord').split(',')
+        image_url = self.request.get('poi_image')
+
+        from google.appengine.api import urlfetch
+        import urllib
+        api_key = self.app.config.get('cartodb_apikey')
+        cartodb_domain = self.app.config.get('cartodb_user')
+        cartodb_table = self.app.config.get('cartodb_pois_table')
+        #unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+            message = _(messages.saving_success)
+            self.add_message(message, 'success')
+        except Exception as e:
+            logging.info('error in cartodb INSERT request: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            pass
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        return self.response.write(json.dumps(reportDict))
 
 """
 

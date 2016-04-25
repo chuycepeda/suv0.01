@@ -48,7 +48,7 @@
 				  font-size: inherit;
 				}
 				ul li{
-					font-family: roboto-thin!important;
+					font-family: roboto-light!important;
 				}
 				.g-recaptcha{
 					  margin-left: 23%;
@@ -1181,7 +1181,7 @@
 	    			function forceLang(lang){
 	    				if (lang == 'en') $('#tr-flag').attr("src", "/default/materialize/images/flags/US.png");
 	    				if (lang == 'es') $('#tr-flag').attr("src", "/default/materialize/images/flags/Mexico.png");
-	    				$("[data-translate]").jqTranslate('default/materialize/js/plugins/translator/translate', {
+	    				$("[data-translate]").jqTranslate('/default/materialize/js/plugins/translator/translate', {
 				            forceLang: lang
 				        });
 

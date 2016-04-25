@@ -19,7 +19,7 @@ function switchLanguage() {
         }
     }
     /* We get current language on page load */
-    $("[data-translate]").jqTranslate('default/materialize/js/plugins/translator/translate', {
+    $("[data-translate]").jqTranslate('/default/materialize/js/plugins/translator/translate', {
         forceLang: language
     });
 
@@ -27,7 +27,7 @@ function switchLanguage() {
     $('#switch-lang').on('change', function(e) {
         e.preventDefault();
         language = $(this).val();
-        $("[data-translate]").jqTranslate('default/materialize/js/plugins/translator/translate', {
+        $("[data-translate]").jqTranslate('/default/materialize/js/plugins/translator/translate', {
             forceLang: language
         });
 

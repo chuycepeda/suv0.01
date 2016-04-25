@@ -4133,6 +4133,7 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         params['lng'] = self.app.config.get('map_center_lng')  
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['has_cic'] = self.app.config.get('has_cic')
@@ -4140,6 +4141,7 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
+        params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         
         return self.render_template('materialize/users/sections/transparency_city.html', **params)
@@ -4298,16 +4300,22 @@ class MaterializeCategoriesHandler(BaseHandler):
         #Return category groups and parent agency
         elif q=='agencies':
             groups = models.GroupCategory.query()
+            agen_raw = []
             for group in groups:
                 agencies = models.Agency.query(models.Agency.group_category_id == group.key.id())
                 agenArr = []
                 for agency in agencies:
                     agenArr.append(agency.name)    
+                    agen_raw.append(agency.name)    
                 if o=='orphan':
                     if len(agenArr)==0:
                         reportDict[group.name] = {}
                 else:
                     reportDict[group.name] = {'agencies': agenArr}
+            if o=='raw':
+                self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+                self.response.headers['Content-Type'] = 'text/html'
+                return self.response.write(json.dumps(agen_raw))
 
         #Return category groups and parent secretary
         elif q=='secretaries':

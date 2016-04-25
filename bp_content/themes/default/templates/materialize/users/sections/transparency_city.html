@@ -68,36 +68,49 @@
                     <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
 	                    <div class="collapsible-body white">
 	                    	<p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="check_polygon" checked>
-		                    	<label for="check_polygon">Polígono territorial</label>
+		                    	<input type="checkbox" class="filled-in layerControl" id="0" checked>
+		                    	<label for="0">Polígono territorial</label>
 		                    </p>
 		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="1">
-		                    	<label for="1">Secciones electorales</label>
+		                    	<input type="checkbox" class="filled-in layerControl" id="1" checked>
+		                    	<label for="1">Geomática municipal</label>
+		                    </p>
+		                    <div class="divider"></div>
+		                    <p style="padding: 8px;">
+		                    	Capas contextuales:
 		                    </p>
 		                    <p style="padding: 8px;">
 		                    	<input type="checkbox" class="filled-in layerControl" id="2">
-		                    	<label for="2">Distritos electorales</label>
+		                    	<label for="2">Secciones electorales</label>
 		                    </p>
 		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="3" checked>
-		                    	<label for="3">Unidades económicas</label>
+		                    	<input type="checkbox" class="filled-in layerControl" id="3">
+		                    	<label for="3">Distritos electorales</label>
 		                    </p>
 		                    <p style="padding: 8px;">
 		                    	<input type="checkbox" class="filled-in layerControl" id="4">
-		                    	<label for="4">AGEBs urbanos - Vivienda</label>
+		                    	<label for="4">Unidades económicas</label>
 		                    </p>
 		                    <p style="padding: 8px;">
 		                    	<input type="checkbox" class="filled-in layerControl" id="5">
-		                    	<label for="5">AGEBs urbanos - Población</label>
+		                    	<label for="5">AGEBs urbanos - Vivienda</label>
 		                    </p>
 		                    <p style="padding: 8px;">
 		                    	<input type="checkbox" class="filled-in layerControl" id="6">
-		                    	<label for="6">AGEBs urbanos - Educación</label>
+		                    	<label for="6">AGEBs urbanos - Población</label>
 		                    </p>
 		                    <p style="padding: 8px;">
 		                    	<input type="checkbox" class="filled-in layerControl" id="7">
-		                    	<label for="7">AGEBs urbanos - Economía</label>
+		                    	<label for="7">AGEBs urbanos - Educación</label>
+		                    </p>
+		                    <p style="padding: 8px;">
+		                    	<input type="checkbox" class="filled-in layerControl" id="8">
+		                    	<label for="8">AGEBs urbanos - Economía</label>
+		                    </p>
+		                    <p style="padding: 8px;text-align: right; font-size: 11px;">
+		                    	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
+		                    	<br>
+		                    	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
 		                    </p>
 	                    </div>
                   </li>
@@ -113,11 +126,195 @@
     	// cartodb
     	var city_user = '{{cartodb_user}}';
     	var city_table_name = '{{cartodb_reports_table}}';
+    	var city_pois_table_name = '{{cartodb_pois_table}}';
     	var city_mun_table_name = '{{cartodb_polygon_table}}';
     	var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
-    	var city_polygon_name = '{{cartodb_polygon_name}}'
+    	var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
+    	var city_polygon_name = '{{cartodb_polygon_name}}';
 		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
 		var sublayers = [];
+		var _reportDict = {
+                "Administración Pública": {"categories": [
+                  "Equipamiento",
+                  "Estudios, proyectos y gastos indirectos",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"BA6432"},
+                "Agropecuario": {"categories": [
+                  "Agrícola",
+                  "Pecuario"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/marker4.svg",
+                "color":"76C4A1"},
+                "Agua Potable, Alcantarillado y Saneamiento": {"categories": [
+                  "Agua potable",
+                  "Alcantarillado",
+                  "Estudios, proyectos y pago de afectaciones",
+                  "Saneamiento"
+                ],
+                "icon_url":"http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/plumber.svg",
+                "color":"169FBA"},
+                "Asistencia Social": {"categories": [
+                  "Apoyos",
+                  "Becas",
+                  "Campañas",
+                  "Cursos y talleres",
+                  "Equipamiento",
+                  "Estimulos",
+                  "Infraestructura",
+                  "Premios económicos",
+                  "Prevención",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"AB3EC6"},
+                "Cultura": {"categories": [
+                  "Becas",
+                  "Biblioteca",
+                  "Centro cultural",
+                  "Centro histórico",
+                  "Edificio histórico",
+                  "Festival",
+                  "Fideicomiso",
+                  "Monumento histórico",
+                  "Museo",
+                  "Programa cultural",
+                  "Teatro"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins21.svg",
+                "color":"AB3E3D"},
+                "Deporte": {"categories": [
+                  "Arena",
+                  "Auditorio",
+                  "Canchas",
+                  "Centro acuático",
+                  "Equipamiento",
+                  "Estadio",
+                  "Gimnasio",
+                  "Lienzo charro",
+                  "Pista de atletismo",
+                  "Plaza de toros",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins87.svg",
+                "color":"31B73D"},
+                "Educación": {"categories": [
+                  "Educación",
+                  "Educación básica",
+                  "Educación media",
+                  "Educación superior",
+                  "Especial",
+                  "Otros"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"FBB73D"},
+                "Fomento Económico": {"categories": [
+                  "Apoyos",
+                  "Convenios",
+                  "Empleo",
+                  "Equipamiento",
+                  "Estudios y proyectos",
+                  "Infraestructura",
+                  "Pymes",
+                  "Urbanización industrial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"0C53DF"},
+                "Infraestructura Social": {"categories": [
+                  "Apoyos",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BA53DF"},
+                "Infraestructura Urbana": {"categories": [
+                  "Alumbrado público",
+                  "Asta bandera",
+                  "Avenidas y boulevares",
+                  "Bacheo",
+                  "Banquetas",
+                  "Bardas y muros de contención",
+                  "Calles",
+                  "Camellones",
+                  "Cancha de usos múltiples",
+                  "Demoliciones",
+                  "Edificio público",
+                  "Electrificación",
+                  "Equipamiento urbano",
+                  "Equipo de luz solar",
+                  "Estudios y proyectos",
+                  "Fachadas",
+                  "Foros",
+                  "Libramientos",
+                  "Limpieza y mantenimiento",
+                  "Obras alternas",
+                  "Parque",
+                  "Pavimentación",
+                  "Plaza pública y jardines",
+                  "Puentes",
+                  "Recarpeteo",
+                  "Señalización y nomenclaturas",
+                  "Techumbres",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BABABA"},
+                "Infraestructura Vial": {"categories": [
+                  "Caminos",
+                  "Carreteras",
+                  "Carreteras alimentadoras",
+                  "Estudios, proyectos y afectaciones",
+                  "Pavimentación",
+                  "Puentes",
+                  "Sistema vial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"DE7B00"},
+                "Medio Ambiente": {"categories": [
+                  "Aire limpio",
+                  "Forestal",
+                  "Iluminación urbana sustentable",
+                  "Medio ambiente",
+                  "Monitoreo ambiental",
+                  "Parque",
+                  "Planta de tratamiento",
+                  "Programa",
+                  "Relleno sanitario",
+                  "Uso de suelo"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins5.svg",
+                "color":"107B00"},
+                "Salud": {"categories": [
+                  "Centro de salud",
+                  "Hospitales",
+                  "Otros",
+                  "Unidad especialidades medicas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins41.svg",
+                "color":"1000D5"},
+                "Seguridad Pública": {"categories": [
+                  "Capacitación",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas",
+                  "Seguridad vecinal"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/location5.svg",
+                "color":"10008A"},
+                "Turismo": {"categories": [
+                  "Centro histórico",
+                  "Infraestructura turística",
+                  "Programas",
+                  "Promotoras",
+                  "Proyectos",
+                  "Pueblos mágicos"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/favourite1.svg",
+                "color":"F2008A"}
+        };
         
 		/* MAPS RELATED */
 		var panorama, sv = new google.maps.StreetViewService();
@@ -128,7 +325,7 @@
 		function init(){
 			var mapOptions = {
 				center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-				zoom: {% if is_mobile %}10{% else %}12{% endif %},
+				zoom: {% if is_mobile %}9{% else %}11{% endif %},
 				minZoom:5,
 				zoomControl: true,
 				zoomControlOptions: {
@@ -171,12 +368,18 @@
 
 
 			// CITY LAYERS
+			var city_query= "SELECT " + city_pois_table_name + ".* FROM " + city_pois_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_pois_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
+            var city_interactivity = ["cartodb_id","the_geom","the_geom_webmercator","description","name","identifier","amount","sector","category","exec_date","agency","fund_source","address_from","leader","image_url","kind","locality"];
 			layerSource = {
                 user_name: city_user,
                 type: 'cartodb',
                 sublayers: [{
                     sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
                     cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+                },{
+                    sql: city_query,
+                    cartocss: createTileStyle('normal',city_pois_table_name),
+                    interactivity: city_interactivity
                 }]
             };
             cartodb.createLayer(map,layerSource)
@@ -186,6 +389,14 @@
                    sublayers[i] = layer.getSubLayer(i);
                    console.log("Congrats, you added sublayer #" + i + "!");
                 }
+                sublayers[1].infowindow.set('template', $('#infowindow_'+city_pois_table_name).html());
+                cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
+                    infowindowTemplate: $('#infowindow_'+city_pois_table_name).html()
+                });
+                sublayers[1].setInteraction(true);                                 
+                sublayers[1].on('featureClick', function(e, latlng, pos, data) {
+                      //do whatever
+                }); 
             }); 
 
 
@@ -194,48 +405,43 @@
                 user_name: 'mexico',
                 type: 'cartodb',
                 sublayers: [{
-                    sql: "SELECT nl_secciones.* FROM nl_secciones, pais_municipios WHERE ST_Intersects(nl_secciones.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    sql: "SELECT nl_secciones.* FROM nl_secciones, nacional_municipios WHERE ST_Intersects(nl_secciones.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
                     cartocss: "#nl_secciones{line-color: #FFD528;line-width: 3;line-opacity: 1;}"
                 },{
-                    sql: "SELECT nl_distritos.* FROM nl_distritos, pais_municipios WHERE ST_Intersects(nl_distritos.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    sql: "SELECT nl_distritos.* FROM nl_distritos, nacional_municipios WHERE ST_Intersects(nl_distritos.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
                     cartocss: "#nl_distritos{line-color: #FFAB1F;line-width: 3;line-opacity: 1;}"
                 },{
-                    sql: "SELECT nl_denue.* FROM nl_denue, pais_municipios WHERE ST_Intersects(nl_denue.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    sql: "SELECT nl_denue.* FROM nl_denue, nacional_municipios WHERE ST_Intersects(nl_denue.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
                     cartocss: "#nl_denue{marker-fill: #FF7E15;marker-line-color: #FFFFFF; line-width: 3;line-opacity: 1;}"
                 },{
-                    sql: "SELECT nl_ageb_urb_viv.* FROM nl_ageb_urb_viv, pais_municipios WHERE ST_Intersects(nl_ageb_urb_viv.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    sql: "SELECT nl_ageb_urb_viv.* FROM nl_ageb_urb_viv, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_viv.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
                     cartocss: "#nl_ageb_urb_viv{line-color: #69B1D8;line-width: 3;line-opacity: 1;}"
                 },{
-                    sql: "SELECT nl_ageb_urb_pob.* FROM nl_ageb_urb_pob, pais_municipios WHERE ST_Intersects(nl_ageb_urb_pob.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    sql: "SELECT nl_ageb_urb_pob.* FROM nl_ageb_urb_pob, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_pob.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
                     cartocss: "#nl_ageb_urb_pob{line-color: #3A6698;line-width: 3;line-opacity: 1;}"
                 },{
-                    sql: "SELECT nl_ageb_urb_edu.* FROM nl_ageb_urb_edu, pais_municipios WHERE ST_Intersects(nl_ageb_urb_edu.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    sql: "SELECT nl_ageb_urb_edu.* FROM nl_ageb_urb_edu, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_edu.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
                     cartocss: "#nl_ageb_urb_edu{line-color: #BA58DA;line-width: 3;line-opacity: 1;}"
                 },{
-                    sql: "SELECT nl_ageb_urb_eco.* FROM nl_ageb_urb_eco, pais_municipios WHERE ST_Intersects(nl_ageb_urb_eco.the_geom, pais_municipios.the_geom) AND pais_municipios.nom_mun IN ('" + city_polygon_full_name + "')",
+                    sql: "SELECT nl_ageb_urb_eco.* FROM nl_ageb_urb_eco, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_eco.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
                     cartocss: "#nl_ageb_urb_eco{line-color: #56107E;line-width: 3;line-opacity: 1;}"
                 }]
             };
             cartodb.createLayer(map,layerSource)
             .on('done', function(layer) {
 			    map.overlayMapTypes.setAt(1, layer);
-                for (var i = 1, j =0; j < layer.getSubLayerCount(); i++, j++) {
+                for (var i = 2, j =0; j < layer.getSubLayerCount(); i++, j++) {
                    sublayers[i] = layer.getSubLayer(j);
                    cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(j));
-                   if (i != 3) sublayers[i].hide(); //leave just one turned on.
+                   sublayers[i].hide(); //leave all turned off.
                    console.log("Congrats, you added sublayer #" + i + "!");
                 }
             }); 
 
 
             $('.layerControl').change(function() {
-                if (this.id == 'check_polygon'){
-                    if (this.checked) sublayers[0].show();
-                    else sublayers[0].hide();
-                }else{
-                	if (this.checked) sublayers[parseInt(this.id)].show();
-                    else sublayers[parseInt(this.id)].hide();
-                }
+                if (this.checked) sublayers[parseInt(this.id)].show();
+                else sublayers[parseInt(this.id)].hide();
             });
 			   
 		}
@@ -348,6 +554,90 @@
 		  		var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
 		  	}
 		  	return val;
-		}				
+		}			
+
+		function createTileStyle(tStyle, table) {
+	        var mOverlap;
+	        var close;
+	        var tileStyle = "#" + table + "{";
+	        switch (tStyle) {
+	            case 'normal':
+	                mOverlap = true;
+	                closeStyle = "}";
+	                break;
+	            case 'cluster':
+	                mOverlap = false;
+	                closeStyle = "}";
+	                break;
+	            case 'heat':
+	                return "#" + table + "{marker-fill:{{brand_secondary_color}};marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
+	            case 'intensity':
+	                return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";                         
+	            case 'bubble':
+	                mOverlap = false;
+	                closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
+	                break;
+	            default:
+	                mOverlap = true;
+	                closeStyle = "}";
+	                break;
+	        }
+	        
+	        tileStyle += "marker-file: url(http://com.cartodb.users-assets.production.s3.amazonaws.com/maki-icons/marker-18.svg);marker-fill-opacity: 1.0;marker-line-color: {{brand_secondary_color}};marker-line-width: 2;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 30;marker-fill: {{brand_tertiary_color}};marker-allow-overlap:" + mOverlap +";";
+	    
+	        for (var x in _reportDict){
+	            tileStyle += '[sector="'+x+'"] {marker-file: url('+ _reportDict[x].icon_url +');marker-fill: #'+_reportDict[x].color+';marker-width: 30;}';    
+	              
+	        }
+	        
+	        tileStyle += closeStyle;
+	        
+	        if (tStyle == "bubble") {
+	            for (var j = upperVotes.length - 1; j >= 0; j--) {
+	                tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
+	            }
+	        }
+	        return tileStyle;
+	    }	
 	</script>
+	<script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
+            {% raw %}
+            <div class="cartodb-popup header blue v2">
+              <a href="#close" class="cartodb-popup-close-button close">x</a>
+              <div class="cartodb-popup-content-wrapper" style="background: white;">
+                <div class="cartodb-popup-content">
+                  <img src="{{image_url}}" alt="" class="responsive-img"/>
+                  <h4>Sector</h4>
+                  <p>{{sector}}</p>
+                  <h4>Categoría</h4>
+                  <p>{{category}}</p>
+                  <h4>Dependencia</h4>
+                  <p>{{agency}}</p>
+                  <h4>Monto</h4>
+                  <p>${{amount}}</p>
+                  <h4>Tipo</h4>
+                  <p>{{kind}}</p>
+                  <h4>Dirección</h4>
+                  <p>{{address_from}}</p>
+                  <h4>Descripción</h4>
+                  <p>{{description}}</p>
+                  // <h4>Fecha de ejecución</h4>
+                  // <p>{{exec_date}}</p>
+                  <h4>Fuente de financiamiento</h4>
+                  <p>{{fund_source}}</p>
+                  <h4>Clave de identificación</h4>
+                  <p>{{identifier}}</p>
+                  <h4>Líder o Auditor</h4>
+                  <p>{{leader}}</p>
+                  <h4>Localidad</h4>
+                  <p>{{locality}}</p>
+                  <h4>Nombre</h4>
+                  <p>{{name}}</p>
+                </div>
+              </div>
+              <div class="cartodb-popup-tip-container">
+              </div>
+            </div>
+            {% endraw %}  
+        </script>
 {% endblock %}

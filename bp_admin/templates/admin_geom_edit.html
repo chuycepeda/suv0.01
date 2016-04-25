@@ -1,0 +1,852 @@
+{% extends 'admin_base.html' %}
+
+{% block breadcrums %}
+    <!--breadcrumbs start-->
+    <div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+        <div class="container">
+            <div class="row">
+              <div class="col s12 m12 l12">
+                <ol class="breadcrumb" style="font-size: 29px;">
+                    <li class="active"><a href="{{ uri_for('admin-geom') }}">Gestión de información geográfica</a> | Capturas</li>
+                </ol>
+              </div>
+            </div>
+        </div>
+    </div>
+    <!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_css %}
+    <style>
+        .btn{
+                margin-right: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
+    <link rel="stylesheet" href="/{{theme}}/materialize/css/plugins/autocomplete/awesomplete.css">
+{% endblock %}
+
+{% block page_content %}
+    <div class="container">
+      <div class="section">
+       <div class="row" style="margin-top:30px">
+            <div class="row">
+              <h3 class="col s12 m8 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Haz clic en un punto para ver su información.</h3>
+            </div> 
+            <div class="row">
+                <div style="height:85vh; width:100%;">
+                        <div id="map_1" style="height:85vh; width:100%;"> </div>
+                </div>
+            </div>
+            <div class="card-panel" id="update_card">
+                <div class="row">
+                  <h3 class="col s12 m8 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita la información y guarda los cambios para actualizar.</h3>
+                </div> 
+                <form id="form_poi" action="{{ url|safe }}" method="post">
+                          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" id="catGroup" name="catGroup">
+                            <input type="hidden" id="subCat" name="subCat">
+                            <input type="hidden" id="kind" name="kind">
+                            <input type="hidden" id="locality" name="locality">
+
+                          <div class="row margin">
+                            <div class="input-field col s12 l6">
+                              <i class="mdi-maps-place prefix brand-color-text"></i>
+                              <input id="name" name="name" type="text" value="">
+                              <label for="name" class="center-align">Nombre del punto de interés</label>
+                            </div>
+                          </div>
+
+                          <div class="row margin">
+                            <div class="input-field col s12 l6">
+                              <i class="mdi-social-person prefix brand-color-text"></i>
+                              <input id="lead" name="lead" type="text" value="">
+                              <label for="lead" class="center-align">Líder responsable o auditor</label>
+                            </div>
+                            <div class="input-field col s12 l6">
+                              <i class="mdi-action-account-balance prefix brand-color-text"></i>
+                              <input id="agency" name="agency" type="text" value="" style="    margin-left: 3rem;width: 92%;width: calc(100% - 3rem);">
+                              <label id="agencyLabel" for="agency" class="center-align">Dependencia encargada</label>
+                            </div>
+                          </div>
+
+                          <div class="row margin">
+                            <div class="input-field col s12 l6">
+                              <i class="mdi-action-account-balance-wallet prefix brand-color-text"></i>
+                              <input id="source" name="source" type="text" value="">
+                              <label for="source" class="center-align">Fuente de financiamiento</label>
+                            </div>
+                            <div class="input-field col s12 l6">
+                              <i class="mdi-editor-attach-money prefix brand-color-text"></i>
+                              <input id="amount" name="amount" type="number" value="" min="1" step="any">
+                              <label for="amount" class="center-align">Monto destinado</label>
+                            </div>
+                          </div>
+
+                          <div class="row margin">
+                              <div class="input-field col s12 l6">
+                                  <i class="mdi-maps-rate-review prefix brand-color-text brand-color-text"></i>
+                                  <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+                                  <label for="description">Descripción del punto de interés</label>
+                              </div>
+                              <div class="input-field col s12 l6">
+                                <i class="mdi-action-receipt prefix brand-color-text"></i>
+                                <input id="identifier" name="identifier" type="text" value="">
+                                <label for="identifier" class="center-align">Clave o número de identificación</label>
+                              </div>
+                          </div>   
+
+                          <div class="row margin" style="margin-left: 45px!important;">
+                                <div class="input-field col s12 l6">
+                                    <!-- Dropdown Trigger -->
+                                    <p>Tipo de obra:</p>
+                                    <a data-hover="false" id="kindbtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='kinddd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                                    <!-- Dropdown Structure -->
+                                    <ul id='kinddd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Acción</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Ampliación</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Apoyo</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Construcción</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Equipamiento</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Estudio</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Programa</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Proyecto</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Rehabilitación</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Servicio</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Otro</a></li>
+                                    </ul>                
+                                </div>
+                              
+                                <div id="localitydd_container" class="input-field col s12 l6">
+                                    <!-- Dropdown Trigger -->
+                                    <p>Tipo de localidad:</p>
+                                    <a data-hover="false" id="localitybtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='localitydd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                                    <!-- Dropdown Structure -->
+                                    <ul id='localitydd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('locality',this);return false;">Urbana</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('locality',this);return false;">Rural</a></li>
+                                    </ul>                
+                                </div>
+                          </div> 
+
+                          <div class="row margin" style="margin-left: 45px!important; margin-bottom:35px!important;">
+                                <div class="input-field col s12 l6">
+                                    <!-- Dropdown Trigger -->
+                                    <p>Sector:</p>
+                                    <a data-hover="false" id='catGroupbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                                    <!-- Dropdown Structure -->
+                                    <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Administración Pública</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Agropecuario</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Agua Potable, Alcantarillado y Saneamiento</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Asistencia Social</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Cultura</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Deporte</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Educación</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Fomento Económico</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Infraestructura Social</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Infraestructura Urbana</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Infraestructura Vial</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Medio Ambiente</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Salud</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Seguridad Pública</a></li>
+                                      <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Turismo</a></li>
+                                    </ul>                
+                                </div>
+                              
+                                <div id="subCatdd_container" class="input-field col s12 l6">
+                                    <!-- Dropdown Trigger -->
+                                    <p>Categoría:</p>
+                                    <a data-hover="false" id='subCatbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='subCatdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                                    <!-- Dropdown Structure -->
+                                    <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
+                                </div>
+                          </div> 
+
+                          <div class="row margin">
+                            <div class="input-field col s12">
+                              <i class="mdi-image-image prefix brand-color-text"></i>
+                              <input id="poi_image" name="poi_image" type="text" value="">
+                              <label for="poi_image" class="center-align">URL de imagen (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                            </div>
+                          </div>
+                          
+                          <div class="row margin">
+                              <div class="input-field col s12 l6">                                
+                                  <i class="mdi-action-event prefix brand-color-text brand-color-text"></i>
+                                  <input id="exec_date" name="exec_date" type="date" class="datepicker" >
+                                  <label for="exec_date">Fecha de ejecución</label>
+                              </div>
+                          </div>
+
+                          <div class="row margin">
+                            <div class="input-field col s12">
+                                  <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="geocode('from')"></i>
+                                  <input id="address_from" name="address_from" type="text" class="validate" value="" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) geocode('from');">
+                                  <label for="address_from" class="active">Ubicación</label>
+                                  <div id="map_2" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
+                            </div>                
+                            <input type="text" id ="address_from_coord" name="address_from_coord" value="" hidden>
+                          </div>
+
+                          <div class="row container" style="padding:25px; padding-left: 55px!important;">
+                            
+                            <a class="waves-effect waves-light grey white-text btn left" id="delete_poi" >Eliminar punto
+                              <i class="mdi-action-delete left"></i>
+                            </a> 
+
+                            <a class="waves-effect waves-light brand-secondary-color white-text btn right" id="update_poi" >Guardar Cambios
+                              <i class="mdi-content-send right"></i>
+                            </a>                          
+                          </div>
+                        </form>
+            </div>         
+        </div>
+      </div>
+    </div>
+    
+{% endblock %}
+
+{% block page_floatings %}
+{% endblock %}
+
+{% block page_scripts %}
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+    <script src="/{{theme}}/materialize/js/cartodb.js"></script>
+    <script src="/{{theme}}/materialize/js/plugins/autocomplete/awesomplete.min.js"></script>
+    <script type="text/javascript">
+
+        var url = "{{ uri_for('materialize-report-categories') }}" + "?q=agencies&o=raw";
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) { 
+                var input = document.getElementById("agency");
+                new Awesomplete(input, {
+                  list: JSON.parse(data)
+                });
+                document.getElementById('agency').addEventListener('click', function() { $('#agencyLabel').addClass('active');});
+            }
+        }).done(function(data) {      
+        });
+
+            // cartodb
+            var city_user = '{{cartodb_user}}';
+            var city_table_name = '{{cartodb_pois_table}}';
+            var city_mun_table_name = '{{cartodb_polygon_table}}';
+            var city_polygon_name = '{{cartodb_polygon_name}}'
+            var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+            var sublayers = [];
+            var sublayers2 = [];
+            var geocoder = new google.maps.Geocoder();
+            var marker = null;
+            var markers = [];
+            var reportDict = null;
+            var city_catMarkers = [];
+            var _reportDict = {
+                "Administración Pública": {"categories": [
+                  "Equipamiento",
+                  "Estudios, proyectos y gastos indirectos",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"BA6432"},
+                "Agropecuario": {"categories": [
+                  "Agrícola",
+                  "Pecuario"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/marker4.svg",
+                "color":"76C4A1"},
+                "Agua Potable, Alcantarillado y Saneamiento": {"categories": [
+                  "Agua potable",
+                  "Alcantarillado",
+                  "Estudios, proyectos y pago de afectaciones",
+                  "Saneamiento"
+                ],
+                "icon_url":"http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/plumber.svg",
+                "color":"169FBA"},
+                "Asistencia Social": {"categories": [
+                  "Apoyos",
+                  "Becas",
+                  "Campañas",
+                  "Cursos y talleres",
+                  "Equipamiento",
+                  "Estimulos",
+                  "Infraestructura",
+                  "Premios económicos",
+                  "Prevención",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"AB3EC6"},
+                "Cultura": {"categories": [
+                  "Becas",
+                  "Biblioteca",
+                  "Centro cultural",
+                  "Centro histórico",
+                  "Edificio histórico",
+                  "Festival",
+                  "Fideicomiso",
+                  "Monumento histórico",
+                  "Museo",
+                  "Programa cultural",
+                  "Teatro"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins21.svg",
+                "color":"AB3E3D"},
+                "Deporte": {"categories": [
+                  "Arena",
+                  "Auditorio",
+                  "Canchas",
+                  "Centro acuático",
+                  "Equipamiento",
+                  "Estadio",
+                  "Gimnasio",
+                  "Lienzo charro",
+                  "Pista de atletismo",
+                  "Plaza de toros",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins87.svg",
+                "color":"31B73D"},
+                "Educación": {"categories": [
+                  "Educación",
+                  "Educación básica",
+                  "Educación media",
+                  "Educación superior",
+                  "Especial",
+                  "Otros"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"FBB73D"},
+                "Fomento Económico": {"categories": [
+                  "Apoyos",
+                  "Convenios",
+                  "Empleo",
+                  "Equipamiento",
+                  "Estudios y proyectos",
+                  "Infraestructura",
+                  "Pymes",
+                  "Urbanización industrial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"0C53DF"},
+                "Infraestructura Social": {"categories": [
+                  "Apoyos",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BA53DF"},
+                "Infraestructura Urbana": {"categories": [
+                  "Alumbrado público",
+                  "Asta bandera",
+                  "Avenidas y boulevares",
+                  "Bacheo",
+                  "Banquetas",
+                  "Bardas y muros de contención",
+                  "Calles",
+                  "Camellones",
+                  "Cancha de usos múltiples",
+                  "Demoliciones",
+                  "Edificio público",
+                  "Electrificación",
+                  "Equipamiento urbano",
+                  "Equipo de luz solar",
+                  "Estudios y proyectos",
+                  "Fachadas",
+                  "Foros",
+                  "Libramientos",
+                  "Limpieza y mantenimiento",
+                  "Obras alternas",
+                  "Parque",
+                  "Pavimentación",
+                  "Plaza pública y jardines",
+                  "Puentes",
+                  "Recarpeteo",
+                  "Señalización y nomenclaturas",
+                  "Techumbres",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BABABA"},
+                "Infraestructura Vial": {"categories": [
+                  "Caminos",
+                  "Carreteras",
+                  "Carreteras alimentadoras",
+                  "Estudios, proyectos y afectaciones",
+                  "Pavimentación",
+                  "Puentes",
+                  "Sistema vial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"DE7B00"},
+                "Medio Ambiente": {"categories": [
+                  "Aire limpio",
+                  "Forestal",
+                  "Iluminación urbana sustentable",
+                  "Medio ambiente",
+                  "Monitoreo ambiental",
+                  "Parque",
+                  "Planta de tratamiento",
+                  "Programa",
+                  "Relleno sanitario",
+                  "Uso de suelo"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins5.svg",
+                "color":"107B00"},
+                "Salud": {"categories": [
+                  "Centro de salud",
+                  "Hospitales",
+                  "Otros",
+                  "Unidad especialidades medicas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins41.svg",
+                "color":"1000D5"},
+                "Seguridad Pública": {"categories": [
+                  "Capacitación",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas",
+                  "Seguridad vecinal"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/location5.svg",
+                "color":"10008A"},
+                "Turismo": {"categories": [
+                  "Centro histórico",
+                  "Infraestructura turística",
+                  "Programas",
+                  "Promotoras",
+                  "Proyectos",
+                  "Pueblos mágicos"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/favourite1.svg",
+                "color":"F2008A"}
+            };
+            var marker_color = "{{brand_color}}";
+            var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);
+            var mapCenter = [{{lat}},{{lng}}] , map, map2;
+            google.maps.event.addDomListener(window,'load', init);
+            var query;                    
+            
+            
+            function init(){
+                // MAP 1
+                var mapOptions = {
+                    center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+                    zoom: {% if is_mobile %}11{% else %}13{% endif %},
+                    minZoom:5,
+                    zoomControl: true,
+                    zoomControlOptions: {
+                        style: google.maps.ZoomControlStyle.SMALL,  
+                        position: google.maps.ControlPosition.LEFT_BOTTOM   
+                    },
+                    mapTypeControl: false,
+                    scrollwheel: false,
+                    streetViewControl: true,
+                    streetViewControlOptions: {
+                        position: google.maps.ControlPosition.LEFT_BOTTOM   
+                    },
+                    panControl:false,
+                    backgroundColor: 'rgb(249, 249, 249)',
+                    rotateControl:true,
+                    overviewMapControl:true
+                };
+                map = new google.maps.Map(document.getElementById('map_1'), mapOptions);
+                
+ 
+                // CITY LAYERS
+                var city_query= "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
+                var city_interactivity = ["cartodb_id","the_geom","the_geom_webmercator","description","name","identifier","amount","sector","category","exec_date","agency","fund_source","address_from","leader","image_url","kind","locality"];
+                $.ajax({
+                    url: "{{ uri_for('materialize-report-categories') }}",
+                    type: 'GET'
+                }).done(function(data) {
+                    reportDict = data;
+                    for (var x in reportDict){
+                        for (var y in reportDict[x].icon_url){
+                            city_catMarkers.push([y, reportDict[x].icon_url[y], reportDict[x].color]);
+                        }
+                    }
+                    layerSource = {
+                        user_name: city_user,
+                        type: 'cartodb',
+                        sublayers: [{
+                            sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
+                            cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+
+                        },{
+                            sql: city_query,
+                            cartocss: createTileStyle('normal',city_table_name),
+                            interactivity: city_interactivity
+                        }]
+                    };
+                    cartodb.createLayer(map,layerSource)
+                    .on('done', function(layer) {
+                        map.overlayMapTypes.setAt(0, layer);
+                        for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                           sublayers[i] = layer.getSubLayer(i);
+                           console.log("Congrats, you added sublayer #" + i + "!");
+                        }
+
+                        sublayers[1].infowindow.set('template', $('#infowindow_'+city_table_name).html());
+                        cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
+                            infowindowTemplate: $('#infowindow_'+city_table_name).html()
+                        });
+                        sublayers[1].setInteraction(true);                                 
+                        sublayers[1].on('featureClick', function(e, latlng, pos, data) {
+                              populateData(data, latlng);
+                              console.log("e",e);
+                              console.log("latlng",latlng);
+                              console.log("pos",pos);
+                              console.log("data",data);
+                        });  
+                        
+                    }); 
+                });
+
+
+
+                // MAP 2
+                map2 = new google.maps.Map(document.getElementById('map_2'), mapOptions);
+                
+                google.maps.event.addDomListener(window, 'resize', function() {
+                    map2.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+                });
+                var layerSource = {
+                      user_name: '{{cartodb_user}}',
+                      type: 'cartodb',
+                      sublayers: [{
+                          sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+                          cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+                      }]
+                  };
+                  cartodb.createLayer(map2,layerSource)
+                  .on('done', function(layer) {
+                  map2.overlayMapTypes.setAt(0, layer);
+                      for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                         sublayers2[i] = layer.getSubLayer(i);
+                         console.log("Congrats, you added sublayer #" + i + "!");
+                      }
+                  })
+                  .error(function(err) {
+                      console.log("error: " + err);
+                  });    
+
+                  var address_from = document.getElementById('address_from');
+                  var autocomplete_from = new google.maps.places.Autocomplete(address_from);
+                  autocomplete_from.bindTo('bounds', map2);
+                  
+                  google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+                      var place = autocomplete_from.getPlace();
+                      if (!place.geometry) {
+                                return;
+                      }
+                      if (place.geometry.viewport) {
+                                map2.fitBounds(place.geometry.viewport);
+                                markerDrop(place.geometry.location);
+                      }else{
+                                map2.setCenter(place.geometry.location);
+                                map2.setZoom(17);
+                                markerDrop(place.geometry.location);
+                      }
+                  });                                       
+                    
+                  google.maps.event.addDomListener(window, 'resize', function() {
+                            setTimeout(function() {
+                                map.panTo({lat: mapCenter[0], lng: mapCenter[1]});
+                                map2.panTo({lat: mapCenter[0], lng: mapCenter[1]});
+                            }, 400);                            
+                      });
+                            
+                  google.maps.event.addListener(map2, 'click', function(event) {
+                          markerDrop(event.latLng);
+                          geocode(event.latLng);
+                          console.log("latLng", event.latLng);
+                      });
+                            
+                    drawMarker();  
+                
+            }
+
+            function codeAddress(input) {
+                var address, obj;                               
+
+                address = document.getElementById(input).value;
+                obj = { 'address': address };
+                geocoder.geocode( obj, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        
+                        if (typeof(input) === 'string') {
+                            map.setCenter(results[0].geometry.location);
+                            switch (results[0].geometry.location_type){
+                                case 'ROOFTOP': map.setZoom(17); break;
+                                case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                                case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                                case 'APPROXIMATE': map.setZoom(13); break;
+                            }
+                        }else{
+                            if (results[1]) {
+                                document.getElementById(input).value = results[1].formatted_address;
+                            } else {
+                                console.log('No results found');
+                            }
+                        }
+                    
+                    } else {
+                        console.log('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            }
+
+            function markerFitBounds() {
+                var bounds = new google.maps.LatLngBounds();
+                for(var i=0,j=markers.length; i<j; i++) {
+                    bounds.extend( markers[i].getPosition() );
+                }
+                map.fitBounds(bounds);
+            }
+                
+            function markerDrop (loc) {
+                //Marker idea from: http://stackoverflow.com/questions/7095574/google-maps-api-3-custom-marker-color-for-default-dot-marker                 
+                if (marker == null){
+                    marker = new google.maps.Marker({
+                              animation: google.maps.Animation.DROP,
+                      position: loc,
+                      map: map2,
+                      draggable: true,
+                      icon: marker_icon
+                    });
+                    google.maps.event.addListener(marker,'dragend',function(event) {
+                          geocode(event.latLng);
+                    });        
+                }else{
+                    marker.setPosition(loc);
+                    //marker.setIcon(marker_icon);
+                }
+            }
+
+            function drawMarker(){
+              if(document.getElementById('address_from_coord').value){
+                  var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
+                  var latlng = new google.maps.LatLng(coof[0],coof[1]);
+                  markerDrop (latlng);
+              }
+            }
+            
+            function geocode(input) {
+                  var address, obj;
+                  if (typeof(input) === 'string') {
+                      address = document.getElementById('address_'+input).value;
+                      obj = { 'address': address };
+                  }else{
+                      address = input;
+                      obj = { 'location': address};
+                  }
+                  geocoder.geocode( obj, function(results, status) {
+                      if (status == google.maps.GeocoderStatus.OK) {
+                          if (typeof(input) === 'string') {
+                              map.setCenter(results[0].geometry.location);
+                              switch (results[0].geometry.location_type){
+                                  case 'ROOFTOP': map.setZoom(17); break;
+                                  case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                                  case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                                  case 'APPROXIMATE': map.setZoom(13); break;
+                              }
+                              markerDrop(results[0].geometry.location);
+                          }else{
+                              if (results[1]) {
+                                  document.getElementById('address_from').value = results[1].formatted_address;
+                              } else {
+                                  alert('No address geocode found');
+                              }
+                          }
+                      } else {
+                          alert('Geocode unsuccessful: ' + status);
+                      }
+                  });
+            }   
+            
+            function fillDd(dd, pKey){
+
+                  if (dd=='click'){
+                    if ($('#subCatbtn').hasClass('disabled')) $('#subCatbtn').removeClass('disabled');          
+                    var html='';
+                    var selectObj = _reportDict[pKey]['categories'];
+                    for (var i=0,j=selectObj.length;i<j;i++){
+                        html += '<li> <a class="brand-color-text" href="#" onclick="fillDd(\'subcat\',this);return false;">'+selectObj[i]+'</a></li>';
+                    }
+                    document.getElementById('subCatdd').innerHTML = html;
+                  }else{
+                      pKey = (pKey.innerHTML).trim();
+                      switch(dd){
+                        case 'kind':
+                                    document.getElementById('kind').value=pKey;
+                                    document.getElementById('kindbtn').innerHTML = pKey;
+                                    break;
+                        case 'locality':
+                                    document.getElementById('locality').value=pKey;
+                                    document.getElementById('localitybtn').innerHTML = pKey;
+                                    break;
+                        case 'cat':
+                                    document.getElementById('subCatbtn').innerHTML='---';
+                                    document.getElementById('subCat').value='';
+                                    document.getElementById('catGroup').value=pKey;
+                                    document.getElementById('catGroupbtn').innerHTML = pKey;
+                                    
+                                    if ($('#subCatbtn').hasClass('disabled')) $('#subCatbtn').removeClass('disabled');          
+                                    var html='';
+                                    var selectObj = _reportDict[pKey]['categories'];
+                                    for (var i=0,j=selectObj.length;i<j;i++){
+                                        html += '<li> <a class="brand-color-text" href="#" onclick="fillDd(\'subcat\',this);return false;">'+selectObj[i]+'</a></li>';
+                                    }
+                                    document.getElementById('subCatdd').innerHTML = html;
+                                    break;
+                        case 'subcat':
+                                    document.getElementById('subCatbtn').innerHTML= pKey;
+                                    document.getElementById('subCat').value= pKey;
+                                    break;
+                      }
+                  }
+                  
+            }
+
+                
+            function createTileStyle(tStyle, table) {
+                var mOverlap;
+                var close;
+                var tileStyle = "#" + table + "{";
+                switch (tStyle) {
+                    case 'normal':
+                        mOverlap = true;
+                        closeStyle = "}";
+                        break;
+                    case 'cluster':
+                        mOverlap = false;
+                        closeStyle = "}";
+                        break;
+                    case 'heat':
+                        return "#" + table + "{marker-fill:{{brand_secondary_color}};marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
+                    case 'intensity':
+                        return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";                         
+                    case 'bubble':
+                        mOverlap = false;
+                        closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
+                        break;
+                    default:
+                        mOverlap = true;
+                        closeStyle = "}";
+                        break;
+                }
+                
+                tileStyle += "marker-file: url(http://com.cartodb.users-assets.production.s3.amazonaws.com/maki-icons/marker-18.svg);marker-fill-opacity: 1.0;marker-line-color: {{brand_secondary_color}};marker-line-width: 2;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 30;marker-fill: {{brand_tertiary_color}};marker-allow-overlap:" + mOverlap +";";
+            
+                for (var x in _reportDict){
+                    tileStyle += '[sector="'+x+'"] {marker-file: url('+ _reportDict[x].icon_url +');marker-fill: #'+_reportDict[x].color+';marker-width: 30;}';    
+                      
+                }
+                
+                tileStyle += closeStyle;
+                
+                if (tStyle == "bubble") {
+                    for (var j = upperVotes.length - 1; j >= 0; j--) {
+                        tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
+                    }
+                }
+                return tileStyle;
+            }
+
+            function populateData(data, latlng){
+                // $('#update_card').show();
+                //do form populate with data
+
+                var qry = "SELECT exec_date FROM " + city_table_name + " WHERE cartodb_id = " + data.cartodb_id;
+                city_sql.execute(qry).done(function(data) {
+                    document.getElementById('exec_date').value = data.rows[0].exec_date.substr(0,10);
+                });
+
+                var latLng = new google.maps.LatLng(latlng[0],latlng[1]);
+                markerDrop(latLng);
+                geocode(latLng);
+
+                $('label').addClass('active');
+
+                document.getElementById('name').value = data.name;
+                document.getElementById('catGroup').value = data.sector;
+                document.getElementById('subCat').value = data.category;
+                document.getElementById('kind').value = data.kind;
+                document.getElementById('locality').value = data.locality;
+                document.getElementById('catGroupbtn').innerHTML = data.sector;
+                document.getElementById('subCatbtn').innerHTML = data.category;
+                document.getElementById('kindbtn').innerHTML = data.kind;
+                document.getElementById('localitybtn').innerHTML = data.locality;
+                document.getElementById('lead').value = data.leader;
+                document.getElementById('agency').value = data.agency;
+                document.getElementById('source').value = data.fund_source;
+                document.getElementById('amount').value = data.amount;
+                document.getElementById('description').value = data.description;
+                document.getElementById('identifier').value = data.identifier;
+                document.getElementById('poi_image').value = data.image_url;
+
+                fillDd('click',data.sector);
+
+            }
+            
+            document.getElementById('update_poi').addEventListener('click', function() {
+                //do carto update here
+
+            });
+
+            document.getElementById('delete_poi').addEventListener('click', function() {
+                //do carto delete here
+
+            });
+                             
+        </script>
+        <script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
+            {% raw %}
+            <div class="cartodb-popup header blue v2">
+              <a href="#close" class="cartodb-popup-close-button close">x</a>
+              <div class="cartodb-popup-header">
+                <a href="#update_card" style="text-decoration:underline; text-transform:uppercase; font-family:roboto-light;">Clic para editar</a>
+                <span class="separator"></span>
+              </div>
+              <div class="cartodb-popup-content-wrapper" style="background: white;">
+                <div class="cartodb-popup-content">
+                  <img src="{{image_url}}" alt="" class="responsive-img"/>
+                  <h4>Sector</h4>
+                  <p>{{sector}}</p>
+                  <h4>Categoría</h4>
+                  <p>{{category}}</p>
+                  <h4>Dependencia</h4>
+                  <p>{{agency}}</p>
+                  <h4>Monto</h4>
+                  <p>${{amount}}</p>
+                  <h4>Tipo</h4>
+                  <p>{{kind}}</p>
+                  <h4>Dirección</h4>
+                  <p>{{address_from}}</p>
+                  <h4>Descripción</h4>
+                  <p>{{description}}</p>
+                  <h4>Fuente de financiamiento</h4>
+                  <p>{{fund_source}}</p>
+                  <h4>Clave de identificación</h4>
+                  <p>{{identifier}}</p>
+                  <h4>Líder o Auditor</h4>
+                  <p>{{leader}}</p>
+                  <h4>Localidad</h4>
+                  <p>{{locality}}</p>
+                  <h4>Nombre</h4>
+                  <p>{{name}}</p>
+                </div>
+              </div>
+              <div class="cartodb-popup-tip-container">
+              </div>
+            </div>
+            {% endraw %}  
+        </script>
+    
+                
+{% endblock %}  

@@ -8,7 +8,7 @@
   <link href="/{{theme}}/materialize/css/prism_o.css" type="text/css" rel="stylesheet" media="screen,projection">   
   <style>
   :not(pre) > code[class*="language-"], pre[class*="language-"]{
-    background: {{brand_secondary_color}}!important;
+    background: #000000!important;
     border-radius: 10px;
   }
   code[class*="language-"], pre[class*="language-"]{
@@ -24,63 +24,410 @@
 {% endblock %}
 
 {% block header_content %}
-  <div class="row">
     <div class="container">
-      <div class="section" >
-        <h3 style="margin-top: 100px;">Bienvenido a la documentación del API de {{app_name}}</h3>
-        <p>En cada sección se explica como consultar las ligas que te permiten hacer HTTP GET al API y te demuestran la respuesta que recibirás.</p>
-        <h5>Categorías</h5>
-        <h6>Listado de categorías</h6>
-        <div class="col s12">
-          <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}</code><a class="btn white brand-color-text right" onclick="getCats()">¡Pruébalo Ahora!</a></pre></div>
-          <div class="row">
-            <pre style="height:300px;overflow-y:scroll">JSON response<code id="catresponse" class="language-javascript">
-              {
-                Ayuntamiento (Permisos): {
-                color: "5EA6FF",
-                icon_url: {
-                Licencia para venta de alcohol: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=beer|5EA6FF",
-                Permismo de comercio ambulante: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|5EA6FF",
-                Permiso de comercio establecido: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|5EA6FF"
-                },
-                categories: [
-                "Permismo de comercio ambulante",
-                "Permiso de comercio establecido",
-                "Licencia para venta de alcohol"
-                ]
-                },
-                Educación en línea: {
-                color: "FFFFFF",
-                icon_url: {
-                Maestría en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF",
-                Prepa en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF",
-                Licenciatura en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF"
-                },
-                categories: [
-                "Maestría en línea",
-                "Prepa en línea",
-                "Licenciatura en línea"
-                ]
-                }
-                ...
-              }
-            </code></pre>
-          </div>
+        <div class="section">
+            <div class="row">      
+              <h3 style="margin-top: 100px;">Bienvenido a la documentación del API de {{app_name}}</h3>
+              <p>En cada sección se explica como consultar las ligas que te permiten hacer HTTP GET al API y te demuestran la respuesta que recibirás.</p>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 {% endblock %}
 
 
 {% block body_content %}
+    <div class="container">
+            
+      
+      <div class="section" >
+        <div class ="row">
+            <h5>Categorías y metadatos</h5>
+            <h6>Listado de categorías</h6>
+            <p>Se muestra la lista de categorías padre con sus subcategorías, descripción, color, secretarias y direcciones asociadas así como banderas de metadatos relacionales.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}</code><a id="cat" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="cat-response" class="language-javascript">
+                  {
+                    Ayuntamiento (Permisos): {
+                    color: "5EA6FF",
+                    icon_url: {
+                    Licencia para venta de alcohol: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=beer|5EA6FF",
+                    Permismo de comercio ambulante: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|5EA6FF",
+                    Permiso de comercio establecido: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|5EA6FF"
+                    },
+                    categories: [
+                    "Permismo de comercio ambulante",
+                    "Permiso de comercio establecido",
+                    "Licencia para venta de alcohol"
+                    ]
+                    },
+                    Educación en línea: {
+                    color: "FFFFFF",
+                    icon_url: {
+                    Maestría en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF",
+                    Prepa en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF",
+                    Licenciatura en línea: "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=caution|FFFFFF"
+                    },
+                    categories: [
+                    "Maestría en línea",
+                    "Prepa en línea",
+                    "Licenciatura en línea"
+                    ]
+                    }
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <h4>El parametro q genera distintas consultas.</h4>
+      
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Status por ticket</h5>
+            <h6>Listado de tickets con su respectivo status</h6>
+            <p>La lista muestra los tickets y su correspondiente status en la base de datos.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=cartoIdStatus</code><a id="cartoIdStatus" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="cartoIdStatus-response" class="language-javascript">
+                  {
+                    1: "solved",
+                    2: "archived",
+                    3: "solved",
+                    4: "solved",
+                    5: "working",
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Categorías y Direcciones</h5>
+            <h6>Listado de categorías</h6>
+            <p>La lista muestra los grupos de categorías y las direcciones encargadas de dicho grupo.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=agencies</code><a id="agencies" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="agencies-response" class="language-javascript">
+                  {
+                    Seguridad Publica Policia y Transito: {
+                        agencies: [
+                            "Policía y Tránsito"
+                        ]
+                    },
+                    Programa de Microcreditos: {
+                        agencies: [
+                            "Fomento Económico"
+                        ]
+                    },
+                    Salud Desarrollo Social: {
+                        agencies: [
+                            "Desarrollo Social (Salud)"
+                        ]
+                    },
+                    Turismo: {
+                        agencies: [
+                            "Turismo"
+                        ]
+                    },
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Categorías y Secretarias</h5>
+            <h6>Listado de categorías</h6>
+            <p>La lista muestra los grupos de categorías y las secretarias a las que pertenece dicho grupo.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=secretaries</code><a id="secretaries" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="secretaries-response" class="language-javascript">
+                  {
+                    Seguridad Publica Policia y Transito: {
+                        secretaries: [
+                            "Secretaria de Seguridad Pública"
+                        ]
+                    },
+                    Programa de Microcreditos: {
+                        secretaries: [
+                            "Secretaría de Desarrollo Económico"
+                        ]
+                    },
+                    Salud Desarrollo Social: {
+                        secretaries: [
+                            "Secretaría de Desarrollo Social"
+                        ]
+                    },
+                    Turismo: {
+                        secretaries: [
+                            "Secretaría de Desarrollo Económico"
+                        ]
+                    },
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Subcategorías</h5>
+            <h6>Listado de subcategorías</h6>
+            <p>La lista muestra las subcategorías y metadatos asociados.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=subcategories</code><a id="subcategories" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="subcategories-response" class="language-javascript">
+                  {
+                    Jurídico: {
+                        benchmark: 3,
+                        icon_url: "http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins75.svg",
+                        requires_image: false
+                    },
+                    Canto: {
+                        benchmark: 3,
+                        icon_url: "http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins88.svg",
+                        requires_image: false
+                    },
+                    Hundimientos: {
+                        benchmark: 3,
+                        icon_url: "http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins4.svg",
+                        requires_image: false
+                    },
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Organizacion</h5>
+            <h6>Estructura de la organizacion</h6>
+            <p>Se muestra la estructura jerárquica de la organización en un árbol.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=org=</code><a id="org" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="org-response" class="language-javascript">
+                  {
+                    Secretaría de Finanzas y Tesorería: {
+                        admin_name: "Ricardo Garza Villarreal",
+                        admin_image: "",
+                        agency: [
+                            {
+                                group_cat: {
+                                    subcats: [
+                                        "Daños patrimoniales",
+                                        "Arrendamiento de bienes inmuebles"
+                                    ],
+                                    name: "Atenciones patrimoniales"
+                                },
+                                operators: {
+                                    Yolanda Perales: ""
+                                },
+                                admin_name: "Gerardo Ismael Cantú García",
+                                admin_image: -1,
+                                name: "Coordinación de atención en finanzas"
+                            },
+                            {
+                                group_cat: {
+                                        subcats: [
+                                            "Lotes baldíos",
+                                            "Tarifas especiales",
+                                            "Impuesto predial"
+                                        ],
+                                        name: "Atencion recaudatoria"
+                                },
+                                operators: {
+                                    Rocío Martínez Sánchez: -1
+                                },
+                                admin_name: "Gerardo Ismael Cantú García",
+                                admin_image: -1,
+                                name: "Coordinación de atención en finanzas II"
+                            }
+                        ]
+                    },
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Categorías y subcategorías</h5>
+            <h6>Listado de categorías</h6>
+            <p>Lista de categorías y cuenta de reportes por subcategoría.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=count</code><a id="count" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="count-response" class="language-javascript">
+                  {
+                    Seguridad Publica Policia y Transito: {
+                        Presencia Tránsito: 42,
+                        Ruido excesivo en negocio y/o empresa: 15,
+                        Delimitación de carriles: 14,
+                        Ausencia de Señalamiento: 2,
+                        Agente de transito para crucero y/o zona escolar: 27,
+                        Vecinos ruidosos: 16,
+                        Mantenimiento de Señalamiento: 5,
+                        Robo: 16,
+                        Ruido excesivo en casa (fiestas, reuniones): 38,
+                        Denuncia: 1,
+                        Bolsa Trabajo PYT: 6,
+                        Violencia intrafamiliar: 2,
+                        Vehículo Abandonado: 31,
+                        Presencia Policiaca: 131,
+                        Licencia Conducir: 5
+                    },
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+      
+      <h4>El parametro o es utilizado para segmentar las cuentas por distintos grupos.</h4>
+      <div class="divider"></div>        
+      
+      <div class="section" >
+        <div class ="row">
+            <h5>Cuenta de reportes por categoría</h5>
+            <h6>Listado de categorías</h6>
+            <p>Regresa la cuenta de reportes para cada categoría.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=count&o=groups</code><a id="count&o=groups" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="count&o=groups-response" class="language-javascript">
+                  {
+                    Seguridad Publica Policia y Transito: 351,
+                    Comunidad: 3,
+                    Programa de Microcreditos: 18,
+                    Salud Desarrollo Social: 45,
+                    Cursos Artisticos: 7,
+                    Atencion a la mujer: 26,
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Cuenta de reportes por subcategoría</h5>
+            <h6>Listado de subcategorías</h6>
+            <p>Regresa la cuenta de reportes para cada subcategoría.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=count&o=categories</code><a id="count&o=categories" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="count&o=categories-response" class="language-javascript">
+                  {
+                    Jurídico: 90,
+                    Fumigación: 13,
+                    Luminaria(s) obstruidas por ramas: 8,
+                    Grabación Demos: 5,
+                    Denuncia por corrupción: 1,
+                    Mediación: 16,
+                    Ferias Empleo: 4,
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Cuenta de reportes por status</h5>
+            <h6>Listado de status</h6>
+            <p>Regresa la cuenta de reportes para cada status.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=count&o=status</code><a id="count&o=status" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="count&o=status-response" class="language-javascript">
+                  {
+                    halted: 33,
+                    archived: 81,
+                    failed: 28,
+                    working: 701,
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+
+      <div class="section" >
+        <div class ="row">
+            <h5>Cuenta de reportes por via</h5>
+            <h6>Listado de vias</h6>
+            <p>Regresa la cuenta de reportes para cada via.</p>
+            <div class="col s12">
+              <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=count&o=via</code><a id="count&o=via" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
+              <div class="row">
+                <pre style="height:300px;overflow-y:scroll">JSON response<code id="count&o=via-response" class="language-javascript">
+                  {
+                    web: 1039,
+                    office: 526,
+                    networks: 200,
+                    phone: 917,
+                    street: 1483,
+                    ...
+                  }
+                </code></pre>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="divider"></div>        
+    
+    </div>
+
 {% endblock %}
 
 {% block page_scripts %}
   <script type="text/javascript" src="/{{theme}}/materialize/js/prism_o.js"></script>
   <script>
-    function getCats(){
-      var url = "/report/categories/";
+    function getData(elmnt){
+      elmnt = elmnt.id || '';
+      console.log(elmnt)
+      var url = "/report/categories/?q="+elmnt;
       $.ajax({
           url: url,
           type: 'GET',
@@ -88,7 +435,7 @@
               console.log(data)
           }
       }).done(function(data) {
-         document.getElementById('catresponse').innerHTML = '<br>' + syntaxHighlight(data);
+         document.getElementById(elmnt+'-response').innerHTML = '<br>' + syntaxHighlight(data);
       }); 
 
     }

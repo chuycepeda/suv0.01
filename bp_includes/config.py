@@ -75,10 +75,12 @@ config = {
     'cartodb_user': 'onesmartcity',
     'cartodb_apikey': '2dd2b08fe09c23bc977b051a85b2d6d725a58a54',
     'cartodb_reports_table': 'public_reports',
+    'cartodb_pois_table': 'public_pois',
     'cartodb_category_dict_table': 'cat_dict',
     'cartodb_polygon_table': 'mun_poly',
     'cartodb_polygon_name': 'MTY',
-    'cartodb_polygon_full_name': 'Monterrey',
+    'cartodb_polygon_full_name': 'Monterrey', # related to nom_mun @ mexico.cartodb.com
+    'cartodb_polygon_cve_ent': 19,          # related to cve_ent @ mexico.cartodb.com
     'cartodb_cic_user': 'cicadmin',
     'cartodb_cic_reports_table': 'nl_public',
     # contact page email settings

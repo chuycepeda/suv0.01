@@ -6,8 +6,9 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-                                
-            <h5 class="breadcrumbs-title">Detalle del reporte</h5>
+            <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active"><a href="{{ uri_for('admin-reports') }}">Gestión de reportes</a> | Detalle del reporte</li>
+            </ol>
           </div>
         </div>
     </div>
@@ -51,7 +52,7 @@
                             <dt class="grey-text text-lighten-2">Ticket:</dt>
                             <dd class="text-darken-3">{% if report.cdb_id != -1 %} {{report.cdb_id}} {% else %} Sin publicar {% endif %}</dd>
                             <dt class="grey-text text-lighten-2">Prioridad:</dt>
-                            <dd class="text-darken-3" style="color:{{report.get_priority_color()}}">{{ report.get_priority()|safe }}</dd>
+                            <dd class="text-darken-3" style="color:{{report.get_priority_color()}}; padding: 5px;background: white;max-width: 180px;border-radius: 10px;text-align: center;">{{ report.get_priority()|safe }}</dd>
                           </div>
                           <div class="col s12 l6">
                             <dt class="grey-text text-lighten-2">Email de envío:</dt>
@@ -483,7 +484,7 @@
                                 <br> 
                                 {{contents}}
                                 <br>
-                                <i class="mdi-action-delete red white-text" style="cursor:pointer; border-radius: 10px;" onclick="$('#modal_log').openModal(); $('#logID_url').val('{{ uri_for('materialize-log-delete', log_id = idx) }}'); $('#logID').val('{{idx}}'); return false;"></i>
+                                <i class="mdi-action-delete grey white-text" style="cursor:pointer; border-radius: 10px;padding: 2px 5px;font-size: 20px;" onclick="$('#modal_log').openModal(); $('#logID_url').val('{{ uri_for('materialize-log-delete', log_id = idx) }}'); $('#logID').val('{{idx}}'); return false;"></i>
                             </p>
                           </li>
                         {% endfor %}

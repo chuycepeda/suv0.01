@@ -6,7 +6,9 @@
         <div class="container">
             <div class="row">
               <div class="col s12 m12 l12">
-                <h5 class="breadcrumbs-title">Mapa de reportes</h5>
+                <ol class="breadcrumb" style="font-size: 29px;">
+                    <li class="active">Mapa de reportes<a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="{{uri_for('admin-reports')}}" style="font-size: 18px;">Ver bandeja<i class="mdi-content-inbox left"></i></a></li>
+                </ol>
               </div>
             </div>
         </div>
@@ -25,8 +27,8 @@
 
 {% block page_content %}
     <div class="row">
-            <div style="height:600px; width:100%;">
-                    <div id="map" style="height:100%; width:100%;"> </div>
+            <div style="height:85vh; width:100%;">
+                    <div id="map" style="height:85vh; width:100%;"> </div>
             </div>
             <div class="hide-on-small-only" style="position:fixed; width:270px; top:120px; left:15%;">
                 <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
