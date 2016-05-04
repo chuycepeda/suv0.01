@@ -3658,8 +3658,6 @@ class MaterializeNewReportHandler(BaseHandler):
 class MaterializeReportUploadImageHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self, report_id):
         try:
-            if not self.has_reports:
-                self.abort(403)
             logging.info(self.get_uploads()[0])
             logging.info('attaching file to report_id: %s' %report_id)
             upload = self.get_uploads()[0]
@@ -4072,8 +4070,6 @@ class MaterializeNewPetitionHandler(BaseHandler):
 class MaterializePetitionUploadImageHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self, petition_id):
         try:
-            if not self.has_petitions:
-                self.abort(403)
             logging.info(self.get_uploads()[0])
             logging.info('attaching file to petition_id: %s' %petition_id)
             upload = self.get_uploads()[0]

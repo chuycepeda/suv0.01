@@ -134,7 +134,7 @@
 	                   <div id="timeline-container-0" class="row"></div>
 	                </div>
 	                <div class="col s12 m10 offset-m1 center">
-	                   <a id="loadmore" class="waves-effect waves-light btn" style="display: none">Ver siguientes 5 reportes</a>
+	                   <a id="loadmore" class="waves-effect waves-light btn" style="display: none">Ver siguientes 10 reportes</a>
 	                </div>
 	                
 				</div>
@@ -205,7 +205,7 @@
 	    var city_table_name = '{{cartodb_reports_table}}';
         var reportDict;
         var step = 0;
-        var limit = 5;	
+        var limit = 10;	
 		
 		function getData(offset,limit){
             var q = "Select * from "+city_table_name+"  WHERE status not in ('spam', 'archived', 'forgot') AND pvt = false order by created desc offset "+offset+" limit "+ limit;
@@ -327,7 +327,7 @@
             $('#loadmore').click(function(){                
                 if($('#loadmore').html().indexOf('cargado') == -1){
 	                step += 1;
-                	$('#loadmore').html('Ver siguientes 5 reportes');
+                	$('#loadmore').html('Ver siguientes 10 reportes');
                 	$('#loadmore').removeClass('disabled');
                 	$('#loadmore').removeClass('grey');
 	                $('#tl-meta').append('<div class="divider"></div><div id="timeline-container-'+step+'" class="row"></div>');

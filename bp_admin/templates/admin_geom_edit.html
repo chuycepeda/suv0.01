@@ -43,21 +43,23 @@
                   <h3 class="col s12 m8 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita la información y guarda los cambios para actualizar.</h3>
                 </div> 
                 <form id="form_poi" action="{{ url|safe }}" method="post">
-                          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                             <input type="hidden" id="catGroup" name="catGroup">
                             <input type="hidden" id="subCat" name="subCat">
                             <input type="hidden" id="kind" name="kind">
                             <input type="hidden" id="locality" name="locality">
+                            <input type="hidden" id="delete" name="delete" value="no">
+                            <input type="hidden" id="cartodb_id" name="cartodb_id" value="">
 
-                          <div class="row margin">
+                            <div class="row margin">
                             <div class="input-field col s12 l6">
                               <i class="mdi-maps-place prefix brand-color-text"></i>
                               <input id="name" name="name" type="text" value="">
                               <label for="name" class="center-align">Nombre del punto de interés</label>
                             </div>
-                          </div>
+                            </div>
 
-                          <div class="row margin">
+                            <div class="row margin">
                             <div class="input-field col s12 l6">
                               <i class="mdi-social-person prefix brand-color-text"></i>
                               <input id="lead" name="lead" type="text" value="">
@@ -68,9 +70,9 @@
                               <input id="agency" name="agency" type="text" value="" style="    margin-left: 3rem;width: 92%;width: calc(100% - 3rem);">
                               <label id="agencyLabel" for="agency" class="center-align">Dependencia encargada</label>
                             </div>
-                          </div>
+                            </div>
 
-                          <div class="row margin">
+                            <div class="row margin">
                             <div class="input-field col s12 l6">
                               <i class="mdi-action-account-balance-wallet prefix brand-color-text"></i>
                               <input id="source" name="source" type="text" value="">
@@ -81,9 +83,9 @@
                               <input id="amount" name="amount" type="number" value="" min="1" step="any">
                               <label for="amount" class="center-align">Monto destinado</label>
                             </div>
-                          </div>
+                            </div>
 
-                          <div class="row margin">
+                            <div class="row margin">
                               <div class="input-field col s12 l6">
                                   <i class="mdi-maps-rate-review prefix brand-color-text brand-color-text"></i>
                                   <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
@@ -94,9 +96,9 @@
                                 <input id="identifier" name="identifier" type="text" value="">
                                 <label for="identifier" class="center-align">Clave o número de identificación</label>
                               </div>
-                          </div>   
+                            </div>   
 
-                          <div class="row margin" style="margin-left: 45px!important;">
+                            <div class="row margin" style="margin-left: 45px!important;">
                                 <div class="input-field col s12 l6">
                                     <!-- Dropdown Trigger -->
                                     <p>Tipo de obra:</p>
@@ -127,9 +129,9 @@
                                       <li> <a class="brand-color-text" href="#" onclick="fillDd('locality',this);return false;">Rural</a></li>
                                     </ul>                
                                 </div>
-                          </div> 
+                            </div> 
 
-                          <div class="row margin" style="margin-left: 45px!important; margin-bottom:35px!important;">
+                            <div class="row margin" style="margin-left: 45px!important; margin-bottom:35px!important;">
                                 <div class="input-field col s12 l6">
                                     <!-- Dropdown Trigger -->
                                     <p>Sector:</p>
@@ -161,25 +163,25 @@
                                     <!-- Dropdown Structure -->
                                     <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
                                 </div>
-                          </div> 
+                            </div> 
 
-                          <div class="row margin">
+                            <div class="row margin">
                             <div class="input-field col s12">
                               <i class="mdi-image-image prefix brand-color-text"></i>
                               <input id="poi_image" name="poi_image" type="text" value="">
                               <label for="poi_image" class="center-align">URL de imagen (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                             </div>
-                          </div>
-                          
-                          <div class="row margin">
+                            </div>
+
+                            <div class="row margin">
                               <div class="input-field col s12 l6">                                
                                   <i class="mdi-action-event prefix brand-color-text brand-color-text"></i>
                                   <input id="exec_date" name="exec_date" type="date" class="datepicker" >
                                   <label for="exec_date">Fecha de ejecución</label>
                               </div>
-                          </div>
+                            </div>
 
-                          <div class="row margin">
+                            <div class="row margin">
                             <div class="input-field col s12">
                                   <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="geocode('from')"></i>
                                   <input id="address_from" name="address_from" type="text" class="validate" value="" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) geocode('from');">
@@ -187,22 +189,43 @@
                                   <div id="map_2" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
                             </div>                
                             <input type="text" id ="address_from_coord" name="address_from_coord" value="" hidden>
-                          </div>
+                            </div>
 
-                          <div class="row container" style="padding:25px; padding-left: 55px!important;">
-                            
-                            <a class="waves-effect waves-light grey white-text btn left" id="delete_poi" >Eliminar punto
-                              <i class="mdi-action-delete left"></i>
-                            </a> 
+                            <div class="row container" style="padding:25px; padding-left: 55px!important;">
+                                
+                                <a class="waves-effect waves-light grey white-text btn left" id="delete_poi" >Eliminar punto
+                                  <i class="mdi-action-delete left"></i>
+                                </a> 
 
-                            <a class="waves-effect waves-light brand-secondary-color white-text btn right" id="update_poi" >Guardar Cambios
-                              <i class="mdi-content-send right"></i>
-                            </a>                          
-                          </div>
-                        </form>
+                                <a class="waves-effect waves-light brand-secondary-color white-text btn right" id="update_poi" >Guardar Cambios
+                                  <i class="mdi-content-send right"></i>
+                                </a>                          
+                            </div>
+                </form>
             </div>         
         </div>
       </div>
+    </div>
+
+    <div id="modal_delete" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
+          <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+          <div class="modal-content">
+              <div class="row">
+                    <div class="input-field col s12 center">
+                      <p class="center login-form-text">¿Seguro que deseas eliminar el punto?<br></p>
+                    </div>
+                    <div class="row">
+                      <div class="container">
+                          <div class="row">
+                            <div class="input-field col s12">
+                              <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
+                              <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" id="submit_form_delete">Sí, seguro</a>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+              </div>
+          </div>
     </div>
     
 {% endblock %}
@@ -568,7 +591,6 @@
                       });
                             
                     drawMarker();  
-                
             }
 
             function codeAddress(input) {
@@ -710,10 +732,8 @@
                                     break;
                       }
                   }
-                  
             }
 
-                
             function createTileStyle(tStyle, table) {
                 var mOverlap;
                 var close;
@@ -761,7 +781,7 @@
             function populateData(data, latlng){
                 // $('#update_card').show();
                 //do form populate with data
-
+                document.getElementById('cartodb_id').value = data.cartodb_id;
                 var qry = "SELECT exec_date FROM " + city_table_name + " WHERE cartodb_id = " + data.cartodb_id;
                 city_sql.execute(qry).done(function(data) {
                     document.getElementById('exec_date').value = data.rows[0].exec_date.substr(0,10);
@@ -791,17 +811,21 @@
                 document.getElementById('poi_image').value = data.image_url;
 
                 fillDd('click',data.sector);
-
             }
             
             document.getElementById('update_poi').addEventListener('click', function() {
-                //do carto update here
-
+                document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1); 
+                document.getElementById('form_poi').submit();
             });
 
             document.getElementById('delete_poi').addEventListener('click', function() {
-                //do carto delete here
+                $('#modal_delete').openModal();
+            });
 
+            document.getElementById('submit_form_delete').addEventListener('click', function() {
+                document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1); 
+                document.getElementById('delete').value = "yes";
+                document.getElementById('form_poi').submit();
             });
                              
         </script>

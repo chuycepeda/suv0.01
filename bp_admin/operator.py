@@ -676,7 +676,6 @@ class AdminGeomEditHandler(BaseHandler):
         return self.render_template('admin_geom_edit.html', **params)
     
     def post(self):
-        reportDict = {}
         name = self.request.get('name').strip()
         sector = self.request.get('catGroup')
         category = self.request.get('subCat')
@@ -692,13 +691,18 @@ class AdminGeomEditHandler(BaseHandler):
         address_from = self.request.get('address_from')
         address_from_coord = self.request.get('address_from_coord').split(',')
         image_url = self.request.get('poi_image')
+        delete = self.request.get('delete')
+        cartodb_id = self.request.get('cartodb_id')
 
         from google.appengine.api import urlfetch
         import urllib
         api_key = self.app.config.get('cartodb_apikey')
         cartodb_domain = self.app.config.get('cartodb_user')
         cartodb_table = self.app.config.get('cartodb_pois_table')
-        #unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, api_key)).encode('utf8')
+        if delete == "no":
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) = (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s') WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, cartodb_id, api_key)).encode('utf8')
+        if delete == "yes":
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=DELETE FROM %s WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, cartodb_id, api_key)).encode('utf8')
         url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
         try:
             t = urlfetch.fetch(url)
@@ -706,14 +710,12 @@ class AdminGeomEditHandler(BaseHandler):
             message = _(messages.saving_success)
             self.add_message(message, 'success')
         except Exception as e:
-            logging.info('error in cartodb INSERT request: %s' % e)
+            logging.info('error in cartodb UPDATE request: %s' % e)
             message = _(messages.saving_error)
             self.add_message(message, 'danger')
             pass
 
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers['Content-Type'] = 'application/json'
-        return self.response.write(json.dumps(reportDict))
+        return self.get() 
 
 """
 
