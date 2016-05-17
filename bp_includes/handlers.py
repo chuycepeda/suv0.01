@@ -113,7 +113,7 @@ def cartoInsert(self, report_id, manual):
         url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
         try:
             t = urlfetch.fetch(url)
-            logging.info("t: %s" % t.content)
+            logging.info("insert request to cartodb responded: %s" % t.content)
             #SELECT CARTODB_ID & ASSIGN
             cl = CartoDBAPIKey(api_key, cartodb_domain)
             response = cl.sql("select cartodb_id from %s where uuid = '%s'" % (cartodb_table, report_info.key.id()))
@@ -150,7 +150,7 @@ def cartoUpdate(self, report_id):
         url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
         try:
             t = urlfetch.fetch(url)
-            logging.info("t: %s" % t.content)
+            logging.info("update request to cartodb responded: %s" % t.content)
         except Exception as e:
             logging.info('error in cartodb UPDATE request: %s' % e)
             pass
@@ -229,9 +229,10 @@ def editReport(self, user_info, report_id, handler):
     
     if report_info.address_from != address_from:
         report_info.address_from = address_from
+        report_info.address_from_coord = ndb.GeoPt(address_from_coord)
         changes += "el domicilio, "
-    # if report_info.address_from_coord != ndb.GeoPt(address_from_coord):
-    #     report_info.address_from_coord = ndb.GeoPt(address_from_coord)
+    if report_info.address_from_coord != ndb.GeoPt(address_from_coord):
+        report_info.address_from_coord = ndb.GeoPt(address_from_coord)
     #     changes += "el mapa, "
     if report_info.when.strftime("%Y-%m-%d") != when:
         report_info.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
@@ -341,6 +342,8 @@ def editReport(self, user_info, report_id, handler):
     if log_info.title and log_info.contents:
         log_info.put()
 
+    report_info.put()
+
     #PUSH TO CARTODB
     if report_info.cdb_id == -1:
         #INSERT
@@ -349,7 +352,6 @@ def editReport(self, user_info, report_id, handler):
         #UPDATE
         cartoUpdate(self, report_info.key.id())
 
-    report_info.put()
 
     #NOTIFY APPROPRIATELY
     """
@@ -434,6 +436,8 @@ def editReportParams(self, report_info):
         params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
     
     params['has_logs'] = True if len(params['logs']) > 0 else False
+    params['zoom'] = self.app.config.get('map_zoom')
+    params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
     params['lat'] = self.app.config.get('map_center_lat')
     params['lng'] = self.app.config.get('map_center_lng')
 
@@ -1364,6 +1368,8 @@ class MaterializeLandingMapRequestHandler(BaseHandler):
         
         params['captchahtml'] = captchaBase(self)
 
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')  
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -1608,6 +1614,46 @@ class MaterializeWelcomeRequestHandler(BaseHandler):
         params['captchahtml'] = captchaBase(self)
         return self.render_template('materialize/users/sections/welcome.html', **params)
 
+class MaterializeProfileRequestHandler(BaseHandler):
+    """
+        Handler for materialized user public profile
+    """
+    @user_required
+    def get(self, profile_id):
+        """ returns simple html for a get request """
+        params, user_info = disclaim(self)
+        params['captchahtml'] = captchaBase(self)
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+        try:
+            p_id = long(profile_id)
+            user_profile = models.User.get_by_id(p_id)
+            params['profile_name'] = user_profile.name
+            params['profile_lastname'] = user_profile.last_name
+            params['profile_img'] = user_profile.get_image_url()
+            reports = models.Report.query(ndb.AND(models.Report.user_id == int(p_id), models.Report.cdb_id != -1))
+            params['reports'] = reports
+            follows = models.Followers.query(models.Followers.user_id == int(p_id))
+            params['follows'] = follows
+            params['profile_reports']=reports.count()
+            params['profile_petitions'] = models.Petition.query(models.Petition.user_id == int(p_id)).count()
+            params['profile_follows']=models.Followers.query(models.Followers.user_id == int(p_id)).count() + models.Votes.query(models.Votes.user_id == int(p_id)).count()
+
+        except ValueError:
+            logging.log("profile_id not a number, attempt to get from unique url")
+            pass
+
+        return self.render_template('materialize/users/sections/citizen.html', **params)
+
 class MaterializeReferralsRequestHandler(BaseHandler):
     """
         Handler for materialized referrals
@@ -1746,6 +1792,8 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
     def get(self):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
 
@@ -2449,6 +2497,8 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
                             break
            
         params['secs']= names[0]
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
 
@@ -3445,6 +3495,8 @@ class MaterializeReportsEditRequestHandler(BaseHandler):
             self.abort(403)
 
         params['report'] = user_report
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -3574,6 +3626,8 @@ class MaterializeNewReportHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
         
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -3988,6 +4042,8 @@ class MaterializeNewPetitionHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
         
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -4125,6 +4181,8 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         ####------------------------------------------------------------------####
 
         
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')  
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -4440,8 +4498,8 @@ class MaterializeReportCommentsHandler(BaseHandler):
                 if image != -1:
                     html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
                 else:
-                    html+= '<i class="mdi-action-face-unlock circle"></i>'
-                html+= '<span class="title right"><span class="orange-text">%s &lt;%s&gt;</span>: %s</span><br><p class="right brand-color-text" style="font-family: roboto-light;"><span class="light-blue-text">%s</span><br>%s</p>' % (name, log.user_email, log.title, log.get_formatted_date(), log.contents)
+                    html+= '<i class="mdi-action-face-unlock circle brand-color-text white" style="height: 60px;width: 60px;font-size: 40px;padding-top: 8px;"></i>'
+                html+= '<span class="title right"><span class="orange-text">%s</span>: %s</span><br><p class="right brand-color-text" style="font-family: roboto-light;"><span class="light-blue-text">%s</span><br>%s</p>' % (name, log.title, log.get_formatted_date(), log.contents)
                 html+= '</li>'
         html += '</ul>'
         reportDict['logs'] = {
@@ -4484,8 +4542,8 @@ class MaterializeReportCommentsByTicketHandler(BaseHandler):
                             if image != -1:
                                 html+= '<img src="%s" alt="" class="circle" style="width: 60px;height: 60px;">' % image
                             else:
-                                html+= '<i class="mdi-action-face-unlock circle"></i>'
-                            html+= '<span class="title right"><span class="orange-text">%s &lt;%s&gt;</span>: %s</span><br><p class="right brand-color-text" style="font-family: roboto-light;"><span class="light-blue-text">%s</span><br>%s</p>' % (name, log.user_email, log.title, log.get_formatted_date(), log.contents)
+                                html+= '<i class="mdi-action-face-unlock circle brand-color-text white" style="height: 60px;width: 60px;font-size: 40px;padding-top: 8px;"></i>'
+                            html+= '<span class="title right"><span class="orange-text">%s</span>: %s</span><br><p class="right brand-color-text" style="font-family: roboto-light;"><span class="light-blue-text">%s</span><br>%s</p>' % (name, log.title, log.get_formatted_date(), log.contents)
                             html+= '</li>'
                     html += '</ul>'
                     reportDict['logs'] = {
@@ -4528,6 +4586,41 @@ class MaterializeReportCommentsAddHandler(BaseHandler):
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating report: %s ' % e)
                 reportDict['status'] = 'error: %s' % e
+                pass
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+
+class MaterializeReportAuthorRequestHandler(BaseHandler):
+    def get(self,uuid):
+        if not self.has_reports:
+            self.abort(403)
+
+        reportDict = {}
+        reportDict['response'] = {
+            'status': 'error',
+            'content': 'error in uuid number request'
+        }
+
+        if uuid:
+            try:
+                report = models.Report.get_by_id(long(uuid))
+                if report:
+                    if report.user_id == -1:
+                        reportDict['response']['user_url'] = '#'
+                        reportDict['response']['name'] = report.contact_name
+                        reportDict['response']['lastname'] = report.contact_lastname
+                        reportDict['response']['content'] = 'manually created report, collected contact info'
+                    else:
+                        reportDict['response']['user_url'] = report.user_id
+                        reportDict['response']['name'] = report.get_user_name()
+                        reportDict['response']['lastname'] = report.get_user_lastname()
+                        reportDict['response']['content'] = 'user created report, collected user data'
+                    reportDict['response']['status'] = 'success'
+
+            except Exception as e:
+                logging.info("error loading author from uuid -%s-: %s" % (uuid,e))                
                 pass
 
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")

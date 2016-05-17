@@ -42,6 +42,7 @@ _routes = [
     RedirectRoute('/report/comment/add/', handlers.MaterializeReportCommentsAddHandler, name='materialize-report-comments-add', strict_slash=True),
     RedirectRoute('/report/follow/', handlers.MaterializeFollowRequestHandler, name='materialize-report-follow', strict_slash=True),   
     RedirectRoute('/report/rate/', handlers.MaterializeRateRequestHandler, name='materialize-report-rate', strict_slash=True),   
+    RedirectRoute('/report/author/<uuid>', handlers.MaterializeReportAuthorRequestHandler, name='materialize-report-author', strict_slash=True),   
     RedirectRoute('/report/urgent/', handlers.MaterializeUrgentRequestHandler, name='materialize-report-urgent', strict_slash=True),   
     RedirectRoute('/report/log/delete/<log_id>/', handlers.MaterializeLogChangeDeleteHandler, name='materialize-log-delete', strict_slash=True, handler_method='edit'),
     
@@ -62,6 +63,7 @@ _routes = [
 
     # User: all
     RedirectRoute('/user/welcome/', handlers.MaterializeWelcomeRequestHandler, name='materialize-welcome', strict_slash=True),
+    RedirectRoute('/user/profile/<profile_id>/', handlers.MaterializeProfileRequestHandler, name='materialize-profile', strict_slash=True),
     RedirectRoute('/user/referrals/', handlers.MaterializeReferralsRequestHandler, name='materialize-referrals', strict_slash=True),
     RedirectRoute('/user/reports/', handlers.MaterializeReportsRequestHandler, name='materialize-reports', strict_slash=True),
     RedirectRoute('/user/reports/<report_id>/', handlers.MaterializeReportsEditRequestHandler, name='materialize-reports-edit', strict_slash=True),

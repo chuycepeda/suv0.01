@@ -106,7 +106,7 @@ class AdminCategoriesHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         params['groups'] = models.GroupCategory.query()
         params['group_color'] = self.app.config.get('brand_secondary_color')
-        return self.render_template('admin_categories.html', **params)
+        return self.render_template('reports/admin_categories.html', **params)
     
     def post(self):
         name = self.request.get('name').strip()
@@ -301,7 +301,7 @@ class AdminSubcategoriesHandler(BaseHandler):
         }
 
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_subcategories.html', **params)
+        return self.render_template('reports/admin_subcategories.html', **params)
 
 class AdminSubcategoriesEditHandler(BaseHandler):
     def get_or_404(self, category_id):
@@ -419,7 +419,7 @@ class AdminSubcategoriesEditHandler(BaseHandler):
         }
         params['group_color'] = params['group_color'] if params['group_color'] != '#FFFFFF' else '#000000'
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_subcategory.html', **params)
+        return self.render_template('reports/admin_subcategory.html', **params)
 
 
 """
@@ -433,7 +433,7 @@ class AdminTopicsHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         params['topics'] = models.Topic.query()
         params['group_color'] = self.app.config.get('brand_secondary_color')
-        return self.render_template('admin_topics.html', **params)
+        return self.render_template('petitions/admin_topics.html', **params)
     
     def post(self):
         name = self.request.get('name').strip()
@@ -518,7 +518,7 @@ class AdminTopicEditHandler(BaseHandler):
         }
 
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_topic_edit.html', **params)
+        return self.render_template('petitions/admin_topic_edit.html', **params)
 
 
 """
@@ -532,7 +532,7 @@ class AdminAreasHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         params['areas'] = models.Area.query()
         params['group_color'] = self.app.config.get('brand_secondary_color')
-        return self.render_template('admin_areas.html', **params)
+        return self.render_template('transparency/admin_areas.html', **params)
     
     def post(self):
         name = self.request.get('name').strip()
@@ -604,7 +604,7 @@ class AdminAreaEditHandler(BaseHandler):
         }
 
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_area_edit.html', **params)
+        return self.render_template('transparency/admin_area_edit.html', **params)
 
 """
     GEOM
@@ -615,6 +615,8 @@ class AdminGeomHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
         params['group_color'] = self.app.config.get('brand_secondary_color')
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -623,7 +625,7 @@ class AdminGeomHandler(BaseHandler):
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
 
-        return self.render_template('admin_geom.html', **params)
+        return self.render_template('transparency/admin_geom.html', **params)
     
     def post(self):
         name = self.request.get('name').strip()
@@ -666,6 +668,8 @@ class AdminGeomEditHandler(BaseHandler):
     def get(self):
         params = {}
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -673,7 +677,7 @@ class AdminGeomEditHandler(BaseHandler):
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        return self.render_template('admin_geom_edit.html', **params)
+        return self.render_template('transparency/admin_geom_edit.html', **params)
     
     def post(self):
         name = self.request.get('name').strip()
@@ -839,7 +843,7 @@ class AdminReportsHandler(BaseHandler):
         params['inbox'] = 'admin-reports'
         params['nickname'] = g_users.get_current_user().email().lower()
 
-        return self.render_template('admin_inbox.html', **params)
+        return self.render_template('reports/admin_inbox.html', **params)
 
 class AdminMapHandler(BaseHandler):
     """
@@ -849,6 +853,8 @@ class AdminMapHandler(BaseHandler):
         """ Returns a simple HTML form for landing """
         params = {}
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')  
         params['right_sidenav_msg'] = self.app.config.get('right_sidenav_msg')
@@ -861,7 +867,7 @@ class AdminMapHandler(BaseHandler):
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
-        return self.render_template('admin_map.html', **params)
+        return self.render_template('reports/admin_map.html', **params)
 
 class AdminReportEditHandler(BaseHandler):
     def get_or_404(self, report_id):
@@ -1175,6 +1181,8 @@ class AdminReportEditHandler(BaseHandler):
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -1182,7 +1190,7 @@ class AdminReportEditHandler(BaseHandler):
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        return self.render_template('admin_report_edit.html', **params)
+        return self.render_template('reports/admin_report_edit.html', **params)
 
 
 """
@@ -1281,7 +1289,7 @@ class AdminPetitionsHandler(BaseHandler):
         params['inbox'] = 'admin-reports'
         params['nickname'] = g_users.get_current_user().email().lower()
 
-        return self.render_template('admin_petitions.html', **params)
+        return self.render_template('petitions/admin_petitions.html', **params)
 
 class AdminPetitionsEditHandler(BaseHandler):
     def get_or_404(self, report_id):
@@ -1595,6 +1603,8 @@ class AdminPetitionsEditHandler(BaseHandler):
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
         params['nickname'] = g_users.get_current_user().email().lower()
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
         params['lat'] = self.app.config.get('map_center_lat')
         params['lng'] = self.app.config.get('map_center_lng')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
@@ -1602,7 +1612,7 @@ class AdminPetitionsEditHandler(BaseHandler):
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        return self.render_template('admin_report_edit.html', **params)
+        return self.render_template('reports/admin_report_edit.html', **params)
 
 
 """
@@ -1628,7 +1638,7 @@ class AdminInitiativesHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         params['initiatives'] = models.Initiative.query()
         params['group_color'] = self.app.config.get('brand_secondary_color')
-        return self.render_template('admin_initiatives.html', **params)
+        return self.render_template('transparency/admin_initiatives.html', **params)
     
     def post(self):
         try:
@@ -1769,7 +1779,7 @@ class AdminInitiativeEditHandler(BaseHandler):
         }
 
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_initiative_edit.html', **params)
+        return self.render_template('transparency/admin_initiative_edit.html', **params)
 
 class AdminInitiativeImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self, initiative_id):
@@ -1801,7 +1811,7 @@ class AdminOrganizationHandler(BaseHandler):
         params = {}
         params['secretaries']  = models.Secretary.query()
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_organization.html', **params)
+        return self.render_template('organization/admin_organization.html', **params)
 
     def post(self):
         try:
@@ -1980,7 +1990,7 @@ class AdminOrganizationSecretaryHandler(BaseHandler):
         params['group_count'] = groups.count()
 
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_secretary.html', **params)
+        return self.render_template('organization/admin_secretary.html', **params)
 
 class AdminOrganizationAgencyHandler(BaseHandler):
     def get_or_404(self, agency_id):
@@ -2100,7 +2110,7 @@ class AdminOrganizationAgencyHandler(BaseHandler):
         }
 
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_agency.html', **params)
+        return self.render_template('organization/admin_agency.html', **params)
 
 class AdminOrganizationOperatorHandler(BaseHandler):
     def get_or_404(self, operator_id):
@@ -2165,7 +2175,7 @@ class AdminOrganizationOperatorHandler(BaseHandler):
             '_user': models.User.get_by_email(operator.email)
         }
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_operator.html', **params)
+        return self.render_template('organization/admin_operator.html', **params)
 
 
 
@@ -2179,7 +2189,7 @@ class AdminCallCenterHandler(BaseHandler):
         params = {}
         params['operators']  = models.CallCenterOperator.query()
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_callcenter.html', **params)
+        return self.render_template('organization/admin_callcenter.html', **params)
 
     def post(self):
         try:
@@ -2278,4 +2288,4 @@ class AdminCallCenterOperatorHandler(BaseHandler):
             '_user': models.User.get_by_email(operator.email)
         }
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_callcenter_operator.html', **params)
+        return self.render_template('organization/admin_callcenter_operator.html', **params)

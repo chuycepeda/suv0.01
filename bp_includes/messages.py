@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 reselect = unicode('Selecciona de nuevo el grupo y la categoría del reporte','utf-8')
 nametaken = unicode('El nombre seleccionado ya existe.','utf-8')
 special_access = unicode('Has recibido un acceso administrativo.','utf-8')

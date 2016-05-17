@@ -146,6 +146,10 @@ class BaseHandler(webapp2.RequestHandler):
         return self.app.config.get('twitter_appID')
 
     @webapp2.cached_property
+    def gmaps_apikey(self):
+        return self.app.config.get('gmaps_apikey')
+
+    @webapp2.cached_property
     def user(self):
 
         return self.auth.get_user_by_session()
@@ -446,7 +450,8 @@ class BaseHandler(webapp2.RequestHandler):
             'has_cic': self.has_cic,
             'google_clientID': self.google_clientID,
             'facebook_appID': self.facebook_appID,
-            'twitter_appID': self.twitter_appID
+            'twitter_appID': self.twitter_appID,
+            'gmaps_apikey': self.gmaps_apikey,
         })
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):

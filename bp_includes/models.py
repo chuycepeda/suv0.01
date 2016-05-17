@@ -19,8 +19,6 @@ class Brand(ndb.Model):
     brand_tertiary_color = ndb.StringProperty(default = '')
 #--------------------------------------- ENDOF    B R A N D     M O D E L -------------------------------------------------------------------          
 
-
-
 #--------------------------------------- U S E R    M O D E L -------------------------------------------------------------------          
 class Rewards(ndb.Model):
     amount = ndb.IntegerProperty()                                                                  #: number of points acquired 
@@ -148,6 +146,10 @@ class User(User):
         reports = Report.query(Report.user_id == int(self.key.id()))
         return reports.count()
 
+    def get_petitions_count(self):
+        petitions = Petition.query(Petition.user_id == int(self.key.id()))
+        return petitions.count()
+
 class UserFB(ndb.Model):
     user_id = ndb.IntegerProperty(required = True)
     age_range = ndb.IntegerProperty()
@@ -165,11 +167,7 @@ class UserGOOG(ndb.Model):
     picture = ndb.StringProperty()
     cover = ndb.StringProperty()
 
-
-
 #--------------------------------------- ENDOF   U S E R    M O D E L -----------------------------------------------------------   
-
-
 
 #--------------------------------------- R E P O R T    M O D E L ---------------------------------------------------------------          
 class Report(ndb.Model):
@@ -622,9 +620,6 @@ class Followers(ndb.Model):
 
 #--------------------------------------- ENDOF   R E P O R T   M O D E L --------------------------------------------------------          
 
-
-
-
 #--------------------------------------- P E T I T I O N    M O D E L ---------------------------------------------------------------     
 
 class Petition(ndb.Model):
@@ -795,7 +790,6 @@ class Comments(ndb.Model):
 
 #--------------------------------------- ENDOF   P E T I T I O N   M O D E L --------------------------------------------------------          
 
-
 #--------------------------------------- T R A N S P A R E N C Y      M O D E L -------------------------------------------------------------
 class Initiative(ndb.Model):
     updated = ndb.DateTimeProperty(auto_now = True)                                                                                 #: Modification date on ndb
@@ -861,7 +855,6 @@ class Initiative(ndb.Model):
     def get_updated_date(self):
         return datetime.date(self.updated.year,self.updated.month,self.updated.day).strftime("%Y-%m-%d")
 
-
 class Area(ndb.Model):
     name = ndb.StringProperty(required = True)
     color = ndb.StringProperty(required = True, default = "AEAEAE")
@@ -874,11 +867,7 @@ class Area(ndb.Model):
     def get_id(self):
         return self._key.id()
 
-
-
 #--------------------------------------- ENDOF   T R A N S P A R E N C Y   M O D E L --------------------------------------------------------          
-
-
 
 #--------------------------------------- H E L P E R S    M O D E L S -----------------------------------------------------------          
 
@@ -980,6 +969,5 @@ class SocialUser(ndb.Model):
     @staticmethod
     def open_id_providers():
         return [k for k,v in SocialUser.PROVIDERS_INFO.items() if v['uri']]
-
 
 #--------------------------------------- ENDOF   H E L P E R S   M O D E L S -----------------------------------------------------          

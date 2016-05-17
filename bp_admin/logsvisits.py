@@ -84,4 +84,4 @@ class AdminLogsVisitsHandler(BaseHandler):
             # "len_hist": len(histogram)
         }
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_logs_visits.html', **params)
+        return self.render_template('usage/admin_logs_visits.html', **params)

@@ -30,7 +30,7 @@
 <div class="row disclaimer" onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')"> 
      <span class="glyphicon-exclamation-sign glyphicon"></span>
      <span>Para poder reportar, </span> 
-     <span style="text-decoration: underline; font-family: roboto-regular;">necesitamos tu teléfono y dirección en tu perfil</span>.         
+     <span style="text-decoration: underline; font-family: roboto-regular;">necesitamos al menos tu teléfono y dirección en tu perfil</span>.         
 </div>
 <input type="text" hidden id="userphone" value="no">
 <input type="text" hidden id="useraddress" value="no">
@@ -159,7 +159,7 @@
 {% endblock %}
 
 {% block page_scripts %} 
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places,visualization"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
 	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
 	<script type="text/javascript" src="/default/materialize/js/plugins/dropify/dropify.js"></script>
 	<script type="text/javascript">
@@ -319,7 +319,7 @@
 			
 			var mapOptions = {
 				center: new google.maps.LatLng(center[0], center[1]),
-				zoom: {% if is_mobile %}10{% else %}12{% endif %},
+				zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
 				zoomControl: true,
 				zoomControlOptions: {
 					style: google.maps.ZoomControlStyle.SMALL,

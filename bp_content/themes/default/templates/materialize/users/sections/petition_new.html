@@ -23,8 +23,8 @@
 {% if phone == "" or not address_from %}
 <div class="row disclaimer" onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')"> 
      <span class="glyphicon-exclamation-sign glyphicon"></span>
-     <span>Para poder reportar, </span> 
-     <span style="text-decoration: underline; font-family: roboto-regular;">necesitamos tu teléfono y dirección en tu perfil</span>.         
+     <span>Para poder proponer, </span> 
+     <span style="text-decoration: underline; font-family: roboto-regular;">necesitamos al menos tu teléfono y dirección en tu perfil</span>.         
 </div>
 <input type="text" hidden id="userphone" value="no">
 <input type="text" hidden id="useraddress" value="no">
@@ -37,26 +37,25 @@
 {% block body_content %}
 	<div class="section">
 	    <div class="container" style="margin-top:80px">
-	    	
 	        <div class="row">
 		                <div class="container">                
 		                    <div class="col s12 m9 offset-m1">
                           <div class="row">
                               <div class="row">
-                                <div class="col s12">
-                                  <ul class="tabs tab-demo z-depth-1">
-                                    <li class="tab col s3"><a class="brand-color-text active" href="#test1">Paso 1</a>
-                                    </li>
-                                    <li class="tab col s3"><a class="brand-color-text" href="#test2">Paso 2</a>
-                                    </li>
-                                    <li class="tab col s3"><a class="brand-color-text" href="#test3">Paso 3</a>
-                                    </li>
-                                    <li class="tab col s3"><a class="brand-color-text" href="#test4">Paso 4</a>
-                                    </li>
-                                  </ul>
-                                </div>
-                                <div class="col s12">
-                                  <form class="col s12" id="form_report" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
+                                <form class="col s12" id="form_report" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
+                                  <div class="col s12">
+                                    <ul class="tabs tab-demo-active z-depth-1">
+                                      <li class="tab col s3"><a class="brand-color-text active" href="#test1">Paso 1</a>
+                                      </li>
+                                      <li class="tab col s3"><a class="brand-color-text" href="#test2">Paso 2</a>
+                                      </li>
+                                      <li class="tab col s3"><a class="brand-color-text" href="#test3">Paso 3</a>
+                                      </li>
+                                      <li class="tab col s3"><a class="brand-color-text" href="#test4">Paso 4</a>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                  <div class="col s12">
                                         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                                         <input type="hidden" id="catGroup" name="catGroup">
                                         <input type="hidden" id="subCat" name="subCat">
@@ -121,8 +120,8 @@
                                               <h3 id="step_iv"class="col s12 m9 offset-m1 grey-text" style="font-weight: 200; display: none;">¿Todo en orden? Revisa tu propuesta y has clic en publicar para comenzar a sumar voces.</h3>
                                           </div>
                                         </div>
-                                  </form>
-                                </div>
+                                  </div>
+                                </form>
                               </div>
                           </div>
                         </div>
@@ -156,28 +155,12 @@
 {% endblock %}
 
 {% block page_scripts %} 
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places,visualization"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
 	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
 	<script type="text/javascript">
-		var requires_image = false;
-
-		function evalRequiresImage(pCat){
-			var url = "{{ uri_for('materialize-report-categories') }}" + "?q=subcategories";
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(data) { 
-                    console.log(data)
-                }
-            }).done(function(data) {
-            	requires_image = data[pCat].requires_image; 
-            });
-		}
 			
 		function init(){
-	        			
             var url = "{{ uri_for('materialize-petition-topics') }}";
-        
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -193,74 +176,47 @@
     	        }
     	        abcList.sort();
                 for (var i=0,j=abcList.length;i<j;i++){
-    	            html += '<li> <a class="brand-color-text" href="#" onclick="return false;">'+ abcList[i] +'</a></li>';
+    	            html += '<li> <a class="brand-color-text" href="#" onclick="document.getElementById(\'catGroupbtn\').innerHTML=this.innerHTML; return false;">'+ abcList[i] +'</a></li>';
     	        }
     	        document.getElementById('catGroupdd').innerHTML = html;
                 document.getElementById('catGroupbtn').innerHTML='---';
                 if ($('#catGroupbtn').hasClass('disabled')) $('#catGroupbtn').removeClass('disabled');
             });    
-
-			
-    		
-    $( "#submit_report_form" ).click(function() {
-    			uphone = document.getElementById('userphone').value;
-    			uaddress = document.getElementById('useraddress').value;
-    			if (uphone == 'no' || uaddress == 'no'){
-    				Materialize.toast('<span class="toast-danger">Oops! Por favor completa primero tu perfil con teléfono y dirección.</span>',3000,'',function(){window.location.href = "{{uri_for('materialize-settings-profile')}}";});
-    	            return false;
-    			}
-    	        if (!marker){
-    	            Materialize.toast('<span class="toast-warning">Oops! Selecciona la ubicación del reporte en el mapa por favor.</span>',4500);
-    	            return false;
-    	        }
-    	        if (document.getElementById('catGroup').value == ''){
-    	            Materialize.toast('<span class="toast-warning">Oops! Selecciona el grupo de categoría por favor.</span>',4500);
-    	            return false;
-    	        }
-    	        if (document.getElementById('subCat').value == ''){
-    	            Materialize.toast('<span class="toast-warning">Oops! Selecciona una subcategoría por favor.</span>',4500);
-    	            return false;
-    	        }
-    	        if (document.getElementById('when').value == ''){
-    	            Materialize.toast('<span class="toast-warning">Oops! Selecciona una fecha por favor.</span>',4500);
-    	            return false;
-    	        }
-    	        if (document.getElementById('description').value == ''){
-    	            Materialize.toast('<span class="toast-warning">Oops! Escribe una descripción por favor.</span>',4500);
-    	            return false;
-    	        }
-    	        if (requires_image && document.getElementById('file').value == ''){
-    	        	Materialize.toast('<span class="toast-warning">Oops! La categoría seleccionada requiere de adjuntar una foto.</span>',4500);
-    	            return false;
-    	        }
-    	        document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1); 
-
-    	        //CHECK IF BEST TO FOLLOW OR COMMENT - - -
-	            var m1 = marker.getPosition().toString().slice(1,-1).split(',').map(Number);           
-	            var gpe_query= "SELECT * FROM " + gpe_table_name + "  WHERE status not in ('spam', 'archived', 'forgot', 'solved', 'failed') AND ( ST_Intersects("+gpe_table_name+".the_geom,ST_Buffer( ST_SetSRID('POINT("+m1[1]+" "+m1[0]+")'::geometry , 4326), 0.00044966080296049427))) AND (group_category ilike '%"+document.getElementById('catGroup').value+"%') AND (sub_category ilike '%"+document.getElementById('subCat').value+"%')";
-	            gpe_sql.execute(gpe_query).done(function(data) {
-			        if(data.total_rows >= 1) {
-			        	console.log(data);
-						console.log('suggesting follow');
-
-						$("#report_description_follow").html(data.rows[0].description);
-						$("#cdb_id_follow").attr('href', '{{uri_for("landing-map")}}?cdb_id='+data.rows[0].cartodb_id+'');
-						$("#modal_follow").openModal();
-
-						// Materialize.toast('<span class="toast-success">Tenemos un reporte muy parecido al tuyo en proceso de solución.</span>',3000);
-						// setTimeout(function(){
-						// 	Materialize.toast('<span class="toast-info"><a href="{{uri_for("landing-map")}}?cdb_id='+data.rows[0].cartodb_id+'" target="_blank">Te sugerimos seguirlo y comentar DANDO CLIC AQUÍ.</a></span>',15000);
-						// 	setTimeout(function(){
-						//  	Materialize.toast('<span class="toast-warning" onclick="document.getElementById("form_report").submit();" style="cursor:pointer;">O bien, para enviar el tuyo HAS CLIC AQUÍ.</span>',15000);
-						//                 }, 3000);
-						//                }, 2000);
-					}else{
-						console.log('sending report');
-    	        		document.getElementById("form_report").submit();        
-					}
-			    })
-    	    });
 		}
+
+    $( "#submit_report_form" ).click(function() {
+          uphone = document.getElementById('userphone').value;
+          uaddress = document.getElementById('useraddress').value;
+          if (uphone == 'no' || uaddress == 'no'){
+            Materialize.toast('<span class="toast-danger">Oops! Por favor completa primero tu perfil con teléfono y dirección.</span>',3000,'',function(){window.location.href = "{{uri_for('materialize-settings-profile')}}";});
+                  return false;
+          }
+              if (!marker){
+                  Materialize.toast('<span class="toast-warning">Oops! Selecciona la ubicación del reporte en el mapa por favor.</span>',4500);
+                  return false;
+              }
+              if (document.getElementById('catGroup').value == ''){
+                  Materialize.toast('<span class="toast-warning">Oops! Selecciona el grupo de categoría por favor.</span>',4500);
+                  return false;
+              }
+              if (document.getElementById('subCat').value == ''){
+                  Materialize.toast('<span class="toast-warning">Oops! Selecciona una subcategoría por favor.</span>',4500);
+                  return false;
+              }
+              if (document.getElementById('when').value == ''){
+                  Materialize.toast('<span class="toast-warning">Oops! Selecciona una fecha por favor.</span>',4500);
+                  return false;
+              }
+              if (document.getElementById('description').value == ''){
+                  Materialize.toast('<span class="toast-warning">Oops! Escribe una descripción por favor.</span>',4500);
+                  return false;
+              }
+              document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1); 
+
+              //CHECK IF BEST TO FOLLOW - - -
+          
+      });
+
 
 
     init();

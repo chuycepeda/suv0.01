@@ -34,7 +34,7 @@ class AdminStatsReportsHandler(BaseHandler):
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
         params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        return self.render_template('admin_summary.html', **params)
+        return self.render_template('stats/admin_summary.html', **params)
 
 class AdminStatsOrganizationHandler(BaseHandler):
     """
@@ -45,7 +45,7 @@ class AdminStatsOrganizationHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')        
-        return self.render_template('admin_orgview.html', **params)
+        return self.render_template('stats/admin_orgview.html', **params)
 
 class AdminSendEmailListHandler(BaseHandler):
     def get(self):
@@ -54,7 +54,7 @@ class AdminSendEmailListHandler(BaseHandler):
             "recipent": email_id,
         }        
         params['nickname'] = g_users.get_current_user().email().lower()
-        return self.render_template('admin_send_email.html', **params)
+        return self.render_template('emails/admin_send_email.html', **params)
             
     def post(self):
         
@@ -100,3 +100,26 @@ class AdminManualHandler(BaseHandler):
 class AdminLogoutHandler(BaseHandler):
     def get(self):
         self.redirect(g_users.create_logout_url(dest_url=self.uri_for('landing')))
+
+class AdminElectoralHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')  
+        params['right_sidenav_msg'] = self.app.config.get('right_sidenav_msg')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
+        params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        
+        return self.render_template('admin_electoral.html', **params)

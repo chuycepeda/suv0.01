@@ -164,6 +164,7 @@
 
 	    	</style>
 		    {% block page_css %}
+ 			<link href="/{{theme}}/materialize/css/plugins/rrssb/rrssb.css" type="text/css" rel="stylesheet" media="screen,projection">
 		    <style type="text/css">
 		    	.side-nav li:hover {
 				    background-color: #fff!important;
@@ -286,12 +287,12 @@
 						<!-- REPORTS DROPDOWN -->
 						{% if has_reports %}
 							<ul id="reports-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Mapa</a>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Ver mapa</a>
 			                        </li>
-			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Hacer un reporte</a>
 			                        </li>
-			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Crear reporte</a>
-			                        </li>
+			                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Crear reporte</a>
+			                        </li> -->
 				            </ul>
 				            <li class="nav-reports" {% if path == uri_for('materialize-report-new') or path == uri_for('landing-map') or path == uri_for('materialize-report-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
 		                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">{% if not is_mobile %}Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
@@ -303,7 +304,7 @@
 							<ul id="petitions-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver propuestas</a>
 			                        </li>
-			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Crear propuesta</a>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Hacer una propuesta</a>
 			                        </li>
 			                      
 				            </ul>
@@ -315,7 +316,7 @@
 						<!-- TRANSPARENCY DROPDOWN -->
 						{% if has_transparency %}
 							<ul id="transparency-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-city") }}">Conoce {{city_name}}</a>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-city") }}">Mapas de {{city_name}}</a>
 			                        </li>
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a>
 			                        </li>
@@ -425,9 +426,9 @@
 									    	<a class="collapsible-header waves-effect waves-light">Reportes{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
-												  <li><a href="{{ uri_for("landing-map") }}">Mapa</a></li>
-												  <li><a href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a></li>
-							                      <li><a href="{{ uri_for("materialize-report-new") }}">Crear reporte</a></li>
+												  <li><a href="{{ uri_for("landing-map") }}">Ver mapa</a></li>
+												  <li><a href="{{ uri_for("materialize-report-cardlist") }}">Hacer un reporte</a></li>
+							                      <!-- <li><a href="{{ uri_for("materialize-report-new") }}">Crear reporte</a></li> -->
 			                                    </ul>
 			                                </div>
 			                            </li>
@@ -444,7 +445,7 @@
 			                            	<div class="collapsible-body">
 			                                    <ul>
 												  <li><a href="{{ uri_for("materialize-petition-cardlist") }}">Ver propuestas</a></li>
-							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Crear propuesta</a></li>
+							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Hacer una propuesta</a></li>
 			                                    </ul>
 			                                </div>
 			                            </li>
@@ -460,7 +461,7 @@
 									    	<a class="collapsible-header waves-effect waves-light">Transparencia{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
-												  <li><a href="{{ uri_for("materialize-transparency-city") }}">Conoce {{city_name}}</a></li>
+												  <li><a href="{{ uri_for("materialize-transparency-city") }}">Mapas de {{city_name}}</a></li>
 							                      <li><a href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a></li>
 							                      <!-- <li><a href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a></li> -->
 			                                    </ul>
@@ -473,7 +474,7 @@
 				    {% endif %}
 				    {% if path == uri_for('landing-map') %}
 					    <li>
-					    	<div class="hide-on-med-only">
+					    	<div class="hide-on-med-and-down">
 			                <ul class="collapsible collapsible-accordion" data-collapsible="expandable" onclick="$('#right-sidebar-nav').hide()">
 			                  <li>
 			                    <div class="collapsible-header white-text truncate brand-secondary-color"> Estás viendo <span id="rep_count_M" style="font-family: roboto-regular;">0</span> reportes.</div>
@@ -763,43 +764,54 @@
 		    <div id="modal3" class="modal" style="top: 80px!important; font-family: roboto-medium; max-height: 85%;">
 		      <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
               <div id="modal3_content" class="modal-content brand-color-text row" style="overflow-y:scroll;">
-                <div class="row">
+                <div class="row" style="margin-bottom: 0px;">
 	                <img id="report_image" class="responsive-img center col s12 m6" style="margin-top: 12px;" src="" style="display:none;">
 	                <div id="gSV" class="col s12" style="display:none;">
 	                	<div id='gSVpanorama' style='height: 300px;overflow: hidden;-webkit-transform: translateZ(0px); background-color:{{brand_secondary_color}}'></div>
 	                </div>
+                	<p class="col s12 brand-color-text" style="text-align: right">Reportado por <a class="brand-secondary-color-text" style="text-decoration: underline;" id="report_author" target="_blank"></a> vía <span id="report_via" class="brand-secondary-color-text"></span> desde <span id="report_date" class="brand-secondary-color-text"></span>.</p>
 	            </div>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-receipt brand-color-text"></i>Ticket: <span id="report_cartodb_id" class="brand-secondary-color-text"></span></p>
                 <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-book brand-color-text"></i>Estado: <span id="report_status" class="brand-secondary-color-text"></span></p>
-		        <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-favorite brand-color-text"></i>Likes: 
+		        <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-favorite brand-color-text"></i>Apoyo: 
 		        <span id="report_followers" class="brand-secondary-color-text"></span>
 				{% if user_id %}
-                <a href="#" id="followBtn" class="waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Dar like este reporte te permite seguir su historial de cambios en tus reportes."   style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;border-radius: 22px;" onclick="followReport(this)"><i class="mdi-action-favorite white-text"></i></a>
+                <a href="#" id="followBtn" class="waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Apoya a que se solucione y obtén los avances en tus reportes."   style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;border-radius: 22px;" onclick="followReport(this)"><i class="mdi-action-favorite white-text"></i></a>
                 {% else %}
 					<a href="{{ uri_for('login') }}" class="modal-trigger menu-item waves-effect waves-white btn brand-color modal-action tooltipped small" data-position="top" data-delay="50" data-tooltip="Dar like a este reporte te permite seguir su historial de cambios en tus reportes." style="margin-left:18px;    margin-left: 18px;font-size: 12px;padding-left: 10px;padding-right: 10px;border-radius: 22px;" ><i class="mdi-action-favorite white-text"></i></a></li>
                 {% endif %}
 		        </p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-event brand-color-text"></i>Fecha: <span id="report_date" class="brand-secondary-color-text"></span></p>
-                <p class="col s12 m8"><i style="padding:8px;" class="mdi-maps-pin-drop brand-color-text"></i>Dirección: <span id="report_address" class="brand-secondary-color-text"></span></p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work brand-color-text"></i>Grupo de categoría: <span id="report_group_category" class="brand-secondary-color-text"></span></p>
-                <p class="col s12 m4"><i style="padding:8px;" class="mdi-image-style brand-color-text"></i>Subcategoría: <span id="report_sub_category" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m4"><i style="padding:8px;" class="mdi-action-group-work brand-color-text"></i>Categoría: <span id="report_group_category" class="brand-secondary-color-text"></span></p>
+                <p class="col s12 m6"><i style="padding:8px;" class="mdi-image-style brand-color-text"></i>Subcategoría: <span id="report_sub_category" class="brand-secondary-color-text"></span></p>
+                <p class="col s12"><i style="padding:8px;" class="mdi-maps-pin-drop brand-color-text"></i>Dirección: <span id="report_address" class="brand-secondary-color-text"></span></p>
                 <p class="col s12"><i style="padding:8px;" class="mdi-action-description brand-color-text"></i>Descripción: <span id="report_description" class="brand-secondary-color-text"></span></p>
-                <p class="col s12" style="margin-left:10px;">Cambios y comentarios: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
+                <p class="col s12"><i style="padding:8px;" class="mdi-social-share"></i>Compartir: <br><span id="sharing_btns" class="col s12 m6 offset-m3 center"></span></p>
+                <p class="col s12" style="margin-left:10px;"><i style="padding:8px;" class="mdi-communication-comment"></i>Avances y comentarios: <br><span id="report_comments" style="color:#53ACA8!important"></span></p>
                 {% if user_id %}
                 <div class="row">
-                    <div class="input-field col s11 offset-s1 m7 offset-m1">
-                        <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
-                        <label for="commentbox">Agrega tu comentario aquí...</label>
+                    <div class="input-field col s11 offset-s1 white" style="padding:30px; border-radius: 3px;">
+                    	{% if has_picture %}
+							<div style="position: absolute;left: 10px;">
+								<img src="{{user_picture_url}}" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px">
+							</div>
+						{% else %}
+							<div style="position: absolute;left: 10px;">
+								<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
+							</div>
+						{% endif %}
+                        <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;margin-left:40px;max-width: 95%;" type="text" ></textarea>
+                        <label for="commentbox" style="margin-left:40px;">Agrega tu comentario aquí...</label>
                     </div>
-                    <div class="input-field col s11 offset-s1 m7 offset-m1">
+                    <div class="input-field col s11 offset-s1 m7 offset-m1 right">
 		            	<a class="btn waves-effect waves-light sm-green white-text right" style="cursor:pointer;" id="submit_report_form_comment">Comentar <i class="mdi-content-send right"></i></a>
 		            </div>
                 </div> 
                 {% endif %}
+
                 <input id="report_ticket" type="hidden" value="">
                 <input id="report_follows" type="hidden" value="">
               </div>
-              <div class="modal-footer brand-tertiary-color">              	
+              <div class="modal-footer brand-secondary-color">              	
                 <a href="#" class="waves-effect waves-teal btn-flat modal-action modal-close white-text" style="margin-right:20px;">Cerrar</a>
               </div>
             </div>
@@ -1195,9 +1207,9 @@
 			{% endblock %}
 
 			{% block page_scripts %}
-				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+				<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
 				<script src="/{{theme}}/materialize/js/cartodb.js"></script>
-
+				<script src="/{{theme}}/materialize/js/plugins/rrssb/rrssb.min.js"></script>
 				{% if not has_cic %}
 	                <script type="text/javascript">
 	                	// cartodb
@@ -1257,7 +1269,7 @@
 						function init(){
 							var mapOptions = {
 								center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-								zoom: {% if is_mobile %}11{% else %}13{% endif %},
+								zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
 								minZoom:5,
 								zoomControl: true,
 								zoomControlOptions: {
@@ -1301,7 +1313,7 @@
 
 							// CITY LAYERS
 							var city_query= "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE " + city_table_name + ".status not in ('spam', 'archived', 'forgot') AND " + city_table_name + ".pvt = false AND ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";	   
-	                        var city_interactivity = ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title"];
+	                        var city_interactivity = ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title", "uuid"];
 							$.ajax({
 				                url: "{{ uri_for('materialize-report-categories') }}",
 				                type: 'GET'
@@ -1566,9 +1578,12 @@
 							});
 							$('#report_status').html(getStatus(data.status));
 							$('#report_via').html(getVia(data.via));
+							getAuthor(data.uuid);
 							$('#followBtn').html('<i class="mdi-action-favorite white-text"></i>');
-
+							$('#sharing_btns').html(' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{uri_for("landing-map", _full=True)}}?cdb_id='+data.cartodb_id+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Hola!%20apoya%20mi%20reporte%20en%20{{uri_for("landing-map", _full=True)}}?cdb_id='+data.cartodb_id+'&hashtags=#onesmartcity" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ');
 							$('#modal3').openModal();
+        					setTimeout(function(){ rrssbInit();}, 500);
+
 							loadComments($('#report_ticket').val());
 							getgSV(latlng)
 
@@ -1580,31 +1595,31 @@
 						        case 'open':
 						            return 'Abierto';   
 						        case 'halted':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
 						            return 'En espera <i class="mdi-action-assignment amber-text"></i>';
 						        case 'assigned':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
 						            return 'Asignado <i class="mdi-action-assignment-ind amber-text"></i>';
 						        case 'spam':
 						            return 'Spam';
 						        case 'archived':
 						            return 'Archivado';
 						        case 'forgot':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
 						            return 'Olvidado <i class="mdi-action-assignment-returned red-text"></i>';
 						        case 'rejected':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
 						            return 'Rechazado <i class="mdi-action-assignment-return red-text"></i>';
 						        case 'working':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
 						            return 'En proceso <i class="mdi-action-assignment amber-text"></i>';
 						        case 'answered':
 						            return 'Respondido';
 						        case 'solved':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #4CAF50";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #4CAF50";
 						            return 'Resuelto <i class="mdi-action-assignment-turned-in green-text"></i>';
 						        case 'failed':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
 						            return 'Fallo <i class="mdi-action-assignment-late red-text"></i>';
 						    }
 						}
@@ -1632,13 +1647,26 @@
 						    }
 						}
 
+						function getAuthor(uuid){
+							var url = "/report/author/"+uuid+"/"; console.log('request_url', url);
+					         $.ajax({
+					             url: url,
+					             type: 'GET',
+					             success: function(data) { 
+					                 console.log('author', data);
+					                 $('#report_author').attr('href', '/user/profile/' + data.response.user_url + '/');
+					                 $('#report_author').html(data.response.name + " " + data.response.lastname);
+					             }
+					         }).done(function(data) {});
+						}
+
 						function loadComments(_id){
 							var url = "/report/comments/ticket/"+_id+"/";
 					         $.ajax({
 					             url: url,
 					             type: 'GET',
 					             success: function(data) { 
-					                 console.log(data)
+					                 console.log('comments', data);
 					             }
 					         }).done(function(data) {
 					             $('#report_comments').html(data.logs.html);
@@ -1702,10 +1730,10 @@
 
 						function followReport(elem){
 							var kind;
-							if (elem.innerHTML.indexOf('<i class="mdi-action-favorite white-text"></i>) >= 0){
+							if (elem.innerHTML.indexOf('<i class="mdi-action-favorite white-text"></i>') >= 0){
 								kind = 'follow';
 							}
-							else if (elem.innerHTML.indexOf('Dejar de seguir') >= 0){
+							else if (elem.innerHTML.indexOf('Dejar de apoyar') >= 0){
 								kind = 'unfollow';
 							}
 							else{
@@ -1724,10 +1752,10 @@
 				            }).done(function(data) {
 				            	console.log(data);
 				            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite white-text"></i>','Dejar de seguir');
+				            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite white-text"></i>','Dejar de apoyar');
 				            	}
 				            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('Dejar de seguir', '<i class="mdi-action-favorite white-text"></i>');
+				            		elem.innerHTML = elem.innerHTML.replace('Dejar de apoyar', '<i class="mdi-action-favorite white-text"></i>');
 				            	}
 				            	var qry = "SELECT follows FROM " + city_table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
 								city_sql.execute(qry).done(function(data) {
@@ -1735,11 +1763,11 @@
 									$('#report_follows').val(data.rows[0].follows)
 								});
 								if (data.contents == 'user already following')
-				    				Materialize.toast('<span class="toast-warning">Oops! Ya sigues este reporte.</span>',4500);
+				    				Materialize.toast('<span class="toast-warning">Oops! Ya apoyas este reporte.</span>',4500);
 								else if (data.contents == 'follow request successful')
 				    				Materialize.toast('<span class="toast-success">Bravo! Ahora podrás verlo en tus reportes.</span>',4500);
 								else if (data.contents == 'unfollow request successful')
-				    				Materialize.toast('<span class="toast-success">Has dejado de seguir este reporte.</span>',4500);
+				    				Materialize.toast('<span class="toast-success">Has dejado de apoyar este reporte.</span>',4500);
 								else if (data.contents == 'user is creator')
 				    				Materialize.toast('<span class="toast-success">Tú creaste este reporte, ya se encuentra en tus reportes.</span>',4500);
 				            });
@@ -1981,7 +2009,7 @@
 						function init(){
 							var mapOptions = {
 								center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-								zoom: {% if is_mobile %}11{% else %}13{% endif %},
+								zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
 								minZoom:5,
 								zoomControl: true,
 								zoomControlOptions: {
@@ -2061,7 +2089,7 @@
 
 							// CITY LAYERS
 							var city_query= "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE " + city_table_name + ".status not in ('spam', 'archived', 'forgot') AND " + city_table_name + ".pvt = false AND ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";	 
-	                        var city_interactivity = ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title"];
+	                        var city_interactivity = ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title", "uuid"];
 							$.ajax({
 				                url: "{{ uri_for('materialize-report-categories') }}",
 				                type: 'GET'
@@ -2341,9 +2369,11 @@
 							});
 							$('#report_status').html(getStatus(data.status));
 							$('#report_via').html(getVia(data.via));
+							getAuthor(data.uuid);
 							$('#followBtn').html('<i class="mdi-action-favorite white-text"></i>');
-
+							$('#sharing_btns').html(' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{uri_for("landing-map", _full=True)}}?cdb_id='+data.cartodb_id+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Hola!%20apoya%20mi%20reporte%20en%20{{uri_for("landing-map", _full=True)}}?cdb_id='+data.cartodb_id+'&hashtags=#onesmartcity" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ');
 							$('#modal3').openModal();
+        					setTimeout(function(){ rrssbInit();}, 500);
 							loadComments($('#report_ticket').val());
 							getgSV(latlng)
 
@@ -2356,31 +2386,31 @@
 						        case 'open':
 						            return 'Abierto';   
 						        case 'halted':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
 						            return 'En espera <i class="mdi-action-assignment amber-text"></i>';
 						        case 'assigned':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
 						            return 'Asignado <i class="mdi-action-assignment-ind amber-text"></i>';
 						        case 'spam':
 						            return 'Spam';
 						        case 'archived':
 						            return 'Archivado';
 						        case 'forgot':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
 						            return 'Olvidado <i class="mdi-action-assignment-returned red-text"></i>';
 						        case 'rejected':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
 						            return 'Rechazado <i class="mdi-action-assignment-return red-text"></i>';
 						        case 'working':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #ffc107";
 						            return 'En proceso <i class="mdi-action-assignment amber-text"></i>';
 						        case 'answered':
 						            return 'Respondido';
 						        case 'solved':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #4CAF50";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #4CAF50";
 						            return 'Resuelto <i class="mdi-action-assignment-turned-in green-text"></i>';
 						        case 'failed':
-						            document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
+						            // document.getElementById("modal3_content").style.borderLeft = "thick solid #F44336";
 						            return 'Fallo <i class="mdi-action-assignment-late red-text"></i>';
 						    }
 						}
@@ -2408,13 +2438,26 @@
 						    }
 						}
 
+						function getAuthor(uuid){
+							var url = "/report/author/"+uuid+"/"; console.log('request_url', url);
+					         $.ajax({
+					             url: url,
+					             type: 'GET',
+					             success: function(data) { 
+					                 console.log('author', data);
+					                 $('#report_author').attr('href', '/user/profile/' + data.response.user_url + '/');
+					                 $('#report_author').html(data.response.name + " " + data.response.lastname);
+					             }
+					         }).done(function(data) {});
+						}
+
 						function loadComments(_id){
 							var url = "/report/comments/ticket/"+_id+"/";
 					         $.ajax({
 					             url: url,
 					             type: 'GET',
 					             success: function(data) { 
-					                 console.log(data)
+					                 console.log('comments', data);
 					             }
 					         }).done(function(data) {
 					             $('#report_comments').html(data.logs.html);
@@ -2482,7 +2525,7 @@
 							if (elem.innerHTML.indexOf('<i class="mdi-action-favorite white-text"></i>') >= 0){
 								kind = 'follow';
 							}
-							else if (elem.innerHTML.indexOf('Dejar de seguir') >= 0){
+							else if (elem.innerHTML.indexOf('Dejar de apoyar') >= 0){
 								kind = 'unfollow';
 							}
 							else{
@@ -2501,10 +2544,10 @@
 				            }).done(function(data) {
 				            	console.log(data);
 				            	if (kind == 'follow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite white-text"></i>','Dejar de seguir');
+				            		elem.innerHTML = elem.innerHTML.replace('<i class="mdi-action-favorite white-text"></i>','Dejar de apoyar');
 				            	}
 				            	if (kind == 'unfollow' && data.status == 'success' && data.contents != 'user is creator'){
-				            		elem.innerHTML = elem.innerHTML.replace('Dejar de seguir', '<i class="mdi-action-favorite white-text"></i>');
+				            		elem.innerHTML = elem.innerHTML.replace('Dejar de apoyar', '<i class="mdi-action-favorite white-text"></i>');
 				            	}
 				            	var qry = "SELECT follows FROM " + city_table_name + " WHERE cartodb_id = " + $('#report_ticket').val();
 								city_sql.execute(qry).done(function(data) {
@@ -2512,11 +2555,11 @@
 									$('#report_follows').val(data.rows[0].follows)
 								});
 								if (data.contents == 'user already following')
-				    				Materialize.toast('<span class="toast-warning">Oops! Ya sigues este reporte.</span>',4500);
+				    				Materialize.toast('<span class="toast-warning">Oops! Ya apoyas este reporte.</span>',4500);
 								else if (data.contents == 'follow request successful')
 				    				Materialize.toast('<span class="toast-success">Bravo! Ahora podrás verlo en tus reportes.</span>',4500);
 								else if (data.contents == 'unfollow request successful')
-				    				Materialize.toast('<span class="toast-success">Has dejado de seguir este reporte.</span>',4500);
+				    				Materialize.toast('<span class="toast-success">Has dejado de apoyar este reporte.</span>',4500);
 								else if (data.contents == 'user is creator')
 				    				Materialize.toast('<span class="toast-success">Tú creaste este reporte, ya se encuentra en tus reportes.</span>',4500);
 				            });

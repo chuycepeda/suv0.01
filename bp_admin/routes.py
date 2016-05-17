@@ -6,7 +6,6 @@ import blog
 import logsemails
 import logsvisits
 import crontasks
-import tools
 
 
 _routes = [
@@ -16,6 +15,7 @@ _routes = [
     RedirectRoute('/admin/send/email/', admin.AdminSendEmailListHandler, name='admin-send-email', strict_slash=True),
     RedirectRoute('/admin/logout/', admin.AdminLogoutHandler, name='admin-logout', strict_slash=True),
     RedirectRoute('/admin/manual/', admin.AdminManualHandler, name='admin-manual', strict_slash=True),
+    RedirectRoute('/admin/electoral/', admin.AdminElectoralHandler, name='admin-electoral', strict_slash=True),
 
 
     # CONFIG Brand
@@ -64,9 +64,9 @@ _routes = [
     RedirectRoute('/admin/blog/', blog.AdminBlogHandler, name='admin-blog', strict_slash=True),
     RedirectRoute('/admin/blog/<post_id>/', blog.AdminBlogEditHandler, name='admin-blog-edit', strict_slash=True),
     RedirectRoute('/admin/blog/upload/<post_id>/', blog.AdminBlogUploadHandler, name='admin-blog-upload', strict_slash=True),
-    RedirectRoute('/admin/tools/css/', tools.AdminCSSHandler, name='admin-tools-css', strict_slash=True),
-    RedirectRoute('/admin/tools/icons/', tools.AdminIconsHandler, name='admin-tools-icons', strict_slash=True),
-    RedirectRoute('/admin/tools/media/', tools.AdminMediaHandler, name='admin-tools-media', strict_slash=True),
+    RedirectRoute('/admin/tools/css/', blog.AdminCSSHandler, name='admin-tools-css', strict_slash=True),
+    RedirectRoute('/admin/tools/icons/', blog.AdminIconsHandler, name='admin-tools-icons', strict_slash=True),
+    RedirectRoute('/admin/tools/media/', blog.AdminMediaHandler, name='admin-tools-media', strict_slash=True),
 
     # PLATFORM USAGE & LOGS
     RedirectRoute('/admin/users/', users.AdminUserListHandler, name='admin-users-list', strict_slash=True),

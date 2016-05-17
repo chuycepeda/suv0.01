@@ -10,6 +10,712 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: LogChange
+  properties:
+  - name: report_id
+  - name: created
+
+- kind: LogChange
+  properties:
+  - name: report_id
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: created
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: created
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: when
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: folio
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: created
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: when
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: group_category
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: when
+
+- kind: Report
+  properties:
+  - name: cdb_id
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_lastname
+  - name: contact_name
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_lastname
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_name
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: created
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: created
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: when
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: group_category
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: when
+
+- kind: Report
+  properties:
+  - name: folio
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: group_category
+  - name: created
+
+- kind: Report
+  properties:
+  - name: group_category
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: group_category
+  - name: when
+
+- kind: Report
+  properties:
+  - name: group_category
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: status
+  - name: group_category
+
+- kind: Report
+  properties:
+  - name: status
+  - name: group_category
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: folio
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: group_category
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: cdb_id
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: group_category
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: folio
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: group_category
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: group_category
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: group_category
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: group_category
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: status
+  - name: created
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: status
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: status
+  - name: group_category
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: status
+  - name: group_category
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: status
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: status
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: when
+
+- kind: Report
+  properties:
+  - name: urgent
+  - name: when
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: user_id
+  - name: created
+
+- kind: Report
+  properties:
+  - name: user_id
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: user_id
+  - name: when
+
+- kind: Report
+  properties:
+  - name: user_id
+  - name: when
+    direction: desc
+
 - kind: User
   properties:
   - name: email
@@ -19,705 +725,4 @@ indexes:
 - kind: Report
   properties:
   - name: user_id
-  - name: when
-
-- kind: Report
-  properties:
-  - name: user_id
-  - name: created
-
-- kind: Report
-  properties:
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: group_category
-  - name: when
-
-- kind: Report
-  properties:
-  - name: group_category
-  - name: created
-
-- kind: Report
-  properties:
-  - name: status
-  - name: group_category
-
-- kind: Report
-  properties:
   - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: when
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: created
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: group_category
-  - name: when
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: group_category
-  - name: created
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: when
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: created
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: when
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: created
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: when
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: created
-
-- kind: Report
-  properties:
-  - name: user_id
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: user_id
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: group_category
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: group_category
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: status
-  - name: group_category
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: group_category
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: group_category
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: folio
-  - name: group_category
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: cdb_id
-  - name: folio
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: group_category
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: group_category
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: status
-  - name: group_category
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: when
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: created
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: group_category
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: group_category
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: status
-  - name: group_category
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: group_category
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: folio
-  - name: group_category
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: status
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: when
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: urgent
-  - name: cdb_id
-  - name: folio
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: contact_lastname
-  - name: contact_name
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: contact_name
-  - name: created
-    direction: desc
-
-- kind: Report
-  properties:
-  - name: contact_lastname
-  - name: created
-    direction: desc
-
-- kind: LogChange
-  properties:
-  - name: report_id
-  - name: created
-
-- kind: LogChange
-  properties:
-  - name: report_id
-  - name: created
-    direction: desc

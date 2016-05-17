@@ -54,11 +54,6 @@ handlers:
 - url: /(robots\.txt|humans\.txt|sitemap\.xml|crossdomain\.xml)
   script: main.app
 
-# @bp_includes - styles
-- url: /boilerplate/css
-  mime_type: text/css
-  static_dir: bp_includes/static/css
-
 # @bp_includes - polymer components
 - url: /boilerplate/webcomponents
   static_dir: bp_includes/static/webcomponents
@@ -67,16 +62,6 @@ handlers:
 - url: /boilerplate/js
   mime_type: text/javascript
   static_dir: bp_includes/static/js
-
-# @bp_includes - images
-- url: /boilerplate/img/(.*\.(gif|png|jpg))
-  static_files: bp_includes/static/img/\1
-  upload: bp_includes/static/img/(.*\.(gif|png|jpg))
-
-# @bp_includes - fonts
-- url: /boilerplate/fonts/(.*\.(eot|svg|ttf|woff))
-  static_files: bp_includes/static/fonts/\1
-  upload: bp_includes/static/fonts/(.*\.(eot|svg|ttf|woff))
 
 # @bp_content - materialize styles
 - url: /(\w*)/materialize/css/(.*\.(css|map|scss|png))$
@@ -146,7 +131,6 @@ handlers:
 - url: /(\w*)/materialize/audio/(.*\.(ogg|mp3))$
   static_files: bp_content/themes/\1/static/materialize/audio/\2
   upload: bp_content/themes/(\w*)/static/materialize/audio/(.*\.(ogg|mp3))$
-
 
 # @taskqueue email sender
 - url: /taskqueue-send-email.*

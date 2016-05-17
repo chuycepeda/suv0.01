@@ -41,8 +41,8 @@
                                 </p>
                                 {% if has_cic %}
                                 <p style="padding: 8px;">
-                                    <input type="checkbox" class="filled-in layerControl" id="check_cic_M">
-                                    <label for="check_cic_M">Vía CIC: <span style="color:#43D1EC" id="c_cic_M"></span></label>
+                                    <input type="checkbox" class="filled-in layerControl" id="check_cic">
+                                    <label for="check_cic">Vía CIC: <span style="color:#43D1EC" id="c_cic_M"></span></label>
                                 </p>
                                 {% endif %}
                             </div>
@@ -190,7 +190,7 @@
 {% endblock %}
 
 {% block page_scripts %}
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
     <script src="/{{theme}}/materialize/js/cartodb.js"></script>
     {% if not has_cic %}
         <script type="text/javascript">
@@ -251,7 +251,7 @@
             function init(){
                 var mapOptions = {
                     center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-                    zoom: {% if is_mobile %}11{% else %}13{% endif %},
+                    zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
                     minZoom:5,
                     zoomControl: true,
                     zoomControlOptions: {
@@ -975,7 +975,7 @@
             function init(){
                 var mapOptions = {
                     center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-                    zoom: {% if is_mobile %}11{% else %}13{% endif %},
+                    zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
                     minZoom:5,
                     zoomControl: true,
                     zoomControlOptions: {

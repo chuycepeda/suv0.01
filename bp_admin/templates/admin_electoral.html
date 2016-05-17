@@ -1,0 +1,935 @@
+{% import 'admin_macros.html' as lib with context %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="{{ locale_language_id }}"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="{{ locale_language_id }}"> <!--<![endif]-->
+
+
+{% block document_head %}
+    <head>
+        {% block title %}<title>{{app_name}}</title>{% endblock %}
+
+        <!-- All meta tags from config files -->
+        {% block metadata %}
+            {{ meta_tags_code }}
+        {% endblock %}
+
+        {% block favicons %}
+            <link rel="icon" href="{{brand_favicon}}">
+            {% if is_mobile %}
+                <!-- For iPhone -->
+                <link rel="apple-touch-icon-precomposed" href="{{brand_favicon}}">
+                <!-- For Windows Phone -->
+                <meta name="msapplication-TileColor" content="#00bcd4">
+                <meta name="msapplication-TileImage" content="{{brand_favicon}}">
+            {% endif %}
+        {% endblock %}
+
+        <!-- All stylesheets   -->
+        {% block stylesheets %}
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <link href="/{{theme}}/materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">         
+            <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+            <link href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+            <style type="text/css">
+                html, body { height: 100%; margin: 0; padding: 0; }
+                .toast-success{ color: #2EF97D!important; line-height: 18px; }
+                .toast-danger{ color: #EF1515!important; line-height: 18px; }
+                .toast-warning{ color: #fdd835!important; line-height: 18px; }
+                .toast-info{ color: #29b6f6!important; line-height: 18px; }
+                @-webkit-keyframes pulsate {
+                    0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+                    50% {opacity: 1.0;}
+                    100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+                }
+
+                .icon-block {
+                  padding: 0 15px;
+                }
+                .icon-block .material-icons {
+                  font-size: inherit;
+                }
+                .g-recaptcha{
+                      margin-left: 23%;
+                      -webkit-transform: scale(0.8);
+                      transform: scale(0.8);
+                }
+                .pager{
+                      padding-left: 0;
+                      margin: 20px 0;
+                      text-align: center;
+                      list-style: none;
+                }
+                .pager:before{
+                    display: table;
+                    content: " ";
+                    box-sizing: border-box;
+                }
+                .pager li{
+                    display: inline;
+                }
+                .pager li>a, .pager li>span{
+                    display: inline-block;
+                    padding: 5px 14px;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 15px;
+                }
+                .pager:after{
+                    clear: both;
+                    content: " ";
+                    box-sizing: border-box;
+                }
+
+                footer.page-footer{
+                    background-color: white!important;
+                }
+
+                .collapsible-header:after {
+                    color: #9e9e9e;
+                }
+                /* BRANDING */
+                .brand-color{
+                    background-color: {{brand_color}}!important;
+                }
+                .brand-color-text{
+                    color:{{brand_color}}!important;
+                }
+                .brand-secondary-color{
+                    background-color: {{brand_secondary_color}}!important;
+                }
+                .brand-secondary-color-text{
+                    color:{{brand_secondary_color}}!important;
+                }
+                .brand-tertiary-color{
+                    background-color: {{brand_tertiary_color}}!important;
+                }
+                .brand-tertiary-color-text{
+                    color:{{brand_tertiary_color}}!important;
+                }
+                .btn{
+                    background-color: {{brand_color}};
+                }
+                .btn:hover{
+                    background-color: {{brand_secondary_color}}!important;
+                    color:white!important;
+                }
+                .btn-large{
+                    background-color: {{brand_color}};
+                }
+                .btn-large:hover{
+                    background-color: {{brand_secondary_color}}!important;
+                }
+                .btn-floating{
+                    background-color: {{brand_color}};
+                }
+                .btn-floating:hover{
+                    background-color: {{brand_secondary_color}}!important;
+                }
+                #loader {
+                  border-top-color: {{brand_color}}!important;
+                }
+                #loader:before {
+                  border-top-color: {{brand_secondary_color}}!important;
+                }
+                #loader:after {
+                  border-top-color: {{brand_tertiary_color}}!important;
+                }
+                .materialboxed{
+                    cursor: auto;
+                }
+                @font-face {
+                  font-family: 'Monoton';
+                  font-style: normal;
+                  font-weight: 400;
+                  src: local('Monoton'), local('Monoton-Regular'), url(http://themes.googleusercontent.com/static/fonts/monoton/v4/AKI-lyzyNHXByGHeOcds_w.woff) format('woff');
+                }
+
+                ul.side-nav.leftside-navigation li  a{
+                    color: #9e9e9e!important;
+                }
+
+                nav-wrapper li.active{
+                    border-bottom: 4px solid {{brand_secondary_color}};
+                    border-radius: 3px;
+                }
+
+                nav ul a{
+                    color:#9e9e9e!important;
+                }
+
+                label{
+                    font-size:12px!important;
+                }
+                
+                .collapsible-body p{
+                    padding: 4px;
+                    margin-left:15px;
+                }
+            </style>
+            {% block page_css %}
+            {% endblock %}
+            {% if user_id %}
+                {{ zendesk_imports }}
+            {% endif %}
+        {% endblock %}
+
+        <!-- All google, mixpanel and analytics tags from config files. -->
+        {% block analytics %}{{ google_analytics_code }}{% endblock %}
+        
+        <!-- All JavaScript at the bottom, except these. -->
+        {% block priority_js %}
+            <script src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>    
+            <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
+        {% endblock %}
+
+        <!--  POLYMER   -->
+        {% block webcomponents %}
+            {% block page_components %}{% endblock %}
+        {% endblock %} 
+
+    </head>
+{% endblock %}
+
+{% block document_body %}
+    <body>
+        {% block loader %}
+            <!-- Start Page Loading -->
+            <div id="loader-wrapper">
+                <div id="loader"></div>        
+                <div class="loader-section section-left"></div>
+                <div class="loader-section section-right"></div>
+            </div>
+            <!-- End Page Loading -->
+        {% endblock %}
+
+        {% block header %}
+            <!-- START HEADER -->
+            <header id="header" class="page-topbar">
+                <!-- start header nav-->
+                <div class="navbar-fixed">
+                    <nav class="white">
+                        <div class="nav-wrapper">
+                            <a href="#" data-activates="left-out" class="sidebar-collapse waves-effect waves-light darken-2" style="top:0!important;left:14px!important;"><i class="mdi-navigation-menu" style="color: #9e9e9e; background-color: white;" ></i></a>
+                            <div id="main-preloader" class="preloader-wrapper small active left" style="display: none;margin-top:12px; margin-left:60px;">
+                              <div class="spinner-layer spinner-blue">
+                                <div class="circle-clipper left">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                  <div class="circle"></div>
+                                </div>
+                              </div>
+
+                              <div class="spinner-layer spinner-red">
+                                <div class="circle-clipper left">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                  <div class="circle"></div>
+                                </div>
+                              </div>
+
+                              <div class="spinner-layer spinner-yellow">
+                                <div class="circle-clipper left">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                  <div class="circle"></div>
+                                </div>
+                              </div>
+
+                              <div class="spinner-layer spinner-green">
+                                <div class="circle-clipper left">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                  <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                  <div class="circle"></div>
+                                </div>
+                              </div>
+                            </div>
+                            <ul class="right">
+                                <li ><a href="{{ uri_for('admin-logout') }}">{% if not is_mobile %}<i class="mdi-action-exit-to-app left"></i>Cerrar sesión{% else %}<i class="mdi-action-exit-to-app"></i>{% endif %}</a></li>
+                                <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen grey-text text-ligthen-1">{% if not is_mobile %}<i class="mdi-action-settings-overscan left"></i>Ver pantalla completa{% else %}<i class="mdi-action-settings-overscan"></i>{% endif %}</a>
+                                <li><a id="chatout-btn" href="#" data-activates="chat-out" class="grey-text chat-collapse" onclick="populateRightSidebar('info');"><i class="large mdi-communication-live-help"></i></a></li>
+                                <li style="display: none"><a id="chatout-btn-hidden" href="#" data-activates="chat-out" class="grey-text chat-collapse"><i class="large mdi-communication-live-help"></i></a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+                <!-- end header nav-->
+            </header>
+            <!-- END HEADER -->
+        {% endblock %}
+
+
+        {% block main %}
+            <!-- START MAIN -->
+            <div class="row" style="height: 100%; width:100%;">
+                        {% block sidebar_left %}
+                            <!-- START LEFT SIDEBAR NAV-->
+                            <aside id="left-sidebar-nav">
+                                <ul id="left-out" class="side-nav leftside-navigation">
+                                    <li> <div class="divider"></div> </li>
+                                    <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px;">
+                                        <ul class="collapsible collapsible-accordion">
+                                            <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-maps-layers grey-text left"></i>Capas de información</a>
+                                               <div class="collapsible-body white" style="line-height: 10px;">
+                                                    <label>
+                                                    <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">INEGI - <span class="cyan-text">descriptores</span></a>
+                                                    </label>
+                                                    <p>
+                                                        <input type="checkbox" class="filled-in layerControl" id="0">
+                                                        <label for="0">Polígono estatal</label>
+                                                    </p>
+                                                    <p>
+                                                        <input type="checkbox" class="filled-in layerControl" id="1">
+                                                        <label for="1">Polígonos municipales</label>
+                                                    </p>
+                                                    <div class="divider"></div>
+                                                    <label>
+                                                    <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank">INE - <span class="cyan-text">descriptores</span></a>
+                                                    </label>
+                                                    <p>
+                                                        <input type="checkbox" class="filled-in layerControl" id="2">
+                                                        <label for="2">Distritos electorales</label>
+                                                    </p>
+                                                    <p>
+                                                        <input type="checkbox" class="filled-in layerControl" id="3">
+                                                        <label for="3">Secciones electorales</label>
+                                                    </p><p>
+                                                        <input type="checkbox" class="filled-in layerControl" id="4">
+                                                        <label for="4">Casillas electorales</label>
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
+                                    <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px; display:none;">
+                                        <ul class="collapsible collapsible-accordion">
+                                            <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-content-filter-list grey-text left"></i>Controles de filtrado</a>
+                                               <div class="collapsible-body white" style="line-height: 10px; margin-top: 4px;">
+                                                        <ul class="collapsible collapsible-accordion">
+                                                            <li>
+                                                                <a id='estadoBtn' class='collapsible-header btn brand-color truncate' style="color:white!important;width: 215px;margin-left: 10px;">---</a>
+                                                                <ul class="collapsible-body" style="margin-left: 10px;width: 215px;">
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(1)">Aguascalientes</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(2)">Baja California</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(3)">Baja California Sur</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(4)">Campeche</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(8)">Chihuahua</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(7)">Chiapas</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(5)">Coahuila</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(6)">Colima</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(9)">Distrito Federal</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(10)">Durango</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(11)">Guanajuato</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(12)">Guerrero</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(13)">Hidalgo</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(14)">Jalisco</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(15)">Mexico</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(16)">Michoacan</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(17)">Morelos</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(18)">Nayarit</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(19)">Nuevo Leon</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(20)">Oaxaca</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(21)">Puebla</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(22)">Queretaro</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(23)">Quintana Roo</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(24)">San Luis Potosi</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(25)">Sinaloa</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(26)">Sonora</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(27)">Tabasco</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(28)">Tamaulipas</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(29)">Tlaxcala</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(30)">Veracruz</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(31)">Yucatan</li>
+                                                                      <li style="padding-left: 12px;" onclick="createLayers(32)">Zacatecas</li>
+                                                                </ul>  
+                                                            </li>  
+                                                        </ul>            
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
+                                </ul>
+                            </aside>
+                            <!-- END LEFT SIDEBAR NAV-->
+                        {% endblock %}
+
+                        {% block content %}
+                            <div id="map" style="height:93vh; width:100%;"> </div>
+                            <div class="hide-on-small-only" style="width:200px; position:fixed; top:80px; left:8px;">
+                                <div class="hide-on-med-and-down ">
+                                    <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 200px!important;">
+                                </div>
+                            </div> 
+                        {% endblock %}
+
+                        {% block right_sidebar %}
+                            <!-- Right sidebar -->
+                            <aside id="right-sidebar-nav">
+                                <ul id="chat-out" class="side-nav rightside-navigation" style="margin-top:65px;max-height:90%;padding:6px;overflow: scroll; font-family: roboto-light!important;">
+                                    <li class="li-hover">
+                                        <a href="#" data-activates="chat-out" class="chat-close-collapse right" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
+                                    </li>
+                                    <li class="li-hover">
+                                        <div id="right-sidebar-logo" class="container row" style="margin-top:40px;">
+                                        </div>
+                                    </li>
+                                    <li class="li-hover">
+                                        <div id="right-sidebar-title" class="container row" style="margin-top:40px;">
+                                        </div>
+                                    </li>
+                                    <li class="li-hover">
+                                        <div id="right-sidebar-content" class="container row" style="margin-top:40px;text-align: justify;">                                            
+                                        </div>
+                                    </li>
+                                </ul>
+                            </aside>
+                        {% endblock %}
+            </div>
+            <!-- END MAIN -->
+        {% endblock %}
+
+
+        {% block footer %}
+            
+        {% endblock %}
+
+        <!-- All Scripts start here -->
+        {% block scripts %}
+            <!-- jQuery Library -->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
+            <!--materialize js-->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.js"></script>
+            <!--scrollbar-->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+            <!--plugins.js - Some Specific JS codes for Plugin Settings-->
+            <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js"></script>
+
+
+            <!-- Toast Notification -->
+            {% if messages|safe %}              
+                {% for message in messages %}
+                    <script type="text/javascript">
+                        var resendIndex = 0 ;
+                        var _text = "{{ message[0]|safe }}";
+                        var _textAdditionals = "";
+                        resendIndex = _text.search('resend');
+                        if ( resendIndex > 0 ){
+                            //this is the case when resend-activation-link is sent
+                            // 1: Add this text as html to toast additionals
+                            _textAdditionals = '<a class="toast-warning" href="/'+_text.substr(resendIndex).replace(/ /g,'/')+'/">Clic here if you need us to resend activation link. Previous link will be forgotten.</a>';
+                            // 2: Trim this text from toast
+                            _text = _text.substr(0, resendIndex-1);                         
+                        }
+                        var _msg = '<span class="toast-{{ message[1]|safe }}">'+_text+'</span>';
+                        Materialize.toast(_msg, 4500);
+                        if (_textAdditionals != "") Materialize.toast(_textAdditionals, 10000);
+                    </script>
+                {% endfor %}
+            {% endif %} 
+
+            {% block raptor %}
+                <script src="https://hammerjs.github.io/dist/hammer.js"></script>
+                <script src="/{{ theme }}/materialize/js/plugins/raptor/raptor.js?v=5"></script>
+                <script type="text/javascript">
+                    $(window).load(function() {
+                        $('body').raptorize({
+                            'enterOn' : 'konami-code'
+                        });
+                    });
+                </script>
+            {% endblock %}
+
+            
+            {% block onload_methods %}
+                <script>
+                    var is_Safari = false, not_Chrome = false;
+
+                    (function(){
+                        var BrowserDetect = {
+                                init: function() {
+                                    this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+                                    this.version = this.searchVersion(navigator.userAgent) || this.searchVersion(navigator.appVersion) || "an unknown version";
+                                    this.OS = this.searchString(this.dataOS) || "an unknown OS";
+                                    console.log("Detected " + this.browser + " v." + this.version + " running {{app_name}} in a " + this.OS);
+                                    if (this.browser != 'Chrome' && this.browser.indexOf('Safari') == -1 && this.browser.indexOf('iPhone') == -1 && this.browser != 'Firefox') {
+                                        alert("Sorry, this is a system for the future, use Google Chrome.");
+                                    }
+                                    else if (this.browser.indexOf("Safari") != -1)
+                                        is_Safari = true;
+                                    else if (this.browser.indexOf("Chrome") == -1)
+                                        not_Chrome = true;
+                                },
+                                searchString: function(data) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        var dataString = data[i].string;
+                                        var dataProp = data[i].prop;
+                                        this.versionSearchString = data[i].versionSearch || data[i].identity;
+                                        if (dataString) {
+                                            if (dataString.indexOf(data[i].subString) != -1) return data[i].identity;
+                                        } else if (dataProp) return data[i].identity;
+                                    }
+                                },
+                                searchVersion: function(dataString) {
+                                    var index = dataString.indexOf(this.versionSearchString);
+                                    if (index == -1) return;
+                                    return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+                                },
+                                dataBrowser: [{
+                                    string: navigator.userAgent,
+                                    subString: "Chrome",
+                                    identity: "Chrome"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "OmniWeb",
+                                    versionSearch: "OmniWeb/",
+                                    identity: "OmniWeb"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "Apple",
+                                    identity: "Safari",
+                                    versionSearch: "Version"
+                                }, {
+                                    prop: window.opera,
+                                    identity: "Opera",
+                                    versionSearch: "Version"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "iCab",
+                                    identity: "iCab"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "KDE",
+                                    identity: "Konqueror"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "Firefox",
+                                    identity: "Firefox"
+                                }, {
+                                    string: navigator.vendor,
+                                    subString: "Camino",
+                                    identity: "Camino"
+                                }, { // for newer Netscapes (6+)
+                                    string: navigator.userAgent,
+                                    subString: "Netscape",
+                                    identity: "Netscape"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "MSIE",
+                                    identity: "Explorer",
+                                    versionSearch: "MSIE"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "Gecko",
+                                    identity: "Mozilla",
+                                    versionSearch: "rv"
+                                }, { // for older Netscapes (4-)
+                                    string: navigator.userAgent,
+                                    subString: "Mozilla",
+                                    identity: "Netscape",
+                                    versionSearch: "Mozilla"
+                                }],
+                                dataOS: [{
+                                    string: navigator.platform,
+                                    subString: "Win",
+                                    identity: "Windows"
+                                }, {
+                                    string: navigator.platform,
+                                    subString: "Mac",
+                                    identity: "Mac"
+                                }, {
+                                    string: navigator.userAgent,
+                                    subString: "iPhone",
+                                    identity: "iPhone/iPod"
+                                }, {
+                                    string: navigator.platform,
+                                    subString: "Linux",
+                                    identity: "Linux"
+                                }]
+                            };
+                        BrowserDetect.init();   
+                     })();
+                </script>
+            {% endblock %}
+
+            {% block page_scripts %}
+
+                <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+                <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+                <script type="text/javascript">
+                    // cartodb
+                    var sublayers = [];
+                    var cartodb_user = 'mexico', cartodb_entidad = {{cartodb_polygon_cve_ent}};
+                    var sql = new cartodb.SQL({ user: cartodb_user });
+                    var obj = getUrlVars();
+                    var estado = ['Aguascalientes','Baja California','Baja California Sur','Campeche','Chihuahua','Chiapas','Coahuila','Colima','Distrito Federal','Durango','Guerrero','Guanajuato','Hidalgo','Jalisco','Mexico','Michoacan','Morelos','Nayarit','Nuevo Leon','Oaxaca','Puebla','Queretaro','Quintana Roo','Sinaloa','San Luis Potosi','Sonora','Tabasco','Tamaulipas','Tlaxcala','Veracruz','Yucatan','Zacatecas'];
+                    if (obj.entidad) cartodb_entidad = obj.entidad;
+
+                    /* MAPS RELATED */
+                    var panorama, sv = new google.maps.StreetViewService();
+                    var mapCenter = [24.15441578788599,-102.1232007765625] , map;
+                    google.maps.event.addDomListener(window,'load', init);
+                    var query;                    
+                    
+                    function init(){
+                        var mapOptions = {
+                            center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+                            zoom: 8,
+                            minZoom:5,
+                            zoomControl: true,
+                            zoomControlOptions: {
+                                position: google.maps.ControlPosition.RIGHT_BOTTOM   
+                            },
+                            mapTypeControl: false,
+                            scrollwheel: true,
+                            streetViewControl: true,
+                            streetViewControlOptions: {
+                                position: google.maps.ControlPosition.RIGHT_BOTTOM   
+                            },
+                            mapTypeControl: true,
+                            mapTypeControlOptions: {
+                                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                                position: google.maps.ControlPosition.RIGHT_TOP   
+                            },
+                            panControl:false,
+                            backgroundColor: 'rgb(249, 249, 249)',
+                            rotateControl:true,
+                            overviewMapControl:true
+                        };
+                        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                        
+                        google.maps.event.addDomListener(window, 'resize', function() {
+                            map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+                        });
+
+                        var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
+                        autocomplete_from.bindTo('bounds', map);
+                        google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+                            var place = autocomplete_from.getPlace();
+                            if (place.geometry.viewport) {
+                              map.fitBounds(place.geometry.viewport);
+                            }else{
+                              map.setCenter(place.geometry.location);
+                              map.setZoom(17);
+                            }
+                        }); 
+
+                        var centerControlDiv = document.createElement('div');
+                        var centerControl = new CenterControl(centerControlDiv, map);
+                        centerControlDiv.index = 1;
+                        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(centerControlDiv);
+
+
+                        createLayers();
+
+
+                        $('.layerControl').change(function() {
+                            if (this.checked) sublayers[parseInt(this.id)].show();
+                            else sublayers[parseInt(this.id)].hide();
+                        });
+                           
+                    }
+
+                    function createLayers(entidad){
+                        entidad = entidad || cartodb_entidad;
+                        // LAYERS
+                        layerSource = {
+                            user_name: cartodb_user,
+                            cartodb_logo:false,
+                            type: 'cartodb',
+                            sublayers: [{
+                                sql: "SELECT nacional_estados.* FROM nacional_estados where cve_ent = "+entidad,
+                                cartocss: "#nacional_estados{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+                            },{
+                                sql: "SELECT nacional_municipios.* FROM nacional_municipios where cve_ent = "+entidad,
+                                cartocss: "#nacional_municipios{line-color: {{brand_secondary_color}};line-width: 1;line-opacity: 1;}"
+                            },{
+                                sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012 where entidad = "+entidad,
+                                cartocss: "#nacional_ine_distritos_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 2;line-opacity: 1;}"
+                            },{
+                                sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012 where entidad = "+entidad,
+                                cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 1;line-opacity: 1;}"
+                            },{
+                                sql: "SELECT nacional_ine_casillas_2012.* FROM nacional_ine_casillas_2012 where entidad = "+entidad,
+                                cartocss: "#nacional_ine_casillas_2012{marker-fill: #A53ED5;marker-line-color: #FFFFFF; line-width: 8;line-opacity: 1;marker-allow-overlap:true; marker-comp-op:color-burn;}"
+                            }]
+                        };
+                        cartodb.createLayer(map,layerSource)
+                        .on('done', function(layer) {
+                            map.overlayMapTypes.setAt(0, layer);
+                            for (var i = 0, j =0; j < layer.getSubLayerCount(); i++, j++) {
+                               sublayers[i] = layer.getSubLayer(j);
+                               cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(j));
+                               if (i!=0){
+                                    sublayers[i].hide(); //leave all turned off except state.
+                               } 
+                               if (i>1){
+                                    $('#'+i).attr('checked', false);
+                                    sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
+                                          populateRightSidebar('feature', data, latlng, layerIndex);
+                                    });
+                               }
+                               $('#0').attr('checked', true);
+                               console.log("Congrats, you added sublayer #" + i + "!");
+                            }
+                        }); 
+
+                        $('#estadoBtn').html(estado[entidad-1]);
+                        map.setZoom(6);
+
+                        sql.getBounds('SELECT nacional_estados.* FROM nacional_estados where cve_ent = ' +entidad).done(function(bounds) {
+                            var southWest = new google.maps.LatLng( bounds[0][0], bounds[0][1] );
+                            var northEast = new google.maps.LatLng( bounds[1][0], bounds[1][1] );
+                            var Bounds = new google.maps.LatLngBounds();
+                            Bounds.extend(southWest);
+                            Bounds.extend(northEast);
+                            map.fitBounds(Bounds);
+                        });
+                    }
+
+                    function get_interactivity(layer_id){
+                        switch(layer_id){
+                            case 0: 
+                                return ["nom_ent","cve_ent","created_at","updated_at"];
+                            case 1: 
+                                return ["nom_mun","cve_ent","cve_mun","created_at","updated_at"];
+                            case 2:
+                                return ["clavegeo","entidad","distrito"];
+                            case 3:
+                                return ["clavegeo","entidad","municipio","distrito","seccion"];
+                            case 4:
+                                return ["entidad","municipio","distrito","seccion","nombre"];
+                        }
+                    }
+
+                    function codeAddress(input) {
+                        var address, obj;                               
+
+                        address = document.getElementById(input).value;
+                        obj = { 'address': address };
+                        geocoder.geocode( obj, function(results, status) {
+                            if (status == google.maps.GeocoderStatus.OK) {
+                                
+                                if (typeof(input) === 'string') {
+                                    map.setCenter(results[0].geometry.location);
+                                    switch (results[0].geometry.location_type){
+                                        case 'ROOFTOP': map.setZoom(17); break;
+                                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                                        case 'APPROXIMATE': map.setZoom(13); break;
+                                    }
+                                }else{
+                                    if (results[1]) {
+                                        document.getElementById(input).value = results[1].formatted_address;
+                                    } else {
+                                        console.log('No results found');
+                                    }
+                                }
+                            
+                            } else {
+                                console.log('Geocode was not successful for the following reason: ' + status);
+                            }
+                        });
+                    }
+
+                    function CenterControl(controlDiv, map) {
+                        // Set CSS for the control border.
+                        var controlUI = document.createElement('div');
+                        controlUI.style.backgroundColor = '#fff';
+                        controlUI.style.border = '2px solid #fff';
+                        controlUI.style.borderRadius = '3px';
+                        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+                        controlUI.style.cursor = 'pointer';
+                        controlUI.style.marginBottom = '2px';
+                        controlUI.style.marginRight = '10px';
+                        controlUI.style.textAlign = 'center';
+                        controlUI.title = 'Click to locate you.';
+                        controlDiv.appendChild(controlUI);
+
+                        // Set CSS for the control interior.
+                        var controlText = document.createElement('div');
+                        controlText.style.color = 'rgb(25,25,25)';
+                        controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+                        controlText.style.fontSize = '16px';
+                        controlText.style.lineHeight = '15px';
+                        controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+                        controlUI.appendChild(controlText);
+
+                        // Setup the click event listeners: simply set the map to Chicago.
+                        controlUI.addEventListener('click', function() {
+                            $('#main-preloader').show();
+                            if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(mapGoPosition);
+                            } else {
+                                Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+                                $('#main-preloader').hide();
+                            }
+                        });
+                    }
+
+                    function mapGoPosition(position) {
+                        map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+                        map.setZoom(16);
+                        $('#main-preloader').hide();
+                    }
+
+                    function getUrlVars(){
+                        var vars = [], hash;
+                        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+                        for(var i = 0; i < hashes.length; i++)
+                        {
+                            hash = hashes[i].split('=');
+                            vars.push(hash[0]);
+                            vars[hash[0]] = hash[1];
+                            if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
+                        }
+                        return vars;
+                    }
+                        
+                    function addCommas(val) {
+                        while (/(\d+)(\d{3})/.test(val.toString())) {
+                            var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+                        }
+                        return val;
+                    }     
+
+                    function populateRightSidebar(handle, data, latlng, layerIndex){
+                        switch(handle){
+                            case 'info':
+                                $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-communication-live-help"></i></p>');
+                                $('#right-sidebar-title').html('<h5 class="center grey-text">¡Bienvenido!</h5>');
+                                $('#right-sidebar-content').html('<p class="grey-text">Para comenzar a usar tu plataforma es muy sencillo.</p><p class="grey-text"><span class="brand-color-text"><i class="mdi-navigation-menu" style="font-size:20px;" ></i></span> este es tu botón de menú principal. Ahí encontrarás el botón para activar las capas de información - <span class="brand-color-text"><i class="mdi-maps-layers" style="font-size:20px;" ></i>Capas de información</span> - y el botón para activar los filtros de información - <span class="brand-color-text"><i class="mdi-content-filter-list" style="font-size:20px;" ></i>Controles de filtrado</span>.</p><br><p class="grey-text">Además, en la parte superior cuentas con botones que te permitirán cambiar la vista de despliegue para que puedas apreciarlo de manera geoespacial <span class="brand-color-text">Mapa</span>, o bien, a manera de tarjetas <span class="brand-color-text">Listas</span>. En ambos casos, hacer clic sobre la información que deseas te permitirá ver reportes gráficos sobre los estadísticos asociados, así como también editar los campos de información que desees.</p>');
+                                $('#right-sidebar-nav').show();
+                                return false;
+                            case 'feature':
+                                map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
+                                switch(layerIndex){
+                                    case 2:
+                                        $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-crop-din"></i></p>');
+                                        $('#right-sidebar-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
+                                        sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                                            console.log('nacional_ine_distritos_2012', response);
+                                            var content = '';
+                                            /* 
+
+                                                    AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                                    Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                                            */
+                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
+                                            // content+='<p class=" grey-text">- - - </p>';
+                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
+                                            // content+='<p class=" grey-text">- - - </p>';
+                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
+                                            // content+='<p class=" grey-text">- - - </p>';
+                                            $('#right-sidebar-content').html(content);
+                                        });
+                                        break;
+                                    case 3:
+                                        $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-flip"></i></p>');
+                                        $('#right-sidebar-title').html('<h5 class="center grey-text">Seccion: '+ data.seccion + '</h5>');
+
+                                        sql.execute("SELECT * FROM nacional_ine_secciones_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                                            console.log('nacional_ine_secciones_2012', response);
+                                            response = response.rows[0];
+                                            var content ='<p class=" grey-text">Esta sección pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
+                                            /* 
+
+                                                    AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                                    Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                                            */
+                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
+                                            // content+='<p class=" grey-text">- - - </p>';
+                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
+                                            // content+='<p class=" grey-text">- - - </p>';
+                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
+                                            // content+='<p class=" grey-text">- - - </p>';
+                                            content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+                                            content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
+                                            content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos. Y '+response.hogjef_f+' son liderados por una mujer.</p>';
+                                            var lim = response.pclim_aud + response.pclim_leng + response.pclim_men + response.pclim_men2 + response.pclim_mot + response.pclim_vis + response.pcon_lim;
+                                            content+='<p class=" grey-text">Existían '+lim+' personas discapacitadas y aproximadamente '+response.psinder+' personas no contaban con servicios de salud.</p>';
+                                            var peac = Math.round(response.pocupada/response.pea*100) || 0;
+                                            content+='<p class=" grey-text">Con una tasa de empleo del '+peac+'%.</p>';
+                                            content+='<p class=" grey-text">En temas de bienes por vivienda, '+response.vph_autom+' tienen automóvil, '+response.vph_c_elec+' acceso a red eléctrica, '+response.vph_cel+' tienen teléfono celular, '+response.vph_pc+' cuentan con una computadora, '+response.vph_inter+' tienen acceso a internet, '+response.vph_pisodt+' cuentan con piso, '+response.vph_tv+' tienen televisión, '+response.vph_radio+' tienen radio, '+response.vph_refri+' tienen refrigerador y '+response.vph_lavad+' tienen lavadora.</p>';
+
+                                            $('#right-sidebar-content').html(content);
+                                        });
+                                        break;
+                                    case 4:
+                                        $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-filter-center-focus"></i></p>');
+                                        $('#right-sidebar-title').html('<h5 class="center grey-text">Seccion: '+ data.seccion + ' Casilla: '+ data.nombre + '</h5>');
+                                        sql.execute("SELECT * FROM nacional_ine_casillas_2012 where entidad = " + data.entidad + " and municipio = " + data.municipio + " and distrito = " + data.distrito + " and seccion = " + data.seccion + " and nombre = '" + data.nombre +"'").done(function(response) {
+                                            console.log('nacional_ine_casillas_2012', response);
+                                            var content = '';
+                                            var response = response.rows[0];
+                                            sql.execute("SELECT * FROM nacional_ine_secciones_2012 where distrito = " + response.distrito + " and seccion = "+response.seccion).done(function(_response) {
+                                                console.log('nacional_ine_secciones_2012', _response);
+                                                var response = _response.rows[0];
+                                                content +='<p class=" grey-text">Esta casilla pertenece a la sección '+response.seccion+', que pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
+                                                /* 
+
+                                                        AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                                        Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                                                */
+                                                // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
+                                                // content+='<p class=" grey-text">- - - </p>';
+                                                // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
+                                                // content+='<p class=" grey-text">- - - </p>';
+                                                // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
+                                                // content+='<p class=" grey-text">- - - </p>';
+                                                content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+                                                content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
+                                                content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos. Y '+response.hogjef_f+' son liderados por una mujer.</p>';
+                                                var lim = response.pclim_aud + response.pclim_leng + response.pclim_men + response.pclim_men2 + response.pclim_mot + response.pclim_vis + response.pcon_lim;
+                                                content+='<p class=" grey-text">Existían '+lim+' personas discapacitadas y aproximadamente '+response.psinder+' personas no contaban con servicios de salud.</p>';
+                                                var peac = Math.round(response.pocupada/response.pea*100) || 0;
+                                                content+='<p class=" grey-text">Con una tasa de empleo del '+peac+'%.</p>';
+                                                content+='<p class=" grey-text">En temas de bienes por vivienda, '+response.vph_autom+' tienen automóvil, '+response.vph_c_elec+' acceso a red eléctrica, '+response.vph_cel+' tienen teléfono celular, '+response.vph_pc+' cuentan con una computadora, '+response.vph_inter+' tienen acceso a internet, '+response.vph_pisodt+' cuentan con piso, '+response.vph_tv+' tienen televisión, '+response.vph_radio+' tienen radio, '+response.vph_refri+' tienen refrigerador y '+response.vph_lavad+' tienen lavadora.</p>';
+
+                                                $('#right-sidebar-content').html(content);
+                                            });
+
+                                        });
+                                        break;
+                                }
+                                $('#right-sidebar-nav').show();
+                                $('#chatout-btn-hidden').click();
+                                return false;
+
+                        }
+                    }
+
+                </script>
+
+            {% endblock %}
+            
+
+        {% endblock %}
+
+    </body>        
+{% endblock %}
+
+
+</html>

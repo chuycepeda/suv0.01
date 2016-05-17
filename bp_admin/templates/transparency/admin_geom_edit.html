@@ -7,7 +7,7 @@
             <div class="row">
               <div class="col s12 m12 l12">
                 <ol class="breadcrumb" style="font-size: 29px;">
-                    <li class="active"><a href="{{ uri_for('admin-geom') }}">Gestión de información geográfica</a> | Capturas</li>
+                    <li class="active"><a href="{{ uri_for('admin-geom') }}">Gestión de transparencia</a> | Capturas</li>
                 </ol>
               </div>
             </div>
@@ -234,7 +234,7 @@
 {% endblock %}
 
 {% block page_scripts %}
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places,panoramio,weather,visualization"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}></script>
     <script src="/{{theme}}/materialize/js/cartodb.js"></script>
     <script src="/{{theme}}/materialize/js/plugins/autocomplete/awesomplete.min.js"></script>
     <script type="text/javascript">
@@ -459,7 +459,7 @@
                 // MAP 1
                 var mapOptions = {
                     center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-                    zoom: {% if is_mobile %}11{% else %}13{% endif %},
+                    zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
                     minZoom:5,
                     zoomControl: true,
                     zoomControlOptions: {

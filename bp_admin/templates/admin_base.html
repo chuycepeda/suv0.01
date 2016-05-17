@@ -295,7 +295,9 @@
                             </a>
                             
                             <ul class="right hide-on-med-and-down">
-                                <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen grey-text text-ligthen-1"><i class="mdi-action-settings-overscan"></i></a>
+                                <li><a href="{{uri_for('admin-electoral')}}" class="waves-effect waves-block waves-light grey-text text-ligthen-1" target="_blank"><i class="mdi-social-public left"></i>Análisis Geoelectoral</a>
+                                </li>
+                                <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen grey-text text-ligthen-1"><i class="mdi-action-settings-overscan left"></i>Ver pantalla completa</a>
                                 </li>
                             </ul>
                         </div>
@@ -365,7 +367,7 @@
                                                     {% endif %}
                                                     {% if has_transparency %}
                                                         <li {% if uri_for('admin-initiatives') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-initiatives') }}">Compromisos</a></li>
-                                                        <li {% if uri_for('admin-geom') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-geom') }}">Geomática</a></li>
+                                                        <li {% if uri_for('admin-geom') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-geom') }}">Obra públicas</a></li>
                                                     {% endif %}
 
                                                     </ul>

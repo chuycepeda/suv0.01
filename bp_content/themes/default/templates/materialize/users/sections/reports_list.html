@@ -126,7 +126,7 @@
 		        	</div>
 		        </div>
 	    	</div>
-			<div class="row">
+			<div class="row hide-on-med-and-down">
 				<h5 class="col s12 m10 offset-m1 grey-text"> Actividad</h5>
 		        <div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div>
 		        <div class="row">
@@ -156,11 +156,19 @@
 							<div class="input-field container col s12" id="report_comments" style="font-weight:bold;">              
                             </div>
                             <div class="row">
-		                        <div class="input-field col s12 l6 right">
-		                            <i class="mdi-maps-map prefix brand-color-text brand-color-text"></i>
-		                            <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
-		                            <label for="commentbox">Escribe aquí tu comentario</label>
-		                        </div>
+		                        <div class="input-field col s11 offset-s1 white" style="padding:30px; border-radius: 3px;">
+			                    	{% if has_picture %}
+										<div style="position: absolute;left: 10px;">
+											<img src="{{user_picture_url}}" alt="" class="circle responsive-img valign profile-image" style=" height: 30px; margin-top:6px;border: 1px solid white; height:35px">
+										</div>
+									{% else %}
+										<div style="position: absolute;left: 10px;">
+											<span class="circle red lighten-1" style="width: 35px;   height: 35px; display: inline-block;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300;margin-top: 5px;line-height: 2.2rem;">{{ name_i }}</span>
+										</div>
+									{% endif %}
+			                        <textarea id="commentbox" name="commentbox" class="materialize-textarea" length="500" style="height: 22px;margin-left:40px;max-width: 95%;" type="text" ></textarea>
+			                        <label for="commentbox" style="margin-left:40px;">Agrega tu comentario aquí...</label>
+			                    </div>
 		                    </div> 
                           	<div class="input-field col s12">
                               <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cerrar</a>
@@ -196,7 +204,6 @@
 {% endblock %}
 
 {% block page_scripts %}
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places,visualization"></script>
 	<script src="/{{theme}}/materialize/js/plugins/rrssb/rrssb.min.js"></script>
 	<script src="/{{theme}}/materialize/js/plugins/jquery/jquery.timelineMe.js"></script>
 	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
@@ -213,8 +220,14 @@
                 console.log(data)
                 var items = [];
                 for (var i = 0; i < data.total_rows;i++){
-                    var shrt = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><div class="col s2"><span class="image " style="background-color:#'+reportDict[data.rows[i].group_category].color+'; -webkit-mask: url('+reportDict[data.rows[i].group_category].icon+') no-repeat 50% 50%;transform: scale(1.25);-webkit-transform: scale(1.25);"></span></div><p class="col s10 truncate">'+data.rows[i].description+'</p><div class="chip white-text" style="margin-top: 20px;margin-left: 10px;">Ticket:'+data.rows[i].cartodb_id+'</div></div><div class="card-action center"><a class="grey-text maplink" href="{{uri_for('landing-map')}}?cdb_id='+data.rows[i].cartodb_id+'" target="_blank"><i class="mdi-maps-place"></i> Ver mapa</a><a class="grey-text maplink" style="cursor:pointer" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i> Compartir</a> <a class="grey-text maplink" style="cursor:pointer" onclick="populateComment('+data.rows[i].uuid+','+data.rows[i].cartodb_id+')"><i class="mdi-action-speaker-notes"></i> Comentar</a></div></div>';
-                    var full = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-image-style brand-color-text left"></i>Subcategoría: <span id="report_group_category" class="brand-secondary-color-text"> '+data.rows[i].sub_category+' </span></p><p class="col s12 valign-wrapper" style="padding:20px"><i class="mdi-action-description brand-color-text left"></i>Descripción:</p><div class="col s12"><blockquote class="grey-text text-lighten-1" style="margin-top: 10px; border-left-width: 5px; border-left-style: solid; border-left-color: {{brand_color}};">'+data.rows[i].description+'</blockquote></div></div>';
+                	var shrt, full;
+                	if (data.rows[i].image_url != 'None'){
+	                    shrt = '<div class="container"><div class="card-content"><img class="responsive-img center col s12" style="padding: 12px;border-radius: 40px 0px 40px 0px;" src="'+data.rows[i].image_url+'"><h4>'+data.rows[i].group_category+'</h4><div class="col s2"><span class="image " style="background-color:#'+reportDict[data.rows[i].group_category].color+'; -webkit-mask: url('+reportDict[data.rows[i].group_category].icon+') no-repeat 50% 50%;transform: scale(1.25);-webkit-transform: scale(1.25);"></span></div><p class="col s10 truncate">'+data.rows[i].description+'</p><div class="chip white-text" style="margin-top: 20px;margin-left: 10px;">Ticket:'+data.rows[i].cartodb_id+'</div></div><div class="card-action center"><a class="grey-text maplink" href="{{uri_for('landing-map')}}?cdb_id='+data.rows[i].cartodb_id+'" target="_blank"><i class="mdi-maps-place"></i> Ver mapa</a><a class="grey-text maplink" style="cursor:pointer" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i> Compartir</a> <a class="grey-text maplink" style="cursor:pointer" onclick="populateComment('+data.rows[i].uuid+','+data.rows[i].cartodb_id+')"><i class="mdi-action-speaker-notes"></i> Comentar</a></div></div>';
+	                    full = '<div class="container"><div class="card-content"><img class="responsive-img center col s12" style="padding: 12px;border-radius: 40px 0px 40px 0px;" src="'+data.rows[i].image_url+'"><h4>'+data.rows[i].group_category+'</h4><div class="col s2"><span class="image " style="background-color:#'+reportDict[data.rows[i].group_category].color+'; -webkit-mask: url('+reportDict[data.rows[i].group_category].icon+') no-repeat 50% 50%;transform: scale(1.25);-webkit-transform: scale(1.25);"></span></div><blockquote style="border-left-width: 5px; border-left-style: solid; border-left-color: transparent;">'+data.rows[i].description+'</blockquote></div><div class="card-action center"><a class="grey-text maplink" href="{{uri_for('landing-map')}}?cdb_id='+data.rows[i].cartodb_id+'" target="_blank"><i class="mdi-maps-place"></i> Ver mapa</a><a class="grey-text maplink" style="cursor:pointer" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i> Compartir</a> <a class="grey-text maplink" style="cursor:pointer" onclick="populateComment('+data.rows[i].uuid+','+data.rows[i].cartodb_id+')"><i class="mdi-action-speaker-notes"></i> Comentar</a></div></div>';
+                	} else{
+                		shrt = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><div class="col s2"><span class="image " style="background-color:#'+reportDict[data.rows[i].group_category].color+'; -webkit-mask: url('+reportDict[data.rows[i].group_category].icon+') no-repeat 50% 50%;transform: scale(1.25);-webkit-transform: scale(1.25);"></span></div><p class="col s10 truncate">'+data.rows[i].description+'</p><div class="chip white-text" style="margin-top: 20px;margin-left: 10px;">Ticket:'+data.rows[i].cartodb_id+'</div></div><div class="card-action center"><a class="grey-text maplink" href="{{uri_for('landing-map')}}?cdb_id='+data.rows[i].cartodb_id+'" target="_blank"><i class="mdi-maps-place"></i> Ver mapa</a><a class="grey-text maplink" style="cursor:pointer" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i> Compartir</a> <a class="grey-text maplink" style="cursor:pointer" onclick="populateComment('+data.rows[i].uuid+','+data.rows[i].cartodb_id+')"><i class="mdi-action-speaker-notes"></i> Comentar</a></div></div>';
+	                    full = '<div class="container"><div class="card-content"><h4>'+data.rows[i].group_category+'</h4><div class="col s2"><span class="image " style="background-color:#'+reportDict[data.rows[i].group_category].color+'; -webkit-mask: url('+reportDict[data.rows[i].group_category].icon+') no-repeat 50% 50%;transform: scale(1.25);-webkit-transform: scale(1.25);"></span></div><blockquote style="border-left-width: 5px; border-left-style: solid; border-left-color: transparent;">'+data.rows[i].description+'</blockquote></div><div class="card-action center"><a class="grey-text maplink" href="{{uri_for('landing-map')}}?cdb_id='+data.rows[i].cartodb_id+'" target="_blank"><i class="mdi-maps-place"></i> Ver mapa</a><a class="grey-text maplink" style="cursor:pointer" onclick="populateShare('+data.rows[i].cartodb_id+')"><i class="mdi-social-share"></i> Compartir</a> <a class="grey-text maplink" style="cursor:pointer" onclick="populateComment('+data.rows[i].uuid+','+data.rows[i].cartodb_id+')"><i class="mdi-action-speaker-notes"></i> Comentar</a></div></div>';
+                	}
                     
                     var d = new Date(data.rows[i].created);
                     items.push({
@@ -249,7 +262,7 @@
 		}
 
 		function populateShare(cdb_id){
-        	var _html = ' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{uri_for("landing-map", _full=True)}}?cdb_id='+cdb_id+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Hola!%20sigue%20mi%20reporte%20en%20{{uri_for("landing-map", _full=True)}}?cdb_id='+cdb_id+'&hashtags=#onesmartcity" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ';
+        	var _html = ' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u={{uri_for("landing-map", _full=True)}}?cdb_id='+cdb_id+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Hola!%20apoya%20mi%20reporte%20en%20{{uri_for("landing-map", _full=True)}}?cdb_id='+cdb_id+'&hashtags=#onesmartcity" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ';
         	$('#share_content').html(_html);
         	$('#modal_share').openModal();
         	setTimeout(function(){ rrssbInit();}, 500);

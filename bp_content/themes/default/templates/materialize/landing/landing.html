@@ -260,12 +260,12 @@
                             {% if has_reports %}
 							<!-- REPORTS DROPDOWN -->
 								<ul id="reports-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Mapa</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Ver mapa</a>
 				                        </li>
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Hacer un reporte</a>
 				                        </li>
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Crear reporte</a>
-				                        </li>
+				                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Crear reporte</a>
+				                        </li> -->
 					            </ul>
 					            <li class="nav-reports" {% if path == uri_for('materialize-report-new') or path == uri_for('landing-map') or path == uri_for('materialize-report-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
 			                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Reportes {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
@@ -277,7 +277,7 @@
 								<ul id="petitions-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-cardlist") }}">Ver propuestas</a>
 				                        </li>
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Crear propuesta</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-petition-new") }}">Hacer una propuesta</a>
 				                        </li>
 				                      
 					            </ul>
@@ -289,7 +289,7 @@
                             <!-- TRANSPARENCY DROPDOWN -->
 							{% if has_transparency %}
 								<ul id="transparency-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-city") }}">Conoce {{city_name}}</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-city") }}">Mapas de {{city_name}}</a>
 				                        </li>
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a>
 				                        </li>
@@ -314,8 +314,8 @@
 				                        </li>
                                       {% endif %}
                                       {% if has_transparency %}
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a>
-				                        </li>
+				                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget-new") }}">Mis propuestas</a> 
+				                        </li>-->
 	                            	  {% endif %}
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
 				                        </li>
@@ -402,9 +402,9 @@
 									    	<a class="collapsible-header waves-effect waves-light">Reportes<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i></span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
-												  <li><a href="{{ uri_for("landing-map") }}">Mapa</a></li>
-												  <li><a href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a></li>
-							                      <li><a href="{{ uri_for("materialize-report-new") }}">Crear reporte</a></li>
+												  <li><a href="{{ uri_for("landing-map") }}">Ver mapa</a></li>
+												  <li><a href="{{ uri_for("materialize-report-cardlist") }}">Hacer un reporte</a></li>
+							                      <!-- <li><a href="{{ uri_for("materialize-report-new") }}">Crear reporte</a></li> -->
 			                                    </ul>
 			                                </div>
 			                            </li>
@@ -421,7 +421,7 @@
 			                            	<div class="collapsible-body">
 			                                    <ul>
 												  <li><a href="{{ uri_for("materialize-petition-cardlist") }}">Ver propuestas</a></li>
-							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Crear propuesta</a></li>
+							                      <li><a href="{{ uri_for("materialize-petition-new") }}">Hacer una propuesta</a></li>
 			                                    </ul>
 			                                </div>
 			                            </li>
@@ -437,7 +437,7 @@
 									    	<a class="collapsible-header waves-effect waves-light">Transparencia{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
 			                            	<div class="collapsible-body">
 			                                    <ul>
-												  <li><a href="{{ uri_for("materialize-transparency-city") }}">Conoce {{city_name}}</a></li>
+												  <li><a href="{{ uri_for("materialize-transparency-city") }}">Mapas de {{city_name}}</a></li>
 							                      <li><a href="{{ uri_for("materialize-transparency-init") }}">Compromisos abiertos</a></li>
 							                      <!-- <li><a href="{{ uri_for("materialize-transparency-budget") }}">Propuesta presupuestaria</a></li> -->
 			                                    </ul>
