@@ -1136,6 +1136,9 @@ class AdminReportEditHandler(BaseHandler):
                             "_url": self.uri_for("materialize-reports", _full=True),
                             "cdb_id": report_info.cdb_id,
                             "reason": reason,
+                            "brand_logo": self.app.config.get('brand_logo'),
+                            "brand_color": self.app.config.get('brand_color'),
+                            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                             "support_url": self.uri_for("contact", _full=True),
                             "twitter_url": self.app.config.get('twitter_url'),
                             "facebook_url": self.app.config.get('facebook_url'),
@@ -1558,6 +1561,9 @@ class AdminPetitionsEditHandler(BaseHandler):
                             "_url": self.uri_for("materialize-reports", _full=True),
                             "cdb_id": report_info.cdb_id,
                             "reason": reason,
+                            "brand_logo": self.app.config.get('brand_logo'),
+                            "brand_color": self.app.config.get('brand_color'),
+                            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                             "support_url": self.uri_for("contact", _full=True),
                             "twitter_url": self.app.config.get('twitter_url'),
                             "facebook_url": self.app.config.get('facebook_url'),
@@ -1835,6 +1841,9 @@ class AdminOrganizationHandler(BaseHandler):
                 #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL
                 template_val = {
                     "_url": self.uri_for("landing", _full=True),
+                    "brand_logo": self.app.config.get('brand_logo'),
+                    "brand_color": self.app.config.get('brand_color'),
+                    "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                     "support_url": self.uri_for("contact", _full=True),
                     "twitter_url": self.app.config.get('twitter_url'),
                     "facebook_url": self.app.config.get('facebook_url'),
@@ -1906,6 +1915,9 @@ class AdminOrganizationSecretaryHandler(BaseHandler):
                         secretary_info.admin_email = self.request.get('adminemail').lower() if self.request.get('adminemail') else ''
                         template_val = {
                             "_url": self.uri_for("landing", _full=True),
+                            "brand_logo": self.app.config.get('brand_logo'),
+                            "brand_color": self.app.config.get('brand_color'),
+                            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                             "support_url": self.uri_for("contact", _full=True),
                             "twitter_url": self.app.config.get('twitter_url'),
                             "facebook_url": self.app.config.get('facebook_url'),
@@ -1954,6 +1966,9 @@ class AdminOrganizationSecretaryHandler(BaseHandler):
                         #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL
                         template_val = {
                             "_url": self.uri_for("landing", _full=True),
+                            "brand_logo": self.app.config.get('brand_logo'),
+                            "brand_color": self.app.config.get('brand_color'),
+                            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                             "support_url": self.uri_for("contact", _full=True),
                             "twitter_url": self.app.config.get('twitter_url'),
                             "facebook_url": self.app.config.get('facebook_url'),
@@ -2047,6 +2062,9 @@ class AdminOrganizationAgencyHandler(BaseHandler):
                         agency_info.admin_email = self.request.get('ageadminemail').lower() if self.request.get('ageadminemail') else ''
                         template_val = {
                             "_url": self.uri_for("landing", _full=True),
+                            "brand_logo": self.app.config.get('brand_logo'),
+                            "brand_color": self.app.config.get('brand_color'),
+                            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                             "support_url": self.uri_for("contact", _full=True),
                             "twitter_url": self.app.config.get('twitter_url'),
                             "facebook_url": self.app.config.get('facebook_url'),
@@ -2078,6 +2096,9 @@ class AdminOrganizationAgencyHandler(BaseHandler):
                     #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL
                     template_val = {
                         "_url": self.uri_for("landing", _full=True),
+                        "brand_logo": self.app.config.get('brand_logo'),
+                        "brand_color": self.app.config.get('brand_color'),
+                        "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                         "support_url": self.uri_for("contact", _full=True),
                         "twitter_url": self.app.config.get('twitter_url'),
                         "facebook_url": self.app.config.get('facebook_url'),
@@ -2144,6 +2165,9 @@ class AdminOrganizationOperatorHandler(BaseHandler):
                         #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL
                         template_val = {
                             "_url": self.uri_for("landing", _full=True),
+                            "brand_logo": self.app.config.get('brand_logo'),
+                            "brand_color": self.app.config.get('brand_color'),
+                            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                             "support_url": self.uri_for("contact", _full=True),
                             "twitter_url": self.app.config.get('twitter_url'),
                             "facebook_url": self.app.config.get('facebook_url'),
@@ -2203,6 +2227,9 @@ class AdminCallCenterHandler(BaseHandler):
             #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL
             template_val = {
                 "_url": self.uri_for("landing", _full=True),
+                "brand_logo": self.app.config.get('brand_logo'),
+                "brand_color": self.app.config.get('brand_color'),
+                "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                 "support_url": self.uri_for("contact", _full=True),
                 "twitter_url": self.app.config.get('twitter_url'),
                 "facebook_url": self.app.config.get('facebook_url'),
@@ -2257,6 +2284,9 @@ class AdminCallCenterOperatorHandler(BaseHandler):
                         #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL
                         template_val = {
                             "_url": self.uri_for("landing", _full=True),
+                            "brand_logo": self.app.config.get('brand_logo'),
+                            "brand_color": self.app.config.get('brand_color'),
+                            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
                             "support_url": self.uri_for("contact", _full=True),
                             "twitter_url": self.app.config.get('twitter_url'),
                             "facebook_url": self.app.config.get('facebook_url'),

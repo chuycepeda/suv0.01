@@ -8,7 +8,7 @@ AUTO 72
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -20,7 +20,7 @@ AUTO 72
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola {{name}}!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola {{name}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -33,13 +33,13 @@ AUTO 72
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Estamos resolviendo tu reporte.</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Estás recibiendo este correo porque tu reporte ha iniciado el proceso de solución. De ahora en delante recibirás una notificación del estado del mismo que podrás consultar desde tu sección de reportes.</p>                          
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Estamos resolviendo tu reporte.</h3>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Estás recibiendo este correo porque tu reporte ha iniciado el proceso de solución. De ahora en delante recibirás una notificación del estado del mismo que podrás consultar desde tu plataforma digital.</p>                          
                           <div style="text-align:center"><u></u>
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{confirmation_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ver mis reportes</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{confirmation_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ir a tu plataforma</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -103,8 +103,7 @@ AUTO 72
   </table>
 </div>
 
-
-CHANGE NOTIFICATION
+ADMIN CHANGE NOTIFICATION
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <div align="center">
   <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
@@ -114,7 +113,7 @@ CHANGE NOTIFICATION
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -126,7 +125,7 @@ CHANGE NOTIFICATION
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola {{name}}!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola {{name}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -139,13 +138,13 @@ CHANGE NOTIFICATION
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Estamos resolviendo tu reporte con ticket {{cdb_id}}.</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Tu reporte ha sido modificado y estamos avanzando en solucionarlo. Visita tu sección de reportes para ver su estado actual, es posible que necesitemos información adicional.</p>                          
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Estamos resolviendo tu reporte con ticket no. {{cdb_id}}.</h3>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">{{reason}}</p>                          
                           <div style="text-align:center"><u></u>
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ver mis reportes</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ir a tu plataforma</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -209,7 +208,7 @@ CHANGE NOTIFICATION
   </table>
 </div>
 
-SPECIAL ACCESS
+SPECIAL ACCESS INVITE
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <div align="center">
   <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
@@ -219,7 +218,7 @@ SPECIAL ACCESS
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -231,7 +230,7 @@ SPECIAL ACCESS
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -244,13 +243,13 @@ SPECIAL ACCESS
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Has recibido una invitación de acceso especial.</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Esta invitación de acceso especial te fue enviada por ser un Secretario, Director u Operador de Enlace de Ciudad Guadalupe. Usando esta dirección de correo, por favor accesa o regístrate en Mi Ciudad en Línea.</p>                          
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Has recibido una invitación de acceso especial.</h3>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Esta invitación de acceso especial te fue enviada por ser un Secretario, Director u Operador de Enlace de tu Ciudad. Usando esta dirección de correo, por favor accesa o regístrate en tu plataforma digital.</p>                          
                           <div style="text-align:center"><u></u>
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{confirmation_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Accesar</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ir a tu plataforma</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -313,7 +312,6 @@ SPECIAL ACCESS
     </tbody>
   </table>
 </div>
-
 
 ACCOUNT ACTIVATION
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -325,7 +323,7 @@ ACCOUNT ACTIVATION
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -337,7 +335,7 @@ ACCOUNT ACTIVATION
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Bienvenido!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Bienvenido!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -350,13 +348,13 @@ ACCOUNT ACTIVATION
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Gracias por registrarte, {{username}}</h3>
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Gracias por registrarte, {{username}}</h3>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Activa tu cuenta confirmando tu correo.</p>                          
                           <div style="text-align:center"><u></u>
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{confirmation_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Confirmar mi correo</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{confirmation_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Confirmar mi correo</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -420,8 +418,7 @@ ACCOUNT ACTIVATION
   </table>
 </div>
 
-
-CONTACT FORM (INTERNAL USE)
+CHANGE NOTIFICATION
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <div align="center">
   <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
@@ -430,8 +427,8 @@ CONTACT FORM (INTERNAL USE)
         <td style="width:24px;background-color: #FFF;"></td>
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
-          <a href="http://dfcmexico.appspot.com" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="40px">
+          <a href="" target="_blank">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -443,7 +440,7 @@ CONTACT FORM (INTERNAL USE)
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-            <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Nuevo mensaje!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola {{name}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -456,7 +453,112 @@ CONTACT FORM (INTERNAL USE)
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                            <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Llegó un nuevo mensaje al equipo</h3>
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Estamos resolviendo tu reporte con ticket no. {{cdb_id}}.</h3>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">{{reason}}</p>                          
+                          <div style="text-align:center"><u></u>
+                            <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
+                              <tbody>
+                                <tr>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ver mis reportes</a>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table><u></u>
+                          </div>
+                          <div style="margin-top: 50px;padding:0px 15px 5px;color: #5A5858;font-size: 13px;line-height:24px;">                         
+                            <p style="font-family:roboto-light;font-size:14px;text-align:center; letter-spacing:0.5px">¿Dudas? Revisa nuestras </span><a href="{{faq_url}}" style="color:#3498db;text-decoration:none" target="_blank">preguntas frecuentes</a>.</p>
+                          </div>
+                          
+                          <div align="center">
+                            <table cellpadding="0" cellspacing="0" border="0" style="margin:auto;background-color: #FFF;width:500px;font-size:11px;font-weight:400;color:#ffffff;margin-top: 30px;">
+                              <tbody>
+                                <tr>
+                                  <td style="width:200px;padding:0px 0px;border-top: 1px solid rgb(223, 223, 223);">
+                                    <table cellpadding="0" cellspacing="0" border="0" style="margin: auto;padding: 8px 0px 8px 0px;">
+                                      <tbody>
+                                        <tr>
+                                        <td style="text-align:center;padding:0px 10px">
+                                            <a href="{{support_url}}" title="Contáctanos" target="_blank">
+                                              <img alt="Contáctanos" title="Contáctanos" border="0" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/mail_bl.png" height="30px" style="display:block;margin:auto">
+                                            </a>
+                                          </td>
+                                          <td style="text-align:center;padding:0px 10px">
+                                            <a href="{{twitter_url}}" title="Comparte en Twitter" target="_blank">
+                                              <img alt="Comparte en Twitter" title="Comparte en Twitter" border="0" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/tw_bl.png" height="30px" style="display:block;margin:auto">
+                                            </a>
+                                          </td>
+                                          <td style="text-align:center;padding:0px 10px">
+                                            <a href="{{facebook_url}}" title="Comparte en Facebook" target="_blank">
+                                              <img alt="Comparte en Facebook" border="0" title=" Facebook" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/fb_bl.png" height="30px" style="display:block;margin:auto">
+                                            </a>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                        <td width="20" valign="middle" style="width:20px"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+              <tr height="20" style="height:20px">
+                
+              </tr>
+            </tbody>
+          </table>
+        </td>
+        <td style="width:24px"></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+CONTACT
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<div align="center">
+  <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
+    <tbody>
+      <tr>
+        <td style="width:24px;background-color: #FFF;"></td>
+        <td style="background-color: #FFF;padding:15px 10px">
+          <center>
+          <a href="" target="_blank">
+            <img src="{{brand_logo}}" height="80px">
+          </a>
+          </center>
+        </td>
+        <td style="width:24px;background-color: #FFF;"></td>
+      </tr>
+      <tr style="height:10px">
+        <td></td>
+      </tr>
+      <tr>
+        <td style="width:24px"></td>
+        <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
+            <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Nuevo mensaje!</h1>
+          <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
+            <tbody>
+              <tr height="20" style="height:20px">
+                <td width="0" height="20" valign="middle" style="width:0px;height:20px"></td>
+              </tr>
+              <tr>
+                <td width="552" valign="middle" style="width:552px">
+                  <table cellpadding="0" cellspacing="0" border="0" width="552" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
+                    <tbody>
+                      <tr>
+                        <td width="20" valign="middle" style="width:20px"></td>
+                        <td width="512" valign="middle" style="width:512px">
+                            <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Llegó un nuevo mensaje al equipo</h3>
                             
                               <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light"><strong>Nombre:</strong> {{name}}<br>
                               <strong>Email:</strong> {{email}}<br>
@@ -509,7 +611,7 @@ CONTACT FORM (INTERNAL USE)
   </table>
 </div>
 
-EMAIL CHANGED (NEW EMAIL)
+EMAIL NEW
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <div align="center">
   <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
@@ -519,7 +621,7 @@ EMAIL CHANGED (NEW EMAIL)
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -531,7 +633,7 @@ EMAIL CHANGED (NEW EMAIL)
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -544,14 +646,14 @@ EMAIL CHANGED (NEW EMAIL)
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Hubo algunos cambios en tu cuenta</h3>
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Hubo algunos cambios en tu cuenta</h3>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Nos ha llegado solicitud para cambiar tu email a esta dirección. Una vez confirmado, todos los correos se enviarán a <strong>{{new_email}}</strong>. Para confirmar tu cambio, por favor da clic en:</p>
                           
                           <div style="text-align:center">
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 10px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{confirmation_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Confirmar mi email</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{confirmation_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Confirmar mi email</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -615,7 +717,7 @@ EMAIL CHANGED (NEW EMAIL)
   </table>
 </div>
 
-EMAIL CHANGED (OLD EMAIL)
+EMAIL OLD
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <div align="center">
   <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
@@ -625,7 +727,7 @@ EMAIL CHANGED (OLD EMAIL)
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -637,7 +739,7 @@ EMAIL CHANGED (OLD EMAIL)
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -650,7 +752,7 @@ EMAIL CHANGED (OLD EMAIL)
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Hubo algunos cambios en tu cuenta</h3>
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Hubo algunos cambios en tu cuenta</h3>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Encontramos un cambio en tu dirección de correo, para confirmarlo por favor da clic en el link que enviamos a esa nueva dirección.</p>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Si tú no realizaste este cambio y crees que tu cuenta puede estar comprometida, por favor búscanos en:</p>
                           
@@ -658,7 +760,7 @@ EMAIL CHANGED (OLD EMAIL)
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{support_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ayuda</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{support_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Ayuda</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -732,7 +834,7 @@ PASSWORD CHANGED
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -744,7 +846,7 @@ PASSWORD CHANGED
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -757,7 +859,7 @@ PASSWORD CHANGED
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Hubo algunos cambios en tu cuenta</h3>
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Hubo algunos cambios en tu cuenta</h3>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">La contraseña asociada con tu email <strong>{{email}}</strong> ha sido cambiada. Como medida de precaución decidimos escribirte.</p>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Si tú hiciste este cambio no hay necesidad de hacer algo más. Por el contrario, si tú no lo hiciste tu cuenta puede estar comprometida y te invitamos a:</p>
                           
@@ -765,7 +867,7 @@ PASSWORD CHANGED
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{reset_password_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Recuperar mi contraseña</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{reset_password_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Recuperar mi contraseña</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -831,14 +933,13 @@ PASSWORD CHANGED
       </tr>
       <tr>
         <td colspan="3">
-          <img style="display:block;vertical-align:top" border="0" src="http://mihogarinvictus.appspot.com/default/img/bar.png">
         </td>
       </tr>
     </tbody>
   </table>
 </div>
 
-REFERRALS
+RESET PASSWORD
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <div align="center">
   <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
@@ -848,7 +949,7 @@ REFERRALS
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -860,7 +961,7 @@ REFERRALS
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -873,121 +974,13 @@ REFERRALS
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">{{user_name}} ({{user_email}}) te invita a que te unas a transformar Mi Ciudad.</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Mi Ciudad en Línea es un espacio en el que podrás mandar reportes, peticiones y propuestas que serán respondidas por tu alcalde.</p>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">¿Qué esperas? Acepta la invitación y súmate</p>
-                          
-                          <div style="text-align:center">
-                            <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
-                              <tbody>
-                                <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{link_referral}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Aceptar invitación</a>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table><u></u>
-                          </div>
-                          <div style="margin-top: 50px;padding:0px 15px 5px;color: #5A5858;font-size: 13px;line-height:24px;">                         
-                            <p style="font-family:roboto-light;font-size:14px;text-align:center; letter-spacing:0.5px">¿Dudas? Revisa nuestras </span><a href="{{faq_url}}" style="color:#3498db;text-decoration:none" target="_blank">preguntas frecuentes</a>.</p>
-                          </div>
-                          
-                          <div align="center">
-                            <table cellpadding="0" cellspacing="0" border="0" style="margin:auto;background-color: #FFF;width:500px;font-size:11px;font-weight:400;color:#ffffff;margin-top: 30px;">
-                              <tbody>
-                                <tr>
-                                  <td style="width:200px;padding:0px 0px;border-top: 1px solid rgb(223, 223, 223);">
-                                    <table cellpadding="0" cellspacing="0" border="0" style="margin: auto;padding: 8px 0px 8px 0px;">
-                                      <tbody>
-                                        <tr>
-                                        <td style="text-align:center;padding:0px 10px">
-                                            <a href="{{support_url}}" title="Contáctanos" target="_blank">
-                                              <img alt="Contáctanos" title="Contáctanos" border="0" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/mail_bl.png" height="30px" style="display:block;margin:auto">
-                                            </a>
-                                          </td>
-                                          <td style="text-align:center;padding:0px 10px">
-                                            <a href="{{twitter_url}}" title="Comparte en Twitter" target="_blank">
-                                              <img alt="Comparte en Twitter" title="Comparte en Twitter" border="0" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/tw_bl.png" height="30px" style="display:block;margin:auto">
-                                            </a>
-                                          </td>
-                                          <td style="text-align:center;padding:0px 10px">
-                                            <a href="{{facebook_url}}" title="Comparte en Facebook" target="_blank">
-                                              <img alt="Comparte en Facebook" border="0" title="Facebook" src="http://one-smart-city-demo.appspot.com/default/materialize/images/emails/fb_bl.png" height="30px" style="display:block;margin:auto">
-                                            </a>
-                                          </td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td width="20" valign="middle" style="width:20px"></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-              <tr height="20" style="height:20px">
-                
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td style="width:24px"></td>
-      </tr>
-      <tr>
-        <td colspan="3">
-          <img style="display:block;vertical-align:top" border="0" src="http://mihogarinvictus.appspot.com/default/img/bar.png">
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-PASSWORD RECOVERY
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<div align="center">
-  <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
-    <tbody>
-      <tr>
-        <td style="width:24px;background-color: #FFF;"></td>
-        <td style="background-color: #FFF;padding:15px 10px">
-          <center>
-          <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
-          </a>
-          </center>
-        </td>
-        <td style="width:24px;background-color: #FFF;"></td>
-      </tr>
-      <tr style="height:10px">
-        <td></td>
-      </tr>
-      <tr>
-        <td style="width:24px"></td>
-        <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
-          <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
-            <tbody>
-              <tr height="20" style="height:20px">
-                <td width="0" height="20" valign="middle" style="width:0px;height:20px"></td>
-              </tr>
-              <tr>
-                <td width="552" valign="middle" style="width:552px">
-                  <table cellpadding="0" cellspacing="0" border="0" width="552" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
-                    <tbody>
-                      <tr>
-                        <td width="20" valign="middle" style="width:20px"></td>
-                        <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Te ayudaremos a recuperar tu contraseña</h3>
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Te ayudaremos a recuperar tu contraseña</h3>
                           <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Para iniciar el proceso de recuperación, por favor da clic en:</p>
                           <div style="text-align:center">
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 10px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{reset_password_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Recuperar mi contraseña</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{reset_password_url}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Recuperar mi contraseña</a>
                                   </td>
                                 </tr>
                               </tbody>
@@ -1047,14 +1040,14 @@ PASSWORD RECOVERY
       </tr>
       <tr>
         <td colspan="3">
-          <img style="display:block;vertical-align:top" border="0" src="http://mihogarinvictus.appspot.com/default/img/bar.png">
         </td>
       </tr>
     </tbody>
   </table>
 </div>
 
-MESSAGE ARRIVED
+
+REFERRALS
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <div align="center">
   <table cellpadding="0" cellspacing="0" border="0" style="background-color: #FFF;width:554px;margin:0px auto;padding:0px;border-spacing:0;border-collapse:collapse">
@@ -1064,7 +1057,7 @@ MESSAGE ARRIVED
         <td style="background-color: #FFF;padding:15px 10px">
           <center>
           <a href="" target="_blank">
-            <img src="http://one-smart-city-demo.appspot.com/default/materialize/images/favicon/rhexlogo.png" height="80px">
+            <img src="{{brand_logo}}" height="80px">
           </a>
           </center>
         </td>
@@ -1076,7 +1069,7 @@ MESSAGE ARRIVED
       <tr>
         <td style="width:24px"></td>
         <td style="background-color:#ffffff;padding:15px;color:#494949; border-radius:3px">
-          <h1 style="min-height:48px;margin:0;color:#00464F;font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hey {{username}}!</h1>
+          <h1 style="min-height:48px;margin:0;color:{{brand_secondary_color}};font-size:20px;font-weight:normal;line-height:48px;text-align:center;font-family:roboto">¡Hola!</h1>
           <table cellpadding="0" cellspacing="0" border="0" style="width:552px;margin:-16px auto;padding:0px;background-color:#ffffff;border-spacing:0;border-collapse:collapse">
             <tbody>
               <tr height="20" style="height:20px">
@@ -1089,19 +1082,20 @@ MESSAGE ARRIVED
                       <tr>
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
-                          <h3 style="margin:15px 0 25px;color:#00464F;font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Te han dejado un nuevo mensaje</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Para ver quién te ha escrito por favor da clic en el siguiente vínculo:</p>
+                          <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">{{user_name}} ({{user_email}}) te invita a que te unas a transformar Ciudad Guadalupe.</h3>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Mi Ciudad en Línea es un espacio en el que podrás mandar reportes, peticiones y propuestas que serán respondidas por tu alcalde.</p>
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">¿Qué esperas? Acepta la invitación y súmate</p>
+                          
                           <div style="text-align:center">
-                            <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 10px;">
+                            <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>
                                 <tr>
-                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;cursor:pointer; background-color: #DD3DA1;" onclick=""><a href="{{inbox_url}}" style="color: #FFFFFF;font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Leer mi nuevo mensaje</a>
+                                  <td align="center" width="290" height="50" bgcolor="" style="border-radius: 8px;border: 1px solid {{brand_color}}; cursor:pointer;" onclick=""><a href="{{link_referral}}" style="color: {{brand_color}};font-size:18px;font-family: roboto;text-decoration:none; letter-spacing:1px" target="_blank">Aceptar invitación</a>
                                   </td>
                                 </tr>
                               </tbody>
                             </table><u></u>
                           </div>
-                                                  
                           <div style="margin-top: 50px;padding:0px 15px 5px;color: #5A5858;font-size: 13px;line-height:24px;">                         
                             <p style="font-family:roboto-light;font-size:14px;text-align:center; letter-spacing:0.5px">¿Dudas? Revisa nuestras </span><a href="{{faq_url}}" style="color:#3498db;text-decoration:none" target="_blank">preguntas frecuentes</a>.</p>
                           </div>
@@ -1154,7 +1148,6 @@ MESSAGE ARRIVED
       </tr>
       <tr>
         <td colspan="3">
-          <img style="display:block;vertical-align:top" border="0" src="http://mihogarinvictus.appspot.com/default/img/bar.png">
         </td>
       </tr>
     </tbody>

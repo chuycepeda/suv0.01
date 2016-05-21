@@ -1,5 +1,5 @@
 application: one-smart-city-demo
-version: dev
+version: production
 runtime: python27
 api_version: 1
 threadsafe: true

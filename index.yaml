@@ -697,6 +697,11 @@ indexes:
 - kind: Report
   properties:
   - name: user_id
+  - name: cdb_id
+
+- kind: Report
+  properties:
+  - name: user_id
   - name: created
 
 - kind: Report
@@ -721,8 +726,3 @@ indexes:
   - name: email
   - name: last_login
     direction: desc
-
-- kind: Report
-  properties:
-  - name: user_id
-  - name: cdb_id
