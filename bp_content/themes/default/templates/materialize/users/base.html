@@ -28,9 +28,9 @@
 	    <!-- All stylesheets   -->
 	    {% block stylesheets %}
 		    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-	  		<link href="/{{theme}}/materialize/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">		    
-		    <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
-		    <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+	  		<link href="/{{theme}}/materialize/css/materialize.css?v=10" type="text/css" rel="stylesheet" media="screen,projection">		    
+	  		<link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css?v=10" type="text/css" rel="stylesheet" media="screen,projection">		    
+		    <link href="/{{theme}}/materialize/css/style.css?v=10" type="text/css" rel="stylesheet" media="screen,projection">
 		    <style type="text/css">
 	    		.toast-success{ color: #2EF97D!important; line-height: 18px; }
 	    		.toast-danger{ color: #EF1515!important; line-height: 18px; }
@@ -417,11 +417,11 @@
 			<!-- jQuery Library -->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/jquery-1.11.2.min.js"></script>
 		    <!--materialize js-->
-		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.min.js"></script>
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/materialize.js?v=10"></script>
 		    <!--scrollbar-->
 		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 		    <!--plugins.js - Some Specific JS codes for Plugin Settings-->
-		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js"></script>
+		    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins.js?v=11"></script>
 	        <!-- Toast Notification -->
 		    {% if messages|safe %}		    	
 			    {% for message in messages %}
