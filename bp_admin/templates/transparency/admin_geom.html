@@ -231,6 +231,7 @@
 <script src="/{{theme}}/materialize/js/cartodb.js"></script>
 <script src="/{{theme}}/materialize/js/plugins/autocomplete/awesomplete.min.js"></script>
 <script type="text/javascript">
+    {% if has_reports %}
     var url = "{{ uri_for('materialize-report-categories') }}" + "?q=agencies&o=raw";
     $.ajax({
         url: url,
@@ -244,6 +245,7 @@
         }
     }).done(function(data) {      
     });
+    {% endif %}
     
     document.getElementById('submit_brand_form').addEventListener('click', function() {
       document.getElementById('name').value = cleanUpSpecialChars(document.getElementById('name').value);

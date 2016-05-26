@@ -69,11 +69,11 @@ config = {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",
     # application services
-    'has_reports': True,
-    'has_petitions': True,
+    'has_reports': False,
+    'has_petitions': False,
     'has_transparency': True,
-    'has_social_media': True,
-    'has_cic': True,
+    'has_social_media': False,
+    'has_cic': False,
     # get your own recaptcha keys by registering at http://www.google.com/recaptcha/
     'captcha_public_key': "6LcMfv0SAAAAAGMJ9i-g5aJhXFvSHpPsqDLOHTUD",
     'captcha_private_key': "6LcMfv0SAAAAALMUmCmFt5NOAw_ZTHabWRHAFJI6",

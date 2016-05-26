@@ -234,10 +234,11 @@
 {% endblock %}
 
 {% block page_scripts %}
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
     <script src="/{{theme}}/materialize/js/cartodb.js"></script>
     <script src="/{{theme}}/materialize/js/plugins/autocomplete/awesomplete.min.js"></script>
     <script type="text/javascript">
+        {% if has_reports %}
 
         var url = "{{ uri_for('materialize-report-categories') }}" + "?q=agencies&o=raw";
         $.ajax({
@@ -252,6 +253,7 @@
             }
         }).done(function(data) {      
         });
+        {% endif %}
 
             // cartodb
             var city_user = '{{cartodb_user}}';
@@ -483,52 +485,41 @@
                 // CITY LAYERS
                 var city_query= "SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
                 var city_interactivity = ["cartodb_id","the_geom","the_geom_webmercator","description","name","identifier","amount","sector","category","exec_date","agency","fund_source","address_from","leader","image_url","kind","locality"];
-                $.ajax({
-                    url: "{{ uri_for('materialize-report-categories') }}",
-                    type: 'GET'
-                }).done(function(data) {
-                    reportDict = data;
-                    for (var x in reportDict){
-                        for (var y in reportDict[x].icon_url){
-                            city_catMarkers.push([y, reportDict[x].icon_url[y], reportDict[x].color]);
-                        }
+                layerSource = {
+                    user_name: city_user,
+                    type: 'cartodb',
+                    sublayers: [{
+                        sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
+                        cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+
+                    },{
+                        sql: city_query,
+                        cartocss: createTileStyle('normal',city_table_name),
+                        interactivity: city_interactivity
+                    }]
+                };
+                cartodb.createLayer(map,layerSource)
+                .on('done', function(layer) {
+                    map.overlayMapTypes.setAt(0, layer);
+                    for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                       sublayers[i] = layer.getSubLayer(i);
+                       console.log("Congrats, you added sublayer #" + i + "!");
                     }
-                    layerSource = {
-                        user_name: city_user,
-                        type: 'cartodb',
-                        sublayers: [{
-                            sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
-                            cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
 
-                        },{
-                            sql: city_query,
-                            cartocss: createTileStyle('normal',city_table_name),
-                            interactivity: city_interactivity
-                        }]
-                    };
-                    cartodb.createLayer(map,layerSource)
-                    .on('done', function(layer) {
-                        map.overlayMapTypes.setAt(0, layer);
-                        for (var i = 0; i < layer.getSubLayerCount(); i++) {
-                           sublayers[i] = layer.getSubLayer(i);
-                           console.log("Congrats, you added sublayer #" + i + "!");
-                        }
-
-                        sublayers[1].infowindow.set('template', $('#infowindow_'+city_table_name).html());
-                        cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
-                            infowindowTemplate: $('#infowindow_'+city_table_name).html()
-                        });
-                        sublayers[1].setInteraction(true);                                 
-                        sublayers[1].on('featureClick', function(e, latlng, pos, data) {
-                              populateData(data, latlng);
-                              console.log("e",e);
-                              console.log("latlng",latlng);
-                              console.log("pos",pos);
-                              console.log("data",data);
-                        });  
-                        
-                    }); 
-                });
+                    sublayers[1].infowindow.set('template', $('#infowindow_'+city_table_name).html());
+                    cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
+                        infowindowTemplate: $('#infowindow_'+city_table_name).html()
+                    });
+                    sublayers[1].setInteraction(true);                                 
+                    sublayers[1].on('featureClick', function(e, latlng, pos, data) {
+                          populateData(data, latlng);
+                          console.log("e",e);
+                          console.log("latlng",latlng);
+                          console.log("pos",pos);
+                          console.log("data",data);
+                    });  
+                    
+                }); 
 
 
 
@@ -830,20 +821,17 @@
                              
         </script>
         <script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
-            {% raw %}
             <div class="cartodb-popup header blue v2">
               <a href="#close" class="cartodb-popup-close-button close">x</a>
-              <div class="cartodb-popup-header">
-                <a href="#update_card" style="text-decoration:underline; text-transform:uppercase; font-family:roboto-light;">Clic para editar</a>
-                <span class="separator"></span>
+              <div class="cartodb-popup-header" style="background: -webkit-linear-gradient(top,{{brand_color}},{{brand_secondary_color}});">                
+              {% raw %}    
+                  <a href="#update_card" style="text-decoration:underline; text-transform:uppercase; font-family:roboto-light;">Clic para editar</a>
               </div>
               <div class="cartodb-popup-content-wrapper" style="background: white;">
                 <div class="cartodb-popup-content">
                   <img src="{{image_url}}" alt="" class="responsive-img"/>
                   <h4>Sector</h4>
                   <p>{{sector}}</p>
-                  <h4>Categoría</h4>
-                  <p>{{category}}</p>
                   <h4>Dependencia</h4>
                   <p>{{agency}}</p>
                   <h4>Monto</h4>
@@ -864,12 +852,14 @@
                   <p>{{locality}}</p>
                   <h4>Nombre</h4>
                   <p>{{name}}</p>
+                  <br>
                 </div>
               </div>
+            {% endraw %}  
               <div class="cartodb-popup-tip-container">
               </div>
             </div>
-            {% endraw %}  
+            </div>
         </script>
     
                 

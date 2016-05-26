@@ -354,7 +354,7 @@
     }
 
     function openConversation(id){
-      $('#modalConversation').openModal();
+      // $('#modalConversation').openModal();
       document.getElementById('commentbox').value = "";
       document.getElementById('object_id').value = id;
       var html='', url = "https://graph.facebook.com/v2.5/"+id+"?access_token="+accessToken;

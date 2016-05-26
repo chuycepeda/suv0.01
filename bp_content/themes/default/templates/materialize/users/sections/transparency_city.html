@@ -5,7 +5,7 @@
    
 {% block page_css %}
     <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
-	<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+	<link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css" />
  	<style>
 		.rating:hover{
 			color:#ffc107!important;
@@ -601,16 +601,18 @@
 	    }	
 	</script>
 	<script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
-            {% raw %}
             <div class="cartodb-popup header blue v2">
               <a href="#close" class="cartodb-popup-close-button close">x</a>
+              <div class="cartodb-popup-header" style="background: -webkit-linear-gradient(top,{{brand_color}},{{brand_secondary_color}});">                
+              {% raw %}    
+              <h4 style="color:white">Categoría</h4>
+                  <h3 style="color:white">{{category}}</h3>
+              </div>
               <div class="cartodb-popup-content-wrapper" style="background: white;">
                 <div class="cartodb-popup-content">
                   <img src="{{image_url}}" alt="" class="responsive-img"/>
                   <h4>Sector</h4>
                   <p>{{sector}}</p>
-                  <h4>Categoría</h4>
-                  <p>{{category}}</p>
                   <h4>Dependencia</h4>
                   <p>{{agency}}</p>
                   <h4>Monto</h4>
@@ -621,8 +623,6 @@
                   <p>{{address_from}}</p>
                   <h4>Descripción</h4>
                   <p>{{description}}</p>
-                  // <h4>Fecha de ejecución</h4>
-                  // <p>{{exec_date}}</p>
                   <h4>Fuente de financiamiento</h4>
                   <p>{{fund_source}}</p>
                   <h4>Clave de identificación</h4>
@@ -633,11 +633,13 @@
                   <p>{{locality}}</p>
                   <h4>Nombre</h4>
                   <p>{{name}}</p>
+                  <br>
                 </div>
               </div>
+            {% endraw %}  
               <div class="cartodb-popup-tip-container">
               </div>
             </div>
-            {% endraw %}  
-        </script>
+            </div>
+  </script>
 {% endblock %}

@@ -709,6 +709,7 @@ class AdminGeomEditHandler(BaseHandler):
             unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=DELETE FROM %s WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, cartodb_id, api_key)).encode('utf8')
         url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
         try:
+            logging.info('carto request: %s' % unquoted_url)
             t = urlfetch.fetch(url)
             logging.info("t: %s" % t.content)
             message = _(messages.saving_success)
