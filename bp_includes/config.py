@@ -52,7 +52,7 @@ config = {
     'meta_tags_code': """
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
             <meta name="description" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine." />
-            <meta name="keywords" content="mboilerplate, appengine, materialize, boilerplate, webcomponents, google cloud, gae"/>
+            <meta name="keywords" content="mboilerplate, appengine, materialize, boilerplate, webcomponents, google cloud, gae, onesmartcity, onesmart, gobierno digital, smart city, reporte ciudadano, transparencia, mexico"/>
             <meta property="og:site_name" content="demo.onesmart.city"/>
             <meta property="og:title" content="OneSmart.City"/>
             <meta property="og:type" content="website"/>
@@ -69,8 +69,8 @@ config = {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",
     # application services
-    'has_reports': False,
-    'has_petitions': False,
+    'has_reports': True,
+    'has_petitions': True,
     'has_transparency': True,
     'has_social_media': False,
     'has_cic': False,
@@ -84,7 +84,7 @@ config = {
     'facebook_handle':'mtygob',
     'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com', #get it new from https://console.cloud.google.com/apis/credentials?project=<APP_ID>
     'twitter_appID': '678306982604894208', #get it new from https://twitter.com/settings/widgets
-    'facebook_appID': '523620084480399', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/201422020200516/settings/advanced/
+    'facebook_appID': '523620084480399', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/523620084480399/fb-login/
     # indicoio sentiment analysis apikey, get it new from https://indico.io/dashboard/
     'indicoio_apikey': 'e1e494fc522650381efc67d23e515692',
     # bitly Login & API KEY, get them from your bitly account under settings/advanced.
