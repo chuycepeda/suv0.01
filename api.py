@@ -29,14 +29,16 @@ api_key = "86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA"
 
 MAX_SIZE = 3000
 
-KEYPAGE_RESOURCE = endpoints.ResourceContainer(
-      message_types.VoidMessage,
-      api_key=messages.StringField(1),
-      page=messages.IntegerField(2))
+class KeyPage(messages.Message):
+  api_key = messages.StringField(1)
+  page = messages.IntegerField(2)
 
-PAGE_RESOURCE = endpoints.ResourceContainer(
-      message_types.VoidMessage,
-      page=messages.IntegerField(1))
+KEYPAGE_RESOURCE = endpoints.ResourceContainer(
+      KeyPage)
+
+class PostResponse(messages.Message):
+  status = messages.StringField(1)
+  response = messages.StringField(2)
 
 
 """
@@ -57,7 +59,8 @@ class Users(messages.Message):
     gender = messages.StringField(9)
     credibility = messages.IntegerField(10)
     address = messages.StringField(11)
-    phone = messages.StringField(12)    
+    phone = messages.StringField(12)   
+
 class UsersCollection(messages.Message):
     """Collection of Users."""
     total_rows = messages.IntegerField(1)
@@ -158,7 +161,11 @@ def getReports(page):
   return ReportsCollection(total_rows = len(reports_array), items=reports_array, pages=count/MAX_SIZE)
 
 
-"""  MEDIA GETTER  """
+"""  
+  
+  MEDIA GETTER  
+
+"""
 class ReportsMedias(messages.Message):
     """Reports medias that stores a message."""
     created = messages.StringField(1)
@@ -188,8 +195,36 @@ def getReportsMedias(page):
 
   return ReportsMediasCollection(total_rows = len(reports_array), items=reports_array, pages=int(len(reports_array)/MAX_SIZE))
 
+"""  
+  
+  REGISTER & LOGIN METHODS
+
+"""
+
+class SignIn(messages.Message):
+    email = messages.StringField(1)
+    password = messages.StringField(2)
+
+class SignUp(messages.Message):
+    email = messages.StringField(1)
+    password = messages.StringField(2)
+    name = messages.StringField(3)
 
 
+SIGNIN_RESOURCE = endpoints.ResourceContainer(
+    SignIn)
+
+SIGNUP_RESOURCE = endpoints.ResourceContainer(
+    SignUp)
+
+def getCredentials(method, email, password, name):
+  status = 'success'
+  response = 'got %s it! with email %s' % (method, email)
+  return PostResponse(status=status, response=response)
+
+# -------------------------------------------------------------
+# -------------------------------------------------------------
+# -------------------------------------------------------------
 
 """
 
@@ -201,14 +236,28 @@ class MainApi(remote.Service):
     """
         Main onesmartcity API v1.
 
-        For methods without input vars use 
-        message_types.VoidMessage as RESOURCE.
-
     """
+
+    #SIGN UP METHOD
+    @endpoints.method(SIGNUP_RESOURCE, PostResponse,
+                      path='signup',
+                      http_method='POST',
+                      name='users.signup')
+    def sign_up(self, request):
+      return getCredentials('signup', request.email, request.password, request.name)
+
+    #SIGN IN METHOD
+    @endpoints.method(SIGNIN_RESOURCE, PostResponse,
+                      path='signin',
+                      http_method='POST',
+                      name='users.signin')
+    def sign_in(self, request):
+      return getCredentials('signin', request.email, request.password, '')
+
 
     #USERS INFO METHOD
     @endpoints.method(KEYPAGE_RESOURCE, UsersCollection,
-                      path='users/{api_key}/{page}', http_method='GET',
+                      path='users', http_method='POST',
                       name='users.list')
     def users_list(self, request):
       if request.api_key == api_key:
@@ -217,7 +266,7 @@ class MainApi(remote.Service):
 
     #REPORTS INFO METHOD
     @endpoints.method(KEYPAGE_RESOURCE, ReportsCollection,
-                      path='reports/{api_key}/{page}', http_method='GET',
+                      path='reports', http_method='POST',
                       name='reports.list')
     def reports_list(self, request):
       if request.api_key == api_key:
@@ -225,12 +274,13 @@ class MainApi(remote.Service):
         return getReports(int(page))
 
     #REPORTS MEDIAS METHOD
-    @endpoints.method(PAGE_RESOURCE, ReportsMediasCollection,
-                      path='reports/{page}', http_method='GET',
+    @endpoints.method(KEYPAGE_RESOURCE, ReportsMediasCollection,
+                      path='media', http_method='POST',
                       name='reports.media')
     def reports_media(self, request):
-      page = request.page if request.page is not None else 0
-      return getReportsMedias(int(page))
+      if request.api_key == api_key:
+        page = request.page if request.page is not None else 0
+        return getReportsMedias(int(page))
 
 
 #Endpoints yaml pointer
