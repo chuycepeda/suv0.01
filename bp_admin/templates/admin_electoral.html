@@ -31,8 +31,8 @@
             <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
             <link href="/{{theme}}/materialize/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">         
             <link href="/{{theme}}/materialize/css/style.css" type="text/css" rel="stylesheet" media="screen,projection">
-            <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
-            <link href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+            <!-- <link href="/default/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection"> -->
+            <!-- <link href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" type="text/css" rel="stylesheet" media="screen,projection"/> -->
             <style type="text/css">
                 html, body { height: 100%; margin: 0; padding: 0; }
                 .toast-success{ color: #2EF97D!important; line-height: 18px; }
@@ -170,6 +170,8 @@
                 }
             </style>
             {% block page_css %}
+                <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+                <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css" />
             {% endblock %}
             {% if user_id %}
                 {{ zendesk_imports }}
@@ -280,130 +282,130 @@
         {% block main %}
             <!-- START MAIN -->
             <div class="row" style="height: 100%; width:100%;">
-                        {% block sidebar_left %}
-                            <!-- START LEFT SIDEBAR NAV-->
-                            <aside id="left-sidebar-nav">
-                                <ul id="left-out" class="side-nav leftside-navigation">
-                                    <li> <div class="divider"></div> </li>
-                                    <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px;">
-                                        <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-maps-layers grey-text left"></i>Capas de información</a>
-                                               <div class="collapsible-body white" style="line-height: 10px;">
-                                                    <label>
-                                                    <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">INEGI - <span class="cyan-text">descriptores</span></a>
-                                                    </label>
-                                                    <p>
-                                                        <input type="checkbox" class="filled-in layerControl" id="0">
-                                                        <label for="0">Polígono estatal</label>
-                                                    </p>
-                                                    <p>
-                                                        <input type="checkbox" class="filled-in layerControl" id="1">
-                                                        <label for="1">Polígonos municipales</label>
-                                                    </p>
-                                                    <div class="divider"></div>
-                                                    <label>
-                                                    <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank">INE - <span class="cyan-text">descriptores</span></a>
-                                                    </label>
-                                                    <p>
-                                                        <input type="checkbox" class="filled-in layerControl" id="2">
-                                                        <label for="2">Distritos electorales</label>
-                                                    </p>
-                                                    <p>
-                                                        <input type="checkbox" class="filled-in layerControl" id="3">
-                                                        <label for="3">Secciones electorales</label>
-                                                    </p><p>
-                                                        <input type="checkbox" class="filled-in layerControl" id="4">
-                                                        <label for="4">Casillas electorales</label>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                        </ul>
+                {% block sidebar_left %}
+                    <!-- START LEFT SIDEBAR NAV-->
+                    <aside id="left-sidebar-nav">
+                        <ul id="left-out" class="side-nav leftside-navigation">
+                            <li> <div class="divider"></div> </li>
+                            <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px;">
+                                <ul class="collapsible collapsible-accordion">
+                                    <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-maps-layers grey-text left"></i>Capas de información</a>
+                                       <div class="collapsible-body white" style="line-height: 10px;">
+                                            <label>
+                                            <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">INEGI - <span class="cyan-text">descriptores</span></a>
+                                            </label>
+                                            <p>
+                                                <input type="checkbox" class="filled-in layerControl" id="0">
+                                                <label for="0">Polígono estatal</label>
+                                            </p>
+                                            <p>
+                                                <input type="checkbox" class="filled-in layerControl" id="1">
+                                                <label for="1">Polígonos municipales</label>
+                                            </p>
+                                            <div class="divider"></div>
+                                            <label>
+                                            <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank">INE - <span class="cyan-text">descriptores</span></a>
+                                            </label>
+                                            <p>
+                                                <input type="checkbox" class="filled-in layerControl" id="2">
+                                                <label for="2">Distritos electorales</label>
+                                            </p>
+                                            <p>
+                                                <input type="checkbox" class="filled-in layerControl" id="3">
+                                                <label for="3">Secciones electorales</label>
+                                            </p><p>
+                                                <input type="checkbox" class="filled-in layerControl" id="4">
+                                                <label for="4">Casillas electorales</label>
+                                            </p>
+                                        </div>
                                     </li>
-                                    <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
-                                    <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px; display:none;">
-                                        <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-content-filter-list grey-text left"></i>Controles de filtrado</a>
-                                               <div class="collapsible-body white" style="line-height: 10px; margin-top: 4px;">
-                                                        <ul class="collapsible collapsible-accordion">
-                                                            <li>
-                                                                <a id='estadoBtn' class='collapsible-header btn brand-color truncate' style="color:white!important;width: 215px;margin-left: 10px;">---</a>
-                                                                <ul class="collapsible-body" style="margin-left: 10px;width: 215px;">
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(1)">Aguascalientes</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(2)">Baja California</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(3)">Baja California Sur</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(4)">Campeche</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(8)">Chihuahua</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(7)">Chiapas</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(5)">Coahuila</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(6)">Colima</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(9)">Distrito Federal</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(10)">Durango</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(11)">Guanajuato</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(12)">Guerrero</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(13)">Hidalgo</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(14)">Jalisco</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(15)">Mexico</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(16)">Michoacan</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(17)">Morelos</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(18)">Nayarit</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(19)">Nuevo Leon</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(20)">Oaxaca</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(21)">Puebla</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(22)">Queretaro</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(23)">Quintana Roo</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(24)">San Luis Potosi</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(25)">Sinaloa</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(26)">Sonora</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(27)">Tabasco</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(28)">Tamaulipas</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(29)">Tlaxcala</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(30)">Veracruz</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(31)">Yucatan</li>
-                                                                      <li style="padding-left: 12px;" onclick="createLayers(32)">Zacatecas</li>
-                                                                </ul>  
-                                                            </li>  
-                                                        </ul>            
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
                                 </ul>
-                            </aside>
-                            <!-- END LEFT SIDEBAR NAV-->
-                        {% endblock %}
+                            </li>
+                            <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
+                            <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px; display:none;">
+                                <ul class="collapsible collapsible-accordion">
+                                    <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-content-filter-list grey-text left"></i>Controles de filtrado</a>
+                                       <div class="collapsible-body white" style="line-height: 10px; margin-top: 4px;">
+                                                <ul class="collapsible collapsible-accordion">
+                                                    <li>
+                                                        <a id='estadoBtn' class='collapsible-header btn brand-color truncate' style="color:white!important;width: 215px;margin-left: 10px;">---</a>
+                                                        <ul class="collapsible-body" style="margin-left: 10px;width: 215px;">
+                                                              <li style="padding-left: 12px;" onclick="createLayers(1)">Aguascalientes</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(2)">Baja California</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(3)">Baja California Sur</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(4)">Campeche</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(8)">Chihuahua</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(7)">Chiapas</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(5)">Coahuila</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(6)">Colima</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(9)">Distrito Federal</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(10)">Durango</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(11)">Guanajuato</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(12)">Guerrero</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(13)">Hidalgo</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(14)">Jalisco</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(15)">Mexico</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(16)">Michoacan</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(17)">Morelos</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(18)">Nayarit</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(19)">Nuevo Leon</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(20)">Oaxaca</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(21)">Puebla</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(22)">Queretaro</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(23)">Quintana Roo</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(24)">San Luis Potosi</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(25)">Sinaloa</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(26)">Sonora</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(27)">Tabasco</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(28)">Tamaulipas</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(29)">Tlaxcala</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(30)">Veracruz</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(31)">Yucatan</li>
+                                                              <li style="padding-left: 12px;" onclick="createLayers(32)">Zacatecas</li>
+                                                        </ul>  
+                                                    </li>  
+                                                </ul>            
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
+                        </ul>
+                    </aside>
+                    <!-- END LEFT SIDEBAR NAV-->
+                {% endblock %}
 
-                        {% block content %}
-                            <div id="map" style="height:93vh; width:100%;"> </div>
-                            <div class="hide-on-small-only" style="width:200px; position:fixed; top:80px; left:8px;">
-                                <div class="hide-on-med-and-down ">
-                                    <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 200px!important;">
+                {% block content %}
+                    <div id="map" style="height:93vh; width:100%;"> </div>
+                    <div class="hide-on-small-only" style="width:200px; position:fixed; top:80px; left:8px;">
+                        <div class="hide-on-med-and-down ">
+                            <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 200px!important;">
+                        </div>
+                    </div> 
+                {% endblock %}
+
+                {% block right_sidebar %}
+                    <!-- Right sidebar -->
+                    <aside id="right-sidebar-nav">
+                        <ul id="chat-out" class="side-nav rightside-navigation" style="margin-top:65px;max-height:90%;padding:6px;overflow: scroll; font-family: roboto-light!important;">
+                            <li class="li-hover">
+                                <a href="#" data-activates="chat-out" class="chat-close-collapse right" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
+                            </li>
+                            <li class="li-hover">
+                                <div id="right-sidebar-logo" class="container row" style="margin-top:40px;">
                                 </div>
-                            </div> 
-                        {% endblock %}
-
-                        {% block right_sidebar %}
-                            <!-- Right sidebar -->
-                            <aside id="right-sidebar-nav">
-                                <ul id="chat-out" class="side-nav rightside-navigation" style="margin-top:65px;max-height:90%;padding:6px;overflow: scroll; font-family: roboto-light!important;">
-                                    <li class="li-hover">
-                                        <a href="#" data-activates="chat-out" class="chat-close-collapse right" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
-                                    </li>
-                                    <li class="li-hover">
-                                        <div id="right-sidebar-logo" class="container row" style="margin-top:40px;">
-                                        </div>
-                                    </li>
-                                    <li class="li-hover">
-                                        <div id="right-sidebar-title" class="container row" style="margin-top:40px;">
-                                        </div>
-                                    </li>
-                                    <li class="li-hover">
-                                        <div id="right-sidebar-content" class="container row" style="margin-top:40px;text-align: justify;">                                            
-                                        </div>
-                                    </li>
-                                </ul>
-                            </aside>
-                        {% endblock %}
+                            </li>
+                            <li class="li-hover">
+                                <div id="right-sidebar-title" class="container row" style="margin-top:40px;">
+                                </div>
+                            </li>
+                            <li class="li-hover">
+                                <div id="right-sidebar-content" class="container row" style="margin-top:40px;text-align: justify;">                                            
+                                </div>
+                            </li>
+                        </ul>
+                    </aside>
+                {% endblock %}
             </div>
             <!-- END MAIN -->
         {% endblock %}
@@ -426,7 +428,7 @@
 
 
             <!-- Toast Notification -->
-            {% if messages|safe %}              
+            {% if messages|safe %}
                 {% for message in messages %}
                     <script type="text/javascript">
                         var resendIndex = 0 ;
@@ -458,8 +460,7 @@
                     });
                 </script>
             {% endblock %}
-
-            
+         
             {% block onload_methods %}
                 <script>
                     var is_Safari = false, not_Chrome = false;
@@ -605,11 +606,6 @@
                             streetViewControlOptions: {
                                 position: google.maps.ControlPosition.RIGHT_BOTTOM   
                             },
-                            mapTypeControl: true,
-                            mapTypeControlOptions: {
-                                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-                                position: google.maps.ControlPosition.RIGHT_TOP   
-                            },
                             panControl:false,
                             backgroundColor: 'rgb(249, 249, 249)',
                             rotateControl:true,
@@ -654,7 +650,6 @@
                         // LAYERS
                         layerSource = {
                             user_name: cartodb_user,
-                            cartodb_logo:false,
                             type: 'cartodb',
                             sublayers: [{
                                 sql: "SELECT nacional_estados.* FROM nacional_estados where cve_ent = "+entidad,
@@ -675,10 +670,11 @@
                         };
                         cartodb.createLayer(map,layerSource)
                         .on('done', function(layer) {
-                            map.overlayMapTypes.setAt(0, layer);
-                            for (var i = 0, j =0; j < layer.getSubLayerCount(); i++, j++) {
-                               sublayers[i] = layer.getSubLayer(j);
-                               cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(j));
+                            map.overlayMapTypes.setAt(1, layer);
+                            for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                               sublayers[i] = layer.getSubLayer(i);
+                               cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(i), get_interactivity(i));
+                               sublayers[i].setInteraction(true);   
                                if (i!=0){
                                     sublayers[i].hide(); //leave all turned off except state.
                                } 
@@ -709,9 +705,9 @@
                     function get_interactivity(layer_id){
                         switch(layer_id){
                             case 0: 
-                                return ["nom_ent","cve_ent","created_at","updated_at"];
+                                return ["nom_ent","cve_ent"];
                             case 1: 
-                                return ["nom_mun","cve_ent","cve_mun","created_at","updated_at"];
+                                return ["nom_mun","cve_ent","cve_mun"];
                             case 2:
                                 return ["clavegeo","entidad","distrito"];
                             case 3:

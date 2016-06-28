@@ -218,6 +218,7 @@ SIGNUP_RESOURCE = endpoints.ResourceContainer(
     SignUp)
 
 def getCredentials(method, email, password, name):
+  logging.info('request got for email %s, at method %s' % (email, method))
   status = 'success'
   response = 'got %s it! with email %s' % (method, email)
   return PostResponse(status=status, response=response)

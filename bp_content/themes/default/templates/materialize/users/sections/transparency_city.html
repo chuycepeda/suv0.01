@@ -57,65 +57,65 @@
 {% endblock %}
 
 {% block body_content %}
-	<div id="map">				
-			</div>
-			<div class="hide-on-small-only" style="width:270px; position:fixed; top:12%; left:3%;">
+    <div id="map">				
+		</div>
+		<div class="hide-on-small-only" style="width:270px; position:fixed; top:12%; left:3%;">
 				<div>
 	            	<input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
 				</div>
-                <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
-                  <li>
-                    <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
-	                    <div class="collapsible-body white">
-	                    	<p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="0" checked>
-		                    	<label for="0">Polígono territorial</label>
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="1" checked>
-		                    	<label for="1">Transparencia de obras</label>
-		                    </p>
-		                    <div class="divider"></div>
-		                    <p style="padding: 8px;">
-		                    	Capas contextuales:
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="2">
-		                    	<label for="2">Secciones electorales</label>
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="3">
-		                    	<label for="3">Distritos electorales</label>
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="4">
-		                    	<label for="4">Unidades económicas</label>
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="5">
-		                    	<label for="5">AGEBs urbanos - Vivienda</label>
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="6">
-		                    	<label for="6">AGEBs urbanos - Población</label>
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="7">
-		                    	<label for="7">AGEBs urbanos - Educación</label>
-		                    </p>
-		                    <p style="padding: 8px;">
-		                    	<input type="checkbox" class="filled-in layerControl" id="8">
-		                    	<label for="8">AGEBs urbanos - Economía</label>
-		                    </p>
-		                    <p style="padding: 8px;text-align: right; font-size: 11px;">
-		                    	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
-		                    	<br>
-		                    	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
-		                    </p>
-	                    </div>
-                  </li>
-                </ul>
-            </div> 
+        <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+          <li>
+            <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
+              <div class="collapsible-body white">
+              	<p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="0" checked>
+                	<label for="0">Polígono territorial</label>
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="1" checked>
+                	<label for="1">Transparencia de obras</label>
+                </p>
+                <div class="divider"></div>
+                <p style="padding: 8px;">
+                	Capas contextuales:
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="2">
+                	<label for="2">Secciones electorales</label>
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="3">
+                	<label for="3">Distritos electorales</label>
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="4">
+                	<label for="4">Unidades económicas</label>
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="5">
+                	<label for="5">AGEBs urbanos - Vivienda</label>
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="6">
+                	<label for="6">AGEBs urbanos - Población</label>
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="7">
+                	<label for="7">AGEBs urbanos - Educación</label>
+                </p>
+                <p style="padding: 8px;">
+                	<input type="checkbox" class="filled-in layerControl" id="8">
+                	<label for="8">AGEBs urbanos - Economía</label>
+                </p>
+                <p style="padding: 8px;text-align: right; font-size: 11px;">
+                	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
+                	<br>
+                	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
+                </p>
+              </div>
+          </li>
+        </ul>
+    </div> 
 {% endblock %}
 
 {% block page_scripts %}
