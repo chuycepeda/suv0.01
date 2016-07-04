@@ -1846,7 +1846,7 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
         scholarity = self.request.get('scholarity')
         phone = self.request.get('phone')
         birth = self.request.get('birth')
-        address_from = self.request.get('address_from')
+        address_from = self.request.get('address_from') if len(self.request.get('address_from'))>4 else None
         address_from_coord = self.request.get('address_from_coord')
         picture = self.request.get('picture') if len(self.request.get('picture'))>1 else None
 
@@ -1872,6 +1872,8 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
                     user_info.address.address_from = address_from
                     if len(address_from_coord.split(',')) == 2:
                         user_info.address.address_from_coord = ndb.GeoPt(address_from_coord)
+                else:
+                    user_info.address = None
                 user_info.put()
                 message += " " + _(messages.saving_success)
                 self.add_message(message, 'success')
