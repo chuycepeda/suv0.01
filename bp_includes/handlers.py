@@ -1133,7 +1133,7 @@ class MaterializeAccountActivationReferralHandler(BaseHandler):
             # Slack Incoming WebHooks
             try:
                 from google.appengine.api import urlfetch
-                urlfetch.fetch(self.app.config.get('slack_webhook_url'), payload='{"channel": "#general", "username": "webhookbot", "text": "Just got a new referred user ! Go surprise him at '+referred_user.email+' and remember to thank '+ user.email +'", "icon_emoji": ":bowtie:"}', method='POST')
+                urlfetch.fetch(self.app.config.get('slack_webhook_url'), payload='{"channel": "#general", "username": "webhookbot", "text": "Just got a new referred user at '+self.app.config.get('app_id')+'! Go surprise him at '+referred_user.email+' and remember to thank '+ user.email +'", "icon_emoji": ":bowtie:"}', method='POST')
             except Exception as e:
                 pass
 

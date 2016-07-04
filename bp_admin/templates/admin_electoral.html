@@ -8,7 +8,7 @@
 
 {% block document_head %}
     <head>
-        {% block title %}<title>{{app_name}}</title>{% endblock %}
+        {% block title %}<title>Admin - {{app_name}}</title>{% endblock %}
 
         <!-- All meta tags from config files -->
         {% block metadata %}
@@ -168,6 +168,10 @@
                     padding: 4px;
                     margin-left:15px;
                 }
+
+                .collapsible-header:after {
+                    color: #fff;
+                }
             </style>
             {% block page_css %}
                 <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
@@ -214,7 +218,7 @@
                 <div class="navbar-fixed">
                     <nav class="white">
                         <div class="nav-wrapper">
-                            <a href="#" data-activates="left-out" class="sidebar-collapse waves-effect waves-light darken-2" style="top:0!important;left:14px!important;"><i class="mdi-navigation-menu" style="color: #9e9e9e; background-color: white;" ></i></a>
+                            <!-- <a href="#" data-activates="left-out" class="sidebar-collapse waves-effect waves-light darken-2" style="top:0!important;left:14px!important;"><i class="mdi-navigation-menu" style="color: #9e9e9e; background-color: white;" ></i></a> -->
                             <div id="main-preloader" class="preloader-wrapper small active left" style="display: none;margin-top:12px; margin-left:60px;">
                               <div class="spinner-layer spinner-blue">
                                 <div class="circle-clipper left">
@@ -284,7 +288,7 @@
             <div class="row" style="height: 100%; width:100%;">
                 {% block sidebar_left %}
                     <!-- START LEFT SIDEBAR NAV-->
-                    <aside id="left-sidebar-nav">
+                    <!-- <aside id="left-sidebar-nav">
                         <ul id="left-out" class="side-nav leftside-navigation">
                             <li> <div class="divider"></div> </li>
                             <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px;">
@@ -371,17 +375,53 @@
                             </li>
                             <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
                         </ul>
-                    </aside>
+                    </aside> -->
                     <!-- END LEFT SIDEBAR NAV-->
                 {% endblock %}
 
                 {% block content %}
                     <div id="map" style="height:93vh; width:100%;"> </div>
                     <div class="hide-on-small-only" style="width:200px; position:fixed; top:80px; left:8px;">
-                        <div class="hide-on-med-and-down ">
-                            <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 200px!important;">
+                        <div>
+                            <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
                         </div>
-                    </div> 
+                        <ul class="collapsible collapsible-accordion" data-collapsible="expandable" style="max-height:500px; overflow-y:scroll;min-width: 270px;">
+                          <li>
+                            <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
+                              <div class="collapsible-body white">
+                                <p style="padding: 8px;">
+                                  <input type="checkbox" class="filled-in layerControl" id="0" checked>
+                                  <label for="0">Polígono territorial</label>
+                                </p>
+                                <p style="padding: 8px;">
+                                  <input type="checkbox" class="filled-in layerControl" id="1">
+                                  <label for="1">Polígonos municipales</label>
+                                </p>
+                                <p style="padding: 8px;">
+                                    <input type="checkbox" class="filled-in layerControl" id="2">
+                                    <label for="2">Casillas electorales</label>
+                                </p>
+                                <p style="padding: 8px;">
+                                  <input type="checkbox" class="filled-in layerControl" id="3">
+                                  <label for="3">Secciones electorales</label>
+                                </p>
+                                <p style="padding: 8px;">
+                                  <input type="checkbox" class="filled-in layerControl" id="4">
+                                  <label for="4">Distritos electorales</label>
+                                </p>               
+                                <p style="padding: 8px;">
+                                  <input type="checkbox" class="filled-in layerControl" id="5">
+                                  <label for="5">AGEBs urbanos</label>
+                                </p>
+                                <p style="padding: 8px;text-align: right; font-size: 11px;">
+                                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
+                                  <br>
+                                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
+                                </p>
+                              </div>
+                          </li>
+                        </ul>
+                    </div>  
                 {% endblock %}
 
                 {% block right_sidebar %}
@@ -579,15 +619,20 @@
                 <script type="text/javascript">
                     // cartodb
                     var sublayers = [];
+                    var city_user = '{{cartodb_user}}';
+                    var city_table_name = '{{cartodb_reports_table}}';
+                    var city_pois_table_name = '{{cartodb_pois_table}}';
+                    var city_mun_table_name = '{{cartodb_polygon_table}}';
+                    var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
+                    var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
+                    var city_polygon_name = '{{cartodb_polygon_name}}';
                     var cartodb_user = 'mexico', cartodb_entidad = {{cartodb_polygon_cve_ent}};
                     var sql = new cartodb.SQL({ user: cartodb_user });
-                    var obj = getUrlVars();
                     var estado = ['Aguascalientes','Baja California','Baja California Sur','Campeche','Chihuahua','Chiapas','Coahuila','Colima','Distrito Federal','Durango','Guerrero','Guanajuato','Hidalgo','Jalisco','Mexico','Michoacan','Morelos','Nayarit','Nuevo Leon','Oaxaca','Puebla','Queretaro','Quintana Roo','Sinaloa','San Luis Potosi','Sonora','Tabasco','Tamaulipas','Tlaxcala','Veracruz','Yucatan','Zacatecas'];
-                    if (obj.entidad) cartodb_entidad = obj.entidad;
 
                     /* MAPS RELATED */
                     var panorama, sv = new google.maps.StreetViewService();
-                    var mapCenter = [24.15441578788599,-102.1232007765625] , map;
+                    var mapCenter = [{{lat}},{{lng}}] , map;
                     google.maps.event.addDomListener(window,'load', init);
                     var query;                    
                     
@@ -647,7 +692,7 @@
 
                     function createLayers(entidad){
                         entidad = entidad || cartodb_entidad;
-                        // LAYERS
+                        // MEXICO LAYERS
                         layerSource = {
                             user_name: cartodb_user,
                             type: 'cartodb',
@@ -656,21 +701,24 @@
                                 cartocss: "#nacional_estados{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
                             },{
                                 sql: "SELECT nacional_municipios.* FROM nacional_municipios where cve_ent = "+entidad,
-                                cartocss: "#nacional_municipios{line-color: {{brand_secondary_color}};line-width: 1;line-opacity: 1;}"
+                                cartocss: "#nacional_municipios{line-color: {{brand_color}};line-width: 2;line-opacity: 1;}"
                             },{
-                                sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012 where entidad = "+entidad,
-                                cartocss: "#nacional_ine_distritos_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 2;line-opacity: 1;}"
+                                sql: "SELECT nacional_ine_casillas_2012.* FROM nacional_ine_casillas_2012 where entidad = "+entidad,
+                                cartocss: "#nacional_ine_casillas_2012{marker-fill: #A53ED5;marker-line-color: #FFFFFF; line-width: 8;line-opacity: 1;marker-allow-overlap:true; marker-comp-op:color-burn;}"
                             },{
                                 sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012 where entidad = "+entidad,
                                 cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 1;line-opacity: 1;}"
                             },{
-                                sql: "SELECT nacional_ine_casillas_2012.* FROM nacional_ine_casillas_2012 where entidad = "+entidad,
-                                cartocss: "#nacional_ine_casillas_2012{marker-fill: #A53ED5;marker-line-color: #FFFFFF; line-width: 8;line-opacity: 1;marker-allow-overlap:true; marker-comp-op:color-burn;}"
+                                sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012 where entidad = "+entidad,
+                                cartocss: "#nacional_ine_distritos_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 2;line-opacity: 1;}"
+                            },{
+                                sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                                cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
                             }]
                         };
                         cartodb.createLayer(map,layerSource)
                         .on('done', function(layer) {
-                            map.overlayMapTypes.setAt(1, layer);
+                            map.overlayMapTypes.setAt(0, layer);
                             for (var i = 0; i < layer.getSubLayerCount(); i++) {
                                sublayers[i] = layer.getSubLayer(i);
                                cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(i), get_interactivity(i));
@@ -689,7 +737,6 @@
                             }
                         }); 
 
-                        $('#estadoBtn').html(estado[entidad-1]);
                         map.setZoom(6);
 
                         sql.getBounds('SELECT nacional_estados.* FROM nacional_estados where cve_ent = ' +entidad).done(function(bounds) {
@@ -700,6 +747,7 @@
                             Bounds.extend(northEast);
                             map.fitBounds(Bounds);
                         });
+
                     }
 
                     function get_interactivity(layer_id){
@@ -709,11 +757,16 @@
                             case 1: 
                                 return ["nom_mun","cve_ent","cve_mun"];
                             case 2:
-                                return ["clavegeo","entidad","distrito"];
+                                return ["entidad","municipio","distrito","seccion","nombre"];
                             case 3:
                                 return ["clavegeo","entidad","municipio","distrito","seccion"];
                             case 4:
-                                return ["entidad","municipio","distrito","seccion","nombre"];
+                                return ["clavegeo","entidad","distrito"];
+                            case 5:
+                                return ["cve_ageb","cve_ent","cve_mun"];
+                            default:
+                                return ["name", "description"];
+
                         }
                     }
 
@@ -813,13 +866,13 @@
                             case 'info':
                                 $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-communication-live-help"></i></p>');
                                 $('#right-sidebar-title').html('<h5 class="center grey-text">¡Bienvenido!</h5>');
-                                $('#right-sidebar-content').html('<p class="grey-text">Para comenzar a usar tu plataforma es muy sencillo.</p><p class="grey-text"><span class="brand-color-text"><i class="mdi-navigation-menu" style="font-size:20px;" ></i></span> este es tu botón de menú principal. Ahí encontrarás el botón para activar las capas de información - <span class="brand-color-text"><i class="mdi-maps-layers" style="font-size:20px;" ></i>Capas de información</span> - y el botón para activar los filtros de información - <span class="brand-color-text"><i class="mdi-content-filter-list" style="font-size:20px;" ></i>Controles de filtrado</span>.</p><br><p class="grey-text">Además, en la parte superior cuentas con botones que te permitirán cambiar la vista de despliegue para que puedas apreciarlo de manera geoespacial <span class="brand-color-text">Mapa</span>, o bien, a manera de tarjetas <span class="brand-color-text">Listas</span>. En ambos casos, hacer clic sobre la información que deseas te permitirá ver reportes gráficos sobre los estadísticos asociados, así como también editar los campos de información que desees.</p>');
+                                $('#right-sidebar-content').html('<p class="grey-text">Para comenzar a usar tu plataforma es muy sencillo.</p><p class="grey-text">Este es tu botón para activar las capas de información - <span class="brand-color-text"><i class="mdi-maps-layers" style="font-size:20px;" ></i>Capas de información</span>. Con él, activa las capas que desees y has clic para descubrir la información asociada.</p>');
                                 $('#right-sidebar-nav').show();
                                 return false;
                             case 'feature':
                                 map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
                                 switch(layerIndex){
-                                    case 2:
+                                    case 4:
                                         $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-crop-din"></i></p>');
                                         $('#right-sidebar-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
                                         sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
@@ -872,7 +925,7 @@
                                             $('#right-sidebar-content').html(content);
                                         });
                                         break;
-                                    case 4:
+                                    case 2:
                                         $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-filter-center-focus"></i></p>');
                                         $('#right-sidebar-title').html('<h5 class="center grey-text">Seccion: '+ data.seccion + ' Casilla: '+ data.nombre + '</h5>');
                                         sql.execute("SELECT * FROM nacional_ine_casillas_2012 where entidad = " + data.entidad + " and municipio = " + data.municipio + " and distrito = " + data.distrito + " and seccion = " + data.seccion + " and nombre = '" + data.nombre +"'").done(function(response) {

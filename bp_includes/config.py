@@ -19,6 +19,7 @@ config = {
     'webapp2_extras.jinja2': {'template_path': ['bp_admin/templates', 'bp_content/themes/%s/templates' % os.environ['theme']],
                               'environment_args': {'extensions': ['jinja2.ext.i18n']}},
     # application name
+    'app_id': 'one-smart-city-demo',
     'app_domain':  'http://demo.onesmart.city',
     'app_name':  unicode('Mi Ciudad Digital','utf-8'),
     'city_name':  unicode('Mi Ciudad','utf-8'),
@@ -28,7 +29,6 @@ config = {
     'city_splash_light':  '45',
     'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
     'city_splash_secondary_light':  '45',
-    'app_id': 'one-smart-city-demo',
     # application branding 
     'brand_logo': 'http://onesmart.city/default/materialize/images/_logo.png',
     'brand_favicon': 'http://onesmart.city/default/materialize/images/_logo.png',
