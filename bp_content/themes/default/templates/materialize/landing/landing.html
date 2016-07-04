@@ -262,10 +262,10 @@
 								<ul id="reports-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("landing-map") }}">Ver mapa</a>
 				                        </li>
-				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Hacer un reporte</a>
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a>
 				                        </li>
-				                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Crear reporte</a>
-				                        </li> -->
+				                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-report-new") }}">Hacer un reporte</a>
+				                        </li>
 					            </ul>
 					            <li class="nav-reports" {% if path == uri_for('materialize-report-new') or path == uri_for('landing-map') or path == uri_for('materialize-report-cardlist') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
 			                        	<a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="reports-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Reportes {% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
@@ -403,8 +403,8 @@
 			                            	<div class="collapsible-body">
 			                                    <ul>
 												  <li><a href="{{ uri_for("landing-map") }}">Ver mapa</a></li>
-												  <li><a href="{{ uri_for("materialize-report-cardlist") }}">Hacer un reporte</a></li>
-							                      <!-- <li><a href="{{ uri_for("materialize-report-new") }}">Crear reporte</a></li> -->
+												  <li><a href="{{ uri_for("materialize-report-cardlist") }}">Ver reportes</a></li>
+							                      <li><a href="{{ uri_for("materialize-report-new") }}">Hacer un reporte</a></li>
 			                                    </ul>
 			                                </div>
 			                            </li>

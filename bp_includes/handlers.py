@@ -4251,6 +4251,7 @@ class MaterializeTransparencyInitiativesHandler(BaseHandler):
         ####------------------------------------------------------------------####
 
         params['areas'] = models.Area.query()
+        params['count'] = models.Area.query().count()
         params['first_area'] = models.Area.query().get()
 
         

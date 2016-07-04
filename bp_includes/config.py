@@ -94,11 +94,12 @@ config = {
     'slack_webhook_url' : "https://hooks.slack.com/services/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",
     # cartodb + gmaps + cic integration
     'gmaps_apikey':'AIzaSyAwOfCLYHEH2BLQ5L4UILvrR9w4mRWhYRE', #get new from https://console.developers.google.com/apis/credentials/key?type=CLIENT_SIDE&project=<APP_ID>
+    # gmaps enabler apikey: https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend&keyType=CLIENT_SIDE&reusekey=true
     'map_center_lat': 25.66636979653562, 
     'map_center_lng': -100.3217862868164,
     'map_zoom': 12,
     'map_zoom_mobile': 10,
-    'cartodb_user': 'onesmartcity',
+    'cartodb_user': 'onesmartcity', #remember to import from onesmartcity.cartodb.com 4 tables with queried LIMIT 0, plus fix datatypes after import (e.g. public_reports pvt must be boolean)
     'cartodb_apikey': '2dd2b08fe09c23bc977b051a85b2d6d725a58a54', #get new from https://<cartodb_user>.cartodb.com/your_apps
     'cartodb_reports_table': 'public_reports',
     'cartodb_pois_table': 'public_pois',

@@ -5,112 +5,96 @@
    
 {% block page_css %}
     <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
-	<link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css" />
- 	<style>
-		.rating:hover{
-			color:#ffc107!important;
-			transform: scale(1.75);
-			-webkit-transform: scale(1.75);
-		}
+  <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css" />
+  <style>
+    .rating:hover{
+      color:#ffc107!important;
+      transform: scale(1.75);
+      -webkit-transform: scale(1.75);
+    }
 
-		.rating{
-			font-size: 30px;
-			transform: scale(1.5);
-			-webkit-transform: scale(1.5);
-		}
+    .rating{
+      font-size: 30px;
+      transform: scale(1.5);
+      -webkit-transform: scale(1.5);
+    }
 
-		.create{
-			transition-timing-function: ease-in;
-    		transition: border 0.3s;
-    		-webkit-transition-timing-function: ease-in;
-    		-webkit-transition: border 0.3s;
-		}
+    .create{
+      transition-timing-function: ease-in;
+        transition: border 0.3s;
+        -webkit-transition-timing-function: ease-in;
+        -webkit-transition: border 0.3s;
+    }
 
-		.create:hover{
-			border-bottom: 6px solid {{brand_color}};
-		}
+    .create:hover{
+      border-bottom: 6px solid {{brand_color}};
+    }
 
-		.chip {
-		    display: inline-block;
-		    height: 32px;
-		    font-size: 13px;
-		    font-weight: 500;
-		    color: rgba(0, 0, 0, 0.6);
-		    line-height: 32px;
-		    padding: 0 12px;
-		    border-radius: 16px;
-		    background-color: #e4e4e4;
-		}
+    .chip {
+        display: inline-block;
+        height: 32px;
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.6);
+        line-height: 32px;
+        padding: 0 12px;
+        border-radius: 16px;
+        background-color: #e4e4e4;
+    }
 
-		.hoverable:hover{
-        	box-shadow: #A9A6A6 0px 8px 23px 6px;
-        	transition: all .3s ease-out;
+    .hoverable:hover{
+          box-shadow: #A9A6A6 0px 8px 23px 6px;
+          transition: all .3s ease-out;
         }
 
         .hoverable{
-        	transition: all .3s ease-out;
-		}
- 	</style>
+          transition: all .3s ease-out;
+    }
+  </style>
 {% endblock %}
 
 {% block page_components %}
 {% endblock %}
 
 {% block body_content %}
-    <div id="map">				
-		</div>
-		<div class="hide-on-small-only" style="width:270px; position:fixed; top:12%; left:3%;">
-				<div>
-	            	<input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
-				</div>
+    <div id="map">        
+    </div>
+    <div class="hide-on-small-only" style="width:270px; position:fixed; top:12%; left:3%;">
+        <div>
+                <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
+        </div>
         <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
           <li>
             <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
               <div class="collapsible-body white">
-              	<p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="0" checked>
-                	<label for="0">Polígono territorial</label>
+                <p style="padding: 8px;">
+                  <input type="checkbox" class="filled-in layerControl" id="0" checked>
+                  <label for="0">Polígono territorial</label>
                 </p>
                 <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="1" checked>
-                	<label for="1">Transparencia de obras</label>
+                  <input type="checkbox" class="filled-in layerControl" id="1" checked>
+                  <label for="1">Transparencia de obras</label>
                 </p>
                 <div class="divider"></div>
                 <p style="padding: 8px;">
-                	Capas contextuales:
+                  Capas contextuales:
                 </p>
                 <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="2">
-                	<label for="2">Secciones electorales</label>
+                  <input type="checkbox" class="filled-in layerControl" id="2">
+                  <label for="2">Secciones electorales</label>
                 </p>
                 <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="3">
-                	<label for="3">Distritos electorales</label>
-                </p>
+                  <input type="checkbox" class="filled-in layerControl" id="3">
+                  <label for="3">Distritos electorales</label>
+                </p>               
                 <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="4">
-                	<label for="4">Unidades económicas</label>
-                </p>
-                <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="5">
-                	<label for="5">AGEBs urbanos - Vivienda</label>
-                </p>
-                <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="6">
-                	<label for="6">AGEBs urbanos - Población</label>
-                </p>
-                <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="7">
-                	<label for="7">AGEBs urbanos - Educación</label>
-                </p>
-                <p style="padding: 8px;">
-                	<input type="checkbox" class="filled-in layerControl" id="8">
-                	<label for="8">AGEBs urbanos - Economía</label>
+                  <input type="checkbox" class="filled-in layerControl" id="4">
+                  <label for="4">AGEBs urbanos</label>
                 </p>
                 <p style="padding: 8px;text-align: right; font-size: 11px;">
-                	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
-                	<br>
-                	<a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
+                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
+                  <br>
+                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
                 </p>
               </div>
           </li>
@@ -119,21 +103,21 @@
 {% endblock %}
 
 {% block page_scripts %}
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
-	<!-- <script src="/{{theme}}/materialize/js/cartodb.js"></script> -->
-	<script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+  <!-- <script src="/{{theme}}/materialize/js/cartodb.js"></script> -->
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
     <script type="text/javascript">
-    	// cartodb
-    	var city_user = '{{cartodb_user}}';
-    	var city_table_name = '{{cartodb_reports_table}}';
-    	var city_pois_table_name = '{{cartodb_pois_table}}';
-    	var city_mun_table_name = '{{cartodb_polygon_table}}';
-    	var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
-    	var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
-    	var city_polygon_name = '{{cartodb_polygon_name}}';
-		var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
-		var sublayers = [];
-		var _reportDict = {
+      // cartodb
+      var city_user = '{{cartodb_user}}';
+      var city_table_name = '{{cartodb_reports_table}}';
+      var city_pois_table_name = '{{cartodb_pois_table}}';
+      var city_mun_table_name = '{{cartodb_polygon_table}}';
+      var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
+      var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
+      var city_polygon_name = '{{cartodb_polygon_name}}';
+    var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+    var sublayers = [];
+    var _reportDict = {
                 "Administración Pública": {"categories": [
                   "Equipamiento",
                   "Estudios, proyectos y gastos indirectos",
@@ -316,61 +300,61 @@
                 "color":"F2008A"}
         };
         
-		/* MAPS RELATED */
-		var panorama, sv = new google.maps.StreetViewService();
-		var mapCenter = [{{lat}},{{lng}}] , map;
-		google.maps.event.addDomListener(window,'load', init);
+    /* MAPS RELATED */
+    var panorama, sv = new google.maps.StreetViewService();
+    var mapCenter = [{{lat}},{{lng}}] , map;
+    google.maps.event.addDomListener(window,'load', init);
         var query;                    
-		
-		function init(){
-			var mapOptions = {
-				center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-				zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
-				minZoom:5,
-				zoomControl: true,
-				zoomControlOptions: {
-					style: google.maps.ZoomControlStyle.SMALL,	
-					position: google.maps.ControlPosition.LEFT_BOTTOM	
-				},
-				mapTypeControl: false,
-				scrollwheel: false,
-				streetViewControl: true,
-				streetViewControlOptions: {
-					position: google.maps.ControlPosition.LEFT_BOTTOM	
-				},
-				panControl:false,
-				backgroundColor: 'rgb(249, 249, 249)',
-				rotateControl:true,
-				overviewMapControl:true
-			};
-			map = new google.maps.Map(document.getElementById('map'), mapOptions);
-			
-			google.maps.event.addDomListener(window, 'resize', function() {
+    
+    function init(){
+      var mapOptions = {
+        center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+        zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
+        minZoom:5,
+        zoomControl: true,
+        zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.SMALL,  
+          position: google.maps.ControlPosition.LEFT_BOTTOM 
+        },
+        mapTypeControl: false,
+        scrollwheel: false,
+        streetViewControl: true,
+        streetViewControlOptions: {
+          position: google.maps.ControlPosition.LEFT_BOTTOM 
+        },
+        panControl:false,
+        backgroundColor: 'rgb(249, 249, 249)',
+        rotateControl:true,
+        overviewMapControl:true
+      };
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+      
+      google.maps.event.addDomListener(window, 'resize', function() {
                 map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
             });
 
             var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
-			autocomplete_from.bindTo('bounds', map);
-			google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
-			    var place = autocomplete_from.getPlace();
-			    if (place.geometry.viewport) {
-			      map.fitBounds(place.geometry.viewport);
-			    }else{
-			      map.setCenter(place.geometry.location);
-			      map.setZoom(17);
-			    }
-			});	
+      autocomplete_from.bindTo('bounds', map);
+      google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+          var place = autocomplete_from.getPlace();
+          if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+          }else{
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);
+          }
+      }); 
 
             var centerControlDiv = document.createElement('div');
-			var centerControl = new CenterControl(centerControlDiv, map);
-			centerControlDiv.index = 1;
-			map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
+      var centerControl = new CenterControl(centerControlDiv, map);
+      centerControlDiv.index = 1;
+      map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
 
 
-			// CITY LAYERS
-			var city_query= "SELECT " + city_pois_table_name + ".* FROM " + city_pois_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_pois_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
+      // CITY LAYERS
+      var city_query= "SELECT " + city_pois_table_name + ".* FROM " + city_pois_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_pois_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
             var city_interactivity = ["cartodb_id","the_geom","the_geom_webmercator","description","name","identifier","amount","sector","category","exec_date","agency","fund_source","address_from","leader","image_url","kind","locality"];
-			layerSource = {
+      layerSource = {
                 user_name: city_user,
                 type: 'cartodb',
                 sublayers: [{
@@ -384,7 +368,7 @@
             };
             cartodb.createLayer(map,layerSource)
             .on('done', function(layer) {
-			    map.overlayMapTypes.setAt(0, layer);
+          map.overlayMapTypes.setAt(0, layer);
                 for (var i = 0; i < layer.getSubLayerCount(); i++) {
                    sublayers[i] = layer.getSubLayer(i);
                    console.log("Congrats, you added sublayer #" + i + "!");
@@ -401,40 +385,31 @@
 
 
             // MEXICO LAYERS
-			layerSource = {
+      layerSource = {
                 user_name: 'mexico',
                 type: 'cartodb',
                 sublayers: [{
                     sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_secciones_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nacional_ine_secciones_2012{line-color: #FFD528;line-width: 3;line-opacity: 1;}"
+                    cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF2C69;polygon-opacity: 0.05;line-color: #FF2C69;line-width: 1;line-opacity: 1;}"
                 },{
                     sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_distritos_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nacional_ine_distritos_2012{line-color: #FFAB1F;line-width: 3;line-opacity: 1;}"
+                    cartocss: "#nacional_ine_distritos_2012{polygon-fill: #0A79C9;polygon-opacity: 0.05;line-color: #0A79C9;line-width: 2;line-opacity: 1;}"
                 },{
-                    sql: "SELECT nl_denue.* FROM nl_denue, nacional_municipios WHERE ST_Intersects(nl_denue.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nl_denue{marker-fill: #FF7E15;marker-line-color: #FFFFFF; line-width: 3;line-opacity: 1;}"
-                },{
-                    sql: "SELECT nl_ageb_urb_viv.* FROM nl_ageb_urb_viv, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_viv.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nl_ageb_urb_viv{line-color: #69B1D8;line-width: 3;line-opacity: 1;}"
-                },{
-                    sql: "SELECT nl_ageb_urb_pob.* FROM nl_ageb_urb_pob, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_pob.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nl_ageb_urb_pob{line-color: #3A6698;line-width: 3;line-opacity: 1;}"
-                },{
-                    sql: "SELECT nl_ageb_urb_edu.* FROM nl_ageb_urb_edu, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_edu.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nl_ageb_urb_edu{line-color: #BA58DA;line-width: 3;line-opacity: 1;}"
-                },{
-                    sql: "SELECT nl_ageb_urb_eco.* FROM nl_ageb_urb_eco, nacional_municipios WHERE ST_Intersects(nl_ageb_urb_eco.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nl_ageb_urb_eco{line-color: #56107E;line-width: 3;line-opacity: 1;}"
+                    sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                    cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
                 }]
             };
             cartodb.createLayer(map,layerSource)
             .on('done', function(layer) {
-			    map.overlayMapTypes.setAt(1, layer);
+                map.overlayMapTypes.setAt(1, layer);
                 for (var i = 2, j =0; j < layer.getSubLayerCount(); i++, j++) {
                    sublayers[i] = layer.getSubLayer(j);
-                   cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(j));
+                   cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(i));
                    sublayers[i].hide(); //leave all turned off.
                    console.log("Congrats, you added sublayer #" + i + "!");
+                   sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
+                          // populateRightSidebar('feature', data, latlng, layerIndex);
+                   });
                 }
             }); 
 
@@ -443,164 +418,196 @@
                 if (this.checked) sublayers[parseInt(this.id)].show();
                 else sublayers[parseInt(this.id)].hide();
             });
-			   
-		}
+         
+    }
 
-		function get_interactivity(layer_id){
-			switch(layer_id){
-				case 0:
-					return ["the_geom","the_geom_webmercator","clavegeo","entidad","distrito","municipio","seccion","graproes","hogjef_f","hogjef_m","pcon_lim","pclim_men2","pclim_mot","pclim_aud","pclim_leng","pclim_men","pclim_vis","pcatolica","pder_ss","pder_imss","pder_iste","pder_istee","pder_segp","pdesocup","pea","pobfem","pobmas","pea_m","pnacent","pocupada","psinder","psin_lim","psin_relig","pobtot","vivtot","tvivhab","vph_pisodt","vph_autom","vph_pc","vph_drenaj","vph_excsa","vph_inter","vph_lavad","vph_telef","vph_c_elec","vph_c_serv","vph_radio","vph_refri","vph_cel","vph_tv",];
-				case 1:
-					return ["cartodb_id","the_geom","the_geom_webmercator","clavegeo","entidad","distrito"];
-				case 2:
-					return ["nom_vial","nombre_act","numero_ext","numero_int","per_ocu","raz_social","tipo_asent","tipo_vial","tipocencom","cartodb_id","id","nom_estab","codigo_act","edificio","nom_asent","nom_cencom","the_geom","num_local","cod_postal","cve_ent","entidad","cve_mun","municipio","cve_loc","localidad","ageb","manzana","telefono","correoelec","www","tipounieco","latitud","longitud","fecha_alta","created_at","the_geom_webmercator","updated_at"];
-				case 3:
-					return ["cvegeo","viv0","viv1","viv2","viv2_r","viv3","viv3_r","viv4_r","viv5_r","viv6","viv6_r","viv7","viv7_r","viv8","viv8_r","viv9","viv9_r","viv10","viv10_r","viv11","viv11_r","viv12","viv12_r","viv13","viv13_r","viv14","viv14_r","viv15","viv15_r","viv16","viv16_r","viv17","viv17_r","viv18","viv18_r","viv19","viv19_r","viv20","viv20_r","viv21","viv21_r","viv22","viv22_r","viv23","viv23_r","viv24","viv24_r","viv25","viv25_r","viv26","viv26_r","viv27","viv27_r","viv28","viv28_r","viv29","viv29_r","viv30","viv30_r","viv31","viv31_r","viv32","viv32_r","viv33","viv33_r","viv34","viv34_r","viv35","viv35_r","viv36","viv36_r","viv37","viv37_r","viv38","viv38_r","viv39","viv39_r","viv40","viv40_r","viv41","viv41_r","the_geom","cartodb_id","created_at","updated_at","the_geom_webmercator"];
-				case 4:
-					return ["the_geom","cartodb_id","cvegeo","pob1","pob2","pob2_r","pob3","pob3_r","pob4","pob4_r","pob5","pob5_r","pob6","pob6_r","pob7","pob7_r","pob8","pob8_r","pob9","pob9_r","pob10","pob10_r","pob11","pob11_r","pob12","pob12_r","pob13","pob13_r","pob14","pob14_r","pob15","pob15_r","pob16","pob16_r","pob17","pob17_r","pob18","pob18_r","pob19","pob19_r","pob20","pob20_r","pob21","pob21_r","pob22","pob22_r","pob23","pob23_r","pob24","pob24_r","pob25","pob25_r","pob26_r","pob27_r","pob28_r","pob29_r","pob30_r","pob31","pob31_r","pob32","pob32_r","pob33","pob33_r","pob34","pob34_r","pob35","pob35_r","pob36","pob36_r","pob37","pob37_r","pob38","pob38_r","pob39","pob39_r","pob40","pob40_r","pob41","pob41_r","pob42","pob42_r","pob43","pob43_r","pob44","pob44_r","pob45","pob45_r","pob46","pob46_r","pob47","pob47_r","pob48","pob48_r","pob49","pob49_r","pob50","pob50_r","pob51","pob51_r","pob52","pob52_r","pob53","pob53_r","pob54","pob54_r","pob55","pob55_r","pob56","pob56_r","pob57","pob57_r","pob58","pob58_r","pob59","pob59_r","pob60","pob60_r","pob61","pob61_r","pob62","pob62_r","pob63","pob63_r","pob64","pob64_r","pob65","pob65_r","pob66","pob66_r","pob67","pob67_r","pob68","pob68_r","pob69","pob69_r","pob70","pob70_r","pob71","pob71_r","pob72","pob72_r","pob73","pob73_r","pob74","pob74_r","pob75","pob75_r","pob76","pob76_r","pob77","pob77_r","pob78","pob78_r","pob79","pob79_r","pob80","pob80_r","pob81","pob81_r","oid_"];
-				case 5:
-					return ["cartodb_id","cvegeo","edu1","edu1_r","edu4","edu4_r","edu7","edu7_r","edu10","edu10_r","edu13","edu13_r","edu16","edu16_r","edu19","edu19_r","edu22","edu22_r","edu25","edu25_r","edu28","edu28_r","edu31","edu31_r","edu34","edu34_r","edu37","edu37_r","edu40","edu40_r","edu43","edu43_r","edu46","edu46_r","edu49_r","edu50_r","edu51_r","the_geom","created_at","updated_at","the_geom_webmercator"];
-				case 6:
-					return ["cvegeo","eco1","eco1_r","eco2","eco2_r","eco3","eco3_r","eco4","eco4_r","eco5","eco5_r","eco6","eco6_r","eco7","eco7_r","eco10","eco10_r","eco13","eco13_r","eco16","eco16_r","eco19","eco19_r","eco22","eco22_r","eco25","eco25_r","eco26","eco26_r","eco27","eco27_r","eco28","eco28_r","eco29","eco29_r","eco30","eco30_r","eco31","eco31_r","eco34","eco34_r","eco37","eco37_r","eco40","eco40_r","eco43","eco43_r","the_geom","created_at","cartodb_id","updated_at","the_geom_webmercator"];
-			}
-		}
+    function get_interactivity(layer_id){
+        switch(layer_id){
+            case 2:
+                return ["clavegeo","entidad","municipio","distrito","seccion"];
+            case 3:
+                return ["clavegeo","entidad","distrito"];
+            case 4:
+                return ["cve_ageb","cve_ent","cve_mun"];
+        }
+    }
 
-		function codeAddress(input) {
-	        var address, obj;	     				        
+    function populateRightSidebar(handle, data, latlng, layerIndex){
+        switch(handle){
+            case 'info':
+                $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-communication-live-help"></i></p>');
+                $('#right-sidebar-title').html('<h5 class="center grey-text">¡Bienvenido!</h5>');
+                $('#right-sidebar-content').html('<p class="grey-text">Para comenzar a usar tu plataforma es muy sencillo.</p><p class="grey-text"><span class="brand-color-text"><i class="mdi-navigation-menu" style="font-size:20px;" ></i></span> este es tu botón de menú principal. Ahí encontrarás el botón para activar las capas de información - <span class="brand-color-text"><i class="mdi-maps-layers" style="font-size:20px;" ></i>Capas de información</span> - y el botón para activar los filtros de información - <span class="brand-color-text"><i class="mdi-content-filter-list" style="font-size:20px;" ></i>Controles de filtrado</span>.</p><br><p class="grey-text">Además, en la parte superior cuentas con botones que te permitirán cambiar la vista de despliegue para que puedas apreciarlo de manera geoespacial <span class="brand-color-text">Mapa</span>, o bien, a manera de tarjetas <span class="brand-color-text">Listas</span>. En ambos casos, hacer clic sobre la información que deseas te permitirá ver reportes gráficos sobre los estadísticos asociados, así como también editar los campos de información que desees.</p>');
+                $('#right-sidebar-nav').show();
+                return false;
+            case 'feature':
+                map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
+                switch(layerIndex){
+                    case 2:
+                        $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-crop-din"></i></p>');
+                        $('#right-sidebar-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
+                        sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                            console.log('nacional_ine_distritos_2012', response);
+                            var content = '';
+                            /* 
+
+                                    AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                    Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                            */
+                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
+                            // content+='<p class=" grey-text">- - - </p>';
+                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
+                            // content+='<p class=" grey-text">- - - </p>';
+                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
+                            // content+='<p class=" grey-text">- - - </p>';
+                            $('#right-sidebar-content').html(content);
+                        });
+                        break;
+                }
+                $('#right-sidebar-nav').show();
+                $('#chatout-btn-hidden').click();
+                return false;
+
+        }
+    }
+
+    function codeAddress(input) {
+          var address, obj;                     
 
             address = document.getElementById(input).value;
             obj = { 'address': address };
-	        geocoder.geocode( obj, function(results, status) {
-	            if (status == google.maps.GeocoderStatus.OK) {
-	                
-	                if (typeof(input) === 'string') {
-	                    map.setCenter(results[0].geometry.location);
-	                    switch (results[0].geometry.location_type){
-	                        case 'ROOFTOP': map.setZoom(17); break;
-	                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
-	                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
-	                        case 'APPROXIMATE': map.setZoom(13); break;
-	                    }
-	                }else{
-	                    if (results[1]) {
-	                        document.getElementById(input).value = results[1].formatted_address;
-	                    } else {
-	                        console.log('No results found');
-	                    }
-	                }
-	            
-	            } else {
-	                console.log('Geocode was not successful for the following reason: ' + status);
-	            }
-	        });
-	    }
+          geocoder.geocode( obj, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                  
+                  if (typeof(input) === 'string') {
+                      map.setCenter(results[0].geometry.location);
+                      switch (results[0].geometry.location_type){
+                          case 'ROOFTOP': map.setZoom(17); break;
+                          case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                          case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                          case 'APPROXIMATE': map.setZoom(13); break;
+                      }
+                  }else{
+                      if (results[1]) {
+                          document.getElementById(input).value = results[1].formatted_address;
+                      } else {
+                          console.log('No results found');
+                      }
+                  }
+              
+              } else {
+                  console.log('Geocode was not successful for the following reason: ' + status);
+              }
+          });
+      }
 
-		function CenterControl(controlDiv, map) {
-			// Set CSS for the control border.
-			var controlUI = document.createElement('div');
-			controlUI.style.backgroundColor = '#fff';
-			controlUI.style.border = '2px solid #fff';
-			controlUI.style.borderRadius = '3px';
-			controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-			controlUI.style.cursor = 'pointer';
-			controlUI.style.marginBottom = '2px';
-			controlUI.style.marginLeft = '10px';
-			controlUI.style.textAlign = 'center';
-			controlUI.title = 'Click to locate you.';
-			controlDiv.appendChild(controlUI);
+    function CenterControl(controlDiv, map) {
+      // Set CSS for the control border.
+      var controlUI = document.createElement('div');
+      controlUI.style.backgroundColor = '#fff';
+      controlUI.style.border = '2px solid #fff';
+      controlUI.style.borderRadius = '3px';
+      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlUI.style.cursor = 'pointer';
+      controlUI.style.marginBottom = '2px';
+      controlUI.style.marginLeft = '10px';
+      controlUI.style.textAlign = 'center';
+      controlUI.title = 'Click to locate you.';
+      controlDiv.appendChild(controlUI);
 
-			// Set CSS for the control interior.
-			var controlText = document.createElement('div');
-			controlText.style.color = 'rgb(25,25,25)';
-			controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-			controlText.style.fontSize = '16px';
-			controlText.style.lineHeight = '15px';
-			controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
-			controlUI.appendChild(controlText);
+      // Set CSS for the control interior.
+      var controlText = document.createElement('div');
+      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+      controlText.style.fontSize = '16px';
+      controlText.style.lineHeight = '15px';
+      controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+      controlUI.appendChild(controlText);
 
-			// Setup the click event listeners: simply set the map to Chicago.
-			controlUI.addEventListener('click', function() {
-				$('#main-preloader').show();
-				if (navigator.geolocation) {
-			        navigator.geolocation.getCurrentPosition(mapGoPosition);
-			    } else {
-	            	Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
-					$('#main-preloader').hide();
-			    }
-			});
-		}
+      // Setup the click event listeners: simply set the map to Chicago.
+      controlUI.addEventListener('click', function() {
+        $('#main-preloader').show();
+        if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(mapGoPosition);
+          } else {
+                Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+          $('#main-preloader').hide();
+          }
+      });
+    }
 
-		function mapGoPosition(position) {
-		    map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-		    map.setZoom(16);
-			$('#main-preloader').hide();
-		}
+    function mapGoPosition(position) {
+        map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+        map.setZoom(16);
+      $('#main-preloader').hide();
+    }
 
-		function getUrlVars(){
-		    var vars = [], hash;
-		    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-		    for(var i = 0; i < hashes.length; i++)
-		    {
-		        hash = hashes[i].split('=');
-		        vars.push(hash[0]);
-		        vars[hash[0]] = hash[1];
-		        if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
-		    }
-		    return vars;
-		}
-			
+    function getUrlVars(){
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+            if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
+        }
+        return vars;
+    }
+      
         function addCommas(val) {
-		  	while (/(\d+)(\d{3})/.test(val.toString())) {
-		  		var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
-		  	}
-		  	return val;
-		}			
+        while (/(\d+)(\d{3})/.test(val.toString())) {
+          var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+        }
+        return val;
+    }     
 
-		function createTileStyle(tStyle, table) {
-	        var mOverlap;
-	        var close;
-	        var tileStyle = "#" + table + "{";
-	        switch (tStyle) {
-	            case 'normal':
-	                mOverlap = true;
-	                closeStyle = "}";
-	                break;
-	            case 'cluster':
-	                mOverlap = false;
-	                closeStyle = "}";
-	                break;
-	            case 'heat':
-	                return "#" + table + "{marker-fill:{{brand_secondary_color}};marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
-	            case 'intensity':
-	                return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";                         
-	            case 'bubble':
-	                mOverlap = false;
-	                closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
-	                break;
-	            default:
-	                mOverlap = true;
-	                closeStyle = "}";
-	                break;
-	        }
-	        
-	        tileStyle += "marker-file: url(http://com.cartodb.users-assets.production.s3.amazonaws.com/maki-icons/marker-18.svg);marker-fill-opacity: 1.0;marker-line-color: {{brand_secondary_color}};marker-line-width: 2;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 30;marker-fill: {{brand_tertiary_color}};marker-allow-overlap:" + mOverlap +";";
-	    
-	        for (var x in _reportDict){
-	            tileStyle += '[sector="'+x+'"] {marker-file: url('+ _reportDict[x].icon_url +');marker-fill: #'+_reportDict[x].color+';marker-width: 30;}';    
-	              
-	        }
-	        
-	        tileStyle += closeStyle;
-	        
-	        if (tStyle == "bubble") {
-	            for (var j = upperVotes.length - 1; j >= 0; j--) {
-	                tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
-	            }
-	        }
-	        return tileStyle;
-	    }	
-	</script>
-	<script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
+    function createTileStyle(tStyle, table) {
+          var mOverlap;
+          var close;
+          var tileStyle = "#" + table + "{";
+          switch (tStyle) {
+              case 'normal':
+                  mOverlap = true;
+                  closeStyle = "}";
+                  break;
+              case 'cluster':
+                  mOverlap = false;
+                  closeStyle = "}";
+                  break;
+              case 'heat':
+                  return "#" + table + "{marker-fill:{{brand_secondary_color}};marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
+              case 'intensity':
+                  return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";                         
+              case 'bubble':
+                  mOverlap = false;
+                  closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
+                  break;
+              default:
+                  mOverlap = true;
+                  closeStyle = "}";
+                  break;
+          }
+          
+          tileStyle += "marker-file: url(http://com.cartodb.users-assets.production.s3.amazonaws.com/maki-icons/marker-18.svg);marker-fill-opacity: 1.0;marker-line-color: {{brand_secondary_color}};marker-line-width: 2;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 30;marker-fill: {{brand_tertiary_color}};marker-allow-overlap:" + mOverlap +";";
+      
+          for (var x in _reportDict){
+              tileStyle += '[sector="'+x+'"] {marker-file: url('+ _reportDict[x].icon_url +');marker-fill: #'+_reportDict[x].color+';marker-width: 30;}';    
+                
+          }
+          
+          tileStyle += closeStyle;
+          
+          if (tStyle == "bubble") {
+              for (var j = upperVotes.length - 1; j >= 0; j--) {
+                  tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
+              }
+          }
+          return tileStyle;
+      } 
+  </script>
+  <script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
             <div class="cartodb-popup header blue v2">
               <a href="#close" class="cartodb-popup-close-button close">x</a>
               <div class="cartodb-popup-header" style="background: -webkit-linear-gradient(top,{{brand_color}},{{brand_secondary_color}});">                
