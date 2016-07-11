@@ -4,7 +4,7 @@
 {% block title %}<title>{{app_name}} » Conoce tu ciudad</title>{% endblock %}
    
 {% block page_css %}
-    <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+  <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
   <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css" />
   <style>
     .rating:hover{
@@ -59,9 +59,9 @@
 {% block body_content %}
     <div id="map">        
     </div>
-    <div class="hide-on-small-only" style="width:270px; position:fixed; top:12%; left:3%;">
+    <div style="width:270px; position:fixed; top:12%; left:3%;">
         <div>
-                <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
+          <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
         </div>
         <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
           <li>
@@ -69,7 +69,7 @@
               <div class="collapsible-body white">
                 <p style="padding: 8px;">
                   <input type="checkbox" class="filled-in layerControl" id="0" checked>
-                  <label for="0">Polígono territorial</label>
+                  <label for="0">Polígono municipal</label>
                 </p>
                 <p style="padding: 8px;">
                   <input type="checkbox" class="filled-in layerControl" id="1" checked>
@@ -81,12 +81,12 @@
                 </p>
                 <p style="padding: 8px;">
                   <input type="checkbox" class="filled-in layerControl" id="2">
-                  <label for="2">Secciones electorales</label>
-                </p>
+                  <label for="2">Distritos electorales</label>
+                </p>  
                 <p style="padding: 8px;">
                   <input type="checkbox" class="filled-in layerControl" id="3">
-                  <label for="3">Distritos electorales</label>
-                </p>               
+                  <label for="3">Secciones electorales</label>
+                </p>
                 <p style="padding: 8px;">
                   <input type="checkbox" class="filled-in layerControl" id="4">
                   <label for="4">AGEBs urbanos</label>
@@ -94,7 +94,7 @@
                 <p style="padding: 8px;text-align: right; font-size: 11px;">
                   <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
                   <br>
-                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
+                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores INE</a>
                 </p>
               </div>
           </li>
@@ -102,10 +102,35 @@
     </div> 
 {% endblock %}
 
+{% block right_sidebar %}
+    <!-- Right sidebar -->
+    <a id="chatout-btn-hidden" href="#" data-activates="chat-out" class="grey-text chat-collapse" style="display:none"><i class="large mdi-communication-live-help"></i></a>
+    <aside id="right-sidebar-nav">
+        <ul id="chat-out" class="side-nav rightside-navigation" style="margin-top:65px;max-height:90%;padding:6px;overflow: scroll; font-family: roboto-light!important;">
+            <li class="li-hover">
+                <a href="#" data-activates="chat-out" class="chat-close-collapse right" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
+            </li>
+            <li class="li-hover">
+                <div id="right-sidebar-logo" class="container row" style="margin-top:40px;">
+                </div>
+            </li>
+            <li class="li-hover">
+                <div id="right-sidebar-title" class="container row" style="margin-top:40px;">
+                </div>
+            </li>
+            <li class="li-hover">
+                <div id="right-sidebar-content" class="container row" style="margin-top:40px;text-align: justify;">                                            
+                </div>
+            </li>
+        </ul>
+    </aside>
+{% endblock %}
+
 {% block page_scripts %}
   <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
   <!-- <script src="/{{theme}}/materialize/js/cartodb.js"></script> -->
   <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    <script src="/{{ theme }}/materialize/js/data.js"></script>
     <script type="text/javascript">
       // cartodb
       var city_user = '{{cartodb_user}}';
@@ -115,9 +140,10 @@
       var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
       var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
       var city_polygon_name = '{{cartodb_polygon_name}}';
-    var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
-    var sublayers = [];
-    var _reportDict = {
+      var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+      var mexico_sql = new cartodb.SQL({ user: 'mexico' });
+      var sublayers = [];
+      var _reportDict = {
                 "Administración Pública": {"categories": [
                   "Equipamiento",
                   "Estudios, proyectos y gastos indirectos",
@@ -298,252 +324,294 @@
                 ],
                 "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/favourite1.svg",
                 "color":"F2008A"}
-        };
-        
-    /* MAPS RELATED */
-    var panorama, sv = new google.maps.StreetViewService();
-    var mapCenter = [{{lat}},{{lng}}] , map;
-    google.maps.event.addDomListener(window,'load', init);
-        var query;                    
-    
-    function init(){
-      var mapOptions = {
-        center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-        zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
-        minZoom:5,
-        zoomControl: true,
-        zoomControlOptions: {
-          style: google.maps.ZoomControlStyle.SMALL,  
-          position: google.maps.ControlPosition.LEFT_BOTTOM 
-        },
-        mapTypeControl: false,
-        scrollwheel: false,
-        streetViewControl: true,
-        streetViewControlOptions: {
-          position: google.maps.ControlPosition.LEFT_BOTTOM 
-        },
-        panControl:false,
-        backgroundColor: 'rgb(249, 249, 249)',
-        rotateControl:true,
-        overviewMapControl:true
       };
-      map = new google.maps.Map(document.getElementById('map'), mapOptions);
       
-      google.maps.event.addDomListener(window, 'resize', function() {
-                map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
-            });
+        
+      /* MAPS RELATED */
+      var panorama, sv = new google.maps.StreetViewService();
+      var mapCenter = [{{lat}},{{lng}}] , map;
+      google.maps.event.addDomListener(window,'load', init);
+          var query;                    
+      
+      function init(){
+        var mapOptions = {
+          center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+          zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
+          minZoom:5,
+          zoomControl: true,
+          zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL,  
+            position: google.maps.ControlPosition.LEFT_BOTTOM 
+          },
+          mapTypeControl: false,
+          scrollwheel: false,
+          streetViewControl: true,
+          streetViewControlOptions: {
+            position: google.maps.ControlPosition.LEFT_BOTTOM 
+          },
+          panControl:false,
+          backgroundColor: 'rgb(249, 249, 249)',
+          rotateControl:true,
+          overviewMapControl:true
+        };
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        
+        google.maps.event.addDomListener(window, 'resize', function() {
+                  map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+              });
 
-            var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
-      autocomplete_from.bindTo('bounds', map);
-      google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
-          var place = autocomplete_from.getPlace();
-          if (place.geometry.viewport) {
-            map.fitBounds(place.geometry.viewport);
-          }else{
-            map.setCenter(place.geometry.location);
-            map.setZoom(17);
-          }
-      }); 
+              var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
+        autocomplete_from.bindTo('bounds', map);
+        google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+            var place = autocomplete_from.getPlace();
+            if (place.geometry.viewport) {
+              map.fitBounds(place.geometry.viewport);
+            }else{
+              map.setCenter(place.geometry.location);
+              map.setZoom(17);
+            }
+        }); 
 
-            var centerControlDiv = document.createElement('div');
-      var centerControl = new CenterControl(centerControlDiv, map);
-      centerControlDiv.index = 1;
-      map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
-
-
-      // CITY LAYERS
-      var city_query= "SELECT " + city_pois_table_name + ".* FROM " + city_pois_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_pois_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
-            var city_interactivity = ["cartodb_id","the_geom","the_geom_webmercator","description","name","identifier","amount","sector","category","exec_date","agency","fund_source","address_from","leader","image_url","kind","locality"];
-      layerSource = {
-                user_name: city_user,
-                type: 'cartodb',
-                sublayers: [{
-                    sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
-                    cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
-                },{
-                    sql: city_query,
-                    cartocss: createTileStyle('normal',city_pois_table_name),
-                    interactivity: city_interactivity
-                }]
-            };
-            cartodb.createLayer(map,layerSource)
-            .on('done', function(layer) {
-          map.overlayMapTypes.setAt(0, layer);
-                for (var i = 0; i < layer.getSubLayerCount(); i++) {
-                   sublayers[i] = layer.getSubLayer(i);
-                   console.log("Congrats, you added sublayer #" + i + "!");
-                }
-                sublayers[1].infowindow.set('template', $('#infowindow_'+city_pois_table_name).html());
-                cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
-                    infowindowTemplate: $('#infowindow_'+city_pois_table_name).html()
-                });
-                sublayers[1].setInteraction(true);                                 
-                sublayers[1].on('featureClick', function(e, latlng, pos, data) {
-                      //do whatever
-                }); 
-            }); 
+        var centerControlDiv = document.createElement('div');
+        var centerControl = new CenterControl(centerControlDiv, map);
+        centerControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
 
 
-            // MEXICO LAYERS
-      layerSource = {
-                user_name: 'mexico',
-                type: 'cartodb',
-                sublayers: [{
-                    sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_secciones_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF2C69;polygon-opacity: 0.05;line-color: #FF2C69;line-width: 1;line-opacity: 1;}"
-                },{
-                    sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_distritos_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nacional_ine_distritos_2012{polygon-fill: #0A79C9;polygon-opacity: 0.05;line-color: #0A79C9;line-width: 2;line-opacity: 1;}"
-                },{
-                    sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                    cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
-                }]
-            };
-            cartodb.createLayer(map,layerSource)
-            .on('done', function(layer) {
-                map.overlayMapTypes.setAt(1, layer);
-                for (var i = 2, j =0; j < layer.getSubLayerCount(); i++, j++) {
-                   sublayers[i] = layer.getSubLayer(j);
-                   cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(i));
-                   sublayers[i].hide(); //leave all turned off.
-                   console.log("Congrats, you added sublayer #" + i + "!");
-                   sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
-                          // populateRightSidebar('feature', data, latlng, layerIndex);
-                   });
-                }
-            }); 
-
-
-            $('.layerControl').change(function() {
-                if (this.checked) sublayers[parseInt(this.id)].show();
-                else sublayers[parseInt(this.id)].hide();
-            });
-         
-    }
-
-    function get_interactivity(layer_id){
-        switch(layer_id){
-            case 2:
-                return ["clavegeo","entidad","municipio","distrito","seccion"];
-            case 3:
-                return ["clavegeo","entidad","distrito"];
-            case 4:
-                return ["cve_ageb","cve_ent","cve_mun"];
-        }
-    }
-
-    function populateRightSidebar(handle, data, latlng, layerIndex){
-        switch(handle){
-            case 'info':
-                $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-communication-live-help"></i></p>');
-                $('#right-sidebar-title').html('<h5 class="center grey-text">¡Bienvenido!</h5>');
-                $('#right-sidebar-content').html('<p class="grey-text">Para comenzar a usar tu plataforma es muy sencillo.</p><p class="grey-text"><span class="brand-color-text"><i class="mdi-navigation-menu" style="font-size:20px;" ></i></span> este es tu botón de menú principal. Ahí encontrarás el botón para activar las capas de información - <span class="brand-color-text"><i class="mdi-maps-layers" style="font-size:20px;" ></i>Capas de información</span> - y el botón para activar los filtros de información - <span class="brand-color-text"><i class="mdi-content-filter-list" style="font-size:20px;" ></i>Controles de filtrado</span>.</p><br><p class="grey-text">Además, en la parte superior cuentas con botones que te permitirán cambiar la vista de despliegue para que puedas apreciarlo de manera geoespacial <span class="brand-color-text">Mapa</span>, o bien, a manera de tarjetas <span class="brand-color-text">Listas</span>. En ambos casos, hacer clic sobre la información que deseas te permitirá ver reportes gráficos sobre los estadísticos asociados, así como también editar los campos de información que desees.</p>');
-                $('#right-sidebar-nav').show();
-                return false;
-            case 'feature':
-                map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
-                switch(layerIndex){
-                    case 2:
-                        $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-crop-din"></i></p>');
-                        $('#right-sidebar-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
-                        sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
-                            console.log('nacional_ine_distritos_2012', response);
-                            var content = '';
-                            /* 
-
-                                    AJAX ASYNC GET FROM DIFFERENT TABLES 
-                                    Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
-
-                            */
-                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
-                            // content+='<p class=" grey-text">- - - </p>';
-                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
-                            // content+='<p class=" grey-text">- - - </p>';
-                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
-                            // content+='<p class=" grey-text">- - - </p>';
-                            $('#right-sidebar-content').html(content);
-                        });
-                        break;
-                }
-                $('#right-sidebar-nav').show();
-                $('#chatout-btn-hidden').click();
-                return false;
-
-        }
-    }
-
-    function codeAddress(input) {
-          var address, obj;                     
-
-            address = document.getElementById(input).value;
-            obj = { 'address': address };
-          geocoder.geocode( obj, function(results, status) {
-              if (status == google.maps.GeocoderStatus.OK) {
-                  
-                  if (typeof(input) === 'string') {
-                      map.setCenter(results[0].geometry.location);
-                      switch (results[0].geometry.location_type){
-                          case 'ROOFTOP': map.setZoom(17); break;
-                          case 'RANGE_INTERPOLATED': map.setZoom(16); break;
-                          case 'GEOMETRIC_CENTER': map.setZoom(15); break;
-                          case 'APPROXIMATE': map.setZoom(13); break;
-                      }
-                  }else{
-                      if (results[1]) {
-                          document.getElementById(input).value = results[1].formatted_address;
-                      } else {
-                          console.log('No results found');
-                      }
+        // CITY LAYERS
+        var city_query= "SELECT " + city_pois_table_name + ".* FROM " + city_pois_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_pois_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
+              var city_interactivity = ["cartodb_id","the_geom","the_geom_webmercator","description","name","identifier","amount","sector","category","exec_date","agency","fund_source","address_from","leader","image_url","kind","locality"];
+        layerSource = {
+                  user_name: city_user,
+                  type: 'cartodb',
+                  sublayers: [{
+                      sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
+                      cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+                  },{
+                      sql: city_query,
+                      cartocss: createTileStyle('normal',city_pois_table_name),
+                      interactivity: city_interactivity
+                  }]
+              };
+              cartodb.createLayer(map,layerSource)
+              .on('done', function(layer) {
+            map.overlayMapTypes.setAt(0, layer);
+                  for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                     sublayers[i] = layer.getSubLayer(i);
+                     console.log("Congrats, you added sublayer #" + i + "!");
                   }
-              
-              } else {
-                  console.log('Geocode was not successful for the following reason: ' + status);
-              }
-          });
+                  sublayers[1].infowindow.set('template', $('#infowindow_'+city_pois_table_name).html());
+                  cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
+                      infowindowTemplate: $('#infowindow_'+city_pois_table_name).html()
+                  });
+                  sublayers[1].setInteraction(true);                                 
+                  sublayers[1].on('featureClick', function(e, latlng, pos, data) {
+                        //do whatever
+                  }); 
+              }); 
+
+
+              // MEXICO LAYERS
+        layerSource = {
+                  user_name: 'mexico',
+                  type: 'cartodb',
+                  sublayers: [{
+                      sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_distritos_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                      cartocss: "#nacional_ine_distritos_2012{polygon-fill: #0A79C9;polygon-opacity: 0.05;line-color: #0A79C9;line-width: 2;line-opacity: 1;}"
+                  },{
+                      sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_secciones_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                      cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF2C69;polygon-opacity: 0.05;line-color: #FF2C69;line-width: 1;line-opacity: 1;}"
+                  },{
+                      sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                      cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
+                  }]
+              };
+              cartodb.createLayer(map,layerSource)
+              .on('done', function(layer) {
+                  map.overlayMapTypes.setAt(1, layer);
+                  for (var i = 2, j =0; j < layer.getSubLayerCount(); i++, j++) {
+                     sublayers[i] = layer.getSubLayer(j);
+                     cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(i));
+                     sublayers[i].hide(); //leave all turned off.
+                     console.log("Congrats, you added sublayer #" + i + "!");
+                     sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
+                        console.log("populating sidebar for layerIndex: " + layerIndex);
+                        populateRightSidebar('feature', data, latlng, layerIndex);
+                     });
+                  }
+              }); 
+
+
+              $('.layerControl').change(function() {
+                  if (this.checked) sublayers[parseInt(this.id)].show();
+                  else sublayers[parseInt(this.id)].hide();
+              });          
       }
 
-    function CenterControl(controlDiv, map) {
-      // Set CSS for the control border.
-      var controlUI = document.createElement('div');
-      controlUI.style.backgroundColor = '#fff';
-      controlUI.style.border = '2px solid #fff';
-      controlUI.style.borderRadius = '3px';
-      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-      controlUI.style.cursor = 'pointer';
-      controlUI.style.marginBottom = '2px';
-      controlUI.style.marginLeft = '10px';
-      controlUI.style.textAlign = 'center';
-      controlUI.title = 'Click to locate you.';
-      controlDiv.appendChild(controlUI);
-
-      // Set CSS for the control interior.
-      var controlText = document.createElement('div');
-      controlText.style.color = 'rgb(25,25,25)';
-      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-      controlText.style.fontSize = '16px';
-      controlText.style.lineHeight = '15px';
-      controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
-      controlUI.appendChild(controlText);
-
-      // Setup the click event listeners: simply set the map to Chicago.
-      controlUI.addEventListener('click', function() {
-        $('#main-preloader').show();
-        if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(mapGoPosition);
-          } else {
-                Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
-          $('#main-preloader').hide();
+      function get_interactivity(layer_id){
+          switch(layer_id){
+              case 2:
+                  return ["clavegeo","entidad","distrito"];
+              case 3:
+                  return ["clavegeo","entidad","municipio","distrito","seccion"];
+              case 4:
+                  return ["cve_ageb","cve_ent","cve_mun"];
           }
-      });
-    }
+      }
 
-    function mapGoPosition(position) {
+      var ageb_response, ageb_content;
+      function populateRightSidebar(handle, data, latlng, layerIndex){
+          switch(handle){
+              case 'info':
+                  $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-communication-live-help"></i></p>');
+                  $('#right-sidebar-title').html('<h5 class="center grey-text">¡Bienvenido!</h5>');
+                  $('#right-sidebar-content').html('<p class="grey-text">Para comenzar a usar tu plataforma es muy sencillo.</p><p class="grey-text"><span class="brand-color-text"><i class="mdi-navigation-menu" style="font-size:20px;" ></i></span> este es tu botón de menú principal. Ahí encontrarás el botón para activar las capas de información - <span class="brand-color-text"><i class="mdi-maps-layers" style="font-size:20px;" ></i>Capas de información</span> - y el botón para activar los filtros de información - <span class="brand-color-text"><i class="mdi-content-filter-list" style="font-size:20px;" ></i>Controles de filtrado</span>.</p><br><p class="grey-text">Además, en la parte superior cuentas con botones que te permitirán cambiar la vista de despliegue para que puedas apreciarlo de manera geoespacial <span class="brand-color-text">Mapa</span>, o bien, a manera de tarjetas <span class="brand-color-text">Listas</span>. En ambos casos, hacer clic sobre la información que deseas te permitirá ver reportes gráficos sobre los estadísticos asociados, así como también editar los campos de información que desees.</p>');
+                  $('#right-sidebar-nav').show();
+                  return false;
+              case 'feature':
+                  map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
+                  switch(layerIndex){
+                      case 0:
+                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-crop-din"></i></p>');
+                          $('#right-sidebar-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
+                          mexico_sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                              console.log('nacional_ine_distritos_2012', response);
+                              var content = '';
+                              /* 
+
+                                      AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                      Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                              */
+                              $('#right-sidebar-content').html(content);
+                          });
+                          break;
+                      case 1:
+                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-flip"></i></p>');
+                          $('#right-sidebar-title').html('<h5 class="center grey-text">Seccion: '+ data.seccion + '</h5>');
+
+                          mexico_sql.execute("SELECT * FROM nacional_ine_secciones_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                              console.log('nacional_ine_secciones_2012', response);
+                              response = response.rows[0];
+                              var content ='<p class=" grey-text">Esta sección pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
+                              /* 
+
+                                      AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                      Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                              */
+                              content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+                              content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
+                              content+='<p class=" grey-text">El '+response.hogjef_f+'% de los hogares los lideraba una mujer.</p>';
+                              content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos.</p>';
+                              var lim = response.pclim_aud + response.pclim_leng + response.pclim_men + response.pclim_men2 + response.pclim_mot + response.pclim_vis + response.pcon_lim;
+                              content+='<p class=" grey-text">Existían '+lim+' personas discapacitadas y aproximadamente '+response.psinder+' personas no contaban con servicios de salud.</p>';
+                              var peac = Math.round(response.pocupada/response.pea*100) || 0;
+                              content+='<p class=" grey-text">Con una tasa de empleo del '+peac+'%.</p>';
+                              content+='<p class=" grey-text">En temas de bienes por vivienda, '+response.vph_autom+' tienen automóvil, '+response.vph_c_elec+' acceso a red eléctrica, '+response.vph_cel+' tienen teléfono celular, '+response.vph_pc+' cuentan con una computadora, '+response.vph_inter+' tienen acceso a internet, '+response.vph_pisodt+' cuentan con piso, '+response.vph_tv+' tienen televisión, '+response.vph_radio+' tienen radio, '+response.vph_refri+' tienen refrigerador y '+response.vph_lavad+' tienen lavadora.</p>';
+
+                              $('#right-sidebar-content').html(content);
+                          });
+                          break;
+                      case 2:
+                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-filter-center-focus"></i></p>');
+                          $('#right-sidebar-title').html('<h5 class="center grey-text">AGEB: '+ data.cve_ageb + '</h5>');
+                          mexico_sql.execute("SELECT * FROM nacional_ageb_data where cve_ent = " + data.cve_ent + " and cve_mun = " + data.cve_mun + " and cve_ageb = '" + data.cve_ageb + "'").done(function(response) {
+                              console.log('nacional_ageb_data', response);
+                              ageb_response = response.rows[0];
+                              ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                              agebArr.forEach(getAGEB);
+
+                              $('#right-sidebar-content').html(ageb_content);
+
+                          });
+                          break;
+                  }
+                  if (!$('#chatout-btn-hidden').is(":visible")){
+                    $('#right-sidebar-nav').show();
+                    $('#chatout-btn-hidden').click();
+                  }
+                  return false;
+          }
+      }
+
+      function getAGEB(item,index){
+        ageb_content += '<p class="grey-text">' + inegiDict[item] + ': <span style="font-family:roboto-black;">'+ ageb_response[item] +'</span></p>'
+      }
+
+      function codeAddress(input) {
+            var address, obj;                     
+
+              address = document.getElementById(input).value;
+              obj = { 'address': address };
+            geocoder.geocode( obj, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    
+                    if (typeof(input) === 'string') {
+                        map.setCenter(results[0].geometry.location);
+                        switch (results[0].geometry.location_type){
+                            case 'ROOFTOP': map.setZoom(17); break;
+                            case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                            case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                            case 'APPROXIMATE': map.setZoom(13); break;
+                        }
+                    }else{
+                        if (results[1]) {
+                            document.getElementById(input).value = results[1].formatted_address;
+                        } else {
+                            console.log('No results found');
+                        }
+                    }
+                
+                } else {
+                    console.log('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+      }
+
+      function CenterControl(controlDiv, map) {
+        // Set CSS for the control border.
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = '#fff';
+        controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginBottom = '2px';
+        controlUI.style.marginLeft = '10px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Click to locate you.';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior.
+        var controlText = document.createElement('div');
+        controlText.style.color = 'rgb(25,25,25)';
+        controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+        controlText.style.fontSize = '16px';
+        controlText.style.lineHeight = '15px';
+        controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listeners: simply set the map to Chicago.
+        controlUI.addEventListener('click', function() {
+          $('#main-preloader').show();
+          if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mapGoPosition);
+            } else {
+                  Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+            $('#main-preloader').hide();
+            }
+        });
+      }
+
+      function mapGoPosition(position) {
         map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
         map.setZoom(16);
-      $('#main-preloader').hide();
-    }
+        $('#main-preloader').hide();
+      }
 
-    function getUrlVars(){
+      function getUrlVars(){
         var vars = [], hash;
         var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
         for(var i = 0; i < hashes.length; i++)
@@ -554,16 +622,16 @@
             if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
         }
         return vars;
-    }
-      
-        function addCommas(val) {
+      }
+        
+      function addCommas(val) {
         while (/(\d+)(\d{3})/.test(val.toString())) {
           var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
         }
         return val;
-    }     
+      }     
 
-    function createTileStyle(tStyle, table) {
+      function createTileStyle(tStyle, table) {
           var mOverlap;
           var close;
           var tileStyle = "#" + table + "{";

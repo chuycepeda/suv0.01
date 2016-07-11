@@ -161,7 +161,7 @@
                 }
 
                 label{
-                    font-size:12px!important;
+                    font-family:roboto-light!important;
                 }
                 
                 .collapsible-body p{
@@ -286,98 +286,6 @@
         {% block main %}
             <!-- START MAIN -->
             <div class="row" style="height: 100%; width:100%;">
-                {% block sidebar_left %}
-                    <!-- START LEFT SIDEBAR NAV-->
-                    <!-- <aside id="left-sidebar-nav">
-                        <ul id="left-out" class="side-nav leftside-navigation">
-                            <li> <div class="divider"></div> </li>
-                            <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px;">
-                                <ul class="collapsible collapsible-accordion">
-                                    <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-maps-layers grey-text left"></i>Capas de información</a>
-                                       <div class="collapsible-body white" style="line-height: 10px;">
-                                            <label>
-                                            <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">INEGI - <span class="cyan-text">descriptores</span></a>
-                                            </label>
-                                            <p>
-                                                <input type="checkbox" class="filled-in layerControl" id="0">
-                                                <label for="0">Polígono estatal</label>
-                                            </p>
-                                            <p>
-                                                <input type="checkbox" class="filled-in layerControl" id="1">
-                                                <label for="1">Polígonos municipales</label>
-                                            </p>
-                                            <div class="divider"></div>
-                                            <label>
-                                            <a style="margin-left: 18px;" href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank">INE - <span class="cyan-text">descriptores</span></a>
-                                            </label>
-                                            <p>
-                                                <input type="checkbox" class="filled-in layerControl" id="2">
-                                                <label for="2">Distritos electorales</label>
-                                            </p>
-                                            <p>
-                                                <input type="checkbox" class="filled-in layerControl" id="3">
-                                                <label for="3">Secciones electorales</label>
-                                            </p><p>
-                                                <input type="checkbox" class="filled-in layerControl" id="4">
-                                                <label for="4">Casillas electorales</label>
-                                            </p>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
-                            <li class="no-padding" style="margin-bottom: 15px; margin-top: 15px; display:none;">
-                                <ul class="collapsible collapsible-accordion">
-                                    <li class="bold"><a class="collapsible-header waves-effect"><i class="mdi-content-filter-list grey-text left"></i>Controles de filtrado</a>
-                                       <div class="collapsible-body white" style="line-height: 10px; margin-top: 4px;">
-                                                <ul class="collapsible collapsible-accordion">
-                                                    <li>
-                                                        <a id='estadoBtn' class='collapsible-header btn brand-color truncate' style="color:white!important;width: 215px;margin-left: 10px;">---</a>
-                                                        <ul class="collapsible-body" style="margin-left: 10px;width: 215px;">
-                                                              <li style="padding-left: 12px;" onclick="createLayers(1)">Aguascalientes</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(2)">Baja California</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(3)">Baja California Sur</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(4)">Campeche</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(8)">Chihuahua</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(7)">Chiapas</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(5)">Coahuila</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(6)">Colima</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(9)">Distrito Federal</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(10)">Durango</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(11)">Guanajuato</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(12)">Guerrero</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(13)">Hidalgo</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(14)">Jalisco</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(15)">Mexico</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(16)">Michoacan</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(17)">Morelos</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(18)">Nayarit</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(19)">Nuevo Leon</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(20)">Oaxaca</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(21)">Puebla</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(22)">Queretaro</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(23)">Quintana Roo</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(24)">San Luis Potosi</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(25)">Sinaloa</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(26)">Sonora</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(27)">Tabasco</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(28)">Tamaulipas</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(29)">Tlaxcala</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(30)">Veracruz</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(31)">Yucatan</li>
-                                                              <li style="padding-left: 12px;" onclick="createLayers(32)">Zacatecas</li>
-                                                        </ul>  
-                                                    </li>  
-                                                </ul>            
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="li-hover"><div class="divider" style="  padding: 1px;"></div></li>
-                        </ul>
-                    </aside> -->
-                    <!-- END LEFT SIDEBAR NAV-->
-                {% endblock %}
 
                 {% block content %}
                     <div id="map" style="height:93vh; width:100%;"> </div>
@@ -391,7 +299,7 @@
                               <div class="collapsible-body white">
                                 <p style="padding: 8px;">
                                   <input type="checkbox" class="filled-in layerControl" id="0" checked>
-                                  <label for="0">Polígono territorial</label>
+                                  <label for="0">Polígono estatal</label>
                                 </p>
                                 <p style="padding: 8px;">
                                   <input type="checkbox" class="filled-in layerControl" id="1">
@@ -416,7 +324,7 @@
                                 <p style="padding: 8px;text-align: right; font-size: 11px;">
                                   <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
                                   <br>
-                                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores IFE</a>
+                                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores INE</a>
                                 </p>
                               </div>
                           </li>
@@ -616,6 +524,7 @@
 
                 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
                 <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+                <script src="/{{ theme }}/materialize/js/data.js"></script>
                 <script type="text/javascript">
                     // cartodb
                     var sublayers = [];
@@ -624,11 +533,10 @@
                     var city_pois_table_name = '{{cartodb_pois_table}}';
                     var city_mun_table_name = '{{cartodb_polygon_table}}';
                     var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
-                    var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
                     var city_polygon_name = '{{cartodb_polygon_name}}';
-                    var cartodb_user = 'mexico', cartodb_entidad = {{cartodb_polygon_cve_ent}};
+                    var city_cve_ent = {{cartodb_polygon_cve_ent}};
+                    var cartodb_user = 'mexico';
                     var sql = new cartodb.SQL({ user: cartodb_user });
-                    var estado = ['Aguascalientes','Baja California','Baja California Sur','Campeche','Chihuahua','Chiapas','Coahuila','Colima','Distrito Federal','Durango','Guerrero','Guanajuato','Hidalgo','Jalisco','Mexico','Michoacan','Morelos','Nayarit','Nuevo Leon','Oaxaca','Puebla','Queretaro','Quintana Roo','Sinaloa','San Luis Potosi','Sonora','Tabasco','Tamaulipas','Tlaxcala','Veracruz','Yucatan','Zacatecas'];
 
                     /* MAPS RELATED */
                     var panorama, sv = new google.maps.StreetViewService();
@@ -691,17 +599,17 @@
                     }
 
                     function createLayers(entidad){
-                        entidad = entidad || cartodb_entidad;
+                        entidad = entidad || city_cve_ent;
                         // MEXICO LAYERS
                         layerSource = {
                             user_name: cartodb_user,
                             type: 'cartodb',
                             sublayers: [{
                                 sql: "SELECT nacional_estados.* FROM nacional_estados where cve_ent = "+entidad,
-                                cartocss: "#nacional_estados{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+                                cartocss: "#nacional_estados{polygon-fill: {{brand_secondary_color}};polygon-opacity: 0.05;line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
                             },{
                                 sql: "SELECT nacional_municipios.* FROM nacional_municipios where cve_ent = "+entidad,
-                                cartocss: "#nacional_municipios{line-color: {{brand_color}};line-width: 2;line-opacity: 1;}"
+                                cartocss: "#nacional_municipios{polygon-fill: {{brand_secondary_color}};polygon-opacity: 0.05;line-color: {{brand_color}};line-width: 2;line-opacity: 1;}"
                             },{
                                 sql: "SELECT nacional_ine_casillas_2012.* FROM nacional_ine_casillas_2012 where entidad = "+entidad,
                                 cartocss: "#nacional_ine_casillas_2012{marker-fill: #A53ED5;marker-line-color: #FFFFFF; line-width: 8;line-opacity: 1;marker-allow-overlap:true; marker-comp-op:color-burn;}"
@@ -712,7 +620,7 @@
                                 sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012 where entidad = "+entidad,
                                 cartocss: "#nacional_ine_distritos_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 2;line-opacity: 1;}"
                             },{
-                                sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                                sql: "SELECT nacional_ageb.* FROM nacional_ageb WHERE cve_ent = " + entidad,
                                 cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
                             }]
                         };
@@ -725,13 +633,12 @@
                                sublayers[i].setInteraction(true);   
                                if (i!=0){
                                     sublayers[i].hide(); //leave all turned off except state.
+                                    $('#'+i).attr('checked', false);                                    
                                } 
-                               if (i>1){
-                                    $('#'+i).attr('checked', false);
-                                    sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
-                                          populateRightSidebar('feature', data, latlng, layerIndex);
-                                    });
-                               }
+                               sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
+                                    console.log("populating sidebar for layerIndex: " + layerIndex);
+                                    populateRightSidebar('feature', data, latlng, layerIndex);
+                               });
                                $('#0').attr('checked', true);
                                console.log("Congrats, you added sublayer #" + i + "!");
                             }
@@ -861,6 +768,7 @@
                         return val;
                     }     
 
+                    var ageb_response, ageb_content;
                     function populateRightSidebar(handle, data, latlng, layerIndex){
                         switch(handle){
                             case 'info':
@@ -872,24 +780,26 @@
                             case 'feature':
                                 map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
                                 switch(layerIndex){
+                                    case 5:
+                                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-filter-center-focus"></i></p>');
+                                          $('#right-sidebar-title').html('<h5 class="center grey-text">AGEB: '+ data.cve_ageb + '</h5>');
+                                          sql.execute("SELECT * FROM nacional_ageb_data where cve_ent = " + data.cve_ent + " and cve_mun = " + data.cve_mun + " and cve_ageb = '" + data.cve_ageb + "'").done(function(response) {
+                                              console.log('nacional_ageb_data', response);
+                                              ageb_response = response.rows[0];
+                                              ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                                              agebArr.forEach(getAGEB);
+
+                                              $('#right-sidebar-content').html(ageb_content);
+
+                                          });
+                                          break;
                                     case 4:
                                         $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-crop-din"></i></p>');
                                         $('#right-sidebar-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
                                         sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
                                             console.log('nacional_ine_distritos_2012', response);
                                             var content = '';
-                                            /* 
-
-                                                    AJAX ASYNC GET FROM DIFFERENT TABLES 
-                                                    Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
-
-                                            */
-                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
-                                            // content+='<p class=" grey-text">- - - </p>';
-                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
-                                            // content+='<p class=" grey-text">- - - </p>';
-                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
-                                            // content+='<p class=" grey-text">- - - </p>';
                                             $('#right-sidebar-content').html(content);
                                         });
                                         break;
@@ -901,18 +811,6 @@
                                             console.log('nacional_ine_secciones_2012', response);
                                             response = response.rows[0];
                                             var content ='<p class=" grey-text">Esta sección pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
-                                            /* 
-
-                                                    AJAX ASYNC GET FROM DIFFERENT TABLES 
-                                                    Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
-
-                                            */
-                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
-                                            // content+='<p class=" grey-text">- - - </p>';
-                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
-                                            // content+='<p class=" grey-text">- - - </p>';
-                                            // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
-                                            // content+='<p class=" grey-text">- - - </p>';
                                             content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
                                             content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
                                             content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos. Y '+response.hogjef_f+' son liderados por una mujer.</p>';
@@ -936,18 +834,6 @@
                                                 console.log('nacional_ine_secciones_2012', _response);
                                                 var response = _response.rows[0];
                                                 content +='<p class=" grey-text">Esta casilla pertenece a la sección '+response.seccion+', que pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
-                                                /* 
-
-                                                        AJAX ASYNC GET FROM DIFFERENT TABLES 
-                                                        Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
-
-                                                */
-                                                // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Diputados</h6>';
-                                                // content+='<p class=" grey-text">- - - </p>';
-                                                // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Senadores</h6>';
-                                                // content+='<p class=" grey-text">- - - </p>';
-                                                // content+='<h6 class=" grey-text" style="font-weight:bolder;">Resultados oficiales - Presidencia</h6>';
-                                                // content+='<p class=" grey-text">- - - </p>';
                                                 content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
                                                 content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
                                                 content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos. Y '+response.hogjef_f+' son liderados por una mujer.</p>';
@@ -962,6 +848,35 @@
 
                                         });
                                         break;
+                                    case 1:
+                                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-filter-center-focus"></i></p>');
+                                          $('#right-sidebar-title').html('<h5 class="center grey-text">Municipio: '+ data.cve_mun + '</h5>');
+                                          sql.execute("SELECT * FROM nacional_municipal_data where cve_ent = " + data.cve_ent + " and cve_mun = " + data.cve_mun).done(function(response) {
+                                              console.log('nacional_municipal_data', response);
+                                              ageb_response = response.rows[0];
+                                              ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                                              agebArr.forEach(getAGEB);
+
+                                              $('#right-sidebar-content').html(ageb_content);
+
+                                          });
+                                          break;
+                                    case 0:
+                                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-filter-center-focus"></i></p>');
+                                          $('#right-sidebar-title').html('<h5 class="center grey-text">Estado: '+ data.cve_ent + '</h5>');
+                                          sql.execute("SELECT * FROM nacional_estatal_data where cve_ent = " + data.cve_ent).done(function(response) {
+                                              console.log('nacional_estatal_data', response);
+                                              ageb_response = response.rows[0];
+                                              ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                                              agebArr.forEach(getAGEB);
+
+                                              $('#right-sidebar-content').html(ageb_content);
+
+                                          });
+                                          break;
+                                    
                                 }
                                 $('#right-sidebar-nav').show();
                                 $('#chatout-btn-hidden').click();
@@ -969,6 +884,9 @@
 
                         }
                     }
+                    function getAGEB(item,index){
+                        ageb_content += '<p class="grey-text">' + inegiDict[item] + ': <span style="font-family:roboto-black;">'+ ageb_response[item] +'</span></p>'
+                      }
 
                 </script>
 
