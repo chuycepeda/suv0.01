@@ -79,11 +79,11 @@ class AdminSendEmailListHandler(BaseHandler):
             else:
                 for recipents in to.split(','):
                     sendEmail (recipents.strip(),subject,body)
-            self.add_message('Emails sent !', 'success')
+            self.add_message('Correos enviados !', 'success')
         
         except Exception as e:
             logging.info('error in form: %s' % e)
-            self.add_message('Something went wrong.', 'danger')
+            self.add_message('Algo ha ocurrido mal, por favor intenta de nuevo.', 'danger')
             pass
         
         return self.get()
