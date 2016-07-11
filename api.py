@@ -25,9 +25,9 @@ package = 'Hello'
 
 api = endpoints.api(name='onesmartcity', version='v1')
 
-api_key = "86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA"
+API_KEY = "86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA"
 
-MAX_SIZE = 3000
+MAX_SIZE = 1000
 
 class KeyPage(messages.Message):
   api_key = messages.StringField(1)
@@ -35,6 +35,11 @@ class KeyPage(messages.Message):
 
 KEYPAGE_RESOURCE = endpoints.ResourceContainer(
       KeyPage)
+
+GET_KEYPAGE_RESOURCE = endpoints.ResourceContainer(
+      message_types.VoidMessage,
+      api_key=messages.StringField(1),
+      page=messages.IntegerField(2))
 
 class PostResponse(messages.Message):
   status = messages.StringField(1)
@@ -261,7 +266,7 @@ class MainApi(remote.Service):
                       path='users', http_method='POST',
                       name='users.list')
     def users_list(self, request):
-      if request.api_key == api_key:
+      if request.api_key == API_KEY:
         page = request.page if request.page is not None else 0
         return getUsers(int(page))
 
@@ -270,7 +275,7 @@ class MainApi(remote.Service):
                       path='reports', http_method='POST',
                       name='reports.list')
     def reports_list(self, request):
-      if request.api_key == api_key:
+      if request.api_key == API_KEY:
         page = request.page if request.page is not None else 0
         return getReports(int(page))
 
@@ -279,9 +284,24 @@ class MainApi(remote.Service):
                       path='media', http_method='POST',
                       name='reports.media')
     def reports_media(self, request):
-      if request.api_key == api_key:
+      if request.api_key == API_KEY:
         page = request.page if request.page is not None else 0
         return getReportsMedias(int(page))
+
+    #EXPORTS
+    @endpoints.method(GET_KEYPAGE_RESOURCE, UsersCollection,
+                      path='export/users/{api_key}/{page}', http_method='GET',
+                      name='export.users')
+    def export_users_list(self, request):
+      if request.api_key == API_KEY:
+        return getUsers(int(request.page))
+
+    @endpoints.method(GET_KEYPAGE_RESOURCE, ReportsCollection,
+                      path='export/reports/{api_key}/{page}', http_method='GET',
+                      name='export.reports')
+    def export_reports_list(self, request):
+      if request.api_key == API_KEY:
+        return getReports(int(request.page))
 
 
 #Endpoints yaml pointer

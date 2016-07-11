@@ -10,14 +10,22 @@ import os
 
 config = {
 
-    # webapp2 sessions
-    'webapp2_extras.sessions': {'secret_key': '_PUT_KEY_HERE_YOUR_SECRET_KEY_'},
-    # webapp2 authentication
-    'webapp2_extras.auth': {'user_model': 'bp_includes.models.User',
-                            'cookie_name': 'session_name'},
     # jinja2 templates
     'webapp2_extras.jinja2': {'template_path': ['bp_admin/templates', 'bp_content/themes/%s/templates' % os.environ['theme']],
                               'environment_args': {'extensions': ['jinja2.ext.i18n']}},
+   
+
+    # --- --- --- start editing --- --- ---
+   
+    # webapp2 sessions
+    'webapp2_extras.sessions': {'secret_key': 'u5nqp4ceg5rijeb15qf30vqia81nadqt'},
+    # webapp2 authentication
+    'webapp2_extras.auth': {'user_model': 'bp_includes.models.User',
+                            'cookie_name': 'session_name'}, 
+    # Password AES Encryption Parameters
+    # aes_key must be only 16 (*AES-128*), 24 (*AES-192*), or 32 (*AES-256*) bytes (characters) long.
+    'aes_key': "A1BED038702434F8358F799990208234",
+    'salt': "634907BCD5EC4F29BE5DE8ED97637366B2C18E42E14EEEBA3925E9E0485FCCC9480BFC6CB2D8E4E8A9464F3C10ADFA0DB97451C8DB1033A6C2D6C4231D0645EF",
     # application name
     'app_id': 'one-smart-city-demo',
     'app_domain':  'http://demo.onesmart.city',
@@ -29,6 +37,7 @@ config = {
     'city_splash_light':  '45',
     'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
     'city_splash_secondary_light':  '45',
+    'contact_recipient': "uno@onesmart.city",      
     # application branding 
     'brand_logo': 'http://onesmart.city/default/materialize/images/_logo.png',
     'brand_favicon': 'http://onesmart.city/default/materialize/images/_logo.png',
@@ -49,25 +58,26 @@ config = {
             ¡Felicidades por ser parte! Comienza a contribuir hacia la mejora de Mi Ciudad.
         </p>
     """,'utf-8'),
-    'meta_tags_code': """
+    'meta_tags_code': unicode("""
+
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <meta name="description" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine." />
-            <meta name="keywords" content="mboilerplate, appengine, materialize, boilerplate, webcomponents, google cloud, gae, onesmartcity, onesmart, gobierno digital, smart city, reporte ciudadano, transparencia, mexico"/>
+            <meta name="description" content="Ciudad Digital es una iniciativa del municipio para tener un gobierno más abierto." />
+            <meta name="keywords" content="onesmartcity, onesmart, gobierno digital, smart city, reporte ciudadano, transparencia, gobierno, gobierno abierto"/>
             <meta property="og:site_name" content="demo.onesmart.city"/>
-            <meta property="og:title" content="OneSmart.City"/>
+            <meta property="og:title" content="Demo.OneSmart.City"/>
             <meta property="og:type" content="website"/>
-            <meta property="og:description" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine."/>
+            <meta property="og:description" content="Ciudad Digital es una iniciativa del municipio para tener un gobierno más abierto."/>
             <meta property="og:url" content="http://demo.onesmart.city"/>
-            <meta property="og:image" content="http://demo.onesmart.city/{{theme}}/materialize/images/landing/250H.png"/>
+            <meta property="og:image" content="http://onesmart.city/default/materialize/images/landing/splashmeta.png"/>
             <meta name="twitter:card" content="summary_large_image">
-            <meta name="twitter:site" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine.">
-            <meta name="twitter:creator" content="@chuycepeda">
-            <meta name="twitter:title" content="OneSmart.City">
-            <meta name="twitter:description" content="This an amazing, magical, materialized app built with Mboilerplate for the Google AppEngine.">
-            <meta name="twitter:image" content="http://demo.onesmart.city/{{theme}}/materialize/images/landing/250H.png">
+            <meta name="twitter:site" content="Ciudad Digital es una iniciativa del municipio para tener un gobierno más abierto.">
+            <meta name="twitter:creator" content="@chuycepeda,@chuydb">
+            <meta name="twitter:title" content="Demo.OneSmart.City">
+            <meta name="twitter:description" content="Ciudad Digital es una iniciativa del municipio para tener un gobierno más abierto.">
+            <meta name="twitter:image" content="http://onesmart.city/default/materialize/images/landing/splashmeta.png">
             <meta property="twitter:url" content="http://demo.onesmart.city"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",
+            <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",'utf-8'),
     # application services
     'has_reports': True,
     'has_petitions': True,
@@ -105,20 +115,28 @@ config = {
     'cartodb_pois_table': 'public_pois',
     'cartodb_category_dict_table': 'cat_dict',
     'cartodb_polygon_table': 'mun_poly',
-    'cartodb_polygon_name': 'MTY',
+    'cartodb_polygon_name': 'MTY', # related to 'name' @ cartodb_polygon_table
     'cartodb_polygon_full_name': 'Monterrey', # related to nom_mun @ mexico.cartodb.com
     'cartodb_polygon_cve_ent': 19,          # related to cve_ent @ mexico.cartodb.com
     'cartodb_cic_user': 'cicadmin',
     'cartodb_cic_reports_table': 'nl_public',
     # application endpoints
-    'users_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/users/86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA/0/?fields=items",
-    'reports_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/reports/86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA/0/?fields=items",
+    'users_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/export/users/86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA/0/?fields=items",
+    'reports_export_url': "https://one-smart-city-demo.appspot.com/_ah/api/onesmartcity/v1/export/reports/86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA/0/?fields=items",
+    #sendgrid integration
+    'sendgrid_priority' : False,
+    'sendgrid_login' : '',
+    'sendgrid_passkey' : '',
+
+
+    # --- --- --- stop editing --- --- ---
+
+
     # the default language code for the application.
     # should match whatever language the site uses when i18n is disabled
     'app_lang': 'en',
     # contact page email settings
     'contact_sender': '',
-    'contact_recipient': "uno@onesmart.city",      
     # jinja2 base layout template
     'base_layout': '/materialize/users/base.html',
     'landing_layout': '/materialize/landing/base.html',
@@ -156,12 +174,6 @@ config = {
     # Google App Engine Settings must be set to Authentication Options: Federated Login
     'enable_federated_login': True,
 
-    # Password AES Encryption Parameters
-    # aes_key must be only 16 (*AES-128*), 24 (*AES-192*), or 32 (*AES-256*) bytes (characters) long.
-    'aes_key': "A1BED038702434F8358F799990208234",
-    'salt': "634907BCD5EC4F29BE5DE8ED97637366B2C18E42E14EEEBA3925E9E0485FCCC9480BFC6CB2D8E4E8A9464F3C10ADFA0DB97451C8DB1033A6C2D6C4231D0645EF",
-    
-
     # fellas' list
     'developers': (
         ('chuycepeda', 'chuycepeda@gmail.com'),
@@ -174,11 +186,7 @@ config = {
     'log_email': True,
 
     # If true, it will write in datastore a log of every visit
-    'log_visit': True,    
-    
-    #sendgrid integration
-    'sendgrid_login' : '',
-    'sendgrid_passkey' : '',
+    'log_visit': True, 
 
     #zendesk integration
     'zendesk_imports': '',
