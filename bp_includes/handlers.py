@@ -4791,6 +4791,86 @@ class MaterializeAreasHandler(BaseHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))
 
+class MaterializeUserBudgetHandler(BaseHandler):
+    def get(self):
+        if not self.has_transparency:
+            self.abort(403)
+        reportDict = {
+            "name": "US_Budget",
+            "children": [       
+                {
+                    "name": "DEF",
+                    "label": "Infraestructura",
+                    "size": 20,
+                    "color": "#cc3333"
+                },{
+                    "name": "SCI",
+                    "label": "Ciencia e investigación",
+                    "size": 4.5,
+                    "color": "#ea4c88"
+                },
+                {
+                    "name": "EDU",
+                    "label": "Educación",
+                    "size": 3.5,
+                    "color": "#663399"
+                },
+                {
+                    "name": "ENE",
+                    "label": "Energía renovable",
+                    "size": 1.5,
+                    "color": "#0066cc"
+                },
+                {
+                    "name": "TRA",
+                    "label": "Transporte",
+                    "size": 2.5,
+                    "color": "#669900"
+                },
+                {
+                    "name": "CRD",
+                    "label": "Desarrollo social",
+                    "size": 1.5,
+                    "color": "#ffcc33"
+                },
+                {
+                    "name": "AGR",
+                    "label": "Reforestación",
+                    "size": 1.5,
+                    "color": "#ff9900"
+                },
+                {
+                    "name": "OTH",
+                    "label": "Otros",
+                    "size": 8,
+                    "color": "#996633"
+                },
+                {
+                    "name": "HEL",
+                    "label": "Servicios de salud",
+                    "size": 22,
+                    "color": "#663300"
+                },
+                {
+                    "name": "INC",
+                    "label": "Empleo",
+                    "size": 15,
+                    "color": "#353535"
+                },
+                {
+                    "name": "SOC",
+                    "label": "Seguridad social",
+                    "size": 20,
+                    "color": "#999999"
+                }
+            ]
+        }
+        
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+ 
+
 # ------------------------------------------------------------------------------------------- #
 """                                     REST API HANDLERS                                   """
 # ------------------------------------------------------------------------------------------- #

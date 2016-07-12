@@ -606,10 +606,10 @@
                             type: 'cartodb',
                             sublayers: [{
                                 sql: "SELECT nacional_estados.* FROM nacional_estados where cve_ent = "+entidad,
-                                cartocss: "#nacional_estados{polygon-fill: {{brand_secondary_color}};polygon-opacity: 0.05;line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+                                cartocss: "#nacional_estados{polygon-fill: {{brand_color}};polygon-opacity: 0.05;line-color: {{brand_color}};line-width: 3;line-opacity: 1;}"
                             },{
                                 sql: "SELECT nacional_municipios.* FROM nacional_municipios where cve_ent = "+entidad,
-                                cartocss: "#nacional_municipios{polygon-fill: {{brand_secondary_color}};polygon-opacity: 0.05;line-color: {{brand_color}};line-width: 2;line-opacity: 1;}"
+                                cartocss: "#nacional_municipios{polygon-fill: {{brand_color}};polygon-opacity: 0.05;line-color: {{brand_color}};line-width: 2;line-opacity: 1;}"
                             },{
                                 sql: "SELECT nacional_ine_casillas_2012.* FROM nacional_ine_casillas_2012 where entidad = "+entidad,
                                 cartocss: "#nacional_ine_casillas_2012{marker-fill: #A53ED5;marker-line-color: #FFFFFF; line-width: 8;line-opacity: 1;marker-allow-overlap:true; marker-comp-op:color-burn;}"
