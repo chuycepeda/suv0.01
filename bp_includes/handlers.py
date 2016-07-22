@@ -3644,6 +3644,8 @@ class MaterializeReportCardlistHandler(BaseHandler):
         
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
         
         return self.render_template('materialize/users/sections/reports_list.html', **params)
         
