@@ -175,6 +175,22 @@
                     color: {{brand_color}}!important;
                 }
 
+                .breadcrumb:last-child {
+                    color: {{brand_color}}!important;
+                    font-family: roboto-thin;
+                    list-style: none;
+                }
+                
+                .breadcrumb li a {
+                    color: {{brand_secondary_color}};
+                    font-family: roboto-light;
+                }
+
+                .breadcrumb{
+                    height: 15px;
+                    margin-top: 15px;
+                }
+
             </style>
             {% block page_css %}{% endblock %}
             {% if user_id %}

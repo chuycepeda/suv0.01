@@ -22,23 +22,27 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-            <h5 class="breadcrumbs-title">Comentarios en el muro de Facebook 
-            <button class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;" id="loginbtn" {% if facebook_appID %} onclick="myFacebookLogin()" >Inicia sesión con Facebook {% else %}>Facebook sin configuración {% endif %}</button>
-            <div id="main-preloader" class="preloader-wrapper small active right" style="display:none;">
-              <div class="spinner-layer spinner-green-only">
-                <div class="circle-clipper left">
-                  <div class="circle"></div>
-                </div>
-                <div class="gap-patch">
-                  <div class="circle"></div>
-                </div>
-                <div class="circle-clipper right">
-                  <div class="circle"></div>
-                </div>
-              </div>
-            </div>
-            <a id="new-rep" href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;display:none;" target="_blank">Crear reporte<i class="mdi-content-add right"></i></a>
-            </h5>
+              <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active">
+                Comentarios en el muro de Facebook 
+                  <button class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;" id="loginbtn" {% if facebook_appID %} onclick="myFacebookLogin()" >Inicia sesión con Facebook {% else %}>Facebook sin configuración {% endif %}</button>
+                  <div id="main-preloader" class="preloader-wrapper small active right" style="display:none;">
+                    <div class="spinner-layer spinner-green-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div>
+                      <div class="gap-patch">
+                        <div class="circle"></div>
+                      </div>
+                      <div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <a id="new-rep" href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;display:none;" target="_blank">Crear reporte<i class="mdi-content-add right"></i></a>
+                </li>
+              </ol>
+            
           </div>
         </div>
     </div>
