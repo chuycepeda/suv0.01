@@ -61,7 +61,23 @@
                       <label for="opsadminemail" class="center-align">Email del Operador</label>
                     </div>
                   </div>
-                  <div class="row container" style="padding:25px;     padding-left: 55px!important;">
+                  <div class="row margin">
+                    <div class="input-field col s12 l6">
+                        <!-- Dropdown Trigger -->
+                        <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;margin-left:5px;"></i>
+                        <input type="hidden" id="opsadminrole" name="opsadminrole" value="{{operator.role}}">
+                        <label for="opsadminrole" class="center-align" style="margin-left:45px;">Rol:</label><br><br>
+                        <a data-hover="false" id="rolebtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='roledd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{operator.has_role()}}</a>
+                        <!-- Dropdown Structure -->
+                        <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                          <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
+                          <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
+                          <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
+                          <li> <a class="brand-color-text" href="#" onclick="fillDd('admin', this);return false;">Acceso universal</a></li>
+                        </ul>                
+                    </div>
+                  </div>
+                  <div class="row container" style="padding:25px;padding-left: 55px!important; margin-top:40px;">
                     <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_ops_form" >Guardar Cambios
                       <i class="mdi-content-send right"></i>
                     </button>  
@@ -128,7 +144,7 @@
           <div class="modal-content">
               <div class="row">
                 <div class="input-field col s12 center">
-                  <p class="center login-form-text">¿Seguro que deseas eliminar al Operador de Enlace?</p>
+                  <p class="center login-form-text">¿Seguro que deseas eliminar al Operador?</p>
                 </div>
               <div class="row">
                 <div class="input-field col s12">
@@ -159,6 +175,11 @@
         document.getElementById("form_operator").submit();
       }
     });
+
+    function fillDd(val, elem){
+        $('#opsadminrole').val(val);
+        $('#rolebtn').html(elem.innerHTML);
+    }
 
     document.querySelector('#submit_ops_form_delete').addEventListener('click', function() { 
             document.getElementById("delete").value = "confirmed_deletion";

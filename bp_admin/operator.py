@@ -606,121 +606,6 @@ class AdminAreaEditHandler(BaseHandler):
         params['nickname'] = g_users.get_current_user().email().lower()
         return self.render_template('transparency/admin_area_edit.html', **params)
 
-"""
-    GEOM
-"""
-class AdminGeomHandler(BaseHandler):
-    def get(self):
-        params = {}
-        params['nickname'] = g_users.get_current_user().email().lower()
-        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
-        params['group_color'] = self.app.config.get('brand_secondary_color')
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-
-        return self.render_template('transparency/admin_geom.html', **params)
-    
-    def post(self):
-        name = self.request.get('name').strip()
-        sector = self.request.get('catGroup')
-        category = self.request.get('subCat')
-        kind = self.request.get('kind')
-        locality = self.request.get('locality')
-        leader = self.request.get('lead')
-        agency = self.request.get('agency')
-        fund_source = self.request.get('source')
-        amount = self.request.get('amount')
-        description = self.request.get('description')
-        identifier = self.request.get('identifier')
-        exec_date = self.request.get('exec_date')
-        address_from = self.request.get('address_from')
-        address_from_coord = self.request.get('address_from_coord').split(',')
-        image_url = self.request.get('poi_image')
-
-        from google.appengine.api import urlfetch
-        import urllib
-        api_key = self.app.config.get('cartodb_apikey')
-        cartodb_domain = self.app.config.get('cartodb_user')
-        cartodb_table = self.app.config.get('cartodb_pois_table')
-        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, api_key)).encode('utf8')
-        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-        try:
-            t = urlfetch.fetch(url)
-            logging.info("t: %s" % t.content)
-            message = _(messages.saving_success)
-            self.add_message(message, 'success')
-        except Exception as e:
-            logging.info('error in cartodb INSERT request: %s' % e)
-            message = _(messages.saving_error)
-            self.add_message(message, 'danger')
-            pass
-
-        return self.get()  
-
-class AdminGeomEditHandler(BaseHandler):
-    def get(self):
-        params = {}
-        params['nickname'] = g_users.get_current_user().email().lower()
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        return self.render_template('transparency/admin_geom_edit.html', **params)
-    
-    def post(self):
-        name = self.request.get('name').strip()
-        sector = self.request.get('catGroup')
-        category = self.request.get('subCat')
-        kind = self.request.get('kind')
-        locality = self.request.get('locality')
-        leader = self.request.get('lead')
-        agency = self.request.get('agency')
-        fund_source = self.request.get('source')
-        amount = self.request.get('amount')
-        description = self.request.get('description')
-        identifier = self.request.get('identifier')
-        exec_date = self.request.get('exec_date')
-        address_from = self.request.get('address_from')
-        address_from_coord = self.request.get('address_from_coord').split(',')
-        image_url = self.request.get('poi_image')
-        delete = self.request.get('delete')
-        cartodb_id = self.request.get('cartodb_id')
-
-        from google.appengine.api import urlfetch
-        import urllib
-        api_key = self.app.config.get('cartodb_apikey')
-        cartodb_domain = self.app.config.get('cartodb_user')
-        cartodb_table = self.app.config.get('cartodb_pois_table')
-        if delete == "no":
-            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) = (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s') WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, cartodb_id, api_key)).encode('utf8')
-        if delete == "yes":
-            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=DELETE FROM %s WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, cartodb_id, api_key)).encode('utf8')
-        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
-        try:
-            logging.info('carto request: %s' % unquoted_url)
-            t = urlfetch.fetch(url)
-            logging.info("t: %s" % t.content)
-            message = _(messages.saving_success)
-            self.add_message(message, 'success')
-        except Exception as e:
-            logging.info('error in cartodb UPDATE request: %s' % e)
-            message = _(messages.saving_error)
-            self.add_message(message, 'danger')
-            pass
-
-        return self.get() 
 
 """
 
@@ -1805,6 +1690,122 @@ class AdminInitiativeImageUploadHandler(blobstore_handlers.BlobstoreUploadHandle
             self.response.headers['Content-Type'] = 'text/plain'
             self.response.out.write('error')
 
+"""
+    GEOM
+"""
+class AdminGeomHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['group_color'] = self.app.config.get('brand_secondary_color')
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+        return self.render_template('transparency/admin_geom.html', **params)
+    
+    def post(self):
+        name = self.request.get('name').strip()
+        sector = self.request.get('catGroup')
+        category = self.request.get('subCat')
+        kind = self.request.get('kind')
+        locality = self.request.get('locality')
+        leader = self.request.get('lead')
+        agency = self.request.get('agency')
+        fund_source = self.request.get('source')
+        amount = self.request.get('amount')
+        description = self.request.get('description')
+        identifier = self.request.get('identifier')
+        exec_date = self.request.get('exec_date')
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord').split(',')
+        image_url = self.request.get('poi_image')
+
+        from google.appengine.api import urlfetch
+        import urllib
+        api_key = self.app.config.get('cartodb_apikey')
+        cartodb_domain = self.app.config.get('cartodb_user')
+        cartodb_table = self.app.config.get('cartodb_pois_table')
+        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+            message = _(messages.saving_success)
+            self.add_message(message, 'success')
+        except Exception as e:
+            logging.info('error in cartodb INSERT request: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            pass
+
+        return self.get()  
+
+class AdminGeomEditHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        return self.render_template('transparency/admin_geom_edit.html', **params)
+    
+    def post(self):
+        name = self.request.get('name').strip()
+        sector = self.request.get('catGroup')
+        category = self.request.get('subCat')
+        kind = self.request.get('kind')
+        locality = self.request.get('locality')
+        leader = self.request.get('lead')
+        agency = self.request.get('agency')
+        fund_source = self.request.get('source')
+        amount = self.request.get('amount')
+        description = self.request.get('description')
+        identifier = self.request.get('identifier')
+        exec_date = self.request.get('exec_date')
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord').split(',')
+        image_url = self.request.get('poi_image')
+        delete = self.request.get('delete')
+        cartodb_id = self.request.get('cartodb_id')
+
+        from google.appengine.api import urlfetch
+        import urllib
+        api_key = self.app.config.get('cartodb_apikey')
+        cartodb_domain = self.app.config.get('cartodb_user')
+        cartodb_table = self.app.config.get('cartodb_pois_table')
+        if delete == "no":
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) = (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s') WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, cartodb_id, api_key)).encode('utf8')
+        if delete == "yes":
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=DELETE FROM %s WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, cartodb_id, api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            logging.info('carto request: %s' % unquoted_url)
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+            message = _(messages.saving_success)
+            self.add_message(message, 'success')
+        except Exception as e:
+            logging.info('error in cartodb UPDATE request: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            pass
+
+        return self.get() 
+
 
 """
 
@@ -2221,6 +2222,7 @@ class AdminCallCenterHandler(BaseHandler):
             operator = models.CallCenterOperator()
             operator.email = self.request.get('adminemail') if self.request.get('adminemail') else ''
             operator.name = self.request.get('adminname') if self.request.get('adminname') else ''
+            operator.role = self.request.get('adminrole') if self.request.get('adminrole') else 'callcenter'
             operator.put()
 
             #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL
@@ -2277,7 +2279,8 @@ class AdminCallCenterOperatorHandler(BaseHandler):
                 elif delete == 'operator_edition':
                     #OPERATOR EDITION
                     operator_info = models.CallCenterOperator.get_by_id(long(operator_id))
-                    operator_info.name = self.request.get('opsadminname') if self.request.get('opsadminname') else ''
+                    operator_info.name = self.request.get('opsadminname') if self.request.get('opsadminname') else operator_info.name
+                    operator_info.role = self.request.get('opsadminrole') if self.request.get('opsadminrole') else operator_info.role
                     if operator_info.email != self.request.get('opsadminemail') and self.request.get('opsadminemail') != '':
                         operator_info.email = self.request.get('opsadminemail')
                         #SEND EMAIL NOTIFICATION TO ADMIN_EMAIL

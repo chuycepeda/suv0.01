@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">Configura tu plantel de atención ciudadana <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a></li>
+                <li class="active">Configura tu plantel de atención ciudadana y transparencia<a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a></li>
                 
             </ol>
           </div>
@@ -43,7 +43,7 @@
       <div class="section">
        <div class="row" style="margin-top:30px">
             <div class="row">
-              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega a tus operadores de call-center o atención ciudadana.</h3>
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega a tus operadores de call-center, atención ciudadana y transparencia.</h3>
             </div>
             <table id="data-table-simple" class="responsive-table hoverable centered display">
                 <thead style="font-family:roboto; color:#777777;">
@@ -51,6 +51,7 @@
                       <th>✎</th>
                       <th>Nombre</th>
                       <th>Email</th>
+                      <th>Rol</th>
                       <th>Tiene cuenta</th>
                   </tr>
                 </thead>
@@ -64,6 +65,7 @@
                           </td>
                           <td>{{operator.name}}</td>
                           <td>{{operator.email}}</td>
+                          <td>{{operator.has_role()}}</td>
                           <td>{{operator.is_active()}}</td>
                       </tr>
                     {% endfor %}
@@ -99,7 +101,23 @@
           <label for="adminemail" class="center-align">Email</label>
         </div>
       </div>
-      <div class="row">
+      <div class="row margin">
+        <div class="input-field col s12 l6">
+            <!-- Dropdown Trigger -->
+            <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;margin-left:5px;"></i>
+            <input type="hidden" id="adminrole" name="adminrole" value="callcenter">
+            <label for="adminrole" class="center-align" style="margin-left:45px;">Rol:</label><br><br>
+            <a data-hover="false" id="rolebtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='roledd' style="min-width: 250px; min-height: 45px; line-height: 45px;">Atención Ciudadana</a>
+            <!-- Dropdown Structure -->
+            <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+              <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
+              <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
+              <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
+              <li> <a class="brand-color-text" href="#" onclick="fillDd('admin', this);return false;">Acceso universal</a></li>
+            </ul>                
+        </div>
+      </div>
+      <div class="row" style="margin-top:35px;">
         <div class="input-field col s12">
           <a class="btn-large waves-effect waves-light col s12 brand-color white-text" style="cursor:pointer;" onclick="sendForm('form_add');">Agregar</a>
         </div>
@@ -127,6 +145,11 @@
       }else{
         document.getElementById(form).submit();  
       }
+    }
+
+    function fillDd(val, elem){
+        $('#adminrole').val(val);
+        $('#rolebtn').html(elem.innerHTML);
     }
 
     $('#data-table-simple').DataTable({

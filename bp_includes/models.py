@@ -515,6 +515,7 @@ class Operator(ndb.Model):
 class CallCenterOperator(ndb.Model):
     email= ndb.StringProperty(required = True)
     name= ndb.StringProperty()
+    role = ndb.StringProperty(required = True, choices = ['callcenter','transparency', 'socialnetworks', 'admin'], default = 'callcenter')
 
     @classmethod
     def get_by_email(cls, email):
@@ -536,7 +537,17 @@ class CallCenterOperator(ndb.Model):
         if _user:
             return "Si"
         else:
-            return "No"    
+            return "No"
+
+    def has_role(self):
+        if self.role == 'callcenter':
+            return u"Atención ciudadana"
+        elif self.role == 'transparency':
+            return "Transparencia"     
+        elif self.role == 'socialnetworks':
+            return "Redes sociales"     
+        else:
+            return "Acceso universal"
 
 class GroupCategory(ndb.Model):
     name = ndb.StringProperty(required = True)

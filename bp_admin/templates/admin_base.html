@@ -343,8 +343,8 @@
                                                         <li {% if uri_for('admin-areas') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-areas') }}">Compromisos</a></li>
                                                 {% endif %}
                                                 {% if has_reports %}
-                                                        <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización</a></li>
-                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención ciudadana</a></li>
+                                                        <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización y enlaces</a></li>
+                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención y transparencia</a></li>
                                                 {% endif %}
                                                     </ul>
                                                </div>
@@ -367,7 +367,7 @@
                                                     {% endif %}
                                                     {% if has_transparency %}
                                                         <li {% if uri_for('admin-initiatives') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-initiatives') }}">Compromisos</a></li>
-                                                        <li {% if uri_for('admin-geom') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-geom') }}">Obra públicas</a></li>
+                                                        <li {% if uri_for('admin-geom') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-geom') }}">Transparencia de obras</a></li>
                                                     {% endif %}
 
                                                     </ul>
