@@ -1743,7 +1743,7 @@ class AdminInitiativeEditHandler(BaseHandler):
                             urlfetch.set_default_fetch_deadline(45)
 
                             payload = {}
-                            upload_url = blobstore.create_upload_url('/admin/initiatives/image/upload/%s' %(initiative.key.id()))
+                            upload_url = blobstore.create_upload_url('/admin/initiatives/image/upload/%s/' %(initiative.key.id()))
                             file_data = self.request.POST['file']
                             payload['file'] = MultipartParam('file', filename=file_data.filename,
                                                                      filetype=file_data.type,
@@ -1791,8 +1791,6 @@ class AdminInitiativeEditHandler(BaseHandler):
 class AdminInitiativeImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self, initiative_id):
         try:
-            if not self.has_reports:
-                self.abort(403)
             logging.info(self.get_uploads()[0])
             logging.info('attaching file to initiative_id: %s' %initiative_id)
             upload = self.get_uploads()[0]
