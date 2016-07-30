@@ -103,7 +103,10 @@ class User(User):
         return True if Operator.get_by_email(self.email).count() >= 1 else False
 
     def is_callcenter(self):
-        return True if CallCenterOperator.get_by_email(self.email).count() >= 1 else False
+        return True if CallCenterOperator.get_by_email(self.email) else False
+
+    def has_callcenter_role(self):
+        return CallCenterOperator.get_by_email(self.email).role if CallCenterOperator.get_by_email(self.email) else False
 
     def get_image_url(self):
         if self.picture:
@@ -527,7 +530,7 @@ class CallCenterOperator(ndb.Model):
         :returns:
             A operator object.
         """
-        return cls.query(cls.email == email) 
+        return cls.query(cls.email == email).get()
 
     def get_id(self):
         return self._key.id()    

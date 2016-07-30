@@ -344,7 +344,7 @@
                                                 {% endif %}
                                                 {% if has_reports %}
                                                         <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización y enlaces</a></li>
-                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención y transparencia</a></li>
+                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención{% if has_transparency %} y transparencia{% else %} ciudadana{% endif %}</a></li>
                                                 {% endif %}
                                                     </ul>
                                                </div>
@@ -602,7 +602,7 @@
                 {% block page_footer %}{% endblock %}
                 <div class="footer-copyright white grey-text text-lighten-2">
                     <div class="container">
-                        <div class="container" style="text-align:right;" data-position="top" data-delay="50" data-tooltip="You should try the Konami-code">Made from real<i class="mdi-image-flash-on brand-secondary-color-text" style="font-size: 15px;margin-left: 3px;-webkit-animation: pulsate 3s ease-out; -webkit-animation-iteration-count: infinite;"></i>. Powered by the amazing <a class="brand-secondary-color-text" href="http://mboilerplate.appspot.com" target="_blank">MBoilerplate</a>.
+                        <div class="container" style="text-align:right;" data-position="top" data-delay="50" data-tooltip="You should try the Konami-code"><i class="mdi-image-flash-on brand-secondary-color-text" style="font-size: 15px;margin-left: 3px;-webkit-animation: pulsate 3s ease-out; -webkit-animation-iteration-count: infinite;"></i> by <a class="brand-secondary-color-text" href="http://www.onesmart.city" target="_blank">OneSmart.City</a>.
                     </div>
                 </div>
             </footer>

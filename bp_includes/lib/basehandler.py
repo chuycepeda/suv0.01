@@ -193,6 +193,13 @@ class BaseHandler(webapp2.RequestHandler):
         return False
 
     @webapp2.cached_property
+    def user_callcenter_role(self):
+        if self.user:
+            user_info = self.user_model.get_by_id(long(self.user_id))
+            return user_info.has_callcenter_role()
+        return False
+
+    @webapp2.cached_property
     def user_key(self):
         if self.user:
             user_info = self.user_model.get_by_id(long(self.user_id))
@@ -424,6 +431,7 @@ class BaseHandler(webapp2.RequestHandler):
             'user_is_agent': self.user_is_agent,
             'user_is_operator': self.user_is_operator,
             'user_is_callcenter': self.user_is_callcenter,
+            'user_callcenter_role': self.user_callcenter_role,
             'username': self.username,
             'name': self.name,
             'email': self.email,

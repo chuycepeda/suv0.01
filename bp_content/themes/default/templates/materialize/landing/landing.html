@@ -242,19 +242,22 @@
 				    	<li id="nav-admin"><a href="{{uri_for("admin")}}" class="menu-item brand-secondary-color white-text" style="margin-left: 20px;margin-right: 20px;">Administrador</a></li>
 						{% endif %}
 
-                        {% if has_reports %}
-
-					    {% if user_is_callcenter %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-						{% elif user_is_secretary %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-						{% elif user_is_agent %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-						{% elif user_is_operator %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+                        
+                        {% if has_reports or has_transparency %}
+					    	{% if user_is_callcenter and user_callcenter_role in ['callcenter','admin'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+					    	{% elif user_is_callcenter and user_callcenter_role in ['socialnetworks'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-facebook")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+					    	{% elif user_is_callcenter and user_callcenter_role in ['transparency'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-initiatives")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% elif user_is_secretary %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% elif user_is_agent %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% elif user_is_operator %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% endif %}
 						{% endif %}
-
-                        {% endif %}
 
 					    	
                             {% if has_reports %}
