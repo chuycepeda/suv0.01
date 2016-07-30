@@ -100,9 +100,17 @@ _routes = [
     # User: callcenter access
     RedirectRoute('/user/callcenter/inbox/', handlers.MaterializeInboxRequestHandler, name='materialize-callcenter-inbox', strict_slash=True),
     RedirectRoute('/user/callcenter/report/<report_id>/', handlers.MaterializeCallCenterReportRequestHandler, name='materialize-callcenter-report', strict_slash=True, handler_method='edit'),
+    # User: callcenter access for social networks
     RedirectRoute('/user/callcenter/facebook/', handlers.MaterializeCallCenterFacebookRequestHandler, name='materialize-callcenter-facebook', strict_slash=True),
     RedirectRoute('/user/callcenter/twitter/', handlers.MaterializeCallCenterTwitterRequestHandler, name='materialize-callcenter-twitter', strict_slash=True),
-    
+    # User: callcenter access for initiatives
+    RedirectRoute('/user/callcenter/initiatives/', handlers.MaterializeInitiativesHandler, name='materialize-callcenter-initiatives', strict_slash=True),
+    RedirectRoute('/user/callcenter/initiatives/<init_id>/', handlers.MaterializeInitiativeEditHandler, name='materialize-callcenter-initiative-edit', strict_slash=True, handler_method='edit'),
+    RedirectRoute('/user/callcenter/initiatives/image/upload/<initiative_id>/', handlers.MaterializeInitiativeImageUploadHandler, name='materialize-callcenter-initiative-image-upload', strict_slash=True),
+    # User: callcenter access for geo transparency
+    RedirectRoute('/user/callcenter/geom/', handlers.MaterializeGeomHandler, name='materialize-callcenter-geom', strict_slash=True),
+    RedirectRoute('/user/callcenter/geom/edit/', handlers.MaterializeGeomEditHandler, name='materialize-callcenter-geom-edit', strict_slash=True),
+
     #Cronjobs
     RedirectRoute('/cronjob-auto72/', handlers.Auto72CronjobHandler, name='cronjob-auto72', strict_slash=True),  
     RedirectRoute('/cronjob-forgot/', handlers.ForgotCronjobHandler, name='cronjob-forgot', strict_slash=True),  

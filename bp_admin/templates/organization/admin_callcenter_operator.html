@@ -72,7 +72,9 @@
                         <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
                           <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
                           <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
-                          <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
+                          {% if has_social_media %}
+                            <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
+                          {% endif %}
                           <li> <a class="brand-color-text" href="#" onclick="fillDd('admin', this);return false;">Acceso universal</a></li>
                         </ul>                
                     </div>

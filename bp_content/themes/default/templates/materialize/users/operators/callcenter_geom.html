@@ -1,0 +1,706 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block page_css %}
+<link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
+<link rel="stylesheet" href="/{{theme}}/materialize/css/plugins/autocomplete/awesomplete.css">
+  <style>
+    h3{
+        line-height: 60px;
+        letter-spacing: 0.2px;
+      }
+    .color-box {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        left: 5px;
+        top: 5px;
+    }
+    
+    .image{
+          -webkit-transform: scale(0.55);
+          transform: scale(0.55);
+          display: inline-block;
+          vertical-align: top;
+          width: 60px;
+          height: 70px;
+          max-width: 60px;
+          max-height: 70px;
+          border-radius: 3px;
+          line-height: 60px;
+          background-repeat: no-repeat;
+          background-position: center;
+    }
+    .image:hover{
+          -webkit-transform: scale(0.65);
+          transform: scale(0.65);
+    }
+</style>
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active">Gestión de transparencia de obras<a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="{{uri_for('materialize-callcenter-geom-edit')}}" style="font-size: 18px;">Ver capturas<i class="mdi-social-public left"></i></a></li>
+            </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+
+{% block page_content %}
+<div class="container">
+      <div class="section">
+       <div class="row" style="margin-top:30px">
+            <div class="row">
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega tu información geográfica de transparencia en obras.</h3>
+            </div>
+            <div class="card-panel" style="margin-bottom:30px;">
+                <form id="form_poi" action="{{ url|safe }}" method="post">
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" id="catGroup" name="catGroup">
+                    <input type="hidden" id="subCat" name="subCat">
+                    <input type="hidden" id="kind" name="kind">
+                    <input type="hidden" id="locality" name="locality">
+
+                  <div class="row margin">
+                    <div class="input-field col s12 l6">
+                      <i class="mdi-maps-place prefix brand-color-text"></i>
+                      <input id="name" name="name" type="text" value="">
+                      <label for="name" class="center-align">Nombre del punto de interés</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12 l6">
+                      <i class="mdi-social-person prefix brand-color-text"></i>
+                      <input id="lead" name="lead" type="text" value="">
+                      <label for="lead" class="center-align">Líder responsable o auditor</label>
+                    </div>
+                    <div class="input-field col s12 l6">
+                      <i class="mdi-action-account-balance prefix brand-color-text"></i>
+                      <input id="agency" name="agency" type="text" value="" style="    margin-left: 3rem;width: 92%;width: calc(100% - 3rem);">
+                      <label id="agencyLabel" for="agency" class="center-align">Dependencia encargada</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12 l6">
+                      <i class="mdi-action-account-balance-wallet prefix brand-color-text"></i>
+                      <input id="source" name="source" type="text" value="">
+                      <label for="source" class="center-align">Fuente de financiamiento</label>
+                    </div>
+                    <div class="input-field col s12 l6">
+                      <i class="mdi-editor-attach-money prefix brand-color-text"></i>
+                      <input id="amount" name="amount" type="number" value="" min="1" step="any">
+                      <label for="amount" class="center-align">Monto destinado</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                      <div class="input-field col s12 l6">
+                          <i class="mdi-maps-rate-review prefix brand-color-text brand-color-text"></i>
+                          <textarea id="description" name="description" class="materialize-textarea" length="500" style="height: 22px;" type="text" ></textarea>
+                          <label for="description">Descripción del punto de interés</label>
+                      </div>
+                      <div class="input-field col s12 l6">
+                        <i class="mdi-action-receipt prefix brand-color-text"></i>
+                        <input id="identifier" name="identifier" type="text" value="">
+                        <label for="identifier" class="center-align">Clave o número de identificación</label>
+                      </div>
+                  </div>   
+
+                  <div class="row margin" style="margin-left: 45px!important;">
+                        <div class="input-field col s12 l6">
+                            <!-- Dropdown Trigger -->
+                            <p>Tipo de obra:</p>
+                            <a data-hover="false" id="kindbtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='kinddd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                            <!-- Dropdown Structure -->
+                            <ul id='kinddd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Acción</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Ampliación</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Apoyo</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Construcción</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Equipamiento</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Estudio</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Programa</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Proyecto</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Rehabilitación</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Servicio</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('kind',this);return false;">Otro</a></li>
+                            </ul>                
+                        </div>
+                      
+                        <div id="localitydd_container" class="input-field col s12 l6">
+                            <!-- Dropdown Trigger -->
+                            <p>Tipo de localidad:</p>
+                            <a data-hover="false" id="localitybtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='localitydd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                            <!-- Dropdown Structure -->
+                            <ul id='localitydd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('locality',this);return false;">Urbana</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('locality',this);return false;">Rural</a></li>
+                            </ul>                
+                        </div>
+                  </div> 
+
+                  <div class="row margin" style="margin-left: 45px!important; margin-bottom:35px!important;">
+                        <div class="input-field col s12 l6">
+                            <!-- Dropdown Trigger -->
+                            <p>Sector:</p>
+                            <a data-hover="false" id='catGroupbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                            <!-- Dropdown Structure -->
+                            <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Administración Pública</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Agropecuario</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Agua Potable, Alcantarillado y Saneamiento</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Asistencia Social</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Cultura</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Deporte</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Educación</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Fomento Económico</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Infraestructura Social</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Infraestructura Urbana</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Infraestructura Vial</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Medio Ambiente</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Salud</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Seguridad Pública</a></li>
+                              <li> <a class="brand-color-text" href="#" onclick="fillDd('cat',this);return false;">Turismo</a></li>
+                            </ul>                
+                        </div>
+                      
+                        <div id="subCatdd_container" class="input-field col s12 l6">
+                            <!-- Dropdown Trigger -->
+                            <p>Categoría:</p>
+                            <a data-hover="false" id='subCatbtn' class='dropdown-button btn disabled brand-color truncate' href='#' data-activates='subCatdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
+                            <!-- Dropdown Structure -->
+                            <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
+                        </div>
+                  </div> 
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-image-image prefix brand-color-text"></i>
+                      <input id="poi_image" name="poi_image" type="text" value="">
+                      <label for="poi_image" class="center-align">URL de imagen (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
+                    </div>
+                  </div>
+                  
+                  <div class="row margin">
+                      <div class="input-field col s12 l6">                                
+                          <i class="mdi-action-event prefix brand-color-text brand-color-text"></i>
+                          <input id="exec_date" name="exec_date" type="date" class="datepicker" >
+                          <label for="exec_date">Fecha de ejecución</label>
+                      </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                          <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="geocode('from')"></i>
+                          <input id="address_from" name="address_from" type="text" class="validate" value="" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) geocode('from');">
+                          <label for="address_from" class="active">Ubicación</label>
+                          <div id="map" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
+                    </div>                
+                    <input type="text" id ="address_from_coord" name="address_from_coord" value="" hidden>
+                  </div>
+
+                  <div class="row container" style="padding:25px; padding-left: 55px!important;">
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_brand_form" >Guardar Cambios
+                      <i class="mdi-content-send right"></i>
+                    </a>                          
+                  </div>
+                </form>
+            </div>           
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+<script src="/{{theme}}/materialize/js/cartodb.js"></script>
+<script src="/{{theme}}/materialize/js/plugins/autocomplete/awesomplete.min.js"></script>
+<script type="text/javascript">
+    {% if has_reports %}
+    var url = "{{ uri_for('materialize-report-categories') }}" + "?q=agencies&o=raw";
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function(data) { 
+            var input = document.getElementById("agency");
+            new Awesomplete(input, {
+              list: JSON.parse(data)
+            });
+            document.getElementById('agency').addEventListener('click', function() { $('#agencyLabel').addClass('active');});
+        }
+    }).done(function(data) {      
+    });
+    {% endif %}
+    
+    document.getElementById('submit_brand_form').addEventListener('click', function() {
+      document.getElementById('name').value = cleanUpSpecialChars(document.getElementById('name').value);
+      if (document.getElementById('name').value==""){
+          Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre por favor.</span>',4500);
+          return false;      
+      }else if (!marker){
+          Materialize.toast('<span class="toast-warning">Oops! Selecciona la ubicación en el mapa por favor.</span>',4500);
+          return false;
+      }
+      else if (document.getElementById('catGroup').value == ''){
+          Materialize.toast('<span class="toast-warning">Oops! Selecciona una categoría por favor.</span>',4500);
+          return false;
+      }
+      else if (document.getElementById('subCat').value == ''){
+          Materialize.toast('<span class="toast-warning">Oops! Selecciona una subcategoría por favor.</span>',4500);
+          return false;
+      }
+      else if (document.getElementById('exec_date').value == ''){
+          Materialize.toast('<span class="toast-warning">Oops! Selecciona una fecha por favor.</span>',4500);
+          return false;
+      }
+      else if (document.getElementById('description').value == ''){
+          Materialize.toast('<span class="toast-warning">Oops! Escribe una descripción por favor.</span>',4500);
+          return false;
+      }
+      document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1); 
+      document.getElementById("form_poi").submit();
+
+    });
+
+
+    google.maps.event.addDomListener(window,'load', init);
+    var map, center = [{{lat}},{{lng}}];
+    var sublayers = [];
+    var geocoder = new google.maps.Geocoder();
+    var marker = null;
+    var markers = [];
+    var reportDict = {
+                "Administración Pública": {"categories": [
+                  "Equipamiento",
+                  "Estudios, proyectos y gastos indirectos",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"BA6432"},
+                "Agropecuario": {"categories": [
+                  "Agrícola",
+                  "Pecuario"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/marker4.svg",
+                "color":"76C4A1"},
+                "Agua Potable, Alcantarillado y Saneamiento": {"categories": [
+                  "Agua potable",
+                  "Alcantarillado",
+                  "Estudios, proyectos y pago de afectaciones",
+                  "Saneamiento"
+                ],
+                "icon_url":"http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/plumber.svg",
+                "color":"169FBA"},
+                "Asistencia Social": {"categories": [
+                  "Apoyos",
+                  "Becas",
+                  "Campañas",
+                  "Cursos y talleres",
+                  "Equipamiento",
+                  "Estimulos",
+                  "Infraestructura",
+                  "Premios económicos",
+                  "Prevención",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"AB3EC6"},
+                "Cultura": {"categories": [
+                  "Becas",
+                  "Biblioteca",
+                  "Centro cultural",
+                  "Centro histórico",
+                  "Edificio histórico",
+                  "Festival",
+                  "Fideicomiso",
+                  "Monumento histórico",
+                  "Museo",
+                  "Programa cultural",
+                  "Teatro"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins21.svg",
+                "color":"AB3E3D"},
+                "Deporte": {"categories": [
+                  "Arena",
+                  "Auditorio",
+                  "Canchas",
+                  "Centro acuático",
+                  "Equipamiento",
+                  "Estadio",
+                  "Gimnasio",
+                  "Lienzo charro",
+                  "Pista de atletismo",
+                  "Plaza de toros",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins87.svg",
+                "color":"31B73D"},
+                "Educación": {"categories": [
+                  "Educación",
+                  "Educación básica",
+                  "Educación media",
+                  "Educación superior",
+                  "Especial",
+                  "Otros"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"FBB73D"},
+                "Fomento Económico": {"categories": [
+                  "Apoyos",
+                  "Convenios",
+                  "Empleo",
+                  "Equipamiento",
+                  "Estudios y proyectos",
+                  "Infraestructura",
+                  "Pymes",
+                  "Urbanización industrial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"0C53DF"},
+                "Infraestructura Social": {"categories": [
+                  "Apoyos",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BA53DF"},
+                "Infraestructura Urbana": {"categories": [
+                  "Alumbrado público",
+                  "Asta bandera",
+                  "Avenidas y boulevares",
+                  "Bacheo",
+                  "Banquetas",
+                  "Bardas y muros de contención",
+                  "Calles",
+                  "Camellones",
+                  "Cancha de usos múltiples",
+                  "Demoliciones",
+                  "Edificio público",
+                  "Electrificación",
+                  "Equipamiento urbano",
+                  "Equipo de luz solar",
+                  "Estudios y proyectos",
+                  "Fachadas",
+                  "Foros",
+                  "Libramientos",
+                  "Limpieza y mantenimiento",
+                  "Obras alternas",
+                  "Parque",
+                  "Pavimentación",
+                  "Plaza pública y jardines",
+                  "Puentes",
+                  "Recarpeteo",
+                  "Señalización y nomenclaturas",
+                  "Techumbres",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BABABA"},
+                "Infraestructura Vial": {"categories": [
+                  "Caminos",
+                  "Carreteras",
+                  "Carreteras alimentadoras",
+                  "Estudios, proyectos y afectaciones",
+                  "Pavimentación",
+                  "Puentes",
+                  "Sistema vial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"DE7B00"},
+                "Medio Ambiente": {"categories": [
+                  "Aire limpio",
+                  "Forestal",
+                  "Iluminación urbana sustentable",
+                  "Medio ambiente",
+                  "Monitoreo ambiental",
+                  "Parque",
+                  "Planta de tratamiento",
+                  "Programa",
+                  "Relleno sanitario",
+                  "Uso de suelo"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins5.svg",
+                "color":"107B00"},
+                "Salud": {"categories": [
+                  "Centro de salud",
+                  "Hospitales",
+                  "Otros",
+                  "Unidad especialidades medicas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins41.svg",
+                "color":"1000D5"},
+                "Seguridad Pública": {"categories": [
+                  "Capacitación",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas",
+                  "Seguridad vecinal"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/location5.svg",
+                "color":"10008A"},
+                "Turismo": {"categories": [
+                  "Centro histórico",
+                  "Infraestructura turística",
+                  "Programas",
+                  "Promotoras",
+                  "Proyectos",
+                  "Pueblos mágicos"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/favourite1.svg",
+                "color":"F2008A"}
+            };
+    var marker_color = "{{brand_color}}";
+    var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);
+    var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+
+    function markerFitBounds() {
+        var bounds = new google.maps.LatLngBounds();
+        for(var i=0,j=markers.length; i<j; i++) {
+            bounds.extend( markers[i].getPosition() );
+        }
+        map.fitBounds(bounds);
+    }
+        
+    function markerDrop (loc) {
+        //Marker idea from: http://stackoverflow.com/questions/7095574/google-maps-api-3-custom-marker-color-for-default-dot-marker                 
+        if (marker == null){
+            marker = new google.maps.Marker({
+                      animation: google.maps.Animation.DROP,
+              position: loc,
+              map: map,
+              draggable: true,
+              icon: marker_icon
+            });
+            google.maps.event.addListener(marker,'dragend',function(event) {
+                  geocode(event.latLng);
+            });        
+        }else{
+            marker.setPosition(loc);
+            //marker.setIcon(marker_icon);
+        }
+    }
+
+    function drawMarker(){
+      if(document.getElementById('address_from_coord').value){
+          var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
+          var latlng = new google.maps.LatLng(coof[0],coof[1]);
+          markerDrop (latlng);
+      }
+    }
+    
+    function geocode(input) {
+          var address, obj;
+          if (typeof(input) === 'string') {
+              address = document.getElementById('address_'+input).value;
+              obj = { 'address': address };
+          }else{
+              address = input;
+              obj = { 'location': address};
+          }
+          geocoder.geocode( obj, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                  if (typeof(input) === 'string') {
+                      map.setCenter(results[0].geometry.location);
+                      switch (results[0].geometry.location_type){
+                          case 'ROOFTOP': map.setZoom(17); break;
+                          case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                          case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                          case 'APPROXIMATE': map.setZoom(13); break;
+                      }
+                      markerDrop(results[0].geometry.location);
+                  }else{
+                      if (results[1]) {
+                          document.getElementById('address_from').value = results[1].formatted_address;
+                      } else {
+                          alert('No address geocode found');
+                      }
+                  }
+              } else {
+                  alert('Geocode unsuccessful: ' + status);
+              }
+          });
+    }   
+    
+    function fillDd(dd, pKey){
+
+          pKey = (pKey.innerHTML).trim();
+          switch(dd){
+            case 'kind':
+                        document.getElementById('kind').value=pKey;
+                        document.getElementById('kindbtn').innerHTML = pKey;
+                        break;
+            case 'locality':
+                        document.getElementById('locality').value=pKey;
+                        document.getElementById('localitybtn').innerHTML = pKey;
+                        break;
+            case 'cat':
+                        document.getElementById('subCatbtn').innerHTML='---';
+                        document.getElementById('subCat').value='';
+                        document.getElementById('catGroup').value=pKey;
+                        document.getElementById('catGroupbtn').innerHTML = pKey;
+                        
+                        if ($('#subCatbtn').hasClass('disabled')) $('#subCatbtn').removeClass('disabled');          
+                        var html='';
+                        var selectObj = reportDict[pKey]['categories'];
+                        for (var i=0,j=selectObj.length;i<j;i++){
+                            html += '<li> <a class="brand-color-text" href="#" onclick="fillDd(\'subcat\',this);return false;">'+selectObj[i]+'</a></li>';
+                        }
+                        document.getElementById('subCatdd').innerHTML = html;
+                        break;
+            case 'subcat':
+                        document.getElementById('subCatbtn').innerHTML= pKey;
+                        document.getElementById('subCat').value= pKey;
+                        break;
+          }
+          
+    }
+      
+    function init(){
+           
+
+      
+      var mapOptions = {
+        center: new google.maps.LatLng(center[0], center[1]),
+        zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
+        zoomControl: true,
+        zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.SMALL,
+          position: google.maps.ControlPosition.RIGHT_BOTTOM  
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: { 
+          mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
+        },
+        scrollwheel: false,
+        streetViewControl: true,
+        StreetViewControlOptions: {
+          position: google.maps.ControlPosition.BOTTOM_LEFT
+        },
+        panControl:false,
+        backgroundColor: 'rgb(249, 249, 249)',
+        rotateControl:true,
+        overviewMapControl:true
+      };
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+      var centerControlDiv = document.createElement('div');
+      var centerControl = new CenterControl(centerControlDiv, map);
+      centerControlDiv.index = 1;
+      map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(centerControlDiv);
+      
+                            
+        var layerSource = {
+              user_name: '{{cartodb_user}}',
+              type: 'cartodb',
+              sublayers: [{
+                  sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+                  cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+              }]
+          };
+          cartodb.createLayer(map,layerSource)
+          .on('done', function(layer) {
+          map.overlayMapTypes.setAt(0, layer);
+              for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                 sublayers[i] = layer.getSubLayer(i);
+                 console.log("Congrats, you added sublayer #" + i + "!");
+              }
+          })
+          .error(function(err) {
+              console.log("error: " + err);
+          });    
+
+      var address_from = document.getElementById('address_from');
+      var autocomplete_from = new google.maps.places.Autocomplete(address_from);
+      autocomplete_from.bindTo('bounds', map);
+      
+      google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+          var place = autocomplete_from.getPlace();
+          if (!place.geometry) {
+                    return;
+          }
+          if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                    markerDrop(place.geometry.location);
+          }else{
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                    markerDrop(place.geometry.location);
+          }
+      });                                       
+        
+      google.maps.event.addDomListener(window, 'resize', function() {
+                setTimeout(function() {
+                    map.panTo({lat: center[0], lng: center[1]});
+                }, 400);                            
+          });
+                
+      google.maps.event.addListener(map, 'click', function(event) {
+              markerDrop(event.latLng);
+              geocode(event.latLng);
+          });
+                
+        drawMarker();         
+    }
+
+    function CenterControl(controlDiv, map) {
+      // Set CSS for the control border.
+      var controlUI = document.createElement('div');
+      controlUI.style.backgroundColor = '#fff';
+      controlUI.style.border = '2px solid #fff';
+      controlUI.style.borderRadius = '3px';
+      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlUI.style.cursor = 'pointer';
+      controlUI.style.marginBottom = '2px';
+      controlUI.style.marginRight = '10px';
+      controlUI.style.textAlign = 'center';
+      controlUI.title = 'Click to locate you.';
+      controlDiv.appendChild(controlUI);
+
+      // Set CSS for the control interior.
+      var controlText = document.createElement('div');
+      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+      controlText.style.fontSize = '16px';
+      controlText.style.lineHeight = '15px';
+      controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+      controlUI.appendChild(controlText);
+
+      // Setup the click event listeners: simply set the map to Chicago.
+      controlUI.addEventListener('click', function() {
+        $('#main-preloader').show();
+        if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(mapGoPosition);
+          } else {
+                Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+          $('#main-preloader').hide();
+          }
+      });
+    }
+
+    function mapGoPosition(position) {
+        map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+        map.setZoom(16);
+      $('#main-preloader').hide();
+    }
+
+
+
+</script>
+{% endblock %}

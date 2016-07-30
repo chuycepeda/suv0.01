@@ -3425,6 +3425,295 @@ class MaterializeCallCenterTwitterRequestHandler(BaseHandler):
             return self.render_template('materialize/users/operators/twitter.html', **params)
         self.abort(403)
 
+#INITIATIVES
+def inverse_initiative_status(_stat):
+    if _stat == 'Iniciado':
+        return 'open'        
+    if _stat == 'En progreso':
+        return 'measuring'
+    if _stat == 'Retrasado':
+        return 'delayed'
+    if _stat == 'A punto de cumplir':
+        return 'near'
+    if _stat == 'Cumplido':
+        return 'completed'
+
+class MaterializeInitiativesHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['initiatives'] = models.Initiative.query()
+        params['group_color'] = self.app.config.get('brand_secondary_color')
+        return self.render_template('materialize/users/operators/callcenter_initiatives.html', **params)
+    
+    def post(self):
+        try:
+            name = self.request.get('name').strip()
+            icon_url = self.request.get('subicon')
+            description = self.request.get('description')
+            lead = self.request.get('lead')
+            relevance = self.request.get('relevance')
+            area_name = self.request.get('agegroupcat')
+
+            initiative = models.Initiative.query(models.Initiative.name == name).get()
+            if initiative is not None:
+                self.add_message(messages.nametaken, 'danger')
+            else:
+                area = models.Area.query(models.Area.name == area_name).get()
+                if area is None:
+                    logging.info("area is none")
+                    self.add_message(messages.saving_error, 'danger')
+                    return self.get()  
+
+                initiative = models.Initiative()
+                initiative.name = name
+                initiative.color = area.color
+                initiative.icon_url = icon_url
+                initiative.lead = lead
+                initiative.description = description
+                initiative.relevance = relevance
+                initiative.area_id = area.key.id()
+                initiative.put()
+
+                self.add_message(messages.saving_success, 'success')
+        except Exception as e:
+            self.add_message(messages.saving_error, 'danger')
+            logging.info("error in post: %s" % e)
+        
+        return self.get()  
+
+class MaterializeInitiativeEditHandler(BaseHandler):
+    def get_or_404(self, init_id):
+        try:
+            initiative = models.Initiative.get_by_id(long(init_id))
+            if initiative:
+                return initiative
+        except ValueError:
+            pass
+        self.abort(404)
+
+    def edit(self, init_id):
+        if self.request.POST:
+            initiative = self.get_or_404(init_id)
+            delete = self.request.get('delete')
+            
+            try:
+
+                if delete == 'confirmed_deletion':
+                    #DELETE INITIATIVE 
+                    initiative.key.delete()
+
+                    self.add_message(messages.saving_success, 'success')
+                elif delete == 'category_edition':
+                    #INITIATIVE EDITION
+                    name = self.request.get('name').strip()
+                    icon_url = self.request.get('subicon')
+                    description = self.request.get('description')
+                    lead = self.request.get('lead')
+                    relevance = self.request.get('relevance')
+                    area_name = self.request.get('agegroupcat')
+                    value = self.request.get('metric')
+                    status = inverse_initiative_status(self.request.get('status'))
+
+                    _initiative = models.Initiative.query(models.Initiative.name == name).get()
+                    if _initiative is not None and int(_initiative.key.id()) != int(init_id):
+                        self.add_message(messages.nametaken, 'danger')
+                    else:
+                        area = models.Area.query(models.Area.name == area_name).get()
+                        if area is None:
+                            self.add_message(messages.saving_error, 'danger')
+                            return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id) 
+                        initiative.name = name
+                        initiative.color = area.color
+                        initiative.icon_url = icon_url
+                        initiative.lead = lead
+                        initiative.description = description
+                        initiative.relevance = relevance
+                        initiative.value = value
+                        initiative.status = status
+                        initiative.area_id = area.key.id()
+                        initiative.put()
+
+                        if hasattr(self.request.POST['file'], 'filename'):
+                            #create attachment
+                            from google.appengine.api import urlfetch
+                            from poster.encode import multipart_encode, MultipartParam
+                            
+                            urlfetch.set_default_fetch_deadline(45)
+
+                            payload = {}
+                            upload_url = blobstore.create_upload_url('/user/callcenter/initiatives/image/upload/%s/' %(initiative.key.id()))
+                            file_data = self.request.POST['file']
+                            payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                     filetype=file_data.type,
+                                                                     fileobj=file_data.file)
+                            data,headers= multipart_encode(payload)
+                            t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                            
+                            logging.info('t.content: %s' % t.content)
+                            
+                            if t.content == 'success':
+                                message = _(messages.saving_success)
+                                self.add_message(message, 'success')
+                                return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+                                
+                            else:
+                                message = _(messages.attach_error)
+                                self.add_message(message, 'danger')            
+                                return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+                                                  
+                        else:
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')
+                            return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+                            
+
+
+                        self.add_message(messages.saving_success, 'success')
+
+                return self.redirect_to("materialize-callcenter-initiatives")
+                
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error updating initiative: %s ' % e)
+                self.add_message(messages.saving_error, 'danger')
+                return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+        else:
+            initiative = self.get_or_404(init_id)
+
+        params = {
+            'initiative': initiative
+        }
+
+        return self.render_template('materialize/users/operators/callcenter_initiative_edit.html', **params)
+
+class MaterializeInitiativeImageUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self, initiative_id):
+        try:
+            logging.info(self.get_uploads()[0])
+            logging.info('attaching file to initiative_id: %s' %initiative_id)
+            upload = self.get_uploads()[0]
+            initiative = models.Initiative.get_by_id(long(initiative_id))
+            # initiative.attachment = upload.key()
+            initiative.image_url = self.uri_for('blob-serve', photo_key = upload.key(), _full=True)
+            initiative.put()
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('success')
+        except Exception as e:
+            logging.error('something went wrong: %s' % e)
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('error')
+
+# GEO TRANSPARENCY
+class MaterializeGeomHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['group_color'] = self.app.config.get('brand_secondary_color')
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+
+        return self.render_template('materialize/users/operators/callcenter_geom.html', **params)
+    
+    def post(self):
+        name = self.request.get('name').strip()
+        sector = self.request.get('catGroup')
+        category = self.request.get('subCat')
+        kind = self.request.get('kind')
+        locality = self.request.get('locality')
+        leader = self.request.get('lead')
+        agency = self.request.get('agency')
+        fund_source = self.request.get('source')
+        amount = self.request.get('amount')
+        description = self.request.get('description')
+        identifier = self.request.get('identifier')
+        exec_date = self.request.get('exec_date')
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord').split(',')
+        image_url = self.request.get('poi_image')
+
+        from google.appengine.api import urlfetch
+        import urllib
+        api_key = self.app.config.get('cartodb_apikey')
+        cartodb_domain = self.app.config.get('cartodb_user')
+        cartodb_table = self.app.config.get('cartodb_pois_table')
+        unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) VALUES (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s')&api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+            message = _(messages.saving_success)
+            self.add_message(message, 'success')
+        except Exception as e:
+            logging.info('error in cartodb INSERT request: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            pass
+
+        return self.get()  
+
+class MaterializeGeomEditHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['zoom'] = self.app.config.get('map_zoom')
+        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+        params['lat'] = self.app.config.get('map_center_lat')
+        params['lng'] = self.app.config.get('map_center_lng')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        return self.render_template('materialize/users/operators/callcenter_geom_edit.html', **params)
+    
+    def post(self):
+        name = self.request.get('name').strip()
+        sector = self.request.get('catGroup')
+        category = self.request.get('subCat')
+        kind = self.request.get('kind')
+        locality = self.request.get('locality')
+        leader = self.request.get('lead')
+        agency = self.request.get('agency')
+        fund_source = self.request.get('source')
+        amount = self.request.get('amount')
+        description = self.request.get('description')
+        identifier = self.request.get('identifier')
+        exec_date = self.request.get('exec_date')
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord').split(',')
+        image_url = self.request.get('poi_image')
+        delete = self.request.get('delete')
+        cartodb_id = self.request.get('cartodb_id')
+
+        from google.appengine.api import urlfetch
+        import urllib
+        api_key = self.app.config.get('cartodb_apikey')
+        cartodb_domain = self.app.config.get('cartodb_user')
+        cartodb_table = self.app.config.get('cartodb_pois_table')
+        if delete == "no":
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=UPDATE %s SET (the_geom,name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url) = (ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s',%s,'%s','%s','%s','%s','%s') WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, address_from_coord[1], address_from_coord[0],name,sector,category,kind,locality,leader,agency,fund_source,amount,description,identifier,exec_date,address_from,image_url, cartodb_id, api_key)).encode('utf8')
+        if delete == "yes":
+            unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=DELETE FROM %s WHERE cartodb_id = %s &api_key=%s" % (cartodb_domain, cartodb_table, cartodb_id, api_key)).encode('utf8')
+        url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
+        try:
+            logging.info('carto request: %s' % unquoted_url)
+            t = urlfetch.fetch(url)
+            logging.info("t: %s" % t.content)
+            message = _(messages.saving_success)
+            self.add_message(message, 'success')
+        except Exception as e:
+            logging.info('error in cartodb UPDATE request: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            pass
+
+        return self.get() 
+
 
 # ------------------------------------------------------------------------------------------- #
 """                                     CORE REPORT HANDLERS                                """

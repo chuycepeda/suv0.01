@@ -33,8 +33,7 @@ _routes = [
     # CONFIG Initiatives
     RedirectRoute('/admin/areas/', operator.AdminAreasHandler, name='admin-areas', strict_slash=True),
     RedirectRoute('/admin/areas/<area_id>/', operator.AdminAreaEditHandler, name='admin-area-edit', strict_slash=True, handler_method='edit'),
-    RedirectRoute('/admin/geom/', operator.AdminGeomHandler, name='admin-geom', strict_slash=True),
-    RedirectRoute('/admin/geom/edit/', operator.AdminGeomEditHandler, name='admin-geom-edit', strict_slash=True),
+    
     
     # CONFIG Organization
     RedirectRoute('/admin/organization/', operator.AdminOrganizationHandler, name='admin-organization', strict_slash=True),
@@ -59,6 +58,10 @@ _routes = [
     RedirectRoute('/admin/initiatives/', operator.AdminInitiativesHandler, name='admin-initiatives', strict_slash=True),
     RedirectRoute('/admin/initiatives/<init_id>/', operator.AdminInitiativeEditHandler, name='admin-initiative-edit', strict_slash=True, handler_method='edit'),
     RedirectRoute('/admin/initiatives/image/upload/<initiative_id>/', operator.AdminInitiativeImageUploadHandler, name='admin-initiative-image-upload', strict_slash=True),
+
+    # OPERATIONS Geom
+    RedirectRoute('/admin/geom/', operator.AdminGeomHandler, name='admin-geom', strict_slash=True),
+    RedirectRoute('/admin/geom/edit/', operator.AdminGeomEditHandler, name='admin-geom-edit', strict_slash=True),
     
     # BLOG
     RedirectRoute('/admin/blog/', blog.AdminBlogHandler, name='admin-blog', strict_slash=True),

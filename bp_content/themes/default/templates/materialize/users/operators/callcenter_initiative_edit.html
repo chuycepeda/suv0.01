@@ -1,4 +1,5 @@
-{% extends 'admin_base.html' %}
+{% extends '/materialize/users/operations_base.html' %}
+
 {% block page_css %}
     <style type="text/css">
         td {
@@ -50,7 +51,7 @@
             <div class="col s12 m12 l12">
                 <ol class="breadcrumb" style="font-size: 29px;">
                     <li class="active">
-                        <a href="{{ uri_for('admin-initiatives') }}">
+                        <a href="{{ uri_for('materialize-callcenter-initiatives') }}">
                             Gestión de compromisos
                         </a>
                         | Editar compromiso
