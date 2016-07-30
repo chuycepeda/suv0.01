@@ -108,6 +108,7 @@
             <input type="hidden" id="adminrole" name="adminrole" value="callcenter">
             <label for="adminrole" class="center-align" style="margin-left:45px;">Rol:</label><br><br>
             <a data-hover="false" id="rolebtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='roledd' style="min-width: 250px; min-height: 45px; line-height: 45px;">Atención Ciudadana</a>
+            <blockquote id="permission" class="grey-text text-lighten-1 left" style="text-align: justify; margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};">Este nivel de acceso permite al operador ver estadísticas y bandeja de reportes{% if has_social_media %}, y la conexión con redes sociales{% endif %}.</blockquote>
             <!-- Dropdown Structure -->
             <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
               <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
@@ -154,6 +155,24 @@
     function fillDd(val, elem){
         $('#adminrole').val(val);
         $('#rolebtn').html(elem.innerHTML);
+        switch(val){
+          case 'callcenter':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver estadísticas y bandeja de reportes{% if has_social_media %}, y la conexión con redes sociales{% endif %}.';
+            break;
+          case 'admin':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores de atención y transparencia pueden ver.';
+            break;
+          {% if has_transparency %}
+          case 'transparency':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador administrar los compromisos y la transparencia de obras.';
+            break;
+          {% endif %}
+          {% if has_social_media %}
+          case 'socialnetworks':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador crear reportes a partir de la conexión con las redes sociales.';
+            break;
+          {% endif %}
+        }
     }
 
     $('#data-table-simple').DataTable({

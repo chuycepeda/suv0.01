@@ -3407,7 +3407,7 @@ class MaterializeCallCenterReportRequestHandler(BaseHandler):
 class MaterializeCallCenterFacebookRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.has_social_media and self.user_is_callcenter:
+        if self.has_social_media and self.user_is_callcenter and self.user_callcenter_role in ['admin', 'callcenter', 'socialnetworks']:
             params = {}
             params['indicoio_apikey'] = self.app.config.get('indicoio_apikey')
             params['facebook_appID'] = self.app.config.get('facebook_appID')
@@ -3418,7 +3418,7 @@ class MaterializeCallCenterFacebookRequestHandler(BaseHandler):
 class MaterializeCallCenterTwitterRequestHandler(BaseHandler):
     @user_required
     def get(self):
-        if self.has_social_media and self.user_is_callcenter:
+        if self.has_social_media and self.user_is_callcenter and self.user_callcenter_role in ['admin', 'callcenter', 'socialnetworks']:
             params = {}
             params['twitter_appID'] = self.app.config.get('twitter_appID')
             params['twitter_handle'] = self.app.config.get('twitter_handle')
@@ -3439,11 +3439,14 @@ def inverse_initiative_status(_stat):
         return 'completed'
 
 class MaterializeInitiativesHandler(BaseHandler):
+    @user_required
     def get(self):
+        if not self.user_is_callcenter or self.user_callcenter_role not in ['admin', 'transparency']:
+            self.abort(403)
         params = {}
         params['initiatives'] = models.Initiative.query()
         params['group_color'] = self.app.config.get('brand_secondary_color')
-        return self.render_template('materialize/users/operators/callcenter_initiatives.html', **params)
+        return self.render_template('materialize/users/operators/callcenter_initiatives.html', **params)        
     
     def post(self):
         try:
@@ -3491,7 +3494,11 @@ class MaterializeInitiativeEditHandler(BaseHandler):
             pass
         self.abort(404)
 
+    @user_required
     def edit(self, init_id):
+        if not self.user_is_callcenter or self.user_callcenter_role not in ['admin', 'transparency']:
+            self.abort(403)
+
         if self.request.POST:
             initiative = self.get_or_404(init_id)
             delete = self.request.get('delete')
@@ -3604,7 +3611,10 @@ class MaterializeInitiativeImageUploadHandler(blobstore_handlers.BlobstoreUpload
 
 # GEO TRANSPARENCY
 class MaterializeGeomHandler(BaseHandler):
+    @user_required
     def get(self):
+        if not self.user_is_callcenter or self.user_callcenter_role not in ['admin', 'transparency']:
+            self.abort(403)
         params = {}
         params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
         params['group_color'] = self.app.config.get('brand_secondary_color')
@@ -3658,7 +3668,10 @@ class MaterializeGeomHandler(BaseHandler):
         return self.get()  
 
 class MaterializeGeomEditHandler(BaseHandler):
+    @user_required
     def get(self):
+        if not self.user_is_callcenter or self.user_callcenter_role not in ['admin', 'transparency']:
+            self.abort(403)
         params = {}
         params['zoom'] = self.app.config.get('map_zoom')
         params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')

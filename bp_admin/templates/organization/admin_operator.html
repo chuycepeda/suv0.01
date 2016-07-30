@@ -41,39 +41,11 @@
       <div class="section">
        <div class="row" style="margin-top:30px">
             <div class="row">
-              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita al operador de enlace ciudadano.</h3>
-            </div>
-            <div class="card-panel" style="margin-bottom:30px;">
-                <form id="form_operator" action="{{ url|safe }}" method="post">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="delete" id="delete" value="no">
-                  <div class="row margin">
-                    <div class="input-field col s12">
-                      <i class="mdi-social-person prefix brand-color-text"></i>
-                      <input id="opsadminname" name="opsadminname" type="text" value="{{operator.name}}">
-                      <label for="opsadminname" class="center-align">Nombre del Operador</label>
-                    </div>
-                  </div>
-                  <div class="row margin">
-                    <div class="input-field col s12">
-                      <i class="mdi-communication-email prefix brand-color-text"></i>
-                      <input id="opsadminemail" name="opsadminemail" type="email" value="{{operator.email}}">
-                      <label for="opsadminemail" class="center-align">Email del Operador</label>
-                    </div>
-                  </div>
-                  <div class="row container" style="padding:25px;     padding-left: 55px!important;">
-                    <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_ops_form" >Guardar Cambios
-                      <i class="mdi-content-send right"></i>
-                    </button>  
-                    <a class="waves-effect waves-light grey white-text btn left modal-trigger" href="#modal_delete" >Eliminar Operador
-                      <i class="mdi-action-delete right"></i>
-                    </a>                           
-                  </div>
-                </form>
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita al operador de enlace.</h3>
             </div>
             {% if _user %}
             <div class="card-panel">
-              <h5 class="brand-color-text">Perfil ciudadano del operador</h5>
+              <h5 class="brand-color-text">Perfil ciudadano del enlace</h5>
               <div class="row">
                   <div class="col s12 m3 center" style="margin-top:8px;">
                       <div class="form-group">
@@ -117,9 +89,38 @@
             </div>
             {% else %}
              <div class="card-panel red lighten-2">
-              <h5 class="white-text">El operador no ha creado su cuenta.</h5>
+              <h5 class="white-text">El operador de enlace no ha creado su cuenta.</h5>
              </div>
             {% endif %}
+            <div class="card-panel" style="margin-bottom:30px;">
+                <form id="form_operator" action="{{ url|safe }}" method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="delete" id="delete" value="no">
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-social-person prefix brand-color-text"></i>
+                      <input id="opsadminname" name="opsadminname" type="text" value="{{operator.name}}">
+                      <label for="opsadminname" class="center-align">Nombre del Enlace</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-communication-email prefix brand-color-text"></i>
+                      <input id="opsadminemail" name="opsadminemail" type="email" value="{{operator.email}}">
+                      <label for="opsadminemail" class="center-align">Email del Enlace</label>
+                    </div>
+                  </div>
+                  <div class="row container" style="padding:25px;     padding-left: 55px!important;">
+                    <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_ops_form" >Guardar Cambios
+                      <i class="mdi-content-send right"></i>
+                    </button>  
+                    <a class="waves-effect waves-light grey white-text btn left modal-trigger" href="#modal_delete" >Eliminar Enlace
+                      <i class="mdi-action-delete right"></i>
+                    </a>                           
+                  </div>
+                </form>
+            </div>
+            
         </div>
       </div>
     </div>
@@ -128,7 +129,7 @@
           <div class="modal-content">
               <div class="row">
                 <div class="input-field col s12 center">
-                  <p class="center login-form-text">¿Seguro que deseas eliminar al Operador de Enlace?</p>
+                  <p class="center login-form-text">¿Seguro que deseas eliminar al operador de enlace?</p>
                 </div>
               <div class="row">
                 <div class="input-field col s12">

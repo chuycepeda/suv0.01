@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active"><a href="{{ uri_for('admin-organization') }}">Organización</a> | <a href="{{ uri_for('admin-secretary-edit', secretary_id=agency.secretary_id) }}">Secretaría</a> | Dependencia <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a></li>
+                <li class="active"><a href="{{ uri_for('admin-organization') }}">Organización</a> | <a href="{{ uri_for('admin-secretary-edit', secretary_id=agency.secretary_id) }}">Secretaría</a> | Dependencia <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Enlace<i class="mdi-action-note-add left"></i></a></li>
                 
             </ol>
           </div>
@@ -43,11 +43,11 @@
       <div class="section">
        <div class="row" style="margin-top:30px">
             <div class="row">
-              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita la dependencia o administra sus operadores.</h3>
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita la dependencia o administra sus operadores de enlace.</h3>
             </div>
             {% if _user %}
             <div class="card-panel">
-              <h5 class="brand-color-text">Perfil del director de la dependencia</h5>
+              <h5 class="brand-color-text">Perfil ciudadano del director</h5>
               <div class="row">
                   <div class="col s12 m3 center" style="margin-top:8px;">
                       <div class="form-group">
@@ -155,8 +155,8 @@
                 <thead style="font-family:roboto; color:#777777;">
                   <tr class="brand-color white-text">
                       <th>✎</th>
-                      <th>Operador de enlace</th>
-                      <th>Email del operador</th>
+                      <th>Nombre del enlace</th>
+                      <th>Email del enlace</th>
                       <th>Cuenta activa</th>
                   </tr>
                 </thead>
@@ -165,7 +165,7 @@
                       <tr>
                           <td>
                               <div>    
-                                  <a class="icon" href="{{ uri_for('admin-operator-edit', operator_id=operator.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Editar operador</a>
+                                  <a class="icon" href="{{ uri_for('admin-operator-edit', operator_id=operator.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Editar enlace</a>
                               </div>                          
                           </td>
                           <td>{{operator.name}}</td>
@@ -186,21 +186,21 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <div class="row">
           <div class="input-field col s12 center">
-            <p class="center login-form-text">Agrega un nuevo Operador de Enlace llenando la siguiente forma</p>
+            <p class="center login-form-text">Agrega un nuevo operador de enlace llenando la siguiente forma</p>
           </div>
         </div>
         <div class="row margin">
           <div class="input-field col s12">
             <i class="mdi-social-person prefix brand-color-text"></i>
             <input id="opsadminname" name="opsadminname" type="text">
-            <label for="opsadminname" class="center-align">Nombre del Operador</label>
+            <label for="opsadminname" class="center-align">Nombre del Enlace</label>
           </div>
         </div>
         <div class="row margin">
           <div class="input-field col s12">
             <i class="mdi-communication-email prefix brand-color-text"></i>
             <input id="opsadminemail" name="opsadminemail" type="email">
-            <label for="opsadminemail" class="center-align">Email del Operador</label>
+            <label for="opsadminemail" class="center-align">Email del Enlace</label>
           </div>
         </div>
         <div class="row">
@@ -216,7 +216,7 @@
           <div class="modal-content">
               <div class="row">
                 <div class="input-field col s12 center">
-                  <p class="center login-form-text">¿Seguro que deseas eliminar la Dependencia? <br> <span class="red-text">Eliminarás el acceso a sus operadores también</span>.</p>
+                  <p class="center login-form-text">¿Seguro que deseas eliminar la Dependencia? <br> <span class="red-text">Eliminarás el acceso a sus enlaces también</span>.</p>
                 </div>
               <div class="row">
                 <div class="input-field col s12">
@@ -318,11 +318,11 @@
             paging: true,
             "lengthMenu": [[250], [250]],
             "language": {
-              "lengthMenu": "Mostrar _MENU_ operadores por página",
+              "lengthMenu": "Mostrar _MENU_ enlaces por página",
               "search": "Buscar:",
-              "zeroRecords": "Ningún operador encontrado",
-              "info": "Mostrando _START_ a _END_ de _TOTAL_ operadores",
-              "infoFiltered": "(filtrando sobre _MAX_ operadores)",
+              "zeroRecords": "Ningún enlace encontrado",
+              "info": "Mostrando _START_ a _END_ de _TOTAL_ enlaces",
+              "infoFiltered": "(filtrando sobre _MAX_ enlaces)",
               "paginate": {
                   "first":      "Inicio",
                   "last":       "Final",

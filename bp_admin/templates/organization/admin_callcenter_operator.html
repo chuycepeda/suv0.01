@@ -43,57 +43,9 @@
             <div class="row">
               <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Edita al operador.</h3>
             </div>
-            <div class="card-panel" style="margin-bottom:30px;">
-                <form id="form_operator" action="{{ url|safe }}" method="post">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="delete" id="delete" value="no">
-                  <div class="row margin">
-                    <div class="input-field col s12">
-                      <i class="mdi-social-person prefix brand-color-text"></i>
-                      <input id="opsadminname" name="opsadminname" type="text" value="{{operator.name}}">
-                      <label for="opsadminname" class="center-align">Nombre del Operador</label>
-                    </div>
-                  </div>
-                  <div class="row margin">
-                    <div class="input-field col s12">
-                      <i class="mdi-communication-email prefix brand-color-text"></i>
-                      <input id="opsadminemail" name="opsadminemail" type="email" value="{{operator.email}}">
-                      <label for="opsadminemail" class="center-align">Email del Operador</label>
-                    </div>
-                  </div>
-                  <div class="row margin">
-                    <div class="input-field col s12 l6">
-                        <!-- Dropdown Trigger -->
-                        <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;margin-left:5px;"></i>
-                        <input type="hidden" id="opsadminrole" name="opsadminrole" value="{{operator.role}}">
-                        <label for="opsadminrole" class="center-align" style="margin-left:45px;">Rol:</label><br><br>
-                        <a data-hover="false" id="rolebtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='roledd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{operator.has_role()}}</a>
-                        <!-- Dropdown Structure -->
-                        <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
-                          <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
-                          {% if has_transparency %}
-                            <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
-                          {% endif %}
-                          {% if has_social_media %}
-                            <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
-                          {% endif %}
-                          <li> <a class="brand-color-text" href="#" onclick="fillDd('admin', this);return false;">Acceso universal</a></li>
-                        </ul>                
-                    </div>
-                  </div>
-                  <div class="row container" style="padding:25px;padding-left: 55px!important; margin-top:40px;">
-                    <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_ops_form" >Guardar Cambios
-                      <i class="mdi-content-send right"></i>
-                    </button>  
-                    <a class="waves-effect waves-light grey white-text btn left modal-trigger" href="#modal_delete" >Eliminar Operador
-                      <i class="mdi-action-delete right"></i>
-                    </a>                           
-                  </div>
-                </form>
-            </div>
             {% if _user %}
             <div class="card-panel">
-              <h5 class="brand-color-text">Perfil del operador</h5>
+              <h5 class="brand-color-text">Perfil ciudadano del operador</h5>
               <div class="row">
                   <div class="col s12 m3 center" style="margin-top:8px;">
                       <div class="form-group">
@@ -140,6 +92,55 @@
               <h5 class="white-text">El operador no ha creado su cuenta.</h5>
              </div>
             {% endif %}
+            <div class="card-panel" style="margin-bottom:30px;">
+                <form id="form_operator" action="{{ url|safe }}" method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="delete" id="delete" value="no">
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-social-person prefix brand-color-text"></i>
+                      <input id="opsadminname" name="opsadminname" type="text" value="{{operator.name}}">
+                      <label for="opsadminname" class="center-align">Nombre del Operador</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-communication-email prefix brand-color-text"></i>
+                      <input id="opsadminemail" name="opsadminemail" type="email" value="{{operator.email}}">
+                      <label for="opsadminemail" class="center-align">Email del Operador</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12 l6">
+                        <!-- Dropdown Trigger -->
+                        <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;margin-left:5px;"></i>
+                        <input type="hidden" id="opsadminrole" name="opsadminrole" value="{{operator.role}}">
+                        <label for="opsadminrole" class="center-align" style="margin-left:45px;">Rol:</label><br><br>
+                        <a data-hover="false" id="rolebtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='roledd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{operator.has_role()}}</a>
+                        <blockquote id="permission" class="grey-text text-lighten-1 left" style="text-align: justify; margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};"></blockquote>
+                        <!-- Dropdown Structure -->
+                        <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                          <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
+                          {% if has_transparency %}
+                            <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
+                          {% endif %}
+                          {% if has_social_media %}
+                            <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
+                          {% endif %}
+                          <li> <a class="brand-color-text" href="#" onclick="fillDd('admin', this);return false;">Acceso universal</a></li>
+                        </ul>                
+                    </div>
+                  </div>
+                  <div class="row container" style="padding:25px;padding-left: 55px!important; margin-top:40px;">
+                    <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_ops_form" >Guardar Cambios
+                      <i class="mdi-content-send right"></i>
+                    </button>  
+                    <a class="waves-effect waves-light grey white-text btn left modal-trigger" href="#modal_delete" >Eliminar Operador
+                      <i class="mdi-action-delete right"></i>
+                    </a>                           
+                  </div>
+                </form>
+            </div>
         </div>
       </div>
     </div>
@@ -183,7 +184,31 @@
     function fillDd(val, elem){
         $('#opsadminrole').val(val);
         $('#rolebtn').html(elem.innerHTML);
+        populateBlockquote(val);
     }
+
+    function populateBlockquote(val){
+      switch(val){
+          case 'callcenter':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver estadísticas y bandeja de reportes{% if has_social_media %}, y la conexión con redes sociales{% endif %}.';
+            break;
+          case 'admin':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores de atención y transparencia pueden ver.';
+            break;
+          {% if has_transparency %}
+          case 'transparency':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador administrar los compromisos y la transparencia de obras.';
+            break;
+          {% endif %}
+          {% if has_social_media %}
+          case 'socialnetworks':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador crear reportes a partir de la conexión con las redes sociales.';
+            break;
+          {% endif %}
+        }
+    }
+
+    populateBlockquote('{{operator.role}}');
 
     document.querySelector('#submit_ops_form_delete').addEventListener('click', function() { 
             document.getElementById("delete").value = "confirmed_deletion";
