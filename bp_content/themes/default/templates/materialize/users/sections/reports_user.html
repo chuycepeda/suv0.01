@@ -69,13 +69,14 @@
 		                            {% if cdb_id != -1 %}<p class="activator" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-receipt brand-color-text"></i>Ticket: <span class="brand-secondary-color-text">{{cdb_id}}</span> <span class="grey-text text-lighten-2 activator">(clic aquí para ver a detalle)</span></p>
 		                            {% else %} <p class="blog-post-content activator" style="cursor: pointer">Haz clic aquí para ver el detalle.</p>{% endif %}
 									
-									{% if log_count > 0 %}<p class="" style="cursor: pointer; line-height: 40px;"><i class="mdi-action-speaker-notes brand-color-text"></i>Comentarios: <span class="brand-secondary-color-text">{{log_count}}</span> <a class="grey-text text-lighten-2 modal-trigger" href="#modal_comments" onclick="populateModal({{idx}})">(clic aquí para verlos)</a></p>
-		                            {% endif %}
 									<div class="divider" style="margin-top:8px; margin-bottom:8px;"></div>
-									<div class="col s6 center">
+									<div class="col s4 center">
 		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="grey-text" href="{{uri_for('landing-map')}}?cdb_id={{cdb_id}}" target="_blank"><i class="mdi-maps-place"></i>Ver mapa</a></p>		                            	
+		                            </div> 
+		                            <div class="col s4 center">
+		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="modal-trigger grey-text" href="#modal_comments" onclick="populateModal({{idx}})"><i class="mdi-action-speaker-notes"></i>Comentar</a></p>		                            	
 		                            </div>                            
-		                            <div class="col s6 center">
+		                            <div class="col s4 center">
 		                            	<p class="" style="cursor: pointer; line-height: 40px;"><a class="grey-text modal-trigger" href="#modal_share" onclick="populateShare({{cdb_id}})"><i class="mdi-social-share"></i>Compartir</a></p>
 		                            </div>
 		                        </div>

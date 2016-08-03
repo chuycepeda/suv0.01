@@ -439,6 +439,9 @@ def editReportParams(self, report_info):
         params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
     
     params['has_logs'] = True if len(params['logs']) > 0 else False
+    params['atts'] = models.Attachment.query(models.Attachment.report_id == report_info.key.id())
+    params['atts'] = params['atts'].order(-models.Attachment.created)
+    params['has_atts'] = True if params['atts'].count() > 0 else False
     params['zoom'] = self.app.config.get('map_zoom')
     params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
     params['lat'] = self.app.config.get('map_center_lat')
@@ -3304,7 +3307,42 @@ class MaterializeSecretaryReportRequestHandler(BaseHandler):
                     archiveReport(self, user_info, report_info.key.id(), "materialize-secretary-report")                    
 
                 elif delete == 'report_edition':
-                    editReport(self, user_info, report_info.key.id(), "materialize-secretary-report")                    
+                    editReport(self, user_info, report_info.key.id(), "materialize-secretary-report") 
+
+                elif delete == 'attachment':
+                    att = models.Attachment()
+                    att.file_name = self.request.get('att_name')
+                    att.user_id = int(self.request.get('att_user_id'))
+                    att.report_id = int(self.request.get('att_report_id'))
+                    att.put()
+                    
+                    if hasattr(self.request.POST['att_file'], 'filename'):
+                        #create attachment
+                        from google.appengine.api import urlfetch
+                        from poster.encode import multipart_encode, MultipartParam
+                        
+                        urlfetch.set_default_fetch_deadline(45)
+
+                        payload = {}
+                        upload_url = blobstore.create_upload_url('/report/attachment/upload/%s' % (att.key.id()))
+                        file_data = self.request.POST['att_file']
+                        payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                 filetype=file_data.type,
+                                                                 fileobj=file_data.file)
+                        data,headers= multipart_encode(payload)
+                        t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                        
+                        logging.info('t.content: %s' % t.content)
+                        
+                        if t.content == 'success':
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')            
+                            
+                        else:
+                            message = _(messages.attach_error)
+                            self.add_message(message, 'danger')            
+                            
+                        report_info = get_or_404(self, report_id)                   
 
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating report: %s ' % e)
@@ -3332,7 +3370,42 @@ class MaterializeAgentReportRequestHandler(BaseHandler):
                     archiveReport(self, user_info, report_info.key.id(), "materialize-agent-report")
 
                 elif delete == 'report_edition':
-                    editReport(self, user_info, report_info.key.id(), "materialize-agent-report")                    
+                    editReport(self, user_info, report_info.key.id(), "materialize-agent-report") 
+
+                elif delete == 'attachment':
+                    att = models.Attachment()
+                    att.file_name = self.request.get('att_name')
+                    att.user_id = int(self.request.get('att_user_id'))
+                    att.report_id = int(self.request.get('att_report_id'))
+                    att.put()
+                    
+                    if hasattr(self.request.POST['att_file'], 'filename'):
+                        #create attachment
+                        from google.appengine.api import urlfetch
+                        from poster.encode import multipart_encode, MultipartParam
+                        
+                        urlfetch.set_default_fetch_deadline(45)
+
+                        payload = {}
+                        upload_url = blobstore.create_upload_url('/report/attachment/upload/%s' % (att.key.id()))
+                        file_data = self.request.POST['att_file']
+                        payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                 filetype=file_data.type,
+                                                                 fileobj=file_data.file)
+                        data,headers= multipart_encode(payload)
+                        t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                        
+                        logging.info('t.content: %s' % t.content)
+                        
+                        if t.content == 'success':
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')            
+                            
+                        else:
+                            message = _(messages.attach_error)
+                            self.add_message(message, 'danger')            
+                            
+                        report_info = get_or_404(self, report_id)                   
 
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating report: %s ' % e)
@@ -3361,7 +3434,42 @@ class MaterializeOperatorReportRequestHandler(BaseHandler):
                     archiveReport(self, user_info, report_info.key.id(), "materialize-operator-report")
 
                 elif delete == 'report_edition':
-                    editReport(self, user_info, report_info.key.id(), "materialize-operator-report")                    
+                    editReport(self, user_info, report_info.key.id(), "materialize-operator-report")
+
+                elif delete == 'attachment':
+                    att = models.Attachment()
+                    att.file_name = self.request.get('att_name')
+                    att.user_id = int(self.request.get('att_user_id'))
+                    att.report_id = int(self.request.get('att_report_id'))
+                    att.put()
+                    
+                    if hasattr(self.request.POST['att_file'], 'filename'):
+                        #create attachment
+                        from google.appengine.api import urlfetch
+                        from poster.encode import multipart_encode, MultipartParam
+                        
+                        urlfetch.set_default_fetch_deadline(45)
+
+                        payload = {}
+                        upload_url = blobstore.create_upload_url('/report/attachment/upload/%s' % (att.key.id()))
+                        file_data = self.request.POST['att_file']
+                        payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                 filetype=file_data.type,
+                                                                 fileobj=file_data.file)
+                        data,headers= multipart_encode(payload)
+                        t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                        
+                        logging.info('t.content: %s' % t.content)
+                        
+                        if t.content == 'success':
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')            
+                            
+                        else:
+                            message = _(messages.attach_error)
+                            self.add_message(message, 'danger')            
+                            
+                        report_info = get_or_404(self, report_id)                    
                                 
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating report: %s ' % e)
@@ -3390,7 +3498,43 @@ class MaterializeCallCenterReportRequestHandler(BaseHandler):
                     archiveReport(self, user_info, report_info.key.id(), "materialize-callcenter-report")
 
                 elif delete == 'report_edition':
-                    editReport(self, user_info, report_info.key.id(), "materialize-callcenter-report")                    
+                    editReport(self, user_info, report_info.key.id(), "materialize-callcenter-report")      
+                
+                elif delete == 'attachment':
+                    att = models.Attachment()
+                    att.file_name = self.request.get('att_name')
+                    att.user_id = int(self.request.get('att_user_id'))
+                    att.report_id = int(self.request.get('att_report_id'))
+                    att.put()
+                    
+                    if hasattr(self.request.POST['att_file'], 'filename'):
+                        #create attachment
+                        from google.appengine.api import urlfetch
+                        from poster.encode import multipart_encode, MultipartParam
+                        
+                        urlfetch.set_default_fetch_deadline(45)
+
+                        payload = {}
+                        upload_url = blobstore.create_upload_url('/report/attachment/upload/%s' % (att.key.id()))
+                        file_data = self.request.POST['att_file']
+                        payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                 filetype=file_data.type,
+                                                                 fileobj=file_data.file)
+                        data,headers= multipart_encode(payload)
+                        t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                        
+                        logging.info('t.content: %s' % t.content)
+                        
+                        if t.content == 'success':
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')            
+                            
+                        else:
+                            message = _(messages.attach_error)
+                            self.add_message(message, 'danger')            
+                            
+                        report_info = get_or_404(self, report_id)
+
 
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating report: %s ' % e)
@@ -4061,6 +4205,22 @@ class MaterializeReportUploadImageHandler(blobstore_handlers.BlobstoreUploadHand
             # report.attachment = upload.key()
             report.image_url = self.uri_for('blob-serve', photo_key = upload.key(), _full=True)
             report.put()
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('success')
+        except Exception as e:
+            logging.error('something went wrong: %s' % e)
+            self.response.headers['Content-Type'] = 'text/plain'
+            self.response.out.write('error')
+
+class MaterializeReportUploadAttachmentHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self, att_id):
+        try:
+            logging.info(self.get_uploads()[0])
+            logging.info('attachment: %s' % att_id)
+            upload = self.get_uploads()[0]
+            att = models.Attachment.get_by_id(long(att_id))
+            att.file_url = self.uri_for('blob-serve', photo_key = upload.key(), _full=True)
+            att.put()
             self.response.headers['Content-Type'] = 'text/plain'
             self.response.out.write('success')
         except Exception as e:
@@ -4996,6 +5156,37 @@ class MaterializeLogChangeDeleteHandler(BaseHandler):
                 reportDict['status'] = "something went wrong"
         else:
             reportDict['status'] = "log not found"
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+
+class MaterializeAttachmentDeleteHandler(BaseHandler):
+    def get_att_or_404(self, att_id):
+        if att_id:
+            try:
+                att = models.Attachment.get_by_id(long(att_id))
+                if att:
+                    return att
+            except ValueError:
+                pass
+        self.abort(404)
+
+    def edit(self, att_id):
+        if not self.has_reports:
+            self.abort(403)
+        reportDict = {}
+        att = self.get_att_or_404(att_id)
+        if self.request.POST:
+            try:
+                att.key.delete()
+                reportDict['status'] = "deleted successfully"
+
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error deleting attachment -%s-: %s ' % (att_id,e))
+                reportDict['status'] = "something went wrong"
+        else:
+            reportDict['status'] = "att not found"
 
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers['Content-Type'] = 'application/json'

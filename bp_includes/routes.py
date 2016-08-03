@@ -35,6 +35,7 @@ _routes = [
     RedirectRoute('/report/list/', handlers.MaterializeReportCardlistHandler, name='materialize-report-cardlist', strict_slash=True),
     RedirectRoute('/report/new/', handlers.MaterializeNewReportHandler, name='materialize-report-new', strict_slash=True),
     RedirectRoute('/report/image/upload/<report_id>', handlers.MaterializeReportUploadImageHandler, name='report-image-upload', strict_slash=True),
+    RedirectRoute('/report/attachment/upload/<att_id>', handlers.MaterializeReportUploadAttachmentHandler, name='report-attachment-upload', strict_slash=True),
     RedirectRoute('/report/success/', handlers.MaterializeNewReportSuccessHandler, name='materialize-report-success', strict_slash=True),
     RedirectRoute('/report/categories/', handlers.MaterializeCategoriesHandler, name='materialize-report-categories', strict_slash=True),
     RedirectRoute('/report/comments/<report_id>/', handlers.MaterializeReportCommentsHandler, name='materialize-report-comments', strict_slash=True),
@@ -45,6 +46,7 @@ _routes = [
     RedirectRoute('/report/author/<uuid>', handlers.MaterializeReportAuthorRequestHandler, name='materialize-report-author', strict_slash=True),   
     RedirectRoute('/report/urgent/', handlers.MaterializeUrgentRequestHandler, name='materialize-report-urgent', strict_slash=True),   
     RedirectRoute('/report/log/delete/<log_id>/', handlers.MaterializeLogChangeDeleteHandler, name='materialize-log-delete', strict_slash=True, handler_method='edit'),
+    RedirectRoute('/report/att/delete/<att_id>/', handlers.MaterializeAttachmentDeleteHandler, name='materialize-att-delete', strict_slash=True, handler_method='edit'),
     
     # Petitions
     RedirectRoute('/petition/list/', handlers.MaterializePetitionCardlistHandler, name='materialize-petition-cardlist', strict_slash=True),

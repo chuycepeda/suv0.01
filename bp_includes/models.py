@@ -592,6 +592,39 @@ class SubCategory(ndb.Model):
     def get_id(self):
         return self._key.id()
 
+class Attachment(ndb.Model):
+    created = ndb.DateTimeProperty(auto_now_add=True)   #creation date                              
+    file_name = ndb.StringProperty(required = True)      #blobstore url                                                                         
+    file_url = ndb.StringProperty(required = True, default = '')      #blobstore url                                                                         
+    report_id = ndb.IntegerProperty(required = True)    #report to attach
+    user_id = ndb.IntegerProperty(required = True)      #creator
+
+    def get_user_image(self):
+        user = User.get_by_id(long(self.user_id))
+        if user.picture:
+            return "/media/serve/profile/%s/" % user.key.id()
+        elif user.facebook_ID is not None or user.google_ID is not None:
+            if user.facebook_ID is not None:
+                social = UserFB.query(UserFB.user_id == int(user.key.id())).get()
+            elif user.google_ID is not None:
+                social = UserGOOG.query(UserGOOG.user_id == int(user.key.id())).get()
+            if social is not None:
+                return social.picture if social.picture is not None else -1
+        else:
+            return -1
+
+    def get_user_name(self):
+        user = User.get_by_id(long(self.user_id))
+        return user.name
+
+    def get_user_email(self):
+        user = User.get_by_id(long(self.user_id))
+        return user.email
+
+    def get_formatted_date(self):
+        return datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).strftime("%Y-%m-%d a las %X %p (GMT-00)")
+
+
 class LogChange(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)                                               
     user_email = ndb.StringProperty(required = True)

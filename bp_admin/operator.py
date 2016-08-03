@@ -1043,6 +1043,41 @@ class AdminReportEditHandler(BaseHandler):
                     self.add_message(messages.saving_success, 'success')
                     return self.redirect_to("admin-report-edit", report_id=report_id)
                 
+                elif delete == 'attachment':
+                    att = models.Attachment()
+                    att.file_name = self.request.get('att_name')
+                    att.user_id = int(self.request.get('att_user_id'))
+                    att.report_id = int(self.request.get('att_report_id'))
+                    att.put()
+                    
+                    if hasattr(self.request.POST['att_file'], 'filename'):
+                        #create attachment
+                        from google.appengine.api import urlfetch
+                        from poster.encode import multipart_encode, MultipartParam
+                        
+                        urlfetch.set_default_fetch_deadline(45)
+
+                        payload = {}
+                        upload_url = blobstore.create_upload_url('/report/attachment/upload/%s' % (att.key.id()))
+                        file_data = self.request.POST['att_file']
+                        payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                 filetype=file_data.type,
+                                                                 fileobj=file_data.file)
+                        data,headers= multipart_encode(payload)
+                        t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                        
+                        logging.info('t.content: %s' % t.content)
+                        
+                        if t.content == 'success':
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')            
+                            
+                        else:
+                            message = _(messages.attach_error)
+                            self.add_message(message, 'danger')               
+
+                        report_info = self.get_or_404(report_id)
+
             except (AttributeError, KeyError, ValueError), e:
                 logging.error('Error updating report: %s ' % e)
                 self.add_message(messages.saving_error, 'danger')
@@ -1069,6 +1104,9 @@ class AdminReportEditHandler(BaseHandler):
             params['logs'].append((log.key.id(), log.get_formatted_date(), image, initial_letter, name, log.user_email, log.title, log.contents))
         
         params['has_logs'] = True if len(params['logs']) > 0 else False
+        params['atts'] = models.Attachment.query(models.Attachment.report_id == report_info.key.id())
+        params['atts'] = params['atts'].order(-models.Attachment.created)
+        params['has_atts'] = True if params['atts'].count() > 0 else False
         params['nickname'] = g_users.get_current_user().email().lower()
         params['zoom'] = self.app.config.get('map_zoom')
         params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')

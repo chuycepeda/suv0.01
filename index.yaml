@@ -21,6 +21,17 @@ indexes:
   - name: created
     direction: desc
 
+- kind: Attachment
+  properties:
+  - name: report_id
+  - name: created
+
+- kind: Attachment
+  properties:
+  - name: report_id
+  - name: created
+    direction: desc
+
 - kind: Report
   properties:
   - name: cdb_id
