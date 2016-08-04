@@ -49,13 +49,13 @@ config = {
     'video_playlist':  'https://www.youtube.com/watch?v=FxozM2hAHXE',
     'right_sidenav_msg': unicode("""
         <p>
-            A través de tu portal de atención, puedes contribuir a transformar San Nicolás en la ciudad que todos queremos. 
+            A través de tu portal de atención, puedes contribuir a transformar nuestra ciudad en la que todos queremos. 
         </p>
         <p>
             Reportando, administrando y dando seguimiento a las necesidades que aquejan a nuestra comunidad, juntos cuidadanos y gobierno podremos ser más eficientes y demostrar que estamos para servir.
         </p>
         <p>
-            ¡Felicidades por ser parte! Comienza a contribuir hacia la mejora de San Nicolás.
+            ¡Felicidades por ser parte!
         </p>
     """,'utf-8'),
     'meta_tags_code': unicode("""
@@ -90,8 +90,8 @@ config = {
     # application on social media
     'twitter_url': 'https://twitter.com/miciudadenlinea',
     'facebook_url': 'https://www.facebook.com/miciudadenlinea',
-    'twitter_handle': 'mtygob',
-    'facebook_handle':'mtygob',
+    'twitter_handle': 'apodacaorgullodenl',
+    'facebook_handle':'apodacaorgullodenl',
     'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com', #get it new from https://console.cloud.google.com/apis/credentials?project=<APP_ID>
     'twitter_appID': '678306982604894208', #get it new from https://twitter.com/settings/widgets
     'facebook_appID': '523620084480399', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/523620084480399/fb-login/
@@ -105,9 +105,9 @@ config = {
     # cartodb + gmaps + cic integration
     'gmaps_apikey':'AIzaSyAwOfCLYHEH2BLQ5L4UILvrR9w4mRWhYRE', #get new from https://console.developers.google.com/apis/credentials/key?type=CLIENT_SIDE&project=<APP_ID>
     # gmaps enabler apikey: https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend&keyType=CLIENT_SIDE&reusekey=true
-    'map_center_lat': 25.72685144192489, 
-    'map_center_lng': -100.26479470985157,
-    'map_zoom': 13,
+    'map_center_lat': 25.7657688, 
+    'map_center_lng': -100.2021606,
+    'map_zoom': 12,
     'map_zoom_mobile': 11,
     'cartodb_user': 'onesmartcity', #remember to import from onesmartcity.cartodb.com 4 tables with queried LIMIT 0, plus fix datatypes after import (e.g. public_reports pvt must be boolean)
     'cartodb_apikey': '2dd2b08fe09c23bc977b051a85b2d6d725a58a54', #get new from https://<cartodb_user>.cartodb.com/your_apps
@@ -115,8 +115,8 @@ config = {
     'cartodb_pois_table': 'public_pois',
     'cartodb_category_dict_table': 'cat_dict',
     'cartodb_polygon_table': 'mun_poly',
-    'cartodb_polygon_name': 'SN', # related to 'name' @ cartodb_polygon_table
-    'cartodb_polygon_full_name': unicode('San Nicolás de los Garza','utf-8'), # related to nom_mun @ mexico.cartodb.com
+    'cartodb_polygon_name': 'APO', # related to 'name' @ cartodb_polygon_table
+    'cartodb_polygon_full_name': unicode('Apodaca','utf-8'), # related to nom_mun @ mexico.cartodb.com
     'cartodb_polygon_cve_ent': 19,          # related to cve_ent @ mexico.cartodb.com
     'cartodb_cic_user': 'cicadmin',
     'cartodb_cic_reports_table': 'nl_public',

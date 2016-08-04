@@ -373,7 +373,7 @@
 
 				    {% endif %}
 				  </ul>
-				  <ul class="side-nav hide-on-large-only" id="mobile-demo" style="margin-top:65px;">
+				  <ul class="side-nav hide-on-large-only" id="mobile-demo" style="{% if is_mobile %}margin-top:58px;{% else %}margin-top:64px;{% endif %}">
 				    {% if not user_id %}
 					    <li id="nav-login"><a href="#modal1" class="modal-trigger menu-item">Ingresar</a></li>
 					    <li id="nav-register"><a href="#modal2" class="modal-trigger menu-item btn white-text brand-color">Crear cuenta</a></li>

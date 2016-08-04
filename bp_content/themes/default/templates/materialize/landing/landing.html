@@ -224,7 +224,7 @@
 
 		{% block navbar %}
 			<!-- START NAVBAR -->
-            <div class="navbar-fixed">
+            <div class="navbar-fixed" {% if is_mobile %}style="height:0"{% endif %}>
 
 			<nav style="background-color: transparent;" class="z-depth-1">
 				<div class="nav-wrapper" style="background:white;">
@@ -344,7 +344,7 @@
 				    {% endif %}
 
 				  </ul>
-				  <ul class="side-nav hide-on-large-only" id="mobile-demo" style="margin-top:65px;">
+				  <ul class="side-nav hide-on-large-only" id="mobile-demo" style="{% if is_mobile %}margin-top:58px;{% else %}margin-top:64px;{% endif %}">
 				    {% if not user_id %}
                         {% if has_reports %}
 				    <li id="nav-map"><a href="{{ uri_for('landing-map') }}" class="menu-item">Mapa</a></li>
@@ -467,8 +467,8 @@
 				    <br><br><br>
 				    <div class="row center">
 				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a</h3>
-				      <h1 class="header col s12 white-text" style="font-family:Novecentowide-Bold;">{{app_name}}</h1>
-					  <h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" {% if not is_mobile %}style="font-size:2.2rem;"{% else %}style="font-size:1.5rem;"{% endif %}>Un espacio en el que podrás mandar reportes, peticiones y propuestas que serán respondidas por tu alcalde.</h3>
+				      <h1 class="header col s12 white-text" style="font-family:Novecentowide-Bold;font-size:3.2rem;">{{app_name}}</h1>
+					  <h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" {% if not is_mobile %}style="font-size:2.2rem;"{% else %}style="font-size:1.5rem;"{% endif %}>Un espacio en el que podrás mandar reportes y propuestas que serán respondidas por tu alcalde.</h3>
 				    </div>
 				    <div class="row center">
 				    </div>
