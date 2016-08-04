@@ -128,9 +128,7 @@
                                     <!-- Dropdown Structure -->
                                     <ul id='statusdd' class='dropdown-content' style="max-height: 250px; margin-left: 15px; font-weight: bolder;">
                                         <!-- <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; getStatus((this.innerHTML).trim()); return false;">En espera</a></li> -->
-                                        {% if 'callcenter' in path %}
                                         <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; getStatus((this.innerHTML).trim()); return false;">Asignado</a></li>
-                                        {% endif %}
                                         <li><a class="waves-effect waves-light amber-text text-lighten-1 modal-trigger" href="#modal_rejected" style="margin-top:8px;">Rechazado<i class="mdi-action-settings-backup-restore right"></i></a></li> 
                                         <li><a class="waves-effect waves-light green-text text-lighten-1 modal-trigger" href="#modal_solved" style="margin-top:8px;">Resuelto<i class="mdi-action-assignment-turned-in right"></i></a> </li>                      
                                         <li><a class="waves-effect waves-light red-text text-lighten-1 modal-trigger" href="#modal_failed" style="margin-top:8px;">Fallo<i class="mdi-action-assignment-late right"></i></a> </li>
