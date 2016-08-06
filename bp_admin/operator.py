@@ -240,6 +240,7 @@ class AdminSubcategoriesHandler(BaseHandler):
                     logging.info("adding a new subcategory")
                     group_info = models.GroupCategory.get_by_id(long(group_id))
                     name = self.request.get('subname').strip()
+                    description = self.request.get('subdescription').strip()
                     icon = self.request.get('subicon')
                     color = group_info.color
                     image_req = True if self.request.get('subimagereq') else False
@@ -255,6 +256,7 @@ class AdminSubcategoriesHandler(BaseHandler):
                     else:
                         subcategory = models.SubCategory()
                         subcategory.name = name
+                        subcategory.description = description
                         subcategory.icon = icon
                         subcategory.icon_url = icon
                         # subcategory.icon_url = "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=%s|%s" % (icon,color)
@@ -332,6 +334,7 @@ class AdminSubcategoriesEditHandler(BaseHandler):
                     subcategory = models.SubCategory.get_by_id(long(category_id))
                     group_info = models.GroupCategory.get_by_id(long(subcategory.group_category_id))
                     name = self.request.get('subname').strip()
+                    description = self.request.get('subdescription').strip()
                     icon = self.request.get('subicon')
                     image_req = True if self.request.get('subimagereq') else False
                     private = True if self.request.get('subprivate') else False
@@ -350,6 +353,7 @@ class AdminSubcategoriesEditHandler(BaseHandler):
                     prevPrivate = subcategory.private
                     prevName = subcategory.name
                     subcategory.name = name
+                    subcategory.description = description
                     subcategory.icon = icon
                     subcategory.icon_url = icon
                     # subcategory.icon_url = "http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=%s|%s" % (icon,group_info.color)

@@ -4,6 +4,12 @@
 <link href="/{{theme}}/materialize/css/plugins/ionRangeSlider/css/ion.rangeSlider.css" type="text/css" rel="stylesheet" media="screen,projection">
 <!--Flat Skin-->
 <link href="/{{theme}}/materialize/css/plugins/ionRangeSlider/css/ion.rangeSlider.skinFlat.css" type="text/css" rel="stylesheet" media="screen,projection">
+<style>
+  label.active{
+    width: 100%;
+    text-align: left;
+  }
+</style>
 {% endblock %}
 
 {% block breadcrums %}
@@ -81,27 +87,36 @@
                       <input id="brand_secondary_color" name="brand_secondary_color" type="color" style="margin-left:50px; height: 45px;" value="{{brand_secondary_color}}">
                   </div>
 
-                  <div class="row margin">
+                  <div class="row margin" style="margin-bottom: 35px!important;">
                       <i class="mdi-image-colorize left brand-color-text" style="margin-left: 22px;"></i>
                       <p class="grey-text">Haz clic en el recuadro y selecciona el color suplementario de tu marca</p>
                       <input id="brand_tertiary_color" name="brand_tertiary_color" type="color" style="margin-left:50px; height: 45px;" value="{{brand_tertiary_color}}">
                   </div>
 
-                  <div class="row margin">
+                  <div class="row margin" style="margin-bottom: 35px!important;">
                     <div class="input-field col s12">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="brand_favicon" name="brand_favicon" type="text" value="{{brand_favicon}}">
                       <label for="brand_favicon" class="center-align">URL de icono (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
+                    <div class="col s12 m3" id="favicon_view" style="margin-left: 45px;">
+                      <div class="card-panel grey lighten-5 z-depth-1">
+                        <div class="row center">
+                          <div class="col s12">
+                            <img id="fav1" src="{{brand_favicon}}" alt=" Por favor escribe una URL válida " class=" responsive-img valign" style="height: 60px;">
+                          </div>
+                        </div>
+                      </div>
+                    </div> 
                   </div>
 
-                  <div class="row margin">
+                  <div class="row margin" style="margin-bottom: 35px!important;">
                     <div class="input-field col s12" style="margin-top: 30px;">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="brand_logo" name="brand_logo" type="text" value="{{brand_logo}}">
                       <label for="brand_logo" class="center-align">URL de tu logo (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
-                    <div class="col s12 m3" id"logo_view" style="margin-left: 45px;">
+                    <div class="col s12 m3" id="logo_view" style="margin-left: 45px;">
                       <div class="card-panel grey lighten-5 z-depth-1">
                         <div class="row center">
                           <div class="col s12">
@@ -112,13 +127,13 @@
                     </div> 
                   </div>
 
-                  <div class="row margin">
+                  <div class="row margin" style="margin-bottom: 35px!important;">
                     <div class="input-field col s12">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="city_splash" name="city_splash" type="text" value="{{city_splash}}">
                       <label for="city_splash" class="center-align">URL de imagen principal (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
-                    <div class="col s12 m6" id"splash_view" style="margin-left: 45px;">
+                    <div class="col s12 m6" id="splash_view" style="margin-left: 45px;">
                       <div class="card-panel grey lighten-5 z-depth-1">
                         <div class="row valign-wrapper">
                           <div class="col m6">
@@ -135,13 +150,13 @@
                     </div>
                   </div>
 
-                  <div class="row margin">
+                  <div class="row margin" style="margin-bottom: 35px!important;">
                     <div class="input-field col s12">
                       <i class="mdi-image-image prefix brand-color-text"></i>
                       <input id="city_splash_secondary" name="city_splash_secondary" type="text" value="{{city_splash_secondary}}">
                       <label for="city_splash_secondary" class="center-align">URL de tu imagen secundaria (¿No tienes URL? <a href="{{uri_for('blob-form')}}" target="_blank">Obténla aquí</a>)</label>
                     </div>
-                    <div class="col s12 m6" id"second_splash_view" style="margin-left: 45px;">
+                    <div class="col s12 m6" id="second_splash_view" style="margin-left: 45px;">
                       <div class="card-panel grey lighten-5 z-depth-1">
                         <div class="row valign-wrapper">
                           <div class="col m6">
@@ -192,6 +207,8 @@
     var submitBtnUp = document.querySelector('#submit_brand_formUp');
     var brand_logoUrl = document.querySelector('#brand_logo');
     var brand_logoImg = document.querySelector('#logo1');
+    var brand_favUrl = document.querySelector('#brand_favicon');
+    var brand_favImg = document.querySelector('#fav1');
     var city_splashUrl = document.querySelector('#city_splash');
     var city_splashImg = document.querySelector('#splash1');
     var city_secondUrl = document.querySelector('#city_splash_secondary');
@@ -212,6 +229,13 @@
     });
     brand_logoImg.addEventListener('error', function() {
       $('#brand_logo').css('color','#F76E78');
+    });
+    brand_favUrl.addEventListener('change', function() {
+      $('#fav1').attr('src',brand_logoUrl.value);
+      $('#brand_favicon').css('color','#000000');
+    });
+    brand_favImg.addEventListener('error', function() {
+      $('#brand_favicon').css('color','#F76E78');
     });
     city_splashUrl.addEventListener('change', function() {
       $('#splash1').attr('src',city_splashUrl.value);

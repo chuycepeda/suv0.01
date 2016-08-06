@@ -74,6 +74,32 @@
                   </div>
                   <div class="row margin">
                     <div class="input-field col s12">
+                      <i class="mdi-action-description prefix brand-color-text"></i>
+                      <input id="subdescription" name="subdescription" type="text" value="{{category.description}}">
+                      <label for="subdescription" class="center-align">Descripción u observaciones</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-av-timer prefix brand-color-text"></i>
+                      <input id="subbenchmark" name="subbenchmark" type="number" value="{{category.benchmark}}">
+                      <label for="subbenchmark" class="center-align">Días ideales para resolver</label>
+                    </div>
+                  </div>
+                  <div class="row margin" style="margin-bottom:25px!important;">
+                    <div class="input-field col s12 m6">
+                      <i class="mdi-image-camera-alt prefix brand-color-text"></i>
+                      <input name="subimagereq" type="checkbox" class="filled-in" id="filled-in-box" {% if category.requires_image %} checked="checked" {% endif %}>
+                      <label for="filled-in-box">Requiere imagen</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                      <i class="mdi-action-visibility{% if category.private %}-off{% endif %} prefix brand-color-text" id='privateIcon'></i>
+                      <input name="subprivate" type="checkbox" class="filled-in" id="subprivate"  {% if category.private %} checked="checked" {% endif %}>
+                      <label for="subprivate">Privada</label>
+                    </div>
+                  </div>
+                  <div class="row margin">
+                    <div class="input-field col s12">
                       <i class="mdi-maps-place prefix brand-color-text"></i>
                       <input id="subicon" name="subicon" type="text" value="{{category.icon}}" hidden>
                       <input id="subicond" name="subicond" type="text" value="{{category.icon}}" disabled>
@@ -404,25 +430,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row margin">
-                    <div class="input-field col s12">
-                      <i class="mdi-av-timer prefix brand-color-text"></i>
-                      <input id="subbenchmark" name="subbenchmark" type="number" value="{{category.benchmark}}">
-                      <label for="subbenchmark" class="center-align">Días ideales para resolver</label>
-                    </div>
-                  </div>
-                  <div class="row margin">
-                    <div class="input-field col s12 m6">
-                      <i class="mdi-image-camera-alt prefix brand-color-text"></i>
-                      <input name="subimagereq" type="checkbox" class="filled-in" id="filled-in-box" {% if category.requires_image %} checked="checked" {% endif %}>
-                      <label for="filled-in-box">Requiere imagen</label>
-                    </div>
-                    <div class="input-field col s12 m6">
-                      <i class="mdi-action-visibility{% if category.private %}-off{% endif %} prefix brand-color-text" id='privateIcon'></i>
-                      <input name="subprivate" type="checkbox" class="filled-in" id="subprivate"  {% if category.private %} checked="checked" {% endif %}>
-                      <label for="subprivate">Privada</label>
-                    </div>
-                  </div>
                   <div class="row container" style="padding:25px;     padding-left: 55px!important;">
                     <button class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_ops_form" >Guardar Cambios
                       <i class="mdi-content-send right"></i>
@@ -466,7 +473,7 @@
         Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre por favor.</span>',4500);
 
       }else if(document.getElementById('subicon').value==""){
-        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de color por favor.</span>',4500);
+        Materialize.toast('<span class="toast-warning">Oops! Llena el campo de icono por favor.</span>',4500);
 
       }else if(document.getElementById('subbenchmark').value==""){
         Materialize.toast('<span class="toast-warning">Oops! Llena el campo de días por favor.</span>',4500);

@@ -4950,12 +4950,14 @@ class MaterializeCategoriesHandler(BaseHandler):
                     else:
                         description = u'Este grupo de categorías pertenece a %s a cargo de %s, en la dependencia de %s a cargo de %s.' % (secretary.name, secretary.admin_name, agency.name, agency.admin_name)
                 subcatArr = []
+                subcatDescArr = {}
                 privateArr = []
                 cdbArr = []
                 icons = {}
                 subcats = models.SubCategory.query(models.SubCategory.group_category_id == cat.key.id())
                 for subcat in subcats:
                     subcatArr.append(subcat.name)
+                    subcatDescArr[subcat.name]= subcat.description
                     icons[subcat.name]= subcat.icon_url
                     privateArr.append(1 if subcat.private else 0)
                     cdbArr.append(subcat.cdb_id)
@@ -4963,6 +4965,7 @@ class MaterializeCategoriesHandler(BaseHandler):
                     'color': cat.color,
                     'icon': cat.icon_url,
                     'categories': subcatArr,
+                    'categories_desc': subcatDescArr,
                     'icon_url': icons,
                     'secretaries': secArr,
                     'agencies': agenArr,

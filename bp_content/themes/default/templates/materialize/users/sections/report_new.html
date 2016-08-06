@@ -82,7 +82,8 @@
 		                                    <p>En atención a:</p>
 		                                    <a data-hover="false" id='subCatbtn' class='dropdown-button btn disabled brand-color truncate' href='#' data-activates='subCatdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
 		                                    <!-- Dropdown Structure -->
-		                                    <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>                
+		                                    <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul> 
+		                                    <blockquote id="_subdescription" class="grey-text text-lighten-1" style="margin-top: 10px;border-left: 5px solid {{brand_color}};display:none;"></blockquote>               
 		                                </div>
 		    	                    </div>
 		    	                    
@@ -269,11 +270,16 @@
 	        var html='';
 	        var selectObj = reportDict[pKey]['categories'];
 	        for (var i=0,j=selectObj.length;i<j;i++){
-	            html += '<li> <a class="brand-color-text" href="#" onclick="document.getElementById(\'subCatbtn\').innerHTML=this.innerHTML; document.getElementById(\'subCat\').value=(this.innerHTML).trim(); drawMarker(); evalRequiresImage(this.innerHTML); return false;">'+selectObj[i]+'</a></li>';
+	            html += '<li> <a class="brand-color-text" href="#" onclick="document.getElementById(\'subCatbtn\').innerHTML=this.innerHTML; document.getElementById(\'subCat\').value=(this.innerHTML).trim(); drawMarker(); evalRequiresImage(this.innerHTML); populateSubDesc(\''+reportDict[pKey]['categories_desc'][selectObj[i]]+'\'); return false;">'+selectObj[i]+'</a></li>';
 	        }
 	        document.getElementById('subCatdd').innerHTML = html;	
 	        document.getElementById('_description').innerHTML = reportDict[pKey].description; 
 	        $('#_description').show();
+		}
+
+		function populateSubDesc(pDesc){
+			document.getElementById('_subdescription').innerHTML = pDesc; 
+	        $('#_subdescription').show();
 		}
 
 		function evalRequiresImage(pCat){

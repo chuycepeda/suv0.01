@@ -578,6 +578,7 @@ class GroupCategory(ndb.Model):
 class SubCategory(ndb.Model):
     group_category_id = ndb.IntegerProperty(required = True)
     name = ndb.StringProperty()
+    description= ndb.StringProperty(default = "")
     icon = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         #duplicated
     icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")         
     requires_image = ndb.BooleanProperty(default = False)                                                                               
