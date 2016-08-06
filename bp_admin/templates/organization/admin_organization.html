@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">Configura tu organización <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Secretaría<i class="mdi-action-note-add left"></i></a></li>
+                <li class="active">Configura tu organización <a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar {{first_level_caps_singular}}<i class="mdi-action-note-add left"></i></a></li>
                 
             </ol>
           </div>
@@ -43,16 +43,16 @@
       <div class="section">
        <div class="row" style="margin-top:30px">
             <div class="row">
-              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega las secretarías que conforman tu organización.</h3>
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega las {{first_level_mins_plural}} que conforman tu organización.</h3>
             </div>
             <table id="data-table-simple" class="responsive-table hoverable centered display">
                 <thead style="font-family:roboto; color:#777777;">
                   <tr class="brand-color white-text">
                       <th>✎</th>
-                      <th>Secretaría</th>
-                      <th>Nombre del Secretario</th>
-                      <th>Email del Secretario</th>
-                      <th>Dependencias</th>
+                      <th>{{first_level_caps_singular}}</th>
+                      <th>Nombre del {{first_level_caps_person}}</th>
+                      <th>Email del {{first_level_caps_person}}</th>
+                      <th>{{second_level_caps_plural}}</th>
                   </tr>
                 </thead>
                 <tbody id="report_table" style="font-family:roboto-light;">
@@ -60,7 +60,7 @@
                       <tr>
                           <td>
                               <div>    
-                                  <a class="icon" href="{{ uri_for('admin-secretary-edit', secretary_id=secretary.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Editar secretaría o agregar dependencia</a>
+                                  <a class="icon" href="{{ uri_for('admin-secretary-edit', secretary_id=secretary.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Editar {{first_level_mins_singular}} o agregar {{second_level_mins_singular}}</a>
                               </div>                          
                           </td>
                           <td>{{secretary.name}}</td>
@@ -84,14 +84,14 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="row">
         <div class="input-field col s12 center">
-          <p class="center login-form-text">Agrega una nueva Secretaría llenando la siguiente forma</p>
+          <p class="center login-form-text">Agrega una nueva {{first_level_caps_singular}} llenando la siguiente forma</p>
         </div>
       </div>
       <div class="row margin">
         <div class="input-field col s12">
           <i class="mdi-action-account-balance prefix brand-color-text"></i>
           <input id="secname" name="secname" type="text">
-          <label for="secname" class="center-align">Nombre de la Secretaría</label>
+          <label for="secname" class="center-align">Nombre de la {{first_level_caps_singular}}</label>
         </div>
       </div>
       <div class="row margin">
@@ -105,28 +105,28 @@
         <div class="input-field col s12">
           <i class="mdi-social-person prefix brand-color-text"></i>
           <input id="adminname" name="adminname" type="text">
-          <label for="adminname" class="center-align">Nombre del Secretario</label>
+          <label for="adminname" class="center-align">Nombre del {{first_level_caps_person}}</label>
         </div>
       </div>
       <div class="row margin">
         <div class="input-field col s12">
           <i class="mdi-communication-email prefix brand-color-text"></i>
           <input id="adminemail" name="adminemail" type="email">
-          <label for="adminemail" class="center-align">Email del Secretario</label>
+          <label for="adminemail" class="center-align">Email del {{first_level_caps_person}}</label>
         </div>
       </div>
       <div class="row margin">
         <div class="input-field col s12">
           <i class="mdi-communication-phone prefix brand-color-text"></i>
           <input id="phone" name="phone" type="text">
-          <label for="phone" class="center-align">Teléfono de la Secretaría</label>
+          <label for="phone" class="center-align">Teléfono de la {{first_level_caps_singular}}</label>
         </div>
       </div>
       <div class="row margin">
         <div class="input-field col s12">
           <i class="mdi-social-location-city prefix brand-color-text"></i>
           <input id="address" name="address" type="text">
-          <label for="address" class="center-align">Dirección de la Secretaría</label>
+          <label for="address" class="center-align">Dirección de la {{first_level_caps_singular}}</label>
         </div>
       </div>
       <div class="row">
@@ -149,7 +149,7 @@
 <script type="text/javascript">
     function sendForm(form){
       if (document.getElementById('adminname').value==""){
-         Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre del secretario por favor.</span>',4500);
+         Materialize.toast('<span class="toast-warning">Oops! Llena el campo de nombre del {{first_level_caps_person}} por favor.</span>',4500);
 
       }else if(document.getElementById('adminemail').value==""){
          Materialize.toast('<span class="toast-warning">Oops! Llena el campo de email por favor.</span>',4500);
@@ -167,11 +167,11 @@
             paging: true,
             "lengthMenu": [[250], [250]],
             "language": {
-              "lengthMenu": "Mostrar _MENU_ secretarías por página",
+              "lengthMenu": "Mostrar _MENU_ {{first_level_mins_plural}} por página",
               "search": "Buscar:",
-              "zeroRecords": "Ninguna secretaría encontrada",
-              "info": "Mostrando _START_ a _END_ de _TOTAL_ secretarías",
-              "infoFiltered": "(filtrando sobre _MAX_ secretarías)",
+              "zeroRecords": "Ninguna {{first_level_mins_singular}} encontrada",
+              "info": "Mostrando _START_ a _END_ de _TOTAL_ {{first_level_mins_plural}}",
+              "infoFiltered": "(filtrando sobre _MAX_ {{first_level_mins_plural}})",
               "paginate": {
                   "first":      "Inicio",
                   "last":       "Final",

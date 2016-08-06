@@ -26,38 +26,6 @@ config = {
     # aes_key must be only 16 (*AES-128*), 24 (*AES-192*), or 32 (*AES-256*) bytes (characters) long.
     'aes_key': "A1BED038702434F8358F799990208234",
     'salt': "634907BCD5EC4F29BE5DE8ED97637366B2C18E42E14EEEBA3925E9E0485FCCC9480BFC6CB2D8E4E8A9464F3C10ADFA0DB97451C8DB1033A6C2D6C4231D0645EF",
-    # application name
-    'app_id': 'one-smart-city-demo',
-    'app_domain':  'http://demo.onesmart.city',
-    'app_name':  unicode('Mi Ciudad Digital','utf-8'),
-    'city_name':  unicode('Mi Ciudad','utf-8'),
-    'city_url':  'http://onesmart.city',
-    'city_slogan':  unicode('Slogan de Mi Ciudad','utf-8'),
-    'city_splash':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/city.jpeg',
-    'city_splash_light':  '45',
-    'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
-    'city_splash_secondary_light':  '45',
-    'contact_recipient': "uno@onesmart.city",      
-    # application branding 
-    'brand_logo': 'http://onesmart.city/default/materialize/images/_logo.png',
-    'brand_favicon': 'http://onesmart.city/default/materialize/images/_logo.png',
-    'brand_color' : '#59BAB9',
-    'brand_secondary_color' : '#00273D',
-    'brand_tertiary_color' : '#EAEAEA',
-    'landing_skin': '',
-    'video_url':  'https://www.youtube.com/embed/RX7JMnsI7K0',
-    'video_playlist':  'https://www.youtube.com/watch?v=FxozM2hAHXE',
-    'right_sidenav_msg': unicode("""
-        <p>
-            A través de tu portal de atención, puedes contribuir a transformar nuestra ciudad en la que todos queremos. 
-        </p>
-        <p>
-            Reportando, administrando y dando seguimiento a las necesidades que aquejan a nuestra comunidad, juntos cuidadanos y gobierno podremos ser más eficientes y demostrar que estamos para servir.
-        </p>
-        <p>
-            ¡Felicidades por ser parte!
-        </p>
-    """,'utf-8'),
     'meta_tags_code': unicode("""
 
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -78,6 +46,50 @@ config = {
             <meta property="twitter:url" content="http://demo.onesmart.city"/>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">""",'utf-8'),
+    # application name
+    'app_id': 'one-smart-city-demo',
+    'app_domain':  'http://demo.onesmart.city',
+    'app_name':  unicode('Mi Ciudad Digital','utf-8'),
+    'city_name':  unicode('Mi Ciudad','utf-8'),
+    'city_url':  'http://onesmart.city',
+    'city_slogan':  unicode('Slogan de Mi Ciudad','utf-8'),
+    'city_splash':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/city.jpeg',
+    'city_splash_light':  '45',
+    'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
+    'city_splash_secondary_light':  '45',
+    'contact_recipient': "uno@onesmart.city",      
+    # application branding 
+    'brand_logo': 'http://onesmart.city/default/materialize/images/_logo.png',
+    'brand_favicon': 'http://onesmart.city/default/materialize/images/_logo.png',
+    'brand_color' : '#59BAB9',
+    'brand_secondary_color' : '#00273D',
+    'brand_tertiary_color' : '#EAEAEA',
+    # government naming
+    'first_level_caps_singular' : unicode('Dirección','utf-8'),            #Secretaría 
+    'first_level_caps_plural' : unicode('Direcciones','utf-8'),             #Secretarías 
+    'first_level_mins_singular' : unicode('dirección','utf-8'),            #secretaría 
+    'first_level_mins_plural' : unicode('direcciones','utf-8'),             #secretarías 
+    'first_level_caps_person' : unicode('Director','utf-8'),              #Secretario 
+    'second_level_caps_singular' : unicode('Subdirección','utf-8'),          #Dependencia 
+    'second_level_caps_plural' : unicode('Subdirecciones','utf-8'),           #Dependencias 
+    'second_level_mins_singular' : unicode('subdirección','utf-8'),          #dependencia 
+    'second_level_mins_plural' : unicode('subdirecciones','utf-8'),           #dependencias 
+    'second_level_caps_person' : unicode('Subdirector','utf-8'),               #Director 
+    # landing specifics
+    'landing_skin': '',
+    'video_url':  'https://www.youtube.com/embed/RX7JMnsI7K0',
+    'video_playlist':  'https://www.youtube.com/watch?v=FxozM2hAHXE',
+    'right_sidenav_msg': unicode("""
+        <p>
+            A través de tu portal de atención, puedes contribuir a transformar nuestra ciudad en la que todos queremos. 
+        </p>
+        <p>
+            Reportando, administrando y dando seguimiento a las necesidades que aquejan a nuestra comunidad, juntos cuidadanos y gobierno podremos ser más eficientes y demostrar que estamos para servir.
+        </p>
+        <p>
+            ¡Felicidades por ser parte!
+        </p>
+    """,'utf-8'),
     # application services
     'has_reports': True,
     'has_petitions': True,

@@ -145,7 +145,7 @@
           <div class="row">
               <div class="container">
                   <div class="col s12">
-                      <p class="caption center">Reportes por Secretaría.</p>
+                      <p class="caption center">Reportes por {{first_level_caps_singular}}.</p>
                       <div id="container-drilldown" style="height: 600px"></div>
                   </div>
               </div>
@@ -158,7 +158,7 @@
             <div class="row">
                 <div class="container">
                     <div class="col s12">
-                        <p class="caption center" id ="perf_title">Días promedio en cerrar reportes por Secretaría en los últimos 90 días.</p>
+                        <p class="caption center" id ="perf_title">Días promedio en cerrar reportes por {{first_level_caps_singular}} en los últimos 90 días.</p>
                         <div id="perf_container-drilldown" style="height: 600px"></div>
                     </div>
                 </div>
@@ -789,11 +789,11 @@
             if (when){ 
                 s+= when.replace('WHERE', 'AND');
                 var days = daydiff(parseDate($('#from').val()), parseDate($('#until').val()));
-                document.getElementById("perf_title").innerHTML = "Días promedio en cerrar reportes por Secretaría en los últimos "+days+" días.";
+                document.getElementById("perf_title").innerHTML = "Días promedio en cerrar reportes por {{first_level_caps_singular}} en los últimos "+days+" días.";
             }
             else{ 
                 s+= "AND ( (now() - created) < interval '90 day')";
-                document.getElementById("perf_title").innerHTML = "Días promedio en cerrar reportes por Secretaría en los últimos 90 días.";
+                document.getElementById("perf_title").innerHTML = "Días promedio en cerrar reportes por {{first_level_caps_singular}} en los últimos 90 días.";
             }
             s += " GROUP BY group_category, sub_category ORDER BY group_category ASC";
                         

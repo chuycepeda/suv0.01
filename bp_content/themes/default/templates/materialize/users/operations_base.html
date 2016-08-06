@@ -343,10 +343,10 @@
                                                                 <li {% if path == uri_for('materialize-callcenter-inbox') or 'callcenter/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-inbox') }}">Atención ciudadana </a></li>
                                                             {% endif %}
                                                             {% if user_is_secretary %}
-                                                                <li {% if path == uri_for('materialize-secretary-inbox') or 'secretary/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-secretary-inbox') }}">Secretaría</a></li>
+                                                                <li {% if path == uri_for('materialize-secretary-inbox') or 'secretary/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-secretary-inbox') }}">{{first_level_caps_singular}}</a></li>
                                                             {% endif %}
                                                             {% if user_is_agent %}
-                                                                <li {% if path == uri_for('materialize-agent-inbox') or 'agent/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-agent-inbox') }}">Dirección</a></li>
+                                                                <li {% if path == uri_for('materialize-agent-inbox') or 'agent/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-agent-inbox') }}">{{second_level_caps_singular}}</a></li>
                                                             {% endif %}
                                                             {% if user_is_operator %}
                                                                 <li {% if path == uri_for('materialize-operator-inbox') or 'operator/report' in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-operator-inbox') }}">Operador de enlace</a></li>

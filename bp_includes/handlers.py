@@ -4946,9 +4946,9 @@ class MaterializeCategoriesHandler(BaseHandler):
                     secretary = models.Secretary.get_by_id(long(agency.secretary_id))
                     secArr.append(secretary.name)
                     if secretary.phone != '' or secretary.address != '':
-                        description = u'Este grupo de categorías pertenece a %s a cargo de %s, en la dependencia de %s a cargo de %s. <br><br> Contacto: <br> %s %s' % (secretary.name, secretary.admin_name, agency.name, agency.admin_name, secretary.phone, secretary.address)
+                        description = u'Este grupo de categorías pertenece a %s a cargo de %s, en la %s a cargo de %s. <br><br> Contacto: <br> %s %s' % (secretary.name, secretary.admin_name, agency.name, agency.admin_name, secretary.phone, secretary.address)
                     else:
-                        description = u'Este grupo de categorías pertenece a %s a cargo de %s, en la dependencia de %s a cargo de %s.' % (secretary.name, secretary.admin_name, agency.name, agency.admin_name)
+                        description = u'Este grupo de categorías pertenece a %s a cargo de %s, en la %s a cargo de %s.' % (secretary.name, secretary.admin_name, agency.name, agency.admin_name)
                 subcatArr = []
                 subcatDescArr = {}
                 privateArr = []

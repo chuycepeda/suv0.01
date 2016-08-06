@@ -33,7 +33,7 @@
                         <td width="20" valign="middle" style="width:20px"></td>
                         <td width="512" valign="middle" style="width:512px">
                           <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Has recibido una invitación de acceso especial.</h3>
-                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Esta invitación de acceso especial te fue enviada por ser un Secretario, Director u Operador de Enlace de tu ciudad. Usando esta dirección de correo, por favor accesa o regístrate en tu plataforma digital.</p>                          
+                          <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Esta invitación de acceso especial te fue enviada por ser un funcionario público de tu ciudad. Usando esta dirección de correo, por favor ingresa o regístrate en tu plataforma digital.</p>                          
                           <div style="text-align:center"><u></u>
                             <table cellspacing="0" cellpadding="0" style="margin-left:auto;margin-right:auto; margin-top: 50px;">
                               <tbody>

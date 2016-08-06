@@ -117,7 +117,7 @@ class AdminCategoriesHandler(BaseHandler):
             agencies = groupCat.get_agencies()
             agenciesArr = [agency.name for agency in agencies]
             self.add_message(messages.nametaken, 'danger')
-            message = ('<div>El nombre %s esta en uso por las siguientes dependencias:</div><div> - %s</div>' %(name,', '.join(agenciesArr)))
+            message = ('<div>El nombre %s esta en uso por las siguientes {{second_level_mins_plural}}:</div><div> - %s</div>' %(name,', '.join(agenciesArr)))
             self.add_message(message, 'danger')
             logging.info(messages.nametaken)
         else:
@@ -195,7 +195,7 @@ class AdminSubcategoriesHandler(BaseHandler):
                             agencies = groupCat.get_agencies()
                             agenciesArr = [agency.name for agency in agencies]
                             self.add_message(messages.nametaken, 'danger')
-                            message = ('<div>El nombre %s esta en uso por las siguientes dependencias:</div><div> - %s</div>' %(name,', '.join(agenciesArr)))
+                            message = ('<div>El nombre %s esta en uso por las siguientes {{second_level_mins_plural}}:</div><div> - %s</div>' %(name,', '.join(agenciesArr)))
                             self.add_message(message, 'danger')
                             logging.info(messages.nametaken)
                             return self.redirect_to("admin-category-edit", group_id=group_id)                  

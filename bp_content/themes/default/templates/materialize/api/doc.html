@@ -43,7 +43,7 @@
         <div class ="row">
             <h5>Categorías y metadatos</h5>
             <h6>Listado de categorías</h6>
-            <p>Se muestra la lista de categorías padre con sus subcategorías, descripción, color, secretarías y direcciones asociadas así como banderas de metadatos relacionales.</p>
+            <p>Se muestra la lista de categorías padre con sus subcategorías, descripción, color, {{first_level_mins_plural}} y direcciones asociadas así como banderas de metadatos relacionales.</p>
             <div class="col s12">
               <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}</code><a id="cat" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
               <div class="row">
@@ -153,9 +153,9 @@
 
       <div class="section" >
         <div class ="row">
-            <h5>Categorías y Secretarías</h5>
+            <h5>Categorías y {{first_level_caps_plural}}</h5>
             <h6>Listado de categorías</h6>
-            <p>La lista muestra los grupos de categorías y las secretarías a las que pertenece dicho grupo.</p>
+            <p>La lista muestra los grupos de categorías y las {{first_level_mins_plural}} a las que pertenece dicho grupo.</p>
             <div class="col s12">
               <div class="row"><pre>GET url:<code class="language-markup">{{ uri_for('materialize-report-categories', _full=True) }}?q=secretaries</code><a id="secretaries" class="btn white brand-color-text right" onclick="getData(this)">¡Pruébalo Ahora!</a></pre></div>
               <div class="row">
@@ -163,22 +163,22 @@
                   {
                     Seguridad Publica Policia y Transito: {
                         secretaries: [
-                            "Secretaría de Seguridad Pública"
+                            "{{first_level_caps_singular}} de Seguridad Pública"
                         ]
                     },
                     Programa de Microcreditos: {
                         secretaries: [
-                            "Secretaría de Desarrollo Económico"
+                            "{{first_level_caps_singular}} de Desarrollo Económico"
                         ]
                     },
                     Salud Desarrollo Social: {
                         secretaries: [
-                            "Secretaría de Desarrollo Social"
+                            "{{first_level_caps_singular}} de Desarrollo Social"
                         ]
                     },
                     Turismo: {
                         secretaries: [
-                            "Secretaría de Desarrollo Económico"
+                            "{{first_level_caps_singular}} de Desarrollo Económico"
                         ]
                     },
                     ...
@@ -234,7 +234,7 @@
               <div class="row">
                 <pre style="height:300px;overflow-y:scroll">JSON response<code id="org-response" class="language-javascript">
                   {
-                    Secretaría de Finanzas y Tesorería: {
+                    {{first_level_caps_singular}} de Finanzas y Tesorería: {
                         admin_name: "Ricardo Garza Villarreal",
                         admin_image: "",
                         agency: [
