@@ -28,7 +28,8 @@
       }
       
   </style>
-  <link href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+  <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css" rel="stylesheet" type="text/css" media="screen,projection" />
 {% endblock %}
 
 {% block breadcrums %}
@@ -64,7 +65,7 @@
               </form>
           </div>
 
-          <table class="table striped hoverable responsive-table centered" style="  font-size: 12px; font-family: roboto-light; margin-top:40px; margin-bottom:40px;">
+          <table id="data-table-simple" class="dt-responsive no-wrap centered display compact striped hoverable" style="font-size: 12px; font-family: roboto-light; margin-top:40px;">
               <thead>
                   <tr>
                       <th class="col m1"></th>
@@ -74,6 +75,7 @@
                           {{ name|safe }}
                       </th>
                       {% endfor %}
+                      <th></th>
                   </tr>
               </thead>
               {% for user in users %}
@@ -89,6 +91,7 @@
                       {{ getattr(user, attr)|e }}
                   </td>
                   {% endfor %}
+                  <td></td>
               </tr>
               {% endfor %}
           </table>
@@ -102,7 +105,8 @@
 
 
 {% block page_scripts %}
-    <script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript">
         $(function () {
             var vars = {};
@@ -117,7 +121,19 @@
         $('#data-table-simple').DataTable({
             scrollY: 300,
             scrollCollapse: true,
-            paging: true,
+            paging: false,
+            responsive: true,
+            responsive: {
+                details: {
+                    type: 'column',
+                    target: -1
+                }
+            },
+            columnDefs: [ {
+                className: 'control',
+                orderable: false,
+                targets:   -1
+            } ],
             "lengthMenu": [[100], [100]],
             "language": {
               "lengthMenu": "Mostrar _MENU_ reportes por página",

@@ -6,29 +6,14 @@
 
 {% block page_css %}
   <style type="text/css">
-      td {
-          padding: 3px!important;
-          padding-top:7px!important;
-      }
-      thead {
-          border-bottom: 1px dotted rgba(37, 50, 56, 0.1)!important;
-      }
-      .dataTables_length{
-        display: none!important;
-      }
-      .dataTables_paginate {
-        display: none!important;
-      }
-      .paging_simple_numbers{
-        display: none!important;
-      }
       .material-tooltip{
         max-width: 80%!important;
         line-height: 1.2rem!important;
       }
       
   </style>
-  <link href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+  <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css" rel="stylesheet" type="text/css" media="screen,projection" />
 {% endblock %}
 
 {% block breadcrums %}
@@ -160,7 +145,7 @@
         </div>
         <div class="section">
            <div class="row" style="margin-top:30px;">
-                <table id="data-table-simple" class="responsive-table hover cell-border centered display compact">
+                <table id="data-table-simple" class="dt-responsive no-wrap centered display compact">
                 <thead style="font-family:roboto; color:#777777;">
                   <tr class="brand-color white-text">
                       <th>✎</th>
@@ -173,6 +158,7 @@
                       <th>Usuario</th>
                       <th>Última modificación</th>
                       <th><i class="mdi-social-notifications white-text"></i></th>
+                      <th></th>
                   </tr>
                 </thead>
                 <tbody id="report_table" style="font-family:roboto-light;">
@@ -201,6 +187,7 @@
                           <td>{% if report.req_deletion %}<i class="mdi-action-delete {% if report.status == 'archived' %}grey{% else %}red{% endif %}-text"></i>
                           {% elif report.status == 'spam' %}<i class="mdi-action-bug-report red-text"></i>
                           {% elif report.urgent %}<i class="mdi-av-new-releases red-text"></i>{% endif %}</td>
+                          <td></td>
                       </tr>
                     {% endfor %}
                 </tbody>
@@ -216,7 +203,8 @@
 
 
 {% block page_scripts %}
-    <script src="/{{ theme }}/materialize/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript">
         function getStatus(status){
             var ds;
@@ -300,7 +288,19 @@
         $('#data-table-simple').DataTable({
             scrollY: 300,
             scrollCollapse: true,
-            paging: true,
+            paging: false,
+            responsive: true,
+            responsive: {
+                details: {
+                    type: 'column',
+                    target: -1
+                }
+            },
+            columnDefs: [ {
+                className: 'control',
+                orderable: false,
+                targets:   -1
+            } ],
             "lengthMenu": [[100], [100]],
             "language": {
               "lengthMenu": "Mostrar _MENU_ reportes por página",
