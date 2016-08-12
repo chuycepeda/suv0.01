@@ -182,7 +182,8 @@ class Report(ndb.Model):
     description = ndb.TextProperty()                                                                                                #: Report description
     status = ndb.StringProperty(choices = ['open', 'halted', 'assigned', 'spam', 'archived', 'forgot', 'answered', 'rejected', 'working', 'solved', 'failed'], default = 'open') #: Report status
     address_from_coord = ndb.GeoPtProperty()                                                                                        #: lat/long address for report 
-    address_from = ndb.StringProperty()                                                                                             #: text address for report
+    address_from = ndb.StringProperty()                                                                                             #: text address for report from gmaps API
+    address_detail = ndb.StringProperty(default = "")                                                                               #: text address for report
     cdb_id = ndb.IntegerProperty(default = -1)                                                                                      #: ID in CartoDB PostGIS DB
     folio = ndb.StringProperty(default = '-1')                                                                                      #: ID in Government database
     contact_info = ndb.StringProperty()                                                                                             #: User contact information
@@ -408,6 +409,14 @@ class Report(ndb.Model):
             if len(self.contact_info.split(',')) > 2:
                 return self.contact_info.split(',')[1].strip()
         return u"%s" % (self.get_user_lastname())
+
+    def get_stakeholder(self):
+        group = GroupCategory.get_by_name(self.group_category)
+        if group:
+            agency = Agency.get_by_group_id(group._key.id())
+            if agency:
+                return u"%s, %s" % (agency.admin_name, agency.admin_email)
+        return '-'
 
     @classmethod
     def get_by_cdb(cls, cdb_id):
