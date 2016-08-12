@@ -16,7 +16,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active"><a href="{{ uri_for('admin-reports') }}">Gestión de reportes</a> | Detalle del reporte</li>
+                <li class="active"><a href="{{ uri_for('admin-reports') }}">Gestión de reportes</a> | Detalle del reporte <button onclick="demoFromHTML(); return false;" class="right btn light-blue darken-2 waves-effect waves-light right" style="font-size: 14px;">Imprimir <i class="left mdi-action-print"></i></button></li>
             </ol>
           </div>
         </div>
@@ -613,11 +613,11 @@
                             {% else %}
                                 <i class="mdi-action-face-unlock circle"></i>
                             {% endif %}
-                            <span class="title"><span class="orange-text">{{name}} &lt;{{email}}&gt;</span>: {{title}}</span>
+                            <span class="title log-change"><span class="orange-text">{{name}} &lt;{{email}}&gt;</span>: {{title}}</span>
                             <p class="brand-color-text"> 
                                 <span class="light-blue-text">{{date}}</span>
                                 <br> 
-                                {{contents}}
+                                <span class="log-contents">{{contents}}</span>
                                 {% if user_is_callcenter %}
                                 <br>
                                 <i class="mdi-action-delete red-text" style="cursor:pointer; border-radius: 10px; font-size: 25px;margin: 12px;" onclick="$('#modal_log').openModal(); $('#logID_url').val('{{ uri_for('materialize-log-delete', log_id = idx) }}'); $('#logID').val('{{idx}}'); return false;"></i>
@@ -633,6 +633,85 @@
     </div>
     {% endif %}
 
+    <section id="printable_section" style="opacity:0; max-height:0px;overflow: hidden;">
+        <div id="printable" class="row">
+            <h3>
+            IMPRESIÓN DE REPORTE
+            </h3>
+            <table id="tab_customers" class="hover cell-border centered display compact">
+                <thead>
+                    <tr class='warning'>
+                        <th>DATOS DEL REPORTE</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:roboto-light; font-size:12px;">
+                    <tr>
+                        <td>Estado: {{report.get_status()}}</td>
+                    </tr>
+                    <tr>
+                        <td>Canal: {{report.get_via()}}</td>
+                    </tr>
+                    <tr>
+                        <td>Ticket: {% if report.cdb_id != -1 %}{{ report.cdb_id|safe }}{% else %}Sin publicar{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table id="tab_customers" class="hover cell-border centered display compact">
+                <thead>
+                    <tr class='warning'>
+                        <th>DATOS DEL CIUDADANO</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:roboto-light; font-size:12px;">
+                    <tr>
+                        <td>{{report.get_contact_info()}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <table id="tab_customers" class="hover cell-border centered display compact">
+                <thead>
+                    <tr class='warning'>
+                        <th>DETALLE DEL REPORTE</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:roboto-light; font-size:12px;">
+                    <tr>
+                        <td><strong>Fecha de la solicitud</strong>: {{report.get_formatted_date()}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{{first_level_caps_singular}}</strong>: {{report.get_secretary()}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{{second_level_caps_singular}}</strong>: {{report.get_agency()}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Responsable</strong>: {{report.get_stakeholder()}}</td>
+                    </tr>            
+                    <tr>
+                        <td><strong>Categoría</strong>: {{report.group_category}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Subcategoría</strong>: {{report.sub_category}}</td>
+                    </tr>            
+                    <tr>
+                        <td><strong>Ubicación</strong>: {{report.address_from}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Detalle de ubicación</strong>: {{report.address_detail}}</td>
+                    </tr>            
+                    <tr>
+                        <td><strong>Detalle del reporte</strong>: {{report.description}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>RESUMEN DE ACTIVIDADES</h3>
+            <div class="row">
+                <div id="printable_logs" style="max-width:100%"></div>
+            </div>
+        </div>
+    </section>
+
 
 {% endblock %}
 
@@ -642,9 +721,10 @@
 
 
 {% block page_scripts %}
-  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
-  <script src="/{{theme}}/materialize/js/cartodb.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+    <script src="/{{theme}}/materialize/js/cartodb.js"></script>
     <script type="text/javascript" src="/default/materialize/js/plugins/dropify/dropify.js"></script>
+    <script type="text/javascript" src="/default/materialize/js/plugins/jspdf/jspdfdebug.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
         $('.dropify').dropify({
@@ -657,473 +737,524 @@
                 });
         });
     </script>
-  <script type="text/javascript">
+    <script type="text/javascript">
 
-    {% if user_is_callcenter %}
-    document.querySelector('#submit_report_form_delete').addEventListener('click', function() { 
-            if (document.getElementById("subCat").value != "---"){
-                document.getElementById("contents").value = document.getElementById("deletenote").value;
-                document.getElementById("delete").value = "confirmed_deletion";
-                document.getElementById('status').value = "archived";
-                document.getElementById("kind").value = "status";
-                document.getElementById("form_edit_report").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-    });
+        {% if user_is_callcenter %}
+        document.querySelector('#submit_report_form_delete').addEventListener('click', function() { 
+                if (document.getElementById("subCat").value != "---"){
+                    document.getElementById("contents").value = document.getElementById("deletenote").value;
+                    document.getElementById("delete").value = "confirmed_deletion";
+                    document.getElementById('status').value = "archived";
+                    document.getElementById("kind").value = "status";
+                    document.getElementById("form_edit_report").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+        });
 
-    document.querySelector('#submit_report_form_spam').addEventListener('click', function() { 
-            if (document.getElementById("subCat").value != "---"){
-                document.getElementById("contents").value = document.getElementById("spamnote").value;
-                document.getElementById("delete").value = "report_edition";
-                document.getElementById('status').value = "spam";
-                document.getElementById("kind").value = "status";
-                document.getElementById("form_edit_report").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-    });
+        document.querySelector('#submit_report_form_spam').addEventListener('click', function() { 
+                if (document.getElementById("subCat").value != "---"){
+                    document.getElementById("contents").value = document.getElementById("spamnote").value;
+                    document.getElementById("delete").value = "report_edition";
+                    document.getElementById('status').value = "spam";
+                    document.getElementById("kind").value = "status";
+                    document.getElementById("form_edit_report").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+        });
 
-    document.querySelector('#submit_log_delete').addEventListener('click', function() { 
+        document.querySelector('#submit_log_delete').addEventListener('click', function() { 
 
-      var url = document.getElementById('logID_url').value;
-      $.ajax({
-          url: url,
-          type: 'POST',
-          data: {'_csrf_token': '{{ csrf_token() }}'},
-          success: function(data) { 
-              console.log(data)
-          }
-      }).done(function(data) {
-          if (data.status == "deleted successfully"){
-            Materialize.toast('<span class="toast-success">El log ha sido eliminado.</span>',4500);
-            $('#'+document.getElementById('logID').value).hide();
-            $('#modal_log').closeModal();
-          }
-          else if (data.status == "something went wrong")
-            Materialize.toast('<span class="toast-danger">Oops! Algo ha salido, por favor intenta más tarde.</span>',4500);
-          else if (data.status == "log not found")
-            Materialize.toast('<span class="toast-warning">Oops! Ese log ya ha sido eliminado.</span>',4500);
-      });
-
-    });
-    {% endif %}
-
-    document.querySelector('#submit_att_delete').addEventListener('click', function() { 
-
-      var url = document.getElementById('attID_url').value;
-      $.ajax({
-          url: url,
-          type: 'POST',
-          data: {'_csrf_token': '{{ csrf_token() }}'},
-          success: function(data) { 
-              console.log(data)
-          }
-      }).done(function(data) {
-          if (data.status == "deleted successfully"){
-            Materialize.toast('<span class="toast-success">El anexo ha sido eliminado.</span>',4500);
-            $('#'+document.getElementById('attID').value).hide();
-            $('#modal_att').closeModal();
-          }
-          else if (data.status == "something went wrong")
-            Materialize.toast('<span class="toast-danger">Oops! Algo ha salido, por favor intenta más tarde.</span>',4500);
-          else if (data.status == "att not found")
-            Materialize.toast('<span class="toast-warning">Oops! Ese anexo ya ha sido eliminado.</span>',4500);
-      });
-
-    });
-
-    document.querySelector('#submit_attachment_form').addEventListener('click', function() { 
-            if (document.getElementById("att_name").value != "" || document.getElementById("att_file").value != ""){
-                document.getElementById("form_attachment").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor agrega un nombre y archivo.</span>',4500);
-    });
-
-   document.querySelector('#submit_report_form_solved').addEventListener('click', function() { 
-            if (document.getElementById("subCat").value != "---"){
-                document.getElementById("contents").value = document.getElementById("solvednote").value;
-                document.getElementById("delete").value = "report_edition";
-                document.getElementById('status').value = "solved";
-                document.getElementById("kind").value = "status";
-                document.getElementById("form_edit_report").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-    });
-
-    document.querySelector('#submit_report_form_rejected').addEventListener('click', function() { 
-            if (document.getElementById("subCat").value != "---"){
-                document.getElementById("contents").value = document.getElementById("rejectednote").value;
-                document.getElementById("delete").value = "report_edition";
-                document.getElementById('status').value = "rejected";
-                document.getElementById("kind").value = "status";
-                document.getElementById("form_edit_report").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-    });
-
-    document.querySelector('#submit_report_form_failed').addEventListener('click', function() { 
-            if (document.getElementById("subCat").value != "---"){
-                document.getElementById("contents").value = document.getElementById("failednote").value;
-                document.getElementById("delete").value = "report_edition";
-                document.getElementById('status').value = "failed";
-                document.getElementById("kind").value = "status";
-                document.getElementById("form_edit_report").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-    });
-    
-    document.querySelector('#submit_report_form_top').addEventListener('click', function() { 
-            if (document.getElementById("subCat").value != "---"){
-                document.getElementById("delete").value = "report_edition";
-                document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
-                document.getElementById("form_edit_report").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-    });
-
-    document.querySelector('#submit_report_form_bottom').addEventListener('click', function() { 
-            if (document.getElementById("subCat").value != "---"){
-                document.getElementById("delete").value = "report_edition";
-                document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
-                document.getElementById("form_edit_report").submit();
-            }else
-              Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-    });
-    
-    document.querySelector('#submit_note_form').addEventListener('click', function() { 
-            if (document.getElementById("internalnote").value != "" && document.getElementById("subCat").value != "---"){
-              document.getElementById("contents").value = document.getElementById("internalnote").value;
-              document.getElementById("delete").value = "report_edition";
-              document.getElementById("kind").value = "note";
-              document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
-              document.getElementById("form_edit_report").submit();
-            }else{
-                if (document.getElementById("internalnote").value === "")
-                    Materialize.toast('<span class="toast-warning">¡Oops! Por favor llena el campor de nota.</span>',4500);
-                if (document.getElementById("subCat").value === "---")
-                    Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-            }
-    });
-    document.querySelector('#submit_comment_form').addEventListener('click', function() { 
-            if (document.getElementById("ucomment").value != "" && document.getElementById("subCat").value != "---"){
-              document.getElementById("contents").value = document.getElementById("ucomment").value;
-              document.getElementById("delete").value = "report_edition";
-              document.getElementById("kind").value = "comment";
-              document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
-              document.getElementById("form_edit_report").submit();     
-            }else{
-                if (document.getElementById("ucomment").value === "")
-                    Materialize.toast('<span class="toast-warning">¡Oops! Por favor llena el campor de comentarios.</span>',4500);
-                if (document.getElementById("subCat").value === "---")
-                    Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
-            }
-    });
-  </script>
-  <script type="text/javascript">
-        google.maps.event.addDomListener(window,'load', init);
-        var map, center = [{{lat}},{{lng}}];
-        var sublayers = [];
-        var geocoder = new google.maps.Geocoder();
-        var marker = null;
-        var markers = [];
-        var reportDict;    
-        var marker_color = "{{brand_color}}";
-        var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);    
-
-        function getStatus(status){
-            //status = (status.innerHTML).trim();
-            var ds;
-            switch (status) {
-                case 'Abierto':
-                    ds = "open";
-                    break;
-                case 'Spam':
-                    ds = "spam";
-                    break;
-                case 'En espera':
-                    ds = "halted";
-                    break;
-                case 'En proceso':
-                    ds = "working";
-                    break;
-                case 'Asignado':
-                    ds = "assigned";
-                    break;
-                case 'Rechazado':
-                    ds = "rejected";
-                    break;
-                case 'Resuelto':
-                    ds = "solved";
-                    break;
-                case 'Fallo':
-                    ds = "failed";
-                    break;
-                case 'Archivado':
-                    ds = "archived";
-                    break;
-                case 'Olvidado':
-                    ds = "forgot";
-                    break;
-                case 'Respondido':
-                    ds = "answered";
-                    break;
-            }
-            document.getElementById('status').value = ds;
-        }   
-
-        function markerFitBounds() {
-            var bounds = new google.maps.LatLngBounds();
-            for(var i=0,j=markers.length; i<j; i++) {
-                bounds.extend( markers[i].getPosition() );
-            }
-            map.fitBounds(bounds);
-        }
-            
-        function markerDrop(loc) {
-            //Marker idea from: http://stackoverflow.com/questions/7095574/google-maps-api-3-custom-marker-color-for-default-dot-marker                 
-            if (marker == null){
-                marker = new google.maps.Marker({
-                          animation: google.maps.Animation.DROP,
-                  position: loc,
-                  map: map,
-                  draggable: true,
-                  icon: marker_icon
-                });
-                google.maps.event.addListener(marker,'dragend',function(event) {
-                      geocode(event.latLng);
-                });        
-            }else{
-                marker.setPosition(loc);
-            }
-        }
-        
-        function geocode(input) {
-              var address, obj;
-              if (typeof(input) === 'string') {
-                  address = document.getElementById('address_'+input).value;
-                  obj = { 'address': address };
-              }else{
-                  address = input;
-                  obj = { 'location': address};
+          var url = document.getElementById('logID_url').value;
+          $.ajax({
+              url: url,
+              type: 'POST',
+              data: {'_csrf_token': '{{ csrf_token() }}'},
+              success: function(data) { 
+                  console.log(data)
               }
-              geocoder.geocode( obj, function(results, status) {
-                  if (status == google.maps.GeocoderStatus.OK) {
-                      if (typeof(input) === 'string') {
-                          map.setCenter(results[0].geometry.location);
-                          switch (results[0].geometry.location_type){
-                              case 'ROOFTOP': map.setZoom(17); break;
-                              case 'RANGE_INTERPOLATED': map.setZoom(16); break;
-                              case 'GEOMETRIC_CENTER': map.setZoom(15); break;
-                              case 'APPROXIMATE': map.setZoom(13); break;
+          }).done(function(data) {
+              if (data.status == "deleted successfully"){
+                Materialize.toast('<span class="toast-success">El log ha sido eliminado.</span>',4500);
+                $('#'+document.getElementById('logID').value).hide();
+                $('#modal_log').closeModal();
+              }
+              else if (data.status == "something went wrong")
+                Materialize.toast('<span class="toast-danger">Oops! Algo ha salido, por favor intenta más tarde.</span>',4500);
+              else if (data.status == "log not found")
+                Materialize.toast('<span class="toast-warning">Oops! Ese log ya ha sido eliminado.</span>',4500);
+          });
+
+        });
+        {% endif %}
+
+        document.querySelector('#submit_att_delete').addEventListener('click', function() { 
+
+          var url = document.getElementById('attID_url').value;
+          $.ajax({
+              url: url,
+              type: 'POST',
+              data: {'_csrf_token': '{{ csrf_token() }}'},
+              success: function(data) { 
+                  console.log(data)
+              }
+          }).done(function(data) {
+              if (data.status == "deleted successfully"){
+                Materialize.toast('<span class="toast-success">El anexo ha sido eliminado.</span>',4500);
+                $('#'+document.getElementById('attID').value).hide();
+                $('#modal_att').closeModal();
+              }
+              else if (data.status == "something went wrong")
+                Materialize.toast('<span class="toast-danger">Oops! Algo ha salido, por favor intenta más tarde.</span>',4500);
+              else if (data.status == "att not found")
+                Materialize.toast('<span class="toast-warning">Oops! Ese anexo ya ha sido eliminado.</span>',4500);
+          });
+
+        });
+
+        document.querySelector('#submit_attachment_form').addEventListener('click', function() { 
+                if (document.getElementById("att_name").value != "" || document.getElementById("att_file").value != ""){
+                    document.getElementById("form_attachment").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor agrega un nombre y archivo.</span>',4500);
+        });
+
+       document.querySelector('#submit_report_form_solved').addEventListener('click', function() { 
+                if (document.getElementById("subCat").value != "---"){
+                    document.getElementById("contents").value = document.getElementById("solvednote").value;
+                    document.getElementById("delete").value = "report_edition";
+                    document.getElementById('status').value = "solved";
+                    document.getElementById("kind").value = "status";
+                    document.getElementById("form_edit_report").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+        });
+
+        document.querySelector('#submit_report_form_rejected').addEventListener('click', function() { 
+                if (document.getElementById("subCat").value != "---"){
+                    document.getElementById("contents").value = document.getElementById("rejectednote").value;
+                    document.getElementById("delete").value = "report_edition";
+                    document.getElementById('status').value = "rejected";
+                    document.getElementById("kind").value = "status";
+                    document.getElementById("form_edit_report").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+        });
+
+        document.querySelector('#submit_report_form_failed').addEventListener('click', function() { 
+                if (document.getElementById("subCat").value != "---"){
+                    document.getElementById("contents").value = document.getElementById("failednote").value;
+                    document.getElementById("delete").value = "report_edition";
+                    document.getElementById('status').value = "failed";
+                    document.getElementById("kind").value = "status";
+                    document.getElementById("form_edit_report").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+        });
+        
+        document.querySelector('#submit_report_form_top').addEventListener('click', function() { 
+                if (document.getElementById("subCat").value != "---"){
+                    document.getElementById("delete").value = "report_edition";
+                    document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
+                    document.getElementById("form_edit_report").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+        });
+
+        document.querySelector('#submit_report_form_bottom').addEventListener('click', function() { 
+                if (document.getElementById("subCat").value != "---"){
+                    document.getElementById("delete").value = "report_edition";
+                    document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
+                    document.getElementById("form_edit_report").submit();
+                }else
+                  Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+        });
+        
+        document.querySelector('#submit_note_form').addEventListener('click', function() { 
+                if (document.getElementById("internalnote").value != "" && document.getElementById("subCat").value != "---"){
+                  document.getElementById("contents").value = document.getElementById("internalnote").value;
+                  document.getElementById("delete").value = "report_edition";
+                  document.getElementById("kind").value = "note";
+                  document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
+                  document.getElementById("form_edit_report").submit();
+                }else{
+                    if (document.getElementById("internalnote").value === "")
+                        Materialize.toast('<span class="toast-warning">¡Oops! Por favor llena el campor de nota.</span>',4500);
+                    if (document.getElementById("subCat").value === "---")
+                        Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+                }
+        });
+        document.querySelector('#submit_comment_form').addEventListener('click', function() { 
+                if (document.getElementById("ucomment").value != "" && document.getElementById("subCat").value != "---"){
+                  document.getElementById("contents").value = document.getElementById("ucomment").value;
+                  document.getElementById("delete").value = "report_edition";
+                  document.getElementById("kind").value = "comment";
+                  document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1);       
+                  document.getElementById("form_edit_report").submit();     
+                }else{
+                    if (document.getElementById("ucomment").value === "")
+                        Materialize.toast('<span class="toast-warning">¡Oops! Por favor llena el campor de comentarios.</span>',4500);
+                    if (document.getElementById("subCat").value === "---")
+                        Materialize.toast('<span class="toast-warning">¡Oops! Por favor selecciona una categoría.</span>',4500);
+                }
+        });
+    </script>
+    <script type="text/javascript">
+            google.maps.event.addDomListener(window,'load', init);
+            var map, center = [{{lat}},{{lng}}];
+            var sublayers = [];
+            var geocoder = new google.maps.Geocoder();
+            var marker = null;
+            var markers = [];
+            var reportDict;    
+            var marker_color = "{{brand_color}}";
+            var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);    
+
+            function getStatus(status){
+                //status = (status.innerHTML).trim();
+                var ds;
+                switch (status) {
+                    case 'Abierto':
+                        ds = "open";
+                        break;
+                    case 'Spam':
+                        ds = "spam";
+                        break;
+                    case 'En espera':
+                        ds = "halted";
+                        break;
+                    case 'En proceso':
+                        ds = "working";
+                        break;
+                    case 'Asignado':
+                        ds = "assigned";
+                        break;
+                    case 'Rechazado':
+                        ds = "rejected";
+                        break;
+                    case 'Resuelto':
+                        ds = "solved";
+                        break;
+                    case 'Fallo':
+                        ds = "failed";
+                        break;
+                    case 'Archivado':
+                        ds = "archived";
+                        break;
+                    case 'Olvidado':
+                        ds = "forgot";
+                        break;
+                    case 'Respondido':
+                        ds = "answered";
+                        break;
+                }
+                document.getElementById('status').value = ds;
+            }   
+
+            function markerFitBounds() {
+                var bounds = new google.maps.LatLngBounds();
+                for(var i=0,j=markers.length; i<j; i++) {
+                    bounds.extend( markers[i].getPosition() );
+                }
+                map.fitBounds(bounds);
+            }
+                
+            function markerDrop(loc) {
+                //Marker idea from: http://stackoverflow.com/questions/7095574/google-maps-api-3-custom-marker-color-for-default-dot-marker                 
+                if (marker == null){
+                    marker = new google.maps.Marker({
+                              animation: google.maps.Animation.DROP,
+                      position: loc,
+                      map: map,
+                      draggable: true,
+                      icon: marker_icon
+                    });
+                    google.maps.event.addListener(marker,'dragend',function(event) {
+                          geocode(event.latLng);
+                    });        
+                }else{
+                    marker.setPosition(loc);
+                }
+            }
+            
+            function geocode(input) {
+                  var address, obj;
+                  if (typeof(input) === 'string') {
+                      address = document.getElementById('address_'+input).value;
+                      obj = { 'address': address };
+                  }else{
+                      address = input;
+                      obj = { 'location': address};
+                  }
+                  geocoder.geocode( obj, function(results, status) {
+                      if (status == google.maps.GeocoderStatus.OK) {
+                          if (typeof(input) === 'string') {
+                              map.setCenter(results[0].geometry.location);
+                              switch (results[0].geometry.location_type){
+                                  case 'ROOFTOP': map.setZoom(17); break;
+                                  case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                                  case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                                  case 'APPROXIMATE': map.setZoom(13); break;
+                              }
+                              markerDrop(results[0].geometry.location);
+                          }else{
+                              if (results[1]) {
+                                  document.getElementById('address_from').value = results[1].formatted_address;
+                              } else {
+                                  alert('No address geocode found');
+                              }
                           }
-                          markerDrop(results[0].geometry.location);
-                      }else{
-                          if (results[1]) {
-                              document.getElementById('address_from').value = results[1].formatted_address;
-                          } else {
-                              alert('No address geocode found');
-                          }
+                      } else {
+                          alert('Geocode unsuccessful: ' + status);
                       }
-                  } else {
-                      alert('Geocode unsuccessful: ' + status);
-                  }
-              });
-        }   
-        
-        function fillDd(pKey){
-              document.getElementById('subCatbtn').innerHTML='---';
-              document.getElementById('subCat').value ='---';
-              pKey = (pKey.innerHTML).trim();
-              document.getElementById('catGroup').value=pKey;
-              document.getElementById('catGroupbtn').innerHTML = pKey;
-              
-              if ($('#subCatbtn').hasClass('disabled')) $('#subCatbtn').removeClass('disabled');          
-              var html='';
-              var selectObj = reportDict[pKey]['categories'];
-              for (var i=0,j=selectObj.length;i<j;i++){
-                  html += '<li> <a class="brand-color-text" href="#" onclick="document.getElementById(\'subCatbtn\').innerHTML=this.innerHTML; document.getElementById(\'subCat\').value=(this.innerHTML).trim(); return false;">'+selectObj[i]+'</a></li>';
-              }
-              document.getElementById('subCatdd').innerHTML = html;        
-        }
-          
-        function init(){
-            getgSV();
-            getStatus ( document.getElementById('status').value );
-            var url = "{{ uri_for('materialize-report-categories') }}";
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(data) { 
-                    console.log(data)
-                }
-            }).done(function(data) {
-                reportDict = data;
-                var html='';
-                var abcList = [];
-                for (var x in reportDict){
-                    abcList.push(x);
-                }
-                abcList.sort();
-                for (var i=0,j=abcList.length;i<j;i++){
-                    html += '<li> <a class="brand-color-text" href="#" onclick="fillDd(this);return false;">'+ abcList[i] +'</a></li>';
-                }
-                document.getElementById('catGroupdd').innerHTML = html;
-                if ($('#catGroupbtn').hasClass('disabled')) $('#catGroupbtn').removeClass('disabled');
-            });                
-          
-          var mapOptions = {
-            center: new google.maps.LatLng(center[0], center[1]),
-            zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
-            zoomControl: true,
-            zoomControlOptions: {
-              style: google.maps.ZoomControlStyle.SMALL,
-              position: google.maps.ControlPosition.LEFT_BOTTOM 
-            },
-            mapTypeControl: true,
-            mapTypeControlOptions: { 
-              mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
-            },
-            scrollwheel: true,
-            streetViewControl: true,
-            StreetViewControlOptions: {
-              position: google.maps.ControlPosition.BOTTOM_LEFT
-            },
-            panControl:false,
-            backgroundColor: 'rgb(249, 249, 249)',
-            rotateControl:true,
-            overviewMapControl:true
-          };
-          map = new google.maps.Map(document.getElementById('map'), mapOptions);
-                                
-            var layerSource = {
-                user_name: '{{cartodb_user}}',
-                type: 'cartodb',
-                sublayers: [{
-                    sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
-                    cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
-                }]
-              };
-              cartodb.createLayer(map,layerSource)
-              .on('done', function(layer) {
-              map.overlayMapTypes.setAt(0, layer);
-                  for (var i = 0; i < layer.getSubLayerCount(); i++) {
-                     sublayers[i] = layer.getSubLayer(i);
-                     console.log("Congrats, you added sublayer #" + i + "!");
-                  }
-              })
-              .error(function(err) {
-                  console.log("error: " + err);
-              });    
-
-          var address_from = document.getElementById('address_from');
-          var autocomplete_from = new google.maps.places.Autocomplete(address_from);
-          autocomplete_from.bindTo('bounds', map);
-          
-          google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
-              var place = autocomplete_from.getPlace();
-              if (!place.geometry) {
-                        return;
-              }
-              if (place.geometry.viewport) {
-                        map.fitBounds(place.geometry.viewport);
-                        markerDrop(place.geometry.location);
-              }else{
-                        map.setCenter(place.geometry.location);
-                        map.setZoom(17);
-                        markerDrop(place.geometry.location);
-              }
-          });                                       
+                  });
+            }   
             
-          google.maps.event.addDomListener(window, 'resize', function() {
-                    setTimeout(function() {
-                        map.panTo({lat: center[0], lng: center[1]});
-                    }, 400);                            
-              });
-                    
-          google.maps.event.addListener(map, 'click', function(event) {
-                  markerDrop(event.latLng);
-                  geocode(event.latLng);
-              });
-                    
-            if(document.getElementById('address_from_coord').value){
-                var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
-                var latlng = new google.maps.LatLng(coof[0],coof[1]);
-                markerDrop (latlng);
-                map.setCenter(latlng);
-            }         
-        }
-
-        var panorama, sv = new google.maps.StreetViewService();
-        function getgSV() {
-            if(document.getElementById('address_from_coord').value){
-                var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
-                var loc = new google.maps.LatLng(coof[0],coof[1]);
-                sv.getPanoramaByLocation(loc, 50, function(data, status) {
-                    if (status == google.maps.StreetViewStatus.OK) {
-                        $('#gSV').html("<div id='gSVpanorama' style='height: 300px;overflow: hidden;-webkit-transform: translateZ(0px); background-color:#4EC8BC'></div>");
-                        panorama = new google.maps.StreetViewPanorama(
-                            document.getElementById('gSVpanorama'), {
-                                position: loc,
-                                addressControlOptions: {
-                                  position: google.maps.ControlPosition.BOTTOM_CENTER
-                                },
-                                linksControl: false,
-                                panControl: false,
-                                enableCloseButton: true,
-                                scrollwheel: false,
-                                zoomControl: false,
-                                fullScreenControl: false
-                            }
-                        );
-                        console.log('sv available');
-                        return true;
+            function fillDd(pKey){
+                  document.getElementById('subCatbtn').innerHTML='---';
+                  document.getElementById('subCat').value ='---';
+                  pKey = (pKey.innerHTML).trim();
+                  document.getElementById('catGroup').value=pKey;
+                  document.getElementById('catGroupbtn').innerHTML = pKey;
+                  
+                  if ($('#subCatbtn').hasClass('disabled')) $('#subCatbtn').removeClass('disabled');          
+                  var html='';
+                  var selectObj = reportDict[pKey]['categories'];
+                  for (var i=0,j=selectObj.length;i<j;i++){
+                      html += '<li> <a class="brand-color-text" href="#" onclick="document.getElementById(\'subCatbtn\').innerHTML=this.innerHTML; document.getElementById(\'subCat\').value=(this.innerHTML).trim(); return false;">'+selectObj[i]+'</a></li>';
+                  }
+                  document.getElementById('subCatdd').innerHTML = html;        
+            }
+              
+            function init(){
+                getgSV();
+                getStatus ( document.getElementById('status').value );
+                var url = "{{ uri_for('materialize-report-categories') }}";
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) { 
+                        console.log(data)
                     }
-                    else{
-                        console.log('sv unavailable');
-                        $('#gSV').html('<img class="responsive-img" src="/{{theme}}/materialize/images/no-photo.png" style="max-height: 245px;">');
-                        return false;
+                }).done(function(data) {
+                    reportDict = data;
+                    var html='';
+                    var abcList = [];
+                    for (var x in reportDict){
+                        abcList.push(x);
+                    }
+                    abcList.sort();
+                    for (var i=0,j=abcList.length;i<j;i++){
+                        html += '<li> <a class="brand-color-text" href="#" onclick="fillDd(this);return false;">'+ abcList[i] +'</a></li>';
+                    }
+                    document.getElementById('catGroupdd').innerHTML = html;
+                    if ($('#catGroupbtn').hasClass('disabled')) $('#catGroupbtn').removeClass('disabled');
+                });                
+              
+              var mapOptions = {
+                center: new google.maps.LatLng(center[0], center[1]),
+                zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
+                zoomControl: true,
+                zoomControlOptions: {
+                  style: google.maps.ZoomControlStyle.SMALL,
+                  position: google.maps.ControlPosition.LEFT_BOTTOM 
+                },
+                mapTypeControl: true,
+                mapTypeControlOptions: { 
+                  mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
+                },
+                scrollwheel: true,
+                streetViewControl: true,
+                StreetViewControlOptions: {
+                  position: google.maps.ControlPosition.BOTTOM_LEFT
+                },
+                panControl:false,
+                backgroundColor: 'rgb(249, 249, 249)',
+                rotateControl:true,
+                overviewMapControl:true
+              };
+              map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                                    
+                var layerSource = {
+                    user_name: '{{cartodb_user}}',
+                    type: 'cartodb',
+                    sublayers: [{
+                        sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+                        cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+                    }]
+                  };
+                  cartodb.createLayer(map,layerSource)
+                  .on('done', function(layer) {
+                  map.overlayMapTypes.setAt(0, layer);
+                      for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                         sublayers[i] = layer.getSubLayer(i);
+                         console.log("Congrats, you added sublayer #" + i + "!");
+                      }
+                  })
+                  .error(function(err) {
+                      console.log("error: " + err);
+                  });    
+
+              var address_from = document.getElementById('address_from');
+              var autocomplete_from = new google.maps.places.Autocomplete(address_from);
+              autocomplete_from.bindTo('bounds', map);
+              
+              google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+                  var place = autocomplete_from.getPlace();
+                  if (!place.geometry) {
+                            return;
+                  }
+                  if (place.geometry.viewport) {
+                            map.fitBounds(place.geometry.viewport);
+                            markerDrop(place.geometry.location);
+                  }else{
+                            map.setCenter(place.geometry.location);
+                            map.setZoom(17);
+                            markerDrop(place.geometry.location);
+                  }
+              });                                       
+                
+              google.maps.event.addDomListener(window, 'resize', function() {
+                        setTimeout(function() {
+                            map.panTo({lat: center[0], lng: center[1]});
+                        }, 400);                            
+                  });
+                        
+              google.maps.event.addListener(map, 'click', function(event) {
+                      markerDrop(event.latLng);
+                      geocode(event.latLng);
+                  });
+                        
+                if(document.getElementById('address_from_coord').value){
+                    var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
+                    var latlng = new google.maps.LatLng(coof[0],coof[1]);
+                    markerDrop (latlng);
+                    map.setCenter(latlng);
+                }         
+            }
+
+            var panorama, sv = new google.maps.StreetViewService();
+            function getgSV() {
+                if(document.getElementById('address_from_coord').value){
+                    var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
+                    var loc = new google.maps.LatLng(coof[0],coof[1]);
+                    sv.getPanoramaByLocation(loc, 50, function(data, status) {
+                        if (status == google.maps.StreetViewStatus.OK) {
+                            $('#gSV').html("<div id='gSVpanorama' style='height: 300px;overflow: hidden;-webkit-transform: translateZ(0px); background-color:#4EC8BC'></div>");
+                            panorama = new google.maps.StreetViewPanorama(
+                                document.getElementById('gSVpanorama'), {
+                                    position: loc,
+                                    addressControlOptions: {
+                                      position: google.maps.ControlPosition.BOTTOM_CENTER
+                                    },
+                                    linksControl: false,
+                                    panControl: false,
+                                    enableCloseButton: true,
+                                    scrollwheel: false,
+                                    zoomControl: false,
+                                    fullScreenControl: false
+                                }
+                            );
+                            console.log('sv available');
+                            return true;
+                        }
+                        else{
+                            console.log('sv unavailable');
+                            $('#gSV').html('<img class="responsive-img" src="/{{theme}}/materialize/images/no-photo.png" style="max-height: 245px;">');
+                            return false;
+                        }
+                    });
+                }
+                else{
+                    $('#gSV').html('<img class="responsive-img" src="/{{theme}}/materialize/images/no-photo.png" style="max-height: 245px;">');
+                }
+                return false;
+            }
+
+            function urgentCall(repID){
+                $.ajax({
+                    url: "{{ uri_for('materialize-report-urgent') }}",
+                    type: 'POST',
+                    data: { 
+                        'report_id': repID,
+                        '_csrf_token': '{{ csrf_token() }}',
+                    }
+                }).done(function(data) {
+                    console.log('urgentCall response', data);
+                    var btn_top = document.getElementById('urgent_top');
+                    var btn_bottom = document.getElementById('urgent_bottom');
+                    var btn_marker = document.getElementById('urgent_marker');
+
+                    if (data.status == 'success'){
+                        Materialize.toast('<span class="toast-success">Gracias, tus cambios han sido almacenados.</span>',3000);
+                        if (data.is_urgent){
+                            btn_top.className = "btn deep-orange darken-2";
+                            btn_bottom.className = "btn deep-orange darken-2";
+                            btn_marker.style.display = "inline";
+                            btn_top.innerHTML = '<i class="mdi-av-new-releases right"></i>Remover urgencia';
+                            btn_bottom.innerHTML = '<i class="mdi-av-new-releases right"></i>Remover urgencia';
+                        }else{
+                            btn_top.className = "btn white deep-orange-text text-darken-2";
+                            btn_bottom.className = "btn white deep-orange-text text-darken-2";
+                            btn_marker.style.display = "none";
+                            btn_top.innerHTML = '<i class="mdi-av-new-releases right"></i>Marcar urgente';
+                            btn_bottom.innerHTML = '<i class="mdi-av-new-releases right"></i>Marcar urgente';
+                        }
+                    }
+                    else if (data.status == 'error'){
+                        Materialize.toast('<span class="toast-danger">Oops! Ha ocurrido un error, intenta más tarde.</span>',3000);
                     }
                 });
             }
-            else{
-                $('#gSV').html('<img class="responsive-img" src="/{{theme}}/materialize/images/no-photo.png" style="max-height: 245px;">');
-            }
-            return false;
-        }
-
-        function urgentCall(repID){
-            $.ajax({
-                url: "{{ uri_for('materialize-report-urgent') }}",
-                type: 'POST',
-                data: { 
-                    'report_id': repID,
-                    '_csrf_token': '{{ csrf_token() }}',
-                }
-            }).done(function(data) {
-                console.log('urgentCall response', data);
-                var btn_top = document.getElementById('urgent_top');
-                var btn_bottom = document.getElementById('urgent_bottom');
-                var btn_marker = document.getElementById('urgent_marker');
-
-                if (data.status == 'success'){
-                    Materialize.toast('<span class="toast-success">Gracias, tus cambios han sido almacenados.</span>',3000);
-                    if (data.is_urgent){
-                        btn_top.className = "btn deep-orange darken-2";
-                        btn_bottom.className = "btn deep-orange darken-2";
-                        btn_marker.style.display = "inline";
-                        btn_top.innerHTML = '<i class="mdi-av-new-releases right"></i>Remover urgencia';
-                        btn_bottom.innerHTML = '<i class="mdi-av-new-releases right"></i>Remover urgencia';
-                    }else{
-                        btn_top.className = "btn white deep-orange-text text-darken-2";
-                        btn_bottom.className = "btn white deep-orange-text text-darken-2";
-                        btn_marker.style.display = "none";
-                        btn_top.innerHTML = '<i class="mdi-av-new-releases right"></i>Marcar urgente';
-                        btn_bottom.innerHTML = '<i class="mdi-av-new-releases right"></i>Marcar urgente';
+    </script>
+    <script>
+            function demoFromHTML() {
+                var _logs = document.getElementsByClassName('log-change');
+                var _contents = document.getElementsByClassName('log-contents');
+                var _html = '';
+                for(var i=0, j=_logs.length;i<j;i++){
+                    _html += _logs[i].innerHTML + "<br>";
+                    for(var m=0, n=_contents.length;m<n;m++){
+                        _html += _contents[i].innerHTML + "<br>";
                     }
                 }
-                else if (data.status == 'error'){
-                    Materialize.toast('<span class="toast-danger">Oops! Ha ocurrido un error, intenta más tarde.</span>',3000);
-                }
-            });
-        }
-  </script>
+                $('#printable_logs').html(_html);
+                
+                var pdf = new jsPDF('p', 'pt', 'letter');
+                source = $('#printable')[0];
+
+                // we support special element handlers. Register them with jQuery-style 
+                // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+                // There is no support for any other type of selectors 
+                // (class, of compound) at this time.
+                specialElementHandlers = {
+                    // element with id of "bypass" - jQuery style selector
+                    '#bypassme': function (element, renderer) {
+                        // true = "handled elsewhere, bypass text extraction"
+                        return true
+                    }
+                };
+                margins = {
+                    top: 80,
+                    bottom: 60,
+                    left: 40,
+                    width: 522
+                };
+                // all coords and widths are in jsPDF instance's declared units
+                // 'inches' in this case
+                pdf.fromHTML(
+                source, // HTML string or DOM elem ref.
+                margins.left, // x coord
+                margins.top, { // y coord
+                    'width': margins.width, // max width of content on PDF
+                    'elementHandlers': specialElementHandlers
+                },
+
+                function (dispose) {
+                    // dispose: object with X, Y of the last line add to the PDF 
+                    //          this allow the insertion of new lines after html
+                    pdf.save('Reporte - {{app_name}}.pdf');
+
+                }, margins);
+            }
+    </script>
 {% endblock %}
