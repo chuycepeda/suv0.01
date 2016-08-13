@@ -2562,6 +2562,7 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             self.abort(403)
                         
         address_from = self.request.get('address_from')
+        address_detail = self.request.get('address_detail')
         address_from_coord = self.request.get('address_from_coord')
         catGroup = self.request.get('catGroup')
         subCat = self.request.get('subCat')
@@ -2576,6 +2577,7 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             user_report.user_id = int(self.user_id) if int(self.user_id) is not None else -1
             user_report.address_from_coord = ndb.GeoPt(address_from_coord)
             user_report.address_from = address_from
+            user_report.address_detail = address_detail
             user_report.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
             user_report.title = u'%s #%s' % (self.app.config.get('app_name'),subCat)
             user_report.description = description
