@@ -163,7 +163,7 @@
             document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver estadísticas y bandeja de reportes{% if has_social_media %}, y la conexión con redes sociales{% endif %}.';
             break;
           case 'admin':
-            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores de atención y transparencia pueden ver.';
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores de atención CAIC {% if has_transparency %}y transparencia {% endif %}pueden ver.';
             break;
           {% if has_transparency %}
           case 'transparency':

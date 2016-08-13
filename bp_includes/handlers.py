@@ -201,6 +201,7 @@ def editReport(self, user_info, report_id, handler):
     report_info = models.Report.get_by_id(long(report_id))
 
     #UPDATED VALUES
+    address_detail = self.request.get('address_detail')
     address_from = self.request.get('address_from')
     address_from_coord = self.request.get('address_from_coord')
     catGroup = self.request.get('catGroup')
@@ -227,7 +228,8 @@ def editReport(self, user_info, report_id, handler):
     #ASSIGN AS IS
     status = status if status != 'undefined' else report_info.status
     
-    if report_info.address_from != address_from:
+    if report_info.address_from != address_from or report_info.address_detail != address_detail:
+        report_info.address_detail = address_detail
         report_info.address_from = address_from
         report_info.address_from_coord = ndb.GeoPt(address_from_coord)
         changes += "el domicilio, "
@@ -986,9 +988,7 @@ class SendEmailHandler(BaseHandler):
                 logging.info("... sending email to: %s ..." % to)
             except Exception, e:
                 logging.error("Error sending email: %s" % e)
-                pass
-
-        
+                pass  
 
 class MaterializeAccountActivationHandler(BaseHandler):
     """
@@ -2589,7 +2589,7 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
             user_report.folio = folio
             user_report.is_manual = True
             user_report.put()
-            
+
             if hasattr(self.request.POST['file'], 'filename'):
                 #create attachment
                 from google.appengine.api import urlfetch

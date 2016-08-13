@@ -199,7 +199,13 @@
                     <label for="address_from" class="active">Ubicación</label>
                     <div id="map" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
                 </div>                
-                <input type="text" id ="address_from_coord" name="address_from_coord" value="{{report.address_from_coord}}" hidden>            
+                <input type="text" id ="address_from_coord" name="address_from_coord" value="{{report.address_from_coord}}" hidden>    
+
+                <div class="input-field col s10 offset-s1">
+                    <i class="mdi-maps-directions prefix brand-color-text brand-color-text"></i>
+                    <input id="address_detail" name="address_detail" type="text" class="validate" value="{{report.address_detail}}">
+                    <label for="address_detail" class="active">Usa este campo para dejar la dirección exacta de la ubicación en caso que Google Maps no la devuelva.</label>
+                </div>         
           </form>
           </div>
           </div>
