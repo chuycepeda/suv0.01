@@ -143,11 +143,18 @@ class User(User):
         for reward in self.rewards:
             amount += reward.amount
 
+        amount += 100*self.get_reports_count()
+        amount += 30*self.get_follows_count()
+
         return amount
 
     def get_reports_count(self):
         reports = Report.query(Report.user_id == int(self.key.id()))
         return reports.count()
+
+    def get_follows_count(self):
+        follows = Followers.query(Followers.user_id == int(self.key.id()))
+        return follows.count()
 
     def get_petitions_count(self):
         petitions = Petition.query(Petition.user_id == int(self.key.id()))
@@ -633,7 +640,6 @@ class Attachment(ndb.Model):
 
     def get_formatted_date(self):
         return datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).strftime("%Y-%m-%d a las %X %p (GMT-00)")
-
 
 class LogChange(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)                                               

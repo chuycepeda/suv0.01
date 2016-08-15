@@ -43,7 +43,9 @@
             <a id="urgent_top" class="btn white deep-orange-text text-darken-2" href="#" onclick="urgentCall({{report.key.id()|safe}})" style="margin-top:8px;"><i class="mdi-av-new-releases right"></i>Marcar urgente</a>
             {% endif %}
             <a class="btn orange lighten-2 modal-trigger" href="#modalficha" style="margin-top:8px;"><i class="mdi-action-assignment right"></i>Ficha de Reporte</a>
+            {% if not report.is_manual %}
             <a class="waves-effect waves-light light-green white-text btn modal-trigger" href="#modalcomment" style="margin-top:8px;">Responder<i class="mdi-action-question-answer right"></i></a> 
+            {% endif %}
             <a class="waves-effect waves-light purple lighten-2 white-text btn modal-trigger" href="#modalnote" style="margin-top:8px;">Nota<i class="mdi-action-description right"></i></a>
             <a class="waves-effect waves-light indigo white-text btn modal-trigger" href="#modalanexo" style="margin-top:8px;">Anexos<i class="mdi-action-note-add right"></i></a>
             <a class="waves-effect waves-light light-blue white-text btn" id="submit_report_form_top" style="margin-top:8px;">Publicar<i class="mdi-content-send right"></i></a>
@@ -570,7 +572,9 @@
             <a id="urgent_bottom" class="btn white deep-orange-text text-darken-2" href="#" onclick="urgentCall({{report.key.id()|safe}})" style="margin-top:8px;"><i class="mdi-av-new-releases right"></i>Marcar urgente</a>
             {% endif %}
             <a class="btn orange lighten-2 modal-trigger" href="#modalficha" style="margin-top:8px;"><i class="mdi-action-assignment right"></i>Ficha de Reporte</a>
+            {% if not report.is_manual %}
             <a class="waves-effect waves-light light-green white-text btn modal-trigger" href="#modalcomment" style="margin-top:8px;">Responder<i class="mdi-action-question-answer right"></i></a> 
+            {% endif %}
             <a class="waves-effect waves-light purple lighten-2 white-text btn modal-trigger" href="#modalnote" style="margin-top:8px;">Nota<i class="mdi-action-description right"></i></a>
             <a class="waves-effect waves-light indigo white-text btn modal-trigger" href="#modalanexo" style="margin-top:8px;">Anexos<i class="mdi-action-note-add right"></i></a>
             <a class="waves-effect waves-light light-blue white-text btn" id="submit_report_form_bottom" style="margin-top:8px;">Publicar<i class="mdi-content-send right"></i></a>
