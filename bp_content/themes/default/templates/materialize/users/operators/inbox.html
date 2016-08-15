@@ -10,7 +10,6 @@
         max-width: 80%!important;
         line-height: 1.2rem!important;
       }
-      
   </style>
   <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css" rel="stylesheet" type="text/css" media="screen,projection" />
@@ -22,16 +21,9 @@
     <div class="container">
         <div class="row">
           <div class="col s12 m12 l12">
-
-
               <ol class="breadcrumb" style="font-size: 29px;">
                 <li class="active">
                   Reportes {% if path == uri_for('materialize-organization-urgents') %}urgentes{% endif %} ({{count}})               
-              <button onclick="window.open('{{uri_for('materialize-organization-export-reports')}}','_blank');" class="btn light-blue darken-2 waves-effect waves-light right" style="font-size: 14px;">Exportar en CSV<i class="mdi-file-file-download right"></i></button> 
-              <a href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;">Crear reporte<i class="mdi-content-add right"></i></a>
-              {% if path != uri_for('materialize-organization-urgents') %}
-              <a href="{{uri_for('materialize-organization-urgents')}}" class="btn deep-orange darken-2 white-text right" style="font-size:14px;margin-right: 20px;">Ver urgentes <i class="mdi-av-new-releases right"></i></a>
-              {% endif %} 
                 </li>
               </ol>
           </div>
@@ -44,107 +36,141 @@
 {% block page_content %}
     <div class="container">
         <div class="section">
-            <input type="hidden" id="catGroup" value="{{catGroup}}">
-            <input type="hidden" id="status" value="{{statusval}}">
             <div class="row">
-                <div class="input-field col s12 l6">
-                    <!-- Dropdown Trigger -->
-                    <p><i class="mdi-action-group-work brand-color-text left"></i>Grupo de categoría:</p>                                                
-                    <a data-hover="false" id='catGroupbtn' class='dropdown-button btn brand-color truncate {% if ddfill == '---' %}disabled{% endif %}' href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{ddfill}}</a>                    
-                    <!-- Dropdown Structure -->
-                    <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
-                    {% if ddfill != '---' %} 
-                        {% for category in cats %}
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value = (this.innerHTML).trim(); return false;">{{category}}</a></li>
-                        {% endfor %}
-                    {% endif %} 
-                    </ul>                                   
-                </div>
-              
-                <div id="status_container" class="input-field col s12 l6">
-                    <!-- Dropdown Trigger -->
-                    <p><i class="mdi-action-book brand-color-text left"></i>Estado:</p>
-                    <a data-hover="false" id='statusbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='statusdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">{{ddfillstat}}</a>
-                    <!-- Dropdown Structure -->
-                    <ul id='statusdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
-                        {% if 'callcenter' in path %}
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Todos</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Abiertos</a></li>
-                        {% endif %}
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Pendientes</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En espera</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Respondido</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En proceso</a></li>
-                        <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Asignado</a></li>
-                        <li> <a class="amber-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Rechazado</a></li>
-                        <li> <a class="green-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Resuelto</a></li>
-                        <li> <a class="red-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Fallo</a></li>
-                        <li> <a class="red-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Spam</a></li>
-                        <li> <a class="grey-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Archivado</a></li>
-                        <li> <a class="grey-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Olvidado</a></li>
-                       </ul>                
-                </div>
-            </div>
-        
-            <div class="row" style="margin-top: 25px;">
-                <div class="input-field col s12 l4">                                
-                    <i class="mdi-action-receipt prefix brand-color-text brand-color-text active"></i>
-                    <input id="ticket" name="title" type="text" value="{{ticketval}}">
-                    <label for="ticket" class="active">Ticket</label>
-                </div>
-                    <div class="input-field col s12 l2 hide-on-med-and-down">                                
-                </div>
-                <div class="input-field col s12 l4">                                
-                    <i class="mdi-action-receipt prefix brand-color-text brand-color-text active"></i>
-                    <input id="folio" name="folio" type="text" value="{{folioval}}">
-                    <label for="folio" class="active">Folio interno</label>
-                </div>
-            </div>
-        
-            <div class="row">
-               <div class="col s12" style="margin-top:40px;margin-bottom:-40px">
-                    <a class="waves-effect waves-light brand-secondary-color white-text btn-large" href="#" onclick="filter();return false;">Filtrar<i class="mdi-content-send right"></i></a>
-               </div>
-               {% if path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-callcenter-inbox') %}
-                 <div class="col s12 m4" style="margin-top:60px;margin-bottom:-40px">
-                      <a class="brand-secondary-color-text modal-trigger" href="#modalQ">O busca por información de contacto haciendo clic aquí.</a>
-                 </div>
-                 <div id="modalQ" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
-                    <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
-                    <div class="modal-content">
-                        <div class="row">
-                            <div class="input-field col s12 center">
-                              <p class="center login-form-text">Busca por nombre y apellido.</p>
-                            </div>
-                            <div class="row">
-                              <div class="container">
-                                  <div class="row">
-                                    <div class="col s12 m8 offset-m2 center">
-                                      <div class="input-field col s12 m6" style="margin-top:30px;">
-                                        <input id="u_name" name="u_name" type="text" value="">
-                                        <label id="unameLabel" for="u_name">Nombre</label>
-                                      </div>
-                                      <div class="input-field col s12 m6" style="margin-top:30px;">
-                                        <input id="u_last_name" name="u_last_name" type="text" value="">
-                                        <label id="ulastnameLabel" for="u_last_name">Apellido</label>
-                                      </div>
-                                    </div>
-                                    <div class="input-field col s12">
-                                      <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
-                                      <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" onclick="do_Q();return false;">Buscar</a>
-                                    </div>
-                                  </div>
-                              </div>
-                            </div>
-                        </div>
+                <div class="col s12 center">
+                    <div class="input-field col s12 l4">
+                        <a onclick="window.open('{{uri_for('materialize-organization-export-reports')}}','_blank');" class="btn light-blue darken-2 waves-effect waves-light" style="font-size: 14px;">Exportar en CSV<i class="mdi-file-file-download right"></i></a>             
                     </div>
-                 </div>
-               {% endif %}
-            </div>
-        
+                    <div class="input-field col s12 l4">
+                        <a href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light" style="font-size: 14px;">Crear reporte<i class="mdi-content-add right"></i></a>
+                    </div>
+                    {% if path != uri_for('materialize-organization-urgents') %}
+                    <div class="input-field col s12 l4">
+                        <a href="{{uri_for('materialize-organization-urgents')}}" class="btn deep-orange darken-2 white-text" style="font-size:14px;">Ver urgentes <i class="mdi-av-new-releases right"></i></a>
+                    </div>
+                    {% endif %} 
+                </div>
+            </div>            
         </div>
+
+
         <div class="section">
-           <div class="row" style="margin-top:30px;">
+            <div class="row">
+                <div class="col s12">
+                    <ul class="collapsible collapsible-accordion brand-color-text" data-collapsible="accordion">
+                        <li>
+                            <div class="collapsible-header"><i class="mdi-content-filter-list"></i>Filtrar resultados</div>
+                            <div class="collapsible-body">
+                                <div class="container">
+                                    <div class="section">
+                                        <div class="row">
+                                            <div class="col s10 offset-s2"> 
+                                                <input type="hidden" id="catGroup" value="{{catGroup}}">
+                                                <input type="hidden" id="status" value="{{statusval}}">
+                                                <div class="row">
+                                                    <div class="input-field col s12 l6">
+                                                        <!-- Dropdown Trigger -->
+                                                        <span class="col s12" style="margin-bottom: 10px"><i class="mdi-action-group-work brand-color-text left"></i>Grupo de categoría:</span>                                                
+                                                        <a data-hover="false" id='catGroupbtn' class='dropdown-button btn-large brand-color truncate {% if ddfill == '---' %}disabled{% endif %}' href='#' data-activates='catGroupdd' style="width: 250px;">{{ddfill}}</a>                    
+                                                        <!-- Dropdown Structure -->
+                                                        <ul id='catGroupdd' class='dropdown-content white' style="max-height: 250px; font-weight: bolder;">
+                                                        {% if ddfill != '---' %} 
+                                                            {% for category in cats %}
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('catGroupbtn').innerHTML=this.innerHTML; document.getElementById('catGroup').value = (this.innerHTML).trim(); return false;">{{category}}</a></li>
+                                                            {% endfor %}
+                                                        {% endif %} 
+                                                        </ul>                                   
+                                                    </div>
+                                                  
+                                                    <div id="status_container" class="input-field col s12 l6">
+                                                        <!-- Dropdown Trigger -->
+                                                        <span class="col s12" style="margin-bottom: 10px"><i class="mdi-action-book brand-color-text left"></i>Estado:</span>
+                                                        <a data-hover="false" id='statusbtn' class='dropdown-button btn-large brand-color truncate' href='#' data-activates='statusdd' style="width: 250px;">{{ddfillstat}}</a>
+                                                        <!-- Dropdown Structure -->
+                                                        <ul id='statusdd' class='dropdown-content white' style="max-height: 250px; font-weight: bolder;">
+                                                            {% if 'callcenter' in path %}
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Todos</a></li>
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Abierto</a></li>
+                                                            {% endif %}
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Pendientes</a></li>
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En espera</a></li>
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Respondido</a></li>
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">En proceso</a></li>
+                                                            <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Asignado</a></li>
+                                                            <li> <a class="amber-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Rechazado</a></li>
+                                                            <li> <a class="green-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Resuelto</a></li>
+                                                            <li> <a class="red-text text-lighten-1" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Fallo</a></li>
+                                                            <li> <a class="red-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Spam</a></li>
+                                                            <li> <a class="grey-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Archivado</a></li>
+                                                            <li> <a class="grey-text text-lighten-2 " href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; document.getElementById('status').value = (this.innerHTML).trim(); return false;">Olvidado</a></li>
+                                                           </ul>                
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="margin-top: 15px;">
+                                                    <div class="input-field col s10 l4">                                
+                                                        <i class="mdi-action-receipt prefix brand-color-text brand-color-text active"></i>
+                                                        <input id="ticket" name="title" type="text" value="{{ticketval}}">
+                                                        <label for="ticket" class="active">Ticket</label>
+                                                    </div>
+                                                    <div class="input-field col s10 l4 offset-l2">                                
+                                                        <i class="mdi-action-receipt prefix brand-color-text brand-color-text active"></i>
+                                                        <input id="folio" name="folio" type="text" value="{{folioval}}">
+                                                        <label for="folio" class="active">Folio interno</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row">               
+                                                    <div class="input-field col s12">
+                                                        <a class="waves-effect waves-light brand-secondary-color white-text btn-large" href="#" onclick="filter();return false;">Filtrar<i class="mdi-content-send right"></i></a>
+                                                    </div>
+                                                   {% if path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-callcenter-inbox') %}
+                                                     <div class="input-field col s12">
+                                                          <a class="brand-secondary-color-text modal-trigger" href="#modalQ">O busca por información de contacto haciendo clic aquí.</a>
+                                                     </div>
+                                                     <div id="modalQ" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
+                                                        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+                                                        <div class="modal-content">
+                                                            <div class="row">
+                                                                <div class="input-field col s12 center">
+                                                                  <p class="center login-form-text">Busca por nombre y apellido.</p>
+                                                                </div>
+                                                                <div class="row">
+                                                                  <div class="container">
+                                                                      <div class="row">
+                                                                        <div class="col s12 m8 offset-m2 center">
+                                                                          <div class="input-field col s12 m6" style="margin-top:30px;">
+                                                                            <input id="u_name" name="u_name" type="text" value="">
+                                                                            <label id="unameLabel" for="u_name">Nombre</label>
+                                                                          </div>
+                                                                          <div class="input-field col s12 m6" style="margin-top:30px;">
+                                                                            <input id="u_last_name" name="u_last_name" type="text" value="">
+                                                                            <label id="ulastnameLabel" for="u_last_name">Apellido</label>
+                                                                          </div>
+                                                                        </div>
+                                                                        <div class="input-field col s12">
+                                                                          <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
+                                                                          <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" onclick="do_Q();return false;">Buscar</a>
+                                                                        </div>
+                                                                      </div>
+                                                                  </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                     </div>
+                                                   {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>               
+                </div>
+            </div>            
+        </div>
+        
+        <div class="section">
+           <div class="row">
                 <table id="data-table-simple" class="dt-responsive no-wrap centered display compact">
                 <thead style="font-family:roboto; color:#777777;">
                   <tr class="brand-color white-text">
@@ -167,15 +193,15 @@
                           <td>
                             <div><a class="icon" href="{{ uri_for(level, report_id=report.get_id()) }}"><i class="glyphicon-pencil glyphicon"></i> Editar</a></div>
                           </td>
-
+        
                           <td>{% if report.cdb_id != -1 %} {{report.cdb_id}} {% else %} Sin publicar {% endif %}</td>
-
+        
                           <td class="tooltipped" style="background-color:{{report.get_priority_color()}}" data-position="top" data-delay="50" data-tooltip="{{report.get_benchmark()}}">{{report.get_priority() }}</td>
-
+        
                           <td>{{report.get_created_date()}}</td>
                           
                           <td>{{report.get_status()}}</td>
-
+        
                           <td class="truncate tooltipped" style="max-width:300px" data-position="right" data-delay="50" data-tooltip="{{report.description}}">{{report.description}}</td>
                           
                           <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.group_category}}: {{report.sub_category}}">{{report.sub_category}}</td>
@@ -301,6 +327,7 @@
                 orderable: false,
                 targets:   -1
             } ],
+            "dom": 'lrtip',
             "lengthMenu": [[100], [100]],
             "language": {
               "lengthMenu": "Mostrar _MENU_ reportes por página",
