@@ -91,16 +91,16 @@ _routes = [
     RedirectRoute('/user/organization/export/reports/', handlers.MaterializeOrganizationExportReportsHandler, name='materialize-organization-export-reports', strict_slash=True),
     RedirectRoute('/user/organization/export/users/', handlers.MaterializeOrganizationExportUsersHandler, name='materialize-organization-export-users', strict_slash=True),
     # User: secretary access
-    RedirectRoute('/user/secretary/inbox/', handlers.MaterializeInboxRequestHandler, name='materialize-secretary-inbox', strict_slash=True),
+    RedirectRoute('/user/secretary/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-secretary-inbox', strict_slash=True),
     RedirectRoute('/user/secretary/report/<report_id>/', handlers.MaterializeSecretaryReportRequestHandler, name='materialize-secretary-report', strict_slash=True, handler_method='edit'),
     # User: agent access
-    RedirectRoute('/user/agent/inbox/', handlers.MaterializeInboxRequestHandler, name='materialize-agent-inbox', strict_slash=True),
+    RedirectRoute('/user/agent/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-agent-inbox', strict_slash=True),
     RedirectRoute('/user/agent/report/<report_id>/', handlers.MaterializeAgentReportRequestHandler, name='materialize-agent-report', strict_slash=True, handler_method='edit'),
     # User: operator access
-    RedirectRoute('/user/operator/inbox/', handlers.MaterializeInboxRequestHandler, name='materialize-operator-inbox', strict_slash=True),
+    RedirectRoute('/user/operator/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-operator-inbox', strict_slash=True),
     RedirectRoute('/user/operator/report/<report_id>/', handlers.MaterializeOperatorReportRequestHandler, name='materialize-operator-report', strict_slash=True, handler_method='edit'),
     # User: callcenter access
-    RedirectRoute('/user/callcenter/inbox/', handlers.MaterializeInboxRequestHandler, name='materialize-callcenter-inbox', strict_slash=True),
+    RedirectRoute('/user/callcenter/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-callcenter-inbox', strict_slash=True),
     RedirectRoute('/user/callcenter/report/<report_id>/', handlers.MaterializeCallCenterReportRequestHandler, name='materialize-callcenter-report', strict_slash=True, handler_method='edit'),
     # User: callcenter access for social networks
     RedirectRoute('/user/callcenter/facebook/', handlers.MaterializeCallCenterFacebookRequestHandler, name='materialize-callcenter-facebook', strict_slash=True),

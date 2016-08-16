@@ -2804,7 +2804,8 @@ class MaterializeOrganizationUrgentsHandler(BaseHandler):
                 names = []
                 _group = models.GroupCategory.query()
                 for group in _group:
-                    names.append(group.name)
+                    if group.get_agencies().count() > 0:
+                        names.append(group.name)
             elif self.user_is_secretary:
                 secretary = models.Secretary.get_admin_by_email(user_info.email)
                 agencies = models.Agency.query(models.Agency.secretary_id == secretary.key.id())
@@ -2898,7 +2899,7 @@ class MaterializeOrganizationUrgentsHandler(BaseHandler):
                
                 reports = reports.filter(models.Report.urgent == True)
                 count = reports.count()
-                PAGE_SIZE = 100
+                PAGE_SIZE = 50
                 if forward:
                     reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
                     if next_cursor and more:
@@ -2964,7 +2965,8 @@ class MaterializeOrganizationUserReportsHandler(BaseHandler):
                 names = []
                 _group = models.GroupCategory.query()
                 for group in _group:
-                    names.append(group.name)
+                    if group.get_agencies().count() > 0:
+                        names.append(group.name)
             elif self.user_is_secretary:
                 secretary = models.Secretary.get_admin_by_email(user_info.email)
                 agencies = models.Agency.query(models.Agency.secretary_id == secretary.key.id())
@@ -3058,7 +3060,7 @@ class MaterializeOrganizationUserReportsHandler(BaseHandler):
                
                 reports = reports.filter(models.Report.user_id == int(user_id))
                 count = reports.count()
-                PAGE_SIZE = 100
+                PAGE_SIZE = 50
                 if forward:
                     reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
                     if next_cursor and more:
@@ -3115,7 +3117,7 @@ class MaterializeOrganizationUserReportsHandler(BaseHandler):
         
         self.abort(403)
 
-class MaterializeInboxRequestHandler(BaseHandler):
+class MaterializeOrganizationInboxRequestHandler(BaseHandler):
     @user_required
     def get(self):
         if self.has_reports:
@@ -3135,7 +3137,7 @@ class MaterializeInboxRequestHandler(BaseHandler):
                     if group_categories.count() > 1:
                         names.append('TODOS')
                     for group in group_categories:
-                        if group is not None:
+                        if group is not None and group.get_agencies().count() > 0:
                             names.append(group.name)
                 else:
                     names.append('---')
@@ -3243,7 +3245,7 @@ class MaterializeInboxRequestHandler(BaseHandler):
                 if folio:     
                     reports = reports.filter(models.Report.folio == folio)
                 count = reports.count()
-                PAGE_SIZE = 100
+                PAGE_SIZE = 50
                 if forward:
                     reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
                     if next_cursor and more:
