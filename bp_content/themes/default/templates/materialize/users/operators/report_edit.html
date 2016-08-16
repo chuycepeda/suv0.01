@@ -132,7 +132,7 @@
                                 <div class="input-field container col s12 m4">                                
                                     <!-- Dropdown Trigger -->
                                     <p> <i class="mdi-action-book brand-color-text left"></i> Estado:</p>
-                                    <a data-hover="false" id='statusbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='statusdd' style="min-width: 250px; min-height: 45px; line-height: 45px; margin-left: 15px;">{{report.get_status()}}</a>
+                                    <a data-hover="false" id='statusbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='statusdd' style="width: 250px; min-height: 45px; line-height: 45px; margin-left: 15px;">{{report.get_status()}}</a>
                                     <!-- Dropdown Structure -->
                                     <ul id='statusdd' class='dropdown-content' style="max-height: 250px; margin-left: 15px; font-weight: bolder;">
                                         <!-- <li> <a class="brand-color-text" href="#" onclick="document.getElementById('statusbtn').innerHTML=this.innerHTML; getStatus((this.innerHTML).trim()); return false;">En espera</a></li> -->
@@ -150,7 +150,7 @@
                                 <div class="input-field container col s12 m4">
                                     <!-- Dropdown Trigger -->
                                     <p> <i class="mdi-action-group-work brand-color-text left"></i> Grupo de categoría:</p>
-                                    <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate tooltipped' data-position="top" data-delay="50" data-tooltip="{{report.group_category}}" href='#' data-activates='catGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px; margin-left: 15px; max-width: 300px;">{{report.group_category}}</a>
+                                    <a data-hover="false" id='catGroupbtn' class='dropdown-button disabled btn brand-color truncate tooltipped' data-position="top" data-delay="50" data-tooltip="{{report.group_category}}" href='#' data-activates='catGroupdd' style="width: 250px; min-height: 45px; line-height: 45px; margin-left: 15px; max-width: 300px;">{{report.group_category}}</a>
                                     <!-- Dropdown Structure -->
                                     <ul id='catGroupdd' class='dropdown-content' style="max-height: 250px; margin-left: 15px; font-weight: bolder;"></ul>                
                                 </div>
@@ -158,7 +158,7 @@
                                 <div id="subCatdd_container" class="input-field container col s12 m4">
                                     <!-- Dropdown Trigger -->
                                     <p> <i class="mdi-image-style brand-color-text left"></i> Subcategoría</p>
-                                    <a data-hover="false" id='subCatbtn' class='dropdown-button btn disabled brand-color truncate tooltipped' data-position="top" data-delay="50" data-tooltip="{{report.sub_category}}"  href='#' data-activates='subCatdd' style="min-width: 250px; min-height: 45px; line-height: 45px;margin-left: 15px;max-width: 300px;">{{report.sub_category}}</a>
+                                    <a data-hover="false" id='subCatbtn' class='dropdown-button btn disabled brand-color truncate tooltipped' data-position="top" data-delay="50" data-tooltip="{{report.sub_category}}"  href='#' data-activates='subCatdd' style="width: 250px; min-height: 45px; line-height: 45px;margin-left: 15px;max-width: 300px;">{{report.sub_category}}</a>
                                     <!-- Dropdown Structure -->
                                     <ul id='subCatdd' class='dropdown-content' style="max-height: 250px; margin-left: 15px; font-weight: bolder;"></ul>                
                                 </div>

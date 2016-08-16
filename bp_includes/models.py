@@ -396,7 +396,6 @@ class Report(ndb.Model):
         logs = logs.order(-LogChange.created)
         for log in logs:
             return log.user_email
-            break
         return '---'
     
     def get_contact_info(self):

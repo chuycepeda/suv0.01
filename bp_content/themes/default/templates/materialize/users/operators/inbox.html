@@ -71,7 +71,7 @@
                                                     <div class="input-field col s12 l6">
                                                         <!-- Dropdown Trigger -->
                                                         <span class="col s12" style="margin-bottom: 10px"><i class="mdi-action-group-work brand-color-text left"></i>Grupo de categoría:</span>                                                
-                                                        <a data-hover="false" id='catGroupbtn' class='dropdown-button btn-large brand-color truncate {% if ddfill == '---' %}disabled{% endif %}' href='#' data-activates='catGroupdd' style="width: 250px;">{{ddfill}}</a>                    
+                                                        <a data-hover="false" id='catGroupbtn' class='dropdown-button btn brand-color truncate {% if ddfill == '---' %}disabled{% endif %}' href='#' data-activates='catGroupdd' style="width: 250px;">{{ddfill}}</a>                    
                                                         <!-- Dropdown Structure -->
                                                         <ul id='catGroupdd' class='dropdown-content white' style="max-height: 250px; font-weight: bolder;">
                                                         {% if ddfill != '---' %} 
@@ -85,7 +85,7 @@
                                                     <div id="status_container" class="input-field col s12 l6">
                                                         <!-- Dropdown Trigger -->
                                                         <span class="col s12" style="margin-bottom: 10px"><i class="mdi-action-book brand-color-text left"></i>Estado:</span>
-                                                        <a data-hover="false" id='statusbtn' class='dropdown-button btn-large brand-color truncate' href='#' data-activates='statusdd' style="width: 250px;">{{ddfillstat}}</a>
+                                                        <a data-hover="false" id='statusbtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='statusdd' style="width: 250px;">{{ddfillstat}}</a>
                                                         <!-- Dropdown Structure -->
                                                         <ul id='statusdd' class='dropdown-content white' style="max-height: 250px; font-weight: bolder;">
                                                             {% if 'callcenter' in path %}
@@ -120,7 +120,7 @@
                                                 </div>
                                                 <div class="row">               
                                                     <div class="input-field col s12">
-                                                        <a class="waves-effect waves-light brand-secondary-color white-text btn-large" href="#" onclick="filter();return false;">Filtrar<i class="mdi-content-send right"></i></a>
+                                                        <a class="waves-effect waves-light brand-secondary-color white-text btn" href="#" onclick="filter();return false;">Filtrar<i class="mdi-content-send right"></i></a>
                                                     </div>
                                                    {% if path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-callcenter-inbox') %}
                                                      <div class="input-field col s12">
@@ -177,12 +177,10 @@
                       <th>✎</th>
                       <th>Ticket</th>
                       <th>Prioridad</th>
-                      <th>Creado</th>
-                      <th>Estado</th>
-                      <th>Descripción</th>
                       <th>Subcategoría</th>
-                      <th>Usuario</th>
-                      <th>Última modificación</th>
+                      <th>Descripción</th>
+                      <th>Estado</th>
+                      <th>Creado por</th>
                       <th><i class="mdi-social-notifications white-text"></i></th>
                       <th></th>
                   </tr>
@@ -197,18 +195,14 @@
                           <td>{% if report.cdb_id != -1 %} {{report.cdb_id}} {% else %} Sin publicar {% endif %}</td>
         
                           <td class="tooltipped" style="background-color:{{report.get_priority_color()}}" data-position="top" data-delay="50" data-tooltip="{{report.get_benchmark()}}">{{report.get_priority() }}</td>
-        
-                          <td>{{report.get_created_date()}}</td>
+
+                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px; text-align:left" data-position="top" data-delay="50" data-tooltip="{{report.sub_category}}"><span style="font-family:roboto-medium">{{report.sub_category}}</span></td>
+
+                          <td class="truncate tooltipped" style="max-width:300px; text-align:left" data-position="right" data-delay="50" data-tooltip="{{report.description}}">{{report.description}}</td>
                           
                           <td>{{report.get_status()}}</td>
-        
-                          <td class="truncate tooltipped" style="max-width:300px" data-position="right" data-delay="50" data-tooltip="{{report.description}}">{{report.description}}</td>
                           
-                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.group_category}}: {{report.sub_category}}">{{report.sub_category}}</td>
-                          
-                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.get_user_email()}}">{{report.get_user_email()}}</td>
-                          
-                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.get_last_log()}}">{{report.get_last_log()}}</td>
+                          <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.get_user_email()}}">{{report.get_user_email()}}</td>                                                  
                           
                           <td>{% if report.req_deletion %}<i class="mdi-action-delete {% if report.status == 'archived' %}grey{% else %}red{% endif %}-text"></i>
                           {% elif report.status == 'spam' %}<i class="mdi-action-bug-report red-text"></i>
