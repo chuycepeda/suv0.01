@@ -601,7 +601,7 @@
                                 <span class="light-blue-text">{{att.get_formatted_date()}}</span>
                                 <br> 
                                 <a class="btn-large" href="{{att.file_url}}" target="_blank" style="margin:12px;">{{att.file_name}} <i class="mdi-image-image right"></i></a>
-                                {% user_callcenter_role in ['admin'] %}
+                                {% if user_callcenter_role in ['admin'] %}
                                 <br>
                                 <i class="mdi-action-delete red-text" style="cursor:pointer; border-radius: 10px;font-size: 25px;margin: 12px;" onclick="$('#modal_att').openModal(); $('#attID_url').val('{{ uri_for('materialize-att-delete', att_id = att.key.id()) }}'); $('#attID').val('{{att.key.id()}}'); return false;"></i>
                                 {% endif %}
@@ -634,7 +634,7 @@
                                 <span class="light-blue-text">{{date}}</span>
                                 <br> 
                                 <span class="log-contents">{{contents}}</span>
-                                {% user_callcenter_role in ['admin'] %}
+                                {% if user_callcenter_role in ['admin'] %}
                                 <br>
                                 <i class="mdi-action-delete red-text" style="cursor:pointer; border-radius: 10px; font-size: 25px;margin: 12px;" onclick="$('#modal_log').openModal(); $('#logID_url').val('{{ uri_for('materialize-log-delete', log_id = idx) }}'); $('#logID').val('{{idx}}'); return false;"></i>
                                 {% endif %}

@@ -93,8 +93,66 @@ def disclaim(_self, **kwargs):
 
     return _params, user_info
 
+#EMAIL NOTIFICATION TO STAKEHOLDERS
+def notifyOrganization(self, report):
+    if self.app.config.get('send_org_notifications'):
+        emails = ''
+        group = models.GroupCategory.get_by_name(report.group_category)
+        logging.info('group: %s' % group)
+        if group:
+            agency = models.Agency.get_by_group_id(group.key.id())
+            emails = "%s" % agency.admin_email
+            if agency:
+                secretary = models.Secretary.get_by_id(long(agency.secretary_id))
+                if secretary.admin_email not in emails:
+                    emails += ", %s" % (secretary.admin_email)
+                operators = models.Operator.query(models.Operator.agency_id == agency.key.id())
+                for operator in operators:
+                    if operator.email not in emails:
+                        emails += ", %s" % operator.email
+
+        logging.info('sending notification emails to: %s' % emails)
+
+        if report.is_manual:
+            contact = report.contact_info
+            assignee = "%s (%s)" % (report.get_user_name(), report.get_user_email())
+        else:
+            contact = "%s %s; %s; %s; %s" % (report.get_user_name(), report.get_user_lastname(), report.get_user_address(), report.get_user_phone(), report.get_user_email())
+            assignee = report.get_last_log()
+        
+        template_val = {
+            "_url": self.uri_for("landing", _full=True),
+            "cdb_id": report.cdb_id,
+            "contact_info": contact,
+            "category": report.sub_category,
+            "description": report.description,
+            "address": report.address_from,
+            "address_detail": report.address_detail,
+            "when": report.get_formatted_date(),
+            "stakeholder": report.get_stakeholder(),
+            "last_log": assignee,
+            "brand_logo": self.app.config.get('brand_logo'),
+            "brand_color": self.app.config.get('brand_color'),
+            "brand_secondary_color": self.app.config.get('brand_secondary_color'),
+            "support_url": self.uri_for("contact", _full=True),
+            "twitter_url": self.app.config.get('twitter_url'),
+            "facebook_url": self.app.config.get('facebook_url'),
+            "faq_url": self.uri_for("faq", _full=True)
+        }
+        body_path = "emails/notify_organization.txt"
+        body = self.jinja2.render_template(body_path, **template_val)
+
+        email_url = self.uri_for('taskqueue-send-email')
+        taskqueue.add(url=email_url, params={
+            'to': emails,
+            'subject': messages.notification_org,
+            'body': body,
+        })
+    else:
+        logging.info('sending notification is disabled by configuration')
+
 #REPORTS RELATED
-def cartoInsert(self, report_id, manual):
+def cartoInsert(self, report_id, manual, notify_organization):
     #PUSH TO CARTODB
     from google.appengine.api import urlfetch
     import urllib
@@ -119,6 +177,8 @@ def cartoInsert(self, report_id, manual):
             response = cl.sql("select cartodb_id from %s where uuid = '%s'" % (cartodb_table, report_info.key.id()))
             report_info.cdb_id = response['rows'][0]['cartodb_id']
             report_info.put()
+            if notify_organization:
+                notifyOrganization(self, report_info)
             if manual:
                 message = _(messages.report_success)
                 self.add_message(message, 'success')
@@ -131,7 +191,7 @@ def cartoInsert(self, report_id, manual):
                 return self.redirect_to("materialize-organization-report-success", ticket = report_info.cdb_id, report_key = report_info.key.id())
             pass
 
-def cartoUpdate(self, report_id):
+def cartoUpdate(self, report_id, notify_organization):
     #PUSH TO CARTODB
     from google.appengine.api import urlfetch
     import urllib
@@ -154,6 +214,8 @@ def cartoUpdate(self, report_id):
         except Exception as e:
             logging.info('error in cartodb UPDATE request: %s' % e)
             pass
+    if notify_organization:
+        notifyOrganization(self, report_info)
 
 def archiveReport(self, user_info, report_id, handler):
     from google.appengine.api import urlfetch
@@ -199,6 +261,7 @@ def editReport(self, user_info, report_id, handler):
     cartodb_domain = self.app.config.get('cartodb_user')
     cartodb_table = self.app.config.get('cartodb_reports_table')
     report_info = models.Report.get_by_id(long(report_id))
+    notify_organization = False
 
     #UPDATED VALUES
     address_detail = self.request.get('address_detail')
@@ -269,6 +332,8 @@ def editReport(self, user_info, report_id, handler):
                        
         report_info.status = status
         changes += "el estado, "
+        if report_info.status == 'assigned':
+            notify_organization = True
                         
     if report_info.folio != folio:
         report_info.folio = folio
@@ -327,7 +392,7 @@ def editReport(self, user_info, report_id, handler):
         log_info.title = "Ha marcado este reporte como resuelto."
         log_info.contents = self.request.get('contents')
     elif kind == 'status' and report_info.status == 'failed':
-        log_info.title = "Ha marcado este reporte como fallo."
+        log_info.title = "Ha marcado este reporte como fallido."
         log_info.contents = self.request.get('contents')
     elif kind == 'status' and report_info.status == 'rejected':
         log_info.title = "Ha rechazado este reporte."
@@ -349,10 +414,10 @@ def editReport(self, user_info, report_id, handler):
     #PUSH TO CARTODB
     if report_info.cdb_id == -1:
         #INSERT
-        cartoInsert(self, report_info.key.id(),False)
+        cartoInsert(self, report_info.key.id(), False, notify_organization)
     else:
         #UPDATE
-        cartoUpdate(self, report_info.key.id())
+        cartoUpdate(self, report_info.key.id(), notify_organization)
 
 
     #NOTIFY APPROPRIATELY
@@ -975,7 +1040,18 @@ class SendEmailHandler(BaseHandler):
                 message.set_from(sender)
                 status, msg = sg.send(message)
             except Exception, e:
-                logging.error("Error sending email: %s" % e)
+                logging.error("Error sending email with sendgrid: %s" % e)
+                try:            
+                    message = mail.EmailMessage()
+                    message.sender = sender
+                    message.to = to
+                    message.subject = subject
+                    message.html = body
+                    message.send()
+                    logging.info("...attempting google, sending email to: %s ..." % to)
+                except Exception, e:
+                    logging.error("Error sending email: %s" % e)
+                    pass
         else:
             #using appengine email 
             try:            
@@ -2609,13 +2685,13 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
                 logging.info('t.content: %s' % t.content)
                 
                 if t.content == 'success':
-                    cartoInsert(self, user_report.key.id(), True)
+                    cartoInsert(self, user_report.key.id(), True, True)
                 else:
                     message = _(messages.attach_error)
                     self.add_message(message, 'danger')            
                     return self.get()                    
             else:
-                cartoInsert(self, user_report.key.id(), True)
+                cartoInsert(self, user_report.key.id(), True, True)
 
         except Exception as e:
             logging.info('error in post: %s' % e)
@@ -3945,7 +4021,7 @@ class MaterializeReportsRequestHandler(BaseHandler):
                     
                     #PUSH TO CARTODB
                     if report_info.cdb_id !=-1:
-                        cartoUpdate(self, report_info.key.id())
+                        cartoUpdate(self, report_info.key.id(), False)
                         
             report_info.put()
             self.add_message(messages.inquiry_success, 'success')
@@ -4061,14 +4137,14 @@ class MaterializeReportsEditRequestHandler(BaseHandler):
                 logging.info('t.content: %s' % t.content)
                 
                 if t.content == 'success':
-                    cartoUpdate(self, user_report.key.id())
+                    cartoUpdate(self, user_report.key.id(), False)
                     return self.redirect_to('materialize-reports')                    
                 else:
                     message = _(messages.attach_error)
                     self.add_message(message, 'danger')            
                     return self.get(report_id=report_id)                    
             else:
-                cartoUpdate(self, user_report.key.id())
+                cartoUpdate(self, user_report.key.id(), False)
                 message = _(messages.saving_success)
                 self.add_message(message, 'success')
                 return self.redirect_to('materialize-reports')
