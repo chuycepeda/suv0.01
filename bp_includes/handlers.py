@@ -2834,9 +2834,9 @@ class MaterializeOrganizationExportUsersHandler(BaseHandler):
             if result.status_code == 200:
                 data = json.loads(result.content)                
                 writer = csv.writer(self.response.out)
-                writer.writerow(["name", "last_name","last_name2","credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
+                writer.writerow(["name", "last_name","credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
                 for item in data['items']:
-                    writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'),item['last_name2'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'].encode('utf8') ])
+                    writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'].encode('utf8') ])
                         
             self.response.headers['Content-Type'] = 'application/csv'
             self.response.headers['Content-Disposition'] = 'attachment; filename=usuarios.csv'
