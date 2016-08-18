@@ -140,6 +140,9 @@ _routes = [
     RedirectRoute(r'/humans.txt', handlers.HumansHandler, name='humans', strict_slash=True),
     RedirectRoute(r'/sitemap.xml', handlers.SitemapHandler, name='sitemap', strict_slash=True),
     RedirectRoute(r'/crossdomain.xml', handlers.CrossDomainHandler, name='crossdomain', strict_slash=True),
+
+    #Email Bouncer
+    RedirectRoute('/_ah/bounce/', handlers.LogBounceHandler, name='bouncer', strict_slash=True),
         
 ]
 

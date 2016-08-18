@@ -58,6 +58,7 @@ config = {
     'city_splash_secondary':  'http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png',
     'city_splash_secondary_light':  '45',
     'contact_recipient': "uno@onesmart.city",      
+    'send_org_notifications': True,
     # application branding 
     'brand_logo': 'http://onesmart.city/default/materialize/images/_logo.png',
     'brand_favicon': 'http://onesmart.city/default/materialize/images/_logo.png',
@@ -96,7 +97,6 @@ config = {
     'has_transparency': True,
     'has_social_media': True,
     'has_cic': False,
-    'send_org_notifications': False,
     # get your own recaptcha keys by registering at http://www.google.com/recaptcha/
     'captcha_public_key': "6LcMfv0SAAAAAGMJ9i-g5aJhXFvSHpPsqDLOHTUD",
     'captcha_private_key': "6LcMfv0SAAAAALMUmCmFt5NOAw_ZTHabWRHAFJI6",
