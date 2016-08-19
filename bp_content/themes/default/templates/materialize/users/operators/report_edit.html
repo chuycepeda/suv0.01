@@ -61,11 +61,11 @@
                 {% if report.status == 'solved'%}
                 <p style="cursor: pointer; line-height: 40px;" class="col s12">
                     <span id="stars_{{report.key.id()}}" style="font-size:5rem">
-                    <i class="rating mdi-action-star-rate {% if report.rating >= 1 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},1)"{% endif %}></i>
-                    <i class="rating mdi-action-star-rate {% if report.rating >= 2 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},2)"{% endif %}></i>
-                    <i class="rating mdi-action-star-rate {% if report.rating >= 3 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},3)"{% endif %}></i>
-                    <i class="rating mdi-action-star-rate {% if report.rating >= 4 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},4)"{% endif %}></i>
-                    <i class="rating mdi-action-star-rate {% if report.rating >= 5 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},5)"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 1 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},1)"{% else %}onclick="cantRate()"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 2 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},2)"{% else %}onclick="cantRate()"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 3 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},3)"{% else %}onclick="cantRate()"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 4 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},4)"{% else %}onclick="cantRate()"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 5 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},5)"{% else %}onclick="cantRate()"{% endif %}></i>
                     </span>
                 </p>
                 {% endif %} 
@@ -1264,6 +1264,10 @@
                         Materialize.toast('<span class="toast-danger">Oops! Algo ha salido mal, por favor intenta más tarde.</span>',4500);
 
                 });
+            }
+
+            function cantRate(){
+                Materialize.toast('<span class="toast-warning">Oops! Este reporte debe ser calificado por el ciudadano.</span>',4500);
             }
 
             function demoFromHTML() {
