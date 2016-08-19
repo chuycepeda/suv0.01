@@ -43,7 +43,7 @@ _routes = [
     RedirectRoute('/report/comment/add/', handlers.MaterializeReportCommentsAddHandler, name='materialize-report-comments-add', strict_slash=True),
     RedirectRoute('/report/follow/', handlers.MaterializeFollowRequestHandler, name='materialize-report-follow', strict_slash=True),   
     RedirectRoute('/report/rate/', handlers.MaterializeRateRequestHandler, name='materialize-report-rate', strict_slash=True),   
-    RedirectRoute('/report/author/<uuid>', handlers.MaterializeReportAuthorRequestHandler, name='materialize-report-author', strict_slash=True),   
+    RedirectRoute('/report/author/<uuid>/', handlers.MaterializeReportAuthorRequestHandler, name='materialize-report-author', strict_slash=True),   
     RedirectRoute('/report/urgent/', handlers.MaterializeUrgentRequestHandler, name='materialize-report-urgent', strict_slash=True),   
     RedirectRoute('/report/log/delete/<log_id>/', handlers.MaterializeLogChangeDeleteHandler, name='materialize-log-delete', strict_slash=True, handler_method='edit'),
     RedirectRoute('/report/att/delete/<att_id>/', handlers.MaterializeAttachmentDeleteHandler, name='materialize-att-delete', strict_slash=True, handler_method='edit'),

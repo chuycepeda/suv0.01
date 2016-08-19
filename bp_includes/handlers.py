@@ -5214,16 +5214,15 @@ class MaterializeReportAuthorRequestHandler(BaseHandler):
             try:
                 report = models.Report.get_by_id(long(uuid))
                 if report:
-                    if report.user_id == -1:
+                    if report.is_manual:
                         reportDict['response']['user_url'] = '#'
-                        reportDict['response']['name'] = report.contact_name
-                        reportDict['response']['lastname'] = report.contact_lastname
-                        reportDict['response']['content'] = 'manually created report, collected contact info'
+                        reportDict['response']['content'] = 'is manual'
                     else:
                         reportDict['response']['user_url'] = report.user_id
-                        reportDict['response']['name'] = report.get_user_name()
-                        reportDict['response']['lastname'] = report.get_user_lastname()
-                        reportDict['response']['content'] = 'user created report, collected user data'
+                        reportDict['response']['content'] = 'user created'
+                    
+                    reportDict['response']['name'] = report.contact_name
+                    reportDict['response']['lastname'] = report.contact_lastname
                     reportDict['response']['status'] = 'success'
 
             except Exception as e:

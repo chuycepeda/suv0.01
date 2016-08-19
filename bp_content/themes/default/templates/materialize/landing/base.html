@@ -1660,8 +1660,13 @@
 					             type: 'GET',
 					             success: function(data) { 
 					                 console.log('author', data);
-					                 $('#report_author').attr('href', '/user/profile/' + data.response.user_url + '/');
-					                 $('#report_author').html(data.response.name + " " + data.response.lastname);
+					                 if (data.response.status == 'success'){
+					                 	 if (data.response.content != 'is manual')
+						                 	$('#report_author').attr('href', '/user/profile/' + data.response.user_url + '/');
+						                 $('#report_author').html(data.response.name + " " + data.response.lastname);
+					                 }else{
+						                 $('#report_author').html('un ciudadano');
+					                 }
 					             }
 					         }).done(function(data) {});
 						}
@@ -2451,8 +2456,13 @@
 					             type: 'GET',
 					             success: function(data) { 
 					                 console.log('author', data);
-					                 $('#report_author').attr('href', '/user/profile/' + data.response.user_url + '/');
-					                 $('#report_author').html(data.response.name + " " + data.response.lastname);
+					                 if (data.response.status == 'success'){
+					                 	 if (data.response.content != 'is manual')
+						                 	$('#report_author').attr('href', '/user/profile/' + data.response.user_url + '/');
+						                 $('#report_author').html(data.response.name + " " + data.response.lastname);
+					                 }else{
+						                 $('#report_author').html('un ciudadano');
+					                 }
 					             }
 					         }).done(function(data) {});
 						}
