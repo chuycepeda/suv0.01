@@ -196,6 +196,28 @@ indexes:
   properties:
   - name: contact_lastname
   - name: contact_name
+  - name: contact_phone
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_lastname
+  - name: contact_name
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_lastname
+  - name: contact_phone
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_name
+  - name: contact_phone
   - name: created
     direction: desc
 
@@ -208,6 +230,12 @@ indexes:
 - kind: Report
   properties:
   - name: contact_name
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: contact_phone
   - name: created
     direction: desc
 

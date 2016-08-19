@@ -196,6 +196,7 @@ class Report(ndb.Model):
     contact_info = ndb.StringProperty()                                                                                             #: User contact information
     contact_name = ndb.ComputedProperty(lambda self: self.get_contact_name())
     contact_lastname = ndb.ComputedProperty(lambda self: self.get_contact_lastname())
+    contact_phone = ndb.ComputedProperty(lambda self: self.get_contact_phone())
     user_id = ndb.IntegerProperty(required = True, default = -1)                                                                    #: Reporting user ID
     image_url = ndb.StringProperty()                                                                                                #: Report media 
     group_category = ndb.StringProperty()                                                                                           #: Parent category
@@ -229,6 +230,13 @@ class Report(ndb.Model):
         user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
         if user:
             return user.last_name
+        else:
+            return ''
+
+    def get_user_phone(self):
+        user = User.get_by_id(long(self.user_id)) if self.user_id != -1 else None
+        if user:
+            return user.phone
         else:
             return ''
 
@@ -402,7 +410,7 @@ class Report(ndb.Model):
         if self.contact_info:
             if len(self.contact_info) > 3:
                 return self.contact_info
-        return u"%s, %s" % (self.get_user_name(), self.get_user_email())
+        return u"%s, %s, %s" % (self.get_user_name(), self.get_user_phone(), self.get_user_email())
 
     def get_contact_name(self):
         if self.contact_info:
@@ -415,6 +423,12 @@ class Report(ndb.Model):
             if len(self.contact_info.split(',')) > 2:
                 return self.contact_info.split(',')[1].strip()
         return u"%s" % (self.get_user_lastname())
+
+    def get_contact_phone(self):
+        if self.contact_info:
+            if len(self.contact_info.split(',')) > 2:
+                return self.contact_info.split(',')[-2].strip()
+        return u"%s" % (self.get_user_phone())
 
     def get_stakeholder(self):
         group = GroupCategory.get_by_name(self.group_category)

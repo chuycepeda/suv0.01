@@ -3276,11 +3276,25 @@ class MaterializeOrganizationInboxRequestHandler(BaseHandler):
             cursor = Cursor(urlsafe=c)
 
             if q:
-                reports = models.Report.query()            
-                if len(q.split(',')) >= 2:
-                    reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]) ))
+                reports = models.Report.query()         
+
+                if len(q.split(',')) > 3:
+                    if 'u_name' in q and 'u_lastname' in q and 'u_phone' in q:
+                        reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[3].strip(),q.split(',')[3].strip().lower(),q.split(',')[3].strip().upper(), q.split(',')[3].strip().title()]), models.Report.contact_phone.IN([q.split(',')[5]])))
+                    if 'u_name' in q and 'u_lastname' in q and 'u_phone' not in q:
+                        reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[3].strip(),q.split(',')[3].strip().lower(),q.split(',')[3].strip().upper(), q.split(',')[3].strip().title()]) ))
+                    if 'u_name' in q and 'u_lastname' not in q and 'u_phone' in q:
+                        reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_phone.IN([q.split(',')[3]])))
+                    if 'u_name' not in q and 'u_lastname' in q and 'u_phone' in q:
+                        reports = reports.filter(ndb.AND(models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]), models.Report.contact_phone.IN([q.split(',')[3]])))
                 else:
-                    reports = reports.filter(ndb.OR(models.Report.contact_name.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[0].strip(),q.split(',')[0].strip().lower(),q.split(',')[0].strip().upper(),q.split(',')[0].strip().title()])))
+                    if 'u_name' in q:
+                        reports = reports.filter(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]))
+                    elif 'u_last_name' in q:
+                        reports = reports.filter(models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[0].strip().title()]))
+                    elif 'u_phone' in q:
+                        reports = reports.filter(models.Report.contact_phone.IN([q.split(',')[1]]))
+
                 count = reports.count()
                 PAGE_SIZE = 50
                 if forward:

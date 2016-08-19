@@ -131,12 +131,12 @@
                                                         <div class="modal-content">
                                                             <div class="row">
                                                                 <div class="input-field col s12 center">
-                                                                  <p class="center login-form-text">Busca por nombre y apellido.</p>
+                                                                  <p class="center login-form-text">Busca por nombre, apellido y/o teléfono.</p>
                                                                 </div>
                                                                 <div class="row">
                                                                   <div class="container">
                                                                       <div class="row">
-                                                                        <div class="col s12 m8 offset-m2 center">
+                                                                        <div class="col s12 m10 offset-m1 center">
                                                                           <div class="input-field col s12 m6" style="margin-top:30px;">
                                                                             <input id="u_name" name="u_name" type="text" value="">
                                                                             <label id="unameLabel" for="u_name">Nombre</label>
@@ -144,6 +144,10 @@
                                                                           <div class="input-field col s12 m6" style="margin-top:30px;">
                                                                             <input id="u_last_name" name="u_last_name" type="text" value="">
                                                                             <label id="ulastnameLabel" for="u_last_name">Apellido</label>
+                                                                          </div>
+                                                                          <div class="input-field col s12 m6" style="margin-top:30px;">
+                                                                            <input id="u_phone" name="u_phone" type="number" value="">
+                                                                            <label id="uphoneLabel" for="u_phone">Teléfono</label>
                                                                           </div>
                                                                         </div>
                                                                         <div class="input-field col s12">
@@ -290,12 +294,20 @@
         {% if path == uri_for('materialize-secretary-inbox') or path == uri_for('materialize-agent-inbox') or path == uri_for('materialize-operator-inbox') or path == uri_for('materialize-callcenter-inbox') %}
           function do_Q(){
               var _do =true;
-              if (document.getElementById('u_name').value.length > 0 && document.getElementById('u_last_name').value.length > 0)
-                var href="{{ uri_for(inbox) }}?q="+document.getElementById('u_name').value+','+document.getElementById('u_last_name').value;
-              else if (document.getElementById('u_name').value.length == 0 && document.getElementById('u_last_name').value.length > 0)
-                var href="{{ uri_for(inbox) }}?q="+document.getElementById('u_last_name').value;
-              else if (document.getElementById('u_last_name').value.length == 0 && document.getElementById('u_name').value.length > 0)
-                var href="{{ uri_for(inbox) }}?q="+document.getElementById('u_name').value;
+              if (document.getElementById('u_name').value.length > 0 && document.getElementById('u_last_name').value.length > 0 && document.getElementById('u_phone').value.length > 5)
+                var href="{{ uri_for(inbox) }}?q=u_name,"+document.getElementById('u_name').value+',u_last_name,'+document.getElementById('u_last_name').value+',u_phone,'+document.getElementById('u_phone').value;
+              else if (document.getElementById('u_name').value.length > 0 && document.getElementById('u_last_name').value.length > 0 && document.getElementById('u_phone').value.length < 6)
+                var href="{{ uri_for(inbox) }}?q=u_name,"+document.getElementById('u_name').value+',u_last_name,'+document.getElementById('u_last_name').value;
+              else if (document.getElementById('u_name').value.length > 0 && document.getElementById('u_last_name').value.length == 0 && document.getElementById('u_phone').value.length > 5)
+                var href="{{ uri_for(inbox) }}?q=u_name,"+document.getElementById('u_name').value+',u_phone,'+document.getElementById('u_phone').value;
+              else if (document.getElementById('u_name').value.length == 0 && document.getElementById('u_last_name').value.length > 0 && document.getElementById('u_phone').value.length > 5)
+                var href="{{ uri_for(inbox) }}?q=u_last_name,"+document.getElementById('u_last_name').value+',u_phone,'+document.getElementById('u_phone').value;
+              else if (document.getElementById('u_name').value.length == 0 && document.getElementById('u_last_name').value.length > 0 && document.getElementById('u_phone').value.length < 6)
+                var href="{{ uri_for(inbox) }}?q=u_last_name,"+document.getElementById('u_last_name').value;
+              else if (document.getElementById('u_last_name').value.length == 0 && document.getElementById('u_name').value.length > 0 && document.getElementById('u_phone').value.length < 6)
+                var href="{{ uri_for(inbox) }}?q=u_name,"+document.getElementById('u_name').value;
+              else if (document.getElementById('u_last_name').value.length == 0 && document.getElementById('u_name').value.length == 0 && document.getElementById('u_phone').value.length > 5)
+                var href="{{ uri_for(inbox) }}?q=u_phone,"+document.getElementById('u_phone').value;
               else{
                 _do = false;              
                 Materialize.toast('<span class="toast-warning">¡Oops! Por favor llena al menos un campo.</span>',4500);
