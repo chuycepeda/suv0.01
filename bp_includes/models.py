@@ -407,25 +407,25 @@ class Report(ndb.Model):
         return '---'
     
     def get_contact_info(self):
-        if self.contact_info:
+        if self.is_manual:
             if len(self.contact_info) > 3:
                 return self.contact_info
         return u"%s, %s, %s" % (self.get_user_name(), self.get_user_phone(), self.get_user_email())
 
     def get_contact_name(self):
-        if self.contact_info:
+        if self.is_manual:
             if len(self.contact_info.split(',')) > 1:
                 return self.contact_info.split(',')[0].strip()
         return u"%s" % (self.get_user_name())
 
     def get_contact_lastname(self):
-        if self.contact_info:
+        if self.is_manual:
             if len(self.contact_info.split(',')) > 2:
                 return self.contact_info.split(',')[1].strip()
         return u"%s" % (self.get_user_lastname())
 
     def get_contact_phone(self):
-        if self.contact_info:
+        if self.is_manual:
             if len(self.contact_info.split(',')) > 2:
                 return self.contact_info.split(',')[-2].strip()
         return u"%s" % (self.get_user_phone())

@@ -3296,7 +3296,7 @@ class MaterializeOrganizationInboxRequestHandler(BaseHandler):
                         reports = reports.filter(models.Report.contact_phone.IN([q.split(',')[1]]))
 
                 count = reports.count()
-                PAGE_SIZE = 50
+                PAGE_SIZE = 30
                 if forward:
                     reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
                     if next_cursor and more:
@@ -3342,7 +3342,7 @@ class MaterializeOrganizationInboxRequestHandler(BaseHandler):
                 if folio:     
                     reports = reports.filter(models.Report.folio == folio)
                 count = reports.count()
-                PAGE_SIZE = 50
+                PAGE_SIZE = 30
                 if forward:
                     reports, next_cursor, more = reports.order(-models.Report.created, models.Report.key).fetch_page(PAGE_SIZE, start_cursor=cursor)
                     if next_cursor and more:

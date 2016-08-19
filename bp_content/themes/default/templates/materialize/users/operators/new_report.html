@@ -578,6 +578,13 @@
     	            return false;
     			}
 
+    			if (document.getElementById('u_name').value == "") document.getElementById('u_name').value = "-";
+				if (document.getElementById('u_last_name').value == "") document.getElementById('u_last_name').value = "-";
+				if (document.getElementById('u_last_name_m').value == "") document.getElementById('u_last_name_m').value = "-";
+				if (document.getElementById('u_address').value == "") document.getElementById('u_address').value = "-";
+				if (document.getElementById('u_phone').value == "") document.getElementById('u_phone').value = "-";
+				if (document.getElementById('u_email').value == "") document.getElementById('u_email').value = "-";
+
     			document.getElementById('usercontact').value = document.getElementById('u_name').value + ', ' + document.getElementById('u_last_name').value + ', ' + document.getElementById('u_last_name_m').value + ', ' + document.getElementById('u_address').value + ', ' + document.getElementById('u_phone').value + ', ' + document.getElementById('u_email').value;
     	        if (!marker){
     	            Materialize.toast('<span class="toast-warning">Oops! Selecciona la ubicación del reporte en el mapa por favor.</span>',4500);
