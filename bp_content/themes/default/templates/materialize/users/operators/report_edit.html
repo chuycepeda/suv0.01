@@ -57,6 +57,19 @@
         <div class="row">
             <h2 class="header center brand-color-text">Información del Reporte <i id="urgent_marker" class="mdi-av-new-releases deep-orange-text text-accent-3 " style="
         font-size: 42px;{% if not report.urgent %}display:none;{% endif %}"></i></h2>
+            <div class="col s12 center">
+                {% if report.status == 'solved'%}
+                <p style="cursor: pointer; line-height: 40px;" class="col s12">
+                    <span id="stars_{{report.key.id()}}" style="font-size:5rem">
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 1 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},1)"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 2 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},2)"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 3 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},3)"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 4 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},4)"{% endif %}></i>
+                    <i class="rating mdi-action-star-rate {% if report.rating >= 5 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" {% if report.is_manual %}onclick="rateReport({{report.key.id()}},5)"{% endif %}></i>
+                    </span>
+                </p>
+                {% endif %} 
+            </div>
             <div class="col s12 m7">
                 <div class="card-panel brand-color white-text">
                     <dl class="dl-horizontal brand-color white-text">
@@ -1222,8 +1235,37 @@
                     }
                 });
             }
-    </script>
-    <script>
+
+            function rateReport(idx, rating){
+                $.ajax({
+                    url: "{{ uri_for('materialize-report-rate') }}",
+                    type: 'POST',
+                    data: { 
+                        'report_id': idx,
+                        'user_id': {{user_id}},
+                        '_csrf_token': '{{ csrf_token() }}',
+                        'rating': rating
+                    }
+                }).done(function(data) {
+                    console.log(data);
+                    if (data.contents == 'rating request successful'){
+                        Materialize.toast('<span class="toast-success">Gracias! Ya hemos recibido tu calificación.</span>',4500);
+                        var colors = []
+                        switch(data.rating){
+                            case 1: colors = ['amber-text','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2'];break;
+                            case 2: colors = ['amber-text','amber-text','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2'];break;
+                            case 3: colors = ['amber-text','amber-text','amber-text','grey-text text-lighten-2','grey-text text-lighten-2'];break;
+                            case 4: colors = ['amber-text','amber-text','amber-text','amber-text','grey-text text-lighten-2'];break;
+                            case 5: colors = ['amber-text','amber-text','amber-text','amber-text','amber-text'];break;
+                        }
+                        document.getElementById('stars_'+idx).innerHTML = '<i class="rating mdi-action-star-rate '+ colors[0] +'" onclick="rateReport('+ idx +',1)"></i><i class="rating mdi-action-star-rate '+ colors[1] +'" onclick="rateReport('+ idx +',2)"></i><i class="rating mdi-action-star-rate '+ colors[2] +'" onclick="rateReport('+ idx +',3)"></i><i class="rating mdi-action-star-rate '+ colors[3] +'" onclick="rateReport('+ idx +',4)"></i><i class="rating mdi-action-star-rate '+ colors[4] +'" onclick="rateReport('+ idx +',5)"></i>';
+                    }
+                    else
+                        Materialize.toast('<span class="toast-danger">Oops! Algo ha salido mal, por favor intenta más tarde.</span>',4500);
+
+                });
+            }
+
             function demoFromHTML() {
                 var _logs = document.getElementsByClassName('log-change');
                 var _contents = document.getElementsByClassName('log-contents');

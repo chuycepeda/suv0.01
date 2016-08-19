@@ -653,7 +653,7 @@
 	                      <a style="margin-bottom:30px;" href="#modal2" class="modal-trigger menu-item  waves-effect waves-light brand-color white-text btn-large ">Crear Cuenta</a>
 	                      {% else %}
                             {% if has_reports %}
-	                            {% if not has_petitions or not has_transparency %}
+	                            {% if not has_petitions and not has_transparency %}
 		                      		<a style="margin-bottom:30px;" href="{{uri_for("landing-map")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Mapa</a>
 	                            {% endif %}
 	                      		<a style="margin-bottom:30px;" href="{{uri_for("materialize-report-cardlist")}}" class="menu-item  waves-effect waves-light brand-color white-text btn-large ">Reportes</a>

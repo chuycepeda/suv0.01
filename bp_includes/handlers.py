@@ -4461,7 +4461,7 @@ class MaterializeRateRequestHandler(BaseHandler):
         reportDict = {}
         try:
             report = models.Report.get_by_id(long(report_id))
-            if report and report.user_id == user_id:
+            if report and (report.user_id == user_id or self.user_is_callcenter or self.user_is_secretary or self.user_is_agent or self.user_is_operator):
                 report.rating = int(rating)
                 if report.rating > 5:
                     report.rating = 5
