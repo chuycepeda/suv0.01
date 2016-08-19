@@ -34,7 +34,7 @@
                         <td width="512" valign="middle" style="width:512px">
                             <h3 style="margin:15px 0 25px;color:{{brand_secondary_color}};font-size:20px;font-weight:400;line-height:24px;letter-spacing:0.35px;font-family: roboto-thin; text-align:center;">Ticket No. {{cdb_id}}</h3>
                             
-                              <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Se te informa que se ha recibido en el Centro Atención Integral al Ciudadano el siguiente reporte, el cual se debe de atender en un máximo de 24 horas.</p>
+                              <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light">Se te informa que se ha recibido el siguiente reporte en tu plataforma digital de atención al ciudadano.</p>
                               <br>
                               <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light"><strong>Información de contacto:</strong> {{contact_info}}<br>
                               <strong>Trámite:</strong> {{category}}<br>
@@ -48,6 +48,7 @@
                               <p style="margin:0 0 22px;font-size:14px;line-height:24px;letter-spacing:.5px;font-family:roboto-light"><strong>Fecha:</strong>{{when}}<br>
                               <strong>Responsable:</strong> {{stakeholder}}<br>
                               <strong>Asignó:</strong> {{last_log}}</p>
+                              <hr>
                                                                                                           
                           <div style="margin-top: 50px;padding:0px 15px 5px;color: #5A5858;font-size: 13px;line-height:24px;letter-spacing:-1px">                         
                           </div>
