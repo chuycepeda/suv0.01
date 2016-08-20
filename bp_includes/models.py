@@ -414,20 +414,26 @@ class Report(ndb.Model):
 
     def get_contact_name(self):
         if self.is_manual:
-            if len(self.contact_info.split(',')) > 1:
-                return self.contact_info.split(',')[0].strip()
+            try:
+                return u"%s" % self.contact_info.split(',')[0].strip()
+            except:
+                return ""
         return u"%s" % (self.get_user_name())
 
     def get_contact_lastname(self):
         if self.is_manual:
-            if len(self.contact_info.split(',')) > 2:
-                return self.contact_info.split(',')[1].strip()
+            try:
+                return u"%s" % self.contact_info.split(',')[1].strip()
+            except:
+                return ""
         return u"%s" % (self.get_user_lastname())
 
     def get_contact_phone(self):
         if self.is_manual:
-            if len(self.contact_info.split(',')) > 2:
-                return self.contact_info.split(',')[-2].strip()
+            try:
+                return u"%s" % self.contact_info.split(',')[-2].strip()
+            except:
+                return ""
         return u"%s" % (self.get_user_phone())
 
     def get_stakeholder(self):

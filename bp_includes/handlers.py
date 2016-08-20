@@ -3278,14 +3278,19 @@ class MaterializeOrganizationInboxRequestHandler(BaseHandler):
             if q:
                 reports = models.Report.query()         
 
-                if len(q.split(',')) > 3:
-                    if 'u_name' in q and 'u_lastname' in q and 'u_phone' in q:
+                if len(q.split(',')) > 2:
+                    logging.info("querying search instructions...%s" % q)
+                    if 'u_name' in q and 'u_last_name' in q and 'u_phone' in q:
+                        logging.info("all vars")
                         reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[3].strip(),q.split(',')[3].strip().lower(),q.split(',')[3].strip().upper(), q.split(',')[3].strip().title()]), models.Report.contact_phone.IN([q.split(',')[5]])))
-                    if 'u_name' in q and 'u_lastname' in q and 'u_phone' not in q:
+                    if 'u_name' in q and 'u_last_name' in q and 'u_phone' not in q:
+                        logging.info("name and last_name")
                         reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[3].strip(),q.split(',')[3].strip().lower(),q.split(',')[3].strip().upper(), q.split(',')[3].strip().title()]) ))
-                    if 'u_name' in q and 'u_lastname' not in q and 'u_phone' in q:
+                    if 'u_name' in q and 'u_last_name' not in q and 'u_phone' in q:
+                        logging.info("name and phone")
                         reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_phone.IN([q.split(',')[3]])))
-                    if 'u_name' not in q and 'u_lastname' in q and 'u_phone' in q:
+                    if 'u_name' not in q and 'u_last_name' in q and 'u_phone' in q:
+                        logging.info("lastname and phone")
                         reports = reports.filter(ndb.AND(models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]), models.Report.contact_phone.IN([q.split(',')[3]])))
                 else:
                     if 'u_name' in q:
