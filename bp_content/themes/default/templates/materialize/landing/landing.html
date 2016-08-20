@@ -466,9 +466,11 @@
 				    <br><br><br>
 				    <br><br><br>
 				    <div class="row center">
-				      <h3 class="col s8 offset-s2 light center header white-text" style="font-size:2.2rem;">Bienvenido a</h3>
-				      <h1 class="header col s12 white-text" style="font-family:Novecentowide-Bold;font-size:3.2rem;">{{app_name}}</h1>
-					  <h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" {% if not is_mobile %}style="font-size:2.2rem;"{% else %}style="font-size:1.5rem;"{% endif %}>Un espacio en el que podrás mandar reportes y propuestas que serán respondidas por tu alcalde.</h3>
+						  <h1 class="center header col s12 white-text" style="font-family:Novecentowide-Bold;font-size:3.2rem;">{{app_name}}</h1>
+					      <h1 class="center header col s12 white-text" style="font-family:Novecentowide-Bold;font-size:3.2rem;">Tu línea directa con gobierno</h1>
+					      {% if not is_mobile %}
+						  <h3 class="col s10 offset-s1 m8 offset-m2 light center header white-text" style="font-size:2.2rem;">¡Reporta servicios públicos, propón áreas de mejora y consulta información de transparencia!</h3>
+						  {% endif %}
 				    </div>
 				    <div class="row center">
 				    </div>
@@ -485,31 +487,31 @@
 				<div class="section" style="padding-top:60px; padding-bottom: 60px;">
 
 				  <div class="row">
-				   	<h3 class="grey-text col s12 m10 offset-m1 center" style="font-family: Roboto-thin;">Se parte de quienes transforman <span style="font-family: roboto-black;" class="text-darken-4">{{city_name}}</span> en una <em>smart city</em>.</h3>
+				   	<h3 class="grey-text col s12 m10 offset-m1 center" style="font-family: Roboto-thin;"><span style="font-family: roboto-black;" class="text-darken-4">{{city_name}}</span> una Ciudad Inteligente.</h3>
 				    <div class="col s12 m4">
 				      <div class="icon-block">
 				        <h2 class="center brand-color-text"><i class="mdi-editor-insert-emoticon" style="font-size:45px;"></i></h2>
 				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">¿Cómo funciona?</h5>
 
-				        <p class="center light" style="font-size: 18px;">{{app_name}} es un mecanismo de reporte digital de {{city_name}}. Al crear una cuenta podrás enviar reportes y propuestas sobre las necesidades de {{city_name}} que serán registradas en tu historial, y te enviaremos notificaciones de avance hasta dar solución.</p>
+				        <p class="light" style="text-align:justify; font-size: 18px;">{{app_name}} es un mecanismo de participación y colaboración digital de {{city_name}}. Al crear una cuenta podrás enviar reportes y propuestas sobre las necesidades emergentes de {{city_name}}. Estas serán registradas en tu historial y te enviaremos notificaciones de avance hasta darte solución.</p>
 				      </div>
 				    </div>
 
 				    <div class="col s12 m4">
 				      <div class="icon-block">
 				        <h2 class="center brand-color-text"><i class="mdi-action-receipt" style="font-size:45px;"></i></h2>
-				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Reporta y Participa</h5>
+				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Consulta y Participa</h5>
 
-				        <p class="center light" style="font-size: 18px;">Al participar colaboras para hacer de {{city_name}} una mejor ciudad. Con ello se habilita el flujo de conocimiento para la entrega eficaz de servicios y la notificación oportuna al gobierno de lo que nuestra ciudad necesita. Aprovecha el diálogo y la transparencia como nunca antes.</p>
+				        <p class="light" style="text-align:justify; font-size: 18px;">Habilita el flujo de conocimiento para la entrega eficaz de servicios y la notificación oportuna al gobierno de lo que nuestra ciudad necesita. Aprovecha el diálogo y conoce {{city_name}} como nunca antes.</p>
 				      </div>
 				    </div>
 
 				    <div class="col s12 m4">
 				      <div class="icon-block">
 				        <h2 class="center brand-color-text"><i class="mdi-action-favorite-outline" style="font-size:45px;"></i></h2>
-				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Sé parte del cambio</h5>
+				        <h5 class="center brand-color-text" style="font-family: Agenda-Bold;">Gobierno Abierto</h5>
 
-				        <p class="center light" style="font-size: 18px;">Reportes, propuestas y transparencia en un sólo lugar. Ayúdanos a conocer las necesidades de {{city_name}}, juntos lograremos el cambio que estas esperando. En tus manos tienes la herramienta digital que está por transformar {{city_name}} en una ciudad inteligente.</p>
+				        <p class="light" style="text-align:justify; font-size: 18px;">Colaboración, participación y transparencia en un sólo lugar. Ayúdanos a conocer las necesidades de {{city_name}}, juntos lograremos el cambio que estas esperando. En tus manos tienes la herramienta digital que transforma {{city_name}} en una ciudad inteligente.</p>
 				      </div>
 				    </div>
 				  </div>
@@ -520,7 +522,7 @@
 				  <div class="container">
 				    <div class="row center">
 				      <h1 class="header col s12 " style="color:#FFF!important; font-family: Agenda-Bold;">{{city_slogan}}</h1>
-					  <h4 class="col s8 offset-s2 light center header white-text" style="    text-transform: none;">A través de {{app_name}}, puedes contribuir para transformar {{city_name}}. {% if not is_mobile %}Reporta, participa y entérate de las necesidades que tenemos en nuestra comunidad. Con tu ayuda podremos ser más eficientes y lograr la transformación que {{city_name}} necesita.{% endif %}</h4>
+					  <h4 class="col s8 offset-s2 light center header white-text" style="    text-transform: none;">A través de {{app_name}}, puedes contribuir a mejorar {{city_name}}. {% if not is_mobile %}Reporta, participa y entérate de las necesidades que tenemos en nuestra comunidad. Logremos la transformación que {{city_name}} necesita.{% endif %}</h4>
 				      
 				    </div>
 				  </div>
@@ -645,7 +647,7 @@
 				  <div class="row">
 				  <h3 class="grey-text col s12 m10 offset-m1 center" style="font-family: Roboto-thin;">Las ciudades inteligentes, requieren ciudadanos inteligentes.</h3>
 				    <div class="col s12 center">
-				      <h4 style="line-height: 3;font-family: Agenda-Bold;">¡Comienza HOY a transformar {{city_name}}!</h4>
+				      <h4 style="{% if is_mobile %}line-height: 1.5;{% else %}line-height: 3;{% endif %}font-family: Agenda-Bold;">¡Comienza HOY a transformar {{city_name}}!</h4>
 				      
 				      <div class="col s12 center">
 				      	  {% if not user_id %}
