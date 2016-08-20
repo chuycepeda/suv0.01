@@ -359,16 +359,16 @@
 
                         {% if has_reports %}
 				    	{% if user_is_callcenter %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
 					     <li class="divider"></li>
 						{% elif user_is_secretary %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
 					     <li class="divider"></li>
 						{% elif user_is_agent %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
 					     <li class="divider"></li>
 						{% elif user_is_operator %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Bandeja</a></li>
+				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
 					     <li class="divider"></li>
 						{% endif %}
 						{% endif %}
@@ -702,7 +702,7 @@
 				</div>
 				<div class="footer-copyright " style="text-align:right;">
 				  <div class="container">
-				  	© 2015 Gobierno de {{city_name}} <i class="mdi-image-flash-on brand-secondary-color-text" style="font-size: 15px;margin-left: 3px;-webkit-animation: pulsate 3s ease-out; -webkit-animation-iteration-count: infinite;"></i> by <a class="brand-secondary-color-text" href="http://onesmart.city" target="_blank">OneSmart.City</a>.
+				  	© 2016 {% if not is_mobile %}Gobierno de {{city_name}} {% endif %} <i class="mdi-image-flash-on brand-secondary-color-text" style="font-size: 15px;margin-left: 3px;-webkit-animation: pulsate 3s ease-out; -webkit-animation-iteration-count: infinite;"></i> by <a class="brand-secondary-color-text" href="http://onesmart.city" target="_blank">OneSmart.City</a>.
 				  </div>
 				</div>
 			</footer>
