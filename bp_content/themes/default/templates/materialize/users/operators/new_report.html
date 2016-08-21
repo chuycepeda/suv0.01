@@ -123,30 +123,30 @@
 		                                    <textarea id="usercontact" name="usercontact" class="materialize-textarea" length="100" style="height: 22px;" type="text" ></textarea>
 		                                    <label for="usercontact">Información de contacto: aquí puedes agregar nombre, email, teléfono y dirección del usuario.</label>
 		                                </div>
-		                                <h5 style="margin-top: 35px;margin-left: 8px;">Información de contacto</h5>
+		                                <h5 style="margin-top: 35px;margin-left: 8px;">Información de contacto <a class="btn-floating brand-color white-text" onclick="$('#modalQ').openModal(); return false;" style="cursor:pointer;margin-left:8px;"><i class="mdi-action-search"></i></a></h5>
 		                                <div class="input-field col s12 m6 l4" style="margin-top:30px;">
 		                                	<input id="u_name" name="u_name" type="text" value="">
-        		                        	<label id="unameLabel" for="u_name">Nombre</label>
+        		                        	<label class="contact" id="unameLabel" for="u_name">Nombre</label>
 		                                </div>
 		                                <div class="input-field col s12 m6 l4" style="margin-top:30px;">
 		                                	<input id="u_last_name" name="u_last_name" type="text" value="">
-        		                       		<label id="ulastnameLabel" for="u_last_name">Apellido Paterno</label>
+        		                       		<label class="contact" id="ulastnameLabel" for="u_last_name">Apellido Paterno</label>
 		                                </div>
 		                                <div class="input-field col s12 m6 l4" style="margin-top:30px;">
 		                                	<input id="u_last_name_m" name="u_last_name_m" type="text" value="">
-        		                       		<label id="ulastnamemLabel" for="u_last_name_m">Apellido Materno</label>
+        		                       		<label class="contact" id="ulastnamemLabel" for="u_last_name_m">Apellido Materno</label>
 		                                </div>
 		                                <div class="input-field col s12 m6 l4" style="margin-top:30px;">
 		                                	<input id="u_address" name="u_address" type="text" value="">
-        		                        	<label id="uaddressLabel" for="u_address">Dirección</label>
+        		                        	<label class="contact" id="uaddressLabel" for="u_address">Dirección</label>
 		                                </div>
 		                                <div class="input-field col s12 m6 l4" style="margin-top:30px;">
 		                                	<input id="u_phone" name="u_phone" type="text" value="">
-        		                        	<label id="uphoneLabel" for="u_phone">Teléfono</label>
+        		                        	<label class="contact" id="uphoneLabel" for="u_phone">Teléfono</label>
 		                                </div>
 		                                <div class="input-field col s12 m6 l4" style="margin-top:30px;">
 		                                	<input id="u_email" name="u_email" type="text" value="">
-        		                        	<label id="uemailLabel" for="u_email">Email</label>
+        		                        	<label class="contact" id="uemailLabel" for="u_email">Email</label>
 		                                </div>
 		                            </div> 
 		    	                    
@@ -234,6 +234,40 @@
               </div>
           </div>
     </div>
+    <div id="modalQ" class="modal white brand-color-text center" style="display: none; opacity: 1; top: 0px;">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12 center">
+                  <p class="center login-form-text">Prepobla la información de contacto buscando por nombre, apellido y/o teléfono.</p>
+                </div>
+                <div class="row">
+                  <div class="container">
+                      <div class="row">
+                        <div class="col s12 m10 offset-m1 center">
+                          <div class="input-field col s12 m6" style="margin-top:30px;">
+                            <input id="uu_name" name="uu_name" type="text" value="">
+                            <label id="unameLabel" for="uu_name">Nombre</label>
+                          </div>
+                          <div class="input-field col s12 m6" style="margin-top:30px;">
+                            <input id="uu_last_name" name="uu_last_name" type="text" value="">
+                            <label id="ulastnameLabel" for="uu_last_name">Apellido</label>
+                          </div>
+                          <div class="input-field col s12 m6" style="margin-top:30px;">
+                            <input id="uu_phone" name="uu_phone" type="text" value="">
+                            <label id="uphoneLabel" for="uu_phone">Teléfono</label>
+                          </div>
+                        </div>
+                        <div class="input-field col s12">
+                          <a class="btn-large waves-effect waves-light col s4 grey white-text modal-action modal-close" style="cursor:pointer;">Cancelar</a>
+                          <a class="btn-large waves-effect waves-light col s4 offset-s4 brand-color white-text" style="cursor:pointer;" onclick="do_Q();return false;">Buscar</a>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+     </div>
 {% endblock %}
 
 {% block page_floatings %}
@@ -685,6 +719,52 @@
             }
             return ds;
         }  
+
+        function do_Q(){
+              var _do =true;
+              if (document.getElementById('uu_name').value.length > 0 && document.getElementById('uu_last_name').value.length > 0 && document.getElementById('uu_phone').value.length > 5)
+                var href="{{ uri_for('materialize-report-contact-info') }}?q=u_name,"+document.getElementById('uu_name').value+',u_last_name,'+document.getElementById('uu_last_name').value+',u_phone,'+document.getElementById('uu_phone').value;
+              else if (document.getElementById('uu_name').value.length > 0 && document.getElementById('uu_last_name').value.length > 0 && document.getElementById('uu_phone').value.length < 6)
+                var href="{{ uri_for('materialize-report-contact-info') }}?q=u_name,"+document.getElementById('uu_name').value+',u_last_name,'+document.getElementById('uu_last_name').value;
+              else if (document.getElementById('uu_name').value.length > 0 && document.getElementById('uu_last_name').value.length == 0 && document.getElementById('uu_phone').value.length > 5)
+                var href="{{ uri_for('materialize-report-contact-info') }}?q=u_name,"+document.getElementById('uu_name').value+',u_phone,'+document.getElementById('uu_phone').value;
+              else if (document.getElementById('uu_name').value.length == 0 && document.getElementById('uu_last_name').value.length > 0 && document.getElementById('uu_phone').value.length > 5)
+                var href="{{ uri_for('materialize-report-contact-info') }}?q=u_last_name,"+document.getElementById('uu_last_name').value+',u_phone,'+document.getElementById('uu_phone').value;
+              else if (document.getElementById('uu_name').value.length == 0 && document.getElementById('uu_last_name').value.length > 0 && document.getElementById('uu_phone').value.length < 6)
+                var href="{{ uri_for('materialize-report-contact-info') }}?q=u_last_name,"+document.getElementById('uu_last_name').value;
+              else if (document.getElementById('uu_last_name').value.length == 0 && document.getElementById('uu_name').value.length > 0 && document.getElementById('uu_phone').value.length < 6)
+                var href="{{ uri_for('materialize-report-contact-info') }}?q=u_name,"+document.getElementById('uu_name').value;
+              else if (document.getElementById('uu_last_name').value.length == 0 && document.getElementById('uu_name').value.length == 0 && document.getElementById('uu_phone').value.length > 5)
+                var href="{{ uri_for('materialize-report-contact-info') }}?q=u_phone,"+document.getElementById('uu_phone').value;
+              else{
+                _do = false;              
+                Materialize.toast('<span class="toast-warning">¡Oops! Por favor llena al menos un campo.</span>',4500);
+              }
+              if (_do){
+              	$.ajax({
+	                url: href,
+	                type: 'GET',
+	                success: function(data) { 
+	                    console.log(data)
+	                }
+	            }).done(function(data) {
+	                if (data.response.count > 0){
+						document.getElementById("u_email").value = data.response.email.trim();
+						document.getElementById("u_phone").value = data.response.phone.trim();
+						document.getElementById("u_name").value = data.response.name.trim();
+						document.getElementById("u_last_name").value = data.response.p_lastname.trim();
+						document.getElementById("u_last_name_m").value = data.response.m_lastname.trim();
+						document.getElementById("u_address").value = data.response.address.trim();
+                        $(".contact").addClass("active");
+                        $('#modalQ').closeModal();
+                		Materialize.toast('<span class="toast-success">¡Listo! Hemos llenado los campos con el contacto más parecido.</span>',4500);
+	                }else{
+                		Materialize.toast('<span class="toast-info">¡Oops! No encontramos registro, intenta con el número de teléfono.</span>',4500);
+	                }
+
+	            }); 
+              }
+          }
 
 	</script>
 {% endblock %}

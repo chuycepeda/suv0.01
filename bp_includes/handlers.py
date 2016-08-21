@@ -5085,6 +5085,60 @@ class MaterializeCategoriesHandler(BaseHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps(reportDict))
         
+class MaterializeOrganizationContactInfoRequestHandler(BaseHandler):
+    def get(self):
+        if not self.has_reports:
+            self.abort(403)
+
+        reportDict = {}
+        reportDict['response'] = {
+            'status': 'error',
+        }
+        q = self.request.get('q')
+        reports = models.Report.query()         
+
+        if len(q.split(',')) > 2:
+            logging.info("querying search instructions...%s" % q)
+            if 'u_name' in q and 'u_last_name' in q and 'u_phone' in q:
+                logging.info("all vars")
+                reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[3].strip(),q.split(',')[3].strip().lower(),q.split(',')[3].strip().upper(), q.split(',')[3].strip().title()]), models.Report.contact_phone.IN([q.split(',')[5]])))
+            if 'u_name' in q and 'u_last_name' in q and 'u_phone' not in q:
+                logging.info("name and last_name")
+                reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_lastname.IN([q.split(',')[3].strip(),q.split(',')[3].strip().lower(),q.split(',')[3].strip().upper(), q.split(',')[3].strip().title()]) ))
+            if 'u_name' in q and 'u_last_name' not in q and 'u_phone' in q:
+                logging.info("name and phone")
+                reports = reports.filter(ndb.AND(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]), models.Report.contact_phone.IN([q.split(',')[3]])))
+            if 'u_name' not in q and 'u_last_name' in q and 'u_phone' in q:
+                logging.info("lastname and phone")
+                reports = reports.filter(ndb.AND(models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(), q.split(',')[1].strip().title()]), models.Report.contact_phone.IN([q.split(',')[3]])))
+        else:
+            if 'u_name' in q:
+                reports = reports.filter(models.Report.contact_name.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[1].strip().title()]))
+            elif 'u_last_name' in q:
+                reports = reports.filter(models.Report.contact_lastname.IN([q.split(',')[1].strip(),q.split(',')[1].strip().lower(),q.split(',')[1].strip().upper(),q.split(',')[0].strip().title()]))
+            elif 'u_phone' in q:
+                reports = reports.filter(models.Report.contact_phone.IN([q.split(',')[1]]))
+
+        count = reports.count()
+        reportDict['response']['count'] = count
+        if count > 0:
+            report = reports.get()
+            contact = report.get_contact_info()
+            contact = contact.split(',')
+            reportDict['response']['email'] = contact.pop()
+            reportDict['response']['phone'] = contact.pop()
+            contact.reverse()
+            reportDict['response']['name'] = contact.pop()
+            reportDict['response']['p_lastname'] = contact.pop()
+            reportDict['response']['m_lastname'] = contact.pop()
+            contact.reverse()
+            reportDict['response']['address'] = ' '.join(contact)
+            reportDict['response']['status'] = 'success'
+
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps(reportDict))
+
 class MaterializeReportCommentsHandler(BaseHandler):
     def get(self,report_id):
         if not self.has_reports:

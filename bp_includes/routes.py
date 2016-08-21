@@ -38,6 +38,7 @@ _routes = [
     RedirectRoute('/report/attachment/upload/<att_id>', handlers.MaterializeReportUploadAttachmentHandler, name='report-attachment-upload', strict_slash=True),
     RedirectRoute('/report/success/', handlers.MaterializeNewReportSuccessHandler, name='materialize-report-success', strict_slash=True),
     RedirectRoute('/report/categories/', handlers.MaterializeCategoriesHandler, name='materialize-report-categories', strict_slash=True),
+    RedirectRoute('/report/contact_info/', handlers.MaterializeOrganizationContactInfoRequestHandler, name='materialize-report-contact-info', strict_slash=True),
     RedirectRoute('/report/comments/<report_id>/', handlers.MaterializeReportCommentsHandler, name='materialize-report-comments', strict_slash=True),
     RedirectRoute('/report/comments/ticket/<ticket>/', handlers.MaterializeReportCommentsByTicketHandler, name='materialize-report-comments-ticket', strict_slash=True),
     RedirectRoute('/report/comment/add/', handlers.MaterializeReportCommentsAddHandler, name='materialize-report-comments-add', strict_slash=True),

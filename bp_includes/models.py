@@ -408,8 +408,7 @@ class Report(ndb.Model):
     
     def get_contact_info(self):
         if self.is_manual:
-            if len(self.contact_info) > 3:
-                return self.contact_info
+            return self.contact_info
         return u"%s, %s, %s" % (self.get_user_name(), self.get_user_phone(), self.get_user_email())
 
     def get_contact_name(self):
