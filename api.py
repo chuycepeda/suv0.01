@@ -64,7 +64,7 @@ class Users(messages.Message):
     gender = messages.StringField(9)
     credibility = messages.IntegerField(10)
     address = messages.StringField(11)
-    phone = messages.StringField(12)   
+    phone = messages.StringField(12)
 
 class UsersCollection(messages.Message):
     """Collection of Users."""
@@ -79,17 +79,17 @@ def getUsers(page):
   users = users.fetch(MAX_SIZE, offset = MAX_SIZE*page)
   users_array = []
   for user in users:
-    users_array.append(Users(identifier=str(user.key.id()), 
-      created_at=user.created.strftime("%Y-%m-%d"), 
-      last_login=user.last_login if user.last_login else '', 
+    users_array.append(Users(identifier=str(user.key.id()),
+      created_at=user.created.strftime("%Y-%m-%d"),
+      last_login=user.last_login if user.last_login else '',
       name= user.name,
-      last_name = user.last_name, 
-      email = user.email, 
-      image_url=user.get_image_url() if user.get_image_url() != -1 else '', 
-      birth=user.birth.strftime("%Y-%m-%d") if user.birth else '', 
-      gender=user.gender if user.gender else '', 
+      last_name = user.last_name,
+      email = user.email,
+      image_url=user.get_image_url() if user.get_image_url() != -1 else '',
+      birth=user.birth.strftime("%Y-%m-%d") if user.birth else '',
+      gender=user.gender if user.gender else '',
       credibility=user.credibility,
-      address=user.address.address_from if user.address else '', 
+      address=user.address.address_from if user.address else '',
       phone=user.phone if user.phone else ''))
 
   return UsersCollection(total_rows = len(users_array), items=users_array, pages=count/MAX_SIZE)
@@ -125,7 +125,7 @@ class Reports(messages.Message):
     req_deletion = messages.BooleanField(21)
     emailed_72 = messages.BooleanField(22)
     urgent = messages.BooleanField(23)
-    
+
 class ReportsCollection(messages.Message):
     """Collection of Reports."""
     total_rows = messages.IntegerField(1)
@@ -161,14 +161,14 @@ def getReports(page):
       via = report.via,
       req_deletion = report.req_deletion,
       emailed_72 = report.emailed_72,
-      urgent = report.urgent))   
+      urgent = report.urgent))
 
   return ReportsCollection(total_rows = len(reports_array), items=reports_array, pages=count/MAX_SIZE)
 
 
-"""  
-  
-  MEDIA GETTER  
+"""
+
+  MEDIA GETTER
 
 """
 class ReportsMedias(messages.Message):
@@ -178,7 +178,7 @@ class ReportsMedias(messages.Message):
     image_url = messages.StringField(3)
     group_category = messages.StringField(4)
     sub_category  = messages.StringField(5)
-      
+
 class ReportsMediasCollection(messages.Message):
     """Collection of Reports."""
     total_rows = messages.IntegerField(1)
@@ -196,12 +196,12 @@ def getReportsMedias(page):
         status = report.status,
         image_url = report.image_url if report.image_url else '',
         group_category = report.group_category,
-        sub_category  = report.sub_category))   
+        sub_category  = report.sub_category))
 
   return ReportsMediasCollection(total_rows = len(reports_array), items=reports_array, pages=int(len(reports_array)/MAX_SIZE))
 
-"""  
-  
+"""
+
   REGISTER & LOGIN METHODS
 
 """
