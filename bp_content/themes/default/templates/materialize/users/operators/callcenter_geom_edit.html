@@ -101,7 +101,7 @@
                             <div class="row margin" style="margin-left: 45px!important;">
                                 <div class="input-field col s12 l6">
                                     <!-- Dropdown Trigger -->
-                                    <p>Tipo de obra:</p>
+                                    <p>Tipo:</p>
                                     <a data-hover="false" id="kindbtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='kinddd' style="min-width: 250px; min-height: 45px; line-height: 45px;">---</a>
                                     <!-- Dropdown Structure -->
                                     <ul id='kinddd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
@@ -235,7 +235,8 @@
 
 {% block page_scripts %}
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
-    <script src="/{{theme}}/materialize/js/cartodb.js"></script>
+    <!-- <script src="/{{theme}}/materialize/js/cartodb.js"></script> -->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
     <script src="/{{theme}}/materialize/js/plugins/autocomplete/awesomplete.min.js"></script>
     <script type="text/javascript">
         {% if has_reports %}
@@ -823,7 +824,7 @@
         <script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
             <div class="cartodb-popup header blue v2">
               <a href="#close" class="cartodb-popup-close-button close">x</a>
-              <div class="cartodb-popup-header" style="background: -webkit-linear-gradient(top,{{brand_color}},{{brand_secondary_color}});">                
+              <div class="cartodb-popup-header" style="min-height: 50px!important; background: {{brand_secondary_color}}">                
               {% raw %}    
                   <a href="#update_card" style="text-decoration:underline; text-transform:uppercase; font-family:roboto-light;">Clic para editar</a>
               </div>

@@ -403,11 +403,11 @@
                                     {% if user_is_callcenter and has_transparency and user_callcenter_role in ['transparency','admin']  %}
                                         <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                             <ul class="collapsible collapsible-accordion">
-                                                <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if uri_for('materialize-callcenter-initiatives') in path or uri_for('materialize-callcenter-geom') in path %}active{% endif %}"><i class="mdi-action-assignment grey-text left"></i>Compromisos y obras</a>
+                                                <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if uri_for('materialize-callcenter-initiatives') in path or uri_for('materialize-callcenter-geom') in path %}active{% endif %}"><i class="mdi-action-assignment grey-text left"></i>Transparencia</a>
                                                    <div class="collapsible-body">
                                                         <ul>
                                                             <li {% if uri_for('materialize-callcenter-initiatives') in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-initiatives') }}">Compromisos</a></li>
-                                                            <li {% if uri_for('materialize-callcenter-geom') in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-geom') }}">Transparencia de obras</a></li>
+                                                            <li {% if uri_for('materialize-callcenter-geom') in path %}class="active"{% endif %}><a href="{{ uri_for('materialize-callcenter-geom') }}">Mapa de transparencia</a></li>
                                                         </ul>
                                                    </div>
                                                 </li>
