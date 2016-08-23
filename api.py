@@ -65,6 +65,9 @@ class Users(messages.Message):
     credibility = messages.IntegerField(10)
     address = messages.StringField(11)
     phone = messages.StringField(12)
+    rewards = messages.IntegerField(13)
+    reports = messages.IntegerField(14)
+    follows = messages.IntegerField(15)
 
 class UsersCollection(messages.Message):
     """Collection of Users."""
@@ -90,7 +93,10 @@ def getUsers(page):
       gender=user.gender if user.gender else '',
       credibility=user.credibility,
       address=user.address.address_from if user.address else '',
-      phone=user.phone if user.phone else ''))
+      phone=user.phone if user.phone else '',
+      rewards=user.get_rewards(),
+      reports=user.get_reports_count(),
+      follows=user.get_follows_count()))
 
   return UsersCollection(total_rows = len(users_array), items=users_array, pages=count/MAX_SIZE)
 
@@ -123,8 +129,8 @@ class Reports(messages.Message):
     rating = messages.IntegerField(19)
     via = messages.StringField(20)
     req_deletion = messages.BooleanField(21)
-    emailed_72 = messages.BooleanField(22)
-    urgent = messages.BooleanField(23)
+    stakeholder = messages.StringField(22)
+    priority = messages.StringField(23)
 
 class ReportsCollection(messages.Message):
     """Collection of Reports."""
@@ -145,23 +151,23 @@ def getReports(page):
       when = report.when.strftime("%Y-%m-%d"),
       title =  report.title ,
       description = report.description,
-      status = report.status,
+      status = report.get_status(),
       address_lat= str(report.address_from_coord.lat),
       address_lon= str(report.address_from_coord.lon),
       address_from = report.address_from,
       cdb_id = report.cdb_id,
       folio = report.folio,
-      contact_info = report.contact_info if report.contact_info else '',
+      contact_info = report.get_contact_info(),
       user_id = str(report.user_id),
       image_url = report.image_url if report.image_url else '',
       group_category = report.group_category,
       sub_category  = report.sub_category ,
       follows = report.follows,
       rating = report.rating,
-      via = report.via,
+      via = report.get_via(),
       req_deletion = report.req_deletion,
-      emailed_72 = report.emailed_72,
-      urgent = report.urgent))
+      stakeholder = report.get_stakeholder(),
+      priority = report.get_priority()))
 
   return ReportsCollection(total_rows = len(reports_array), items=reports_array, pages=count/MAX_SIZE)
 

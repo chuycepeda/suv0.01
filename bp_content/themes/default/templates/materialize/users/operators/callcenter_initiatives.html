@@ -142,6 +142,39 @@
           </div>
         </div>
         <div class="row margin">
+          <div class="input-field col s12">
+              <i class="mdi-av-timer prefix brand-color-text">
+              </i>
+              <input id="metric" name="metric" type="text" value="" />
+              <label for="metric" class="center-align">
+                  Medida de avance actual
+              </label>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+              <i class="mdi-action-assignment-turned-in left brand-color-text active" style="font-size: 32px;margin-left: 5px;">
+              </i>
+              <input type="hidden" id="status" name="status" value="open" />
+              <label for="status" class="center-align" style="margin-left:45px;" >
+                  Estado del compromiso:
+              </label>
+              <br/>
+              <br/>
+              <!-- Dropdown Trigger -->
+              <a data-hover="false" id='statusGroupbtn' class='dropdown-button btn brand-color truncate left' href='#' data-activates='statusGroupdd' style="min-width: 250px; min-height: 45px; line-height: 45px;">Iniciado
+              </a>
+              <!-- Dropdown Structure -->
+              <ul id='statusGroupdd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                  <li> <a style="color:#9e9e9e!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='open'; return false;">Iniciado</a></li>
+                  <li> <a style="color:#ffc107!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='delayed'; return false;">Retrasado</a></li>
+                  <li> <a style="color:#03a9f4!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='measuring'; return false;">En proceso</a></li>
+                  <li> <a style="color:#8bc34a!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='near'; return false;">A punto de cumplir</a></li>
+                  <li> <a style="color:#4caf50!important" href="#" onclick="document.getElementById('statusGroupbtn').innerHTML=this.innerHTML; document.getElementById('status').value='completed'; return false;">Cumplido</a></li>
+              </ul>
+          </div>
+        </div>
+        <div class="row margin">
           <div class="input-field col s12" style="margin-top:30px;">
             <i class="mdi-social-person prefix brand-color-text"></i>
             <input id="lead" name="lead" type="text" />

@@ -34,6 +34,16 @@
               <h3 class="col s12 m8 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Haz clic en un punto para ver su información.</h3>
             </div> 
             <div class="row">
+                <div class="row margin">
+                    <div class="row margin">
+                        <div class="input-field col s10 m4">
+                          
+                          <input id="searchBox" name="searchBox" type="text" value="" class="">
+                          <label for="searchBox" class="center-align ">Escribe aquí para buscar por texto</label>
+                        </div>
+                        <a class="btn-floating brand-color white-text" id="searchBtn" style="cursor:pointer;margin-left:8px;margin-top: 20px;"><i class="mdi-action-search"></i></a>
+                    </div>
+                </div>
                 <div style="height:85vh; width:100%;">
                         <div id="map_1" style="height:85vh; width:100%;"> </div>
                 </div>
@@ -818,6 +828,14 @@
                 document.getElementById("address_from_coord").value = marker.getPosition().toString().slice(1,-1); 
                 document.getElementById('delete').value = "yes";
                 document.getElementById('form_poi').submit();
+            });
+
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                var queryStr = document.getElementById("searchBox").value.trim();
+                if (queryStr == '')
+                  sublayers[1].setSQL("SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')");
+                else
+                  sublayers[1].setSQL("SELECT " + city_table_name + ".* FROM " + city_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "') AND (" + city_table_name + ".description ilike '%" +queryStr + "%' OR " + city_table_name + ".leader ilike '%" +queryStr + "%' OR " + city_table_name + ".name ilike '%" +queryStr + "%' OR " + city_table_name + ".sector ilike '%" +queryStr + "%' OR " + city_table_name + ".agency ilike '%" +queryStr + "%' OR " + city_table_name + ".category ilike '%" +queryStr + "%' OR " + city_table_name + ".identifier ilike '%" +queryStr + "%' OR " + city_table_name + ".kind ilike '%" +queryStr + "%' OR " + city_table_name + ".locality ilike '%" +queryStr + "%')");
             });
                              
         </script>

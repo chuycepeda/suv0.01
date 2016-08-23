@@ -2829,14 +2829,15 @@ class MaterializeOrganizationExportUsersHandler(BaseHandler):
             import csv, json
             from google.appengine.api import urlfetch
             urlfetch.set_default_fetch_deadline(45)
-            url = self.app.config.get('users_export_url')
+            url = self.app.config.get('users_export_url').replace('/0/', '/%s/' % self.request.get('page')) if self.request.get('page') else self.app.config.get('users_export_url')
             result = urlfetch.fetch(url)
             if result.status_code == 200:
                 data = json.loads(result.content)                
                 writer = csv.writer(self.response.out)
-                writer.writerow(["name", "last_name","credibility", "created_at", "address", "phone", "last_login", "birth", "gender", "image_url", "identifier", "email"])
-                for item in data['items']:
-                    writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'].encode('utf8') ])
+                writer.writerow(["Nombre", "Apellido","Credibilidad", "Fecha de registro", "Direccion", "Telefono", "Ultimo ingreso", "Fecha de nacimiento", "Genero", "URL de imagen", "Identificador unico", "Correo electronico", "Puntos", "Reportes", "Apoyos"])
+                if data:
+                    for item in data['items']:
+                        writer.writerow([ item['name'].encode('utf8'), item['last_name'].encode('utf8'), item['credibility'], item['created_at'], item['address'].replace(',',';').encode('utf8'), item['phone'], item['last_login'], item['birth'], item['gender'], item['image_url'], "'%s"%item['identifier'], item['email'], item['rewards'], item['reports'], item['follows'] ])
                         
             self.response.headers['Content-Type'] = 'application/csv'
             self.response.headers['Content-Disposition'] = 'attachment; filename=usuarios.csv'
@@ -2854,14 +2855,15 @@ class MaterializeOrganizationExportReportsHandler(BaseHandler):
             import csv, json
             from google.appengine.api import urlfetch
             urlfetch.set_default_fetch_deadline(45)
-            url = self.app.config.get('reports_export_url')
+            url = self.app.config.get('reports_export_url').replace('/0/', '/%s/' % self.request.get('page')) if self.request.get('page') else self.app.config.get('reports_export_url')
             result = urlfetch.fetch(url)
             if result.status_code == 200:
                 data = json.loads(result.content)                
                 writer = csv.writer(self.response.out)
-                writer.writerow(["rating", "via", "sub_category", "contact_info", "urgent", "req_deletion", "address_lon", "terminated", "folio", "user_id", "title", "cdb_id", "group_category", "when", "address_lat", "status", "updated", "address_from", "description", "created", "follows", "emailed_72", "image_url"])
-                for item in data['items']:
-                    writer.writerow([ item['rating'], item['via'], item['sub_category'].encode('utf8'), item['contact_info'].encode('utf8'), item['urgent'], item['req_deletion'], item['address_lon'], item['terminated'], item['folio'], "'%s"%item['user_id'], item['title'].encode('utf8'), item['cdb_id'], item['group_category'].encode('utf8'), item['when'], item['address_lat'], item['status'], item['updated'], item['address_from'].encode('utf8'), item['description'].encode('utf8'), item['created'], item['follows'], item['emailed_72'], str(item['image_url'])  ])
+                writer.writerow(["Calificacion", "Canal", "Subcategoria", "Informacion de contacto", "Coordenada de Longitud", "Fecha de cierre", "Folio", "Identificador del ciudadano", "Ticket", "Grupo de categoria", "Fecha", "Coordenada de Latitud", "Estado", "Ultima actualizacion", "Direccion", "Detalle", "Fecha de creacion", "Votos", "Responsable", "Prioridad", "URL de imagen"])
+                if data:
+                    for item in data['items']:
+                        writer.writerow([ item['rating'], item['via'].encode('utf8'), item['sub_category'].encode('utf8'), item['contact_info'].encode('utf8'), item['address_lon'], item['terminated'], item['folio'].encode('utf8'), "'%s"%item['user_id'], item['cdb_id'], item['group_category'].encode('utf8'), item['when'], item['address_lat'], item['status'].encode('utf8'), item['updated'], item['address_from'].encode('utf8'), item['description'].encode('utf8'), item['created'], item['follows'], item['stakeholder'].encode('utf8'), item['priority'].encode('utf8'), str(item['image_url'])  ])
                         
             self.response.headers['Content-Type'] = 'application/csv'
             self.response.headers['Content-Disposition'] = 'attachment; filename=reportes.csv'
@@ -3676,18 +3678,6 @@ class MaterializeCallCenterTwitterRequestHandler(BaseHandler):
         self.abort(403)
 
 #INITIATIVES
-def inverse_initiative_status(_stat):
-    if _stat == 'Iniciado':
-        return 'open'        
-    if _stat == 'En progreso':
-        return 'measuring'
-    if _stat == 'Retrasado':
-        return 'delayed'
-    if _stat == 'A punto de cumplir':
-        return 'near'
-    if _stat == 'Cumplido':
-        return 'completed'
-
 class MaterializeInitiativesHandler(BaseHandler):
     @user_required
     def get(self):
@@ -3706,6 +3696,8 @@ class MaterializeInitiativesHandler(BaseHandler):
             lead = self.request.get('lead')
             relevance = self.request.get('relevance')
             area_name = self.request.get('agegroupcat')
+            value = self.request.get('metric')
+            status = self.request.get('status')
 
             initiative = models.Initiative.query(models.Initiative.name == name).get()
             if initiative is not None:
@@ -3725,6 +3717,8 @@ class MaterializeInitiativesHandler(BaseHandler):
                 initiative.description = description
                 initiative.relevance = relevance
                 initiative.area_id = area.key.id()
+                initiative.value = value
+                initiative.status = status
                 initiative.put()
 
                 self.add_message(messages.saving_success, 'success')
@@ -3769,7 +3763,7 @@ class MaterializeInitiativeEditHandler(BaseHandler):
                     relevance = self.request.get('relevance')
                     area_name = self.request.get('agegroupcat')
                     value = self.request.get('metric')
-                    status = inverse_initiative_status(self.request.get('status'))
+                    status = self.request.get('status')
 
                     _initiative = models.Initiative.query(models.Initiative.name == name).get()
                     if _initiative is not None and int(_initiative.key.id()) != int(init_id):
@@ -4855,8 +4849,6 @@ class MaterializeTransparencyInitiativeHandler(BaseHandler):
                 self.abort(404)
         except ValueError:
             self.abort(404)
-
-
         
 #unused
 class MaterializeTransparencyBudgetHandler(BaseHandler):
