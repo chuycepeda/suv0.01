@@ -421,8 +421,9 @@
       // https://indico.io/docs#sentiment
 
       $.post(
-        'https://apiv2.indico.io/sentiment/batch?key={{indicoio_apikey}}',
+        'https://apiv2.indico.io/sentiment/batch',
         JSON.stringify({
+          'api_key': '{{indicoio_apikey}}',
           'data': conv_array, 'language': "spanish"
         })
       ).then(function(res) { 
@@ -432,8 +433,9 @@
         createGauge("fillgauge5", "#1374CF", "#0534CF", "#FFFFAA", "#1374CF", JSON.parse(res).results.avg()*100.0);
         
         $.post(
-          'https://apiv2.indico.io/political/batch?key={{indicoio_apikey}}',
+          'https://apiv2.indico.io/political/batch',
           JSON.stringify({
+            'api_key': '{{indicoio_apikey}}',
             'data': conv_array, 'language': "spanish"
           })
         ).then(function(res) { 

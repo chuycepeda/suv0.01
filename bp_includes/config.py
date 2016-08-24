@@ -109,7 +109,7 @@ config = {
     'twitter_appID': '678306982604894208', #get it new from https://twitter.com/settings/widgets
     'facebook_appID': '523620084480399', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/523620084480399/fb-login/
     # indicoio sentiment analysis apikey, get it new from https://indico.io/dashboard/
-    'indicoio_apikey': 'e1e494fc522650381efc67d23e515692',
+    'indicoio_apikey': 'e778796ec0b3a2503585e9d1f736febf',
     # bitly Login & API KEY, get them from your bitly account under settings/advanced.
     'bitly_login' : "mboilerplate",
     'bitly_apikey' : "R_c7794de8fef148c6b950578064492e95",
