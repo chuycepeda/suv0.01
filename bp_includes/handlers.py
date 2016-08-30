@@ -3277,9 +3277,18 @@ class MaterializeOrganizationInboxRequestHandler(BaseHandler):
             forward = True if p not in ['prev'] else False
             cursor = Cursor(urlsafe=c)
 
-            if q:
+            # get reports according to specified inbox
+            rate_easy = self.request.get('rate_easy') if self.request.get('rate_easy') else False
+            if rate_easy:
+                reports = models.Report.query(models.Report.is_manual == True)
+                reports = reports.filter(models.Report.status == 'solved')
+                params['just_manuals'] = True
+                logging.info("bringing just manuals...%s" % q)
+            else:
                 reports = models.Report.query()         
+                params['just_manuals'] = False
 
+            if q:            
                 if len(q.split(',')) > 2:
                     logging.info("querying search instructions...%s" % q)
                     if 'u_name' in q and 'u_last_name' in q and 'u_phone' in q:
@@ -3319,21 +3328,21 @@ class MaterializeOrganizationInboxRequestHandler(BaseHandler):
             else:
                 if groupCat:
                     if groupCat == 'TODOS':
-                        reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                        reports = reports.filter(models.Report.group_category.IN(names[1:]))
                     else:
-                        reports = models.Report.query(models.Report.group_category == groupCat)
+                        reports = reports.filter(models.Report.group_category == groupCat)
                     params['ddfill'] = groupCat
                 else:
                     if names[0]=='---':
-                        reports = models.Report.query(models.Report.group_category == 'inexistent')
+                        reports = reports.filter(models.Report.group_category == 'inexistent')
                     else:
                         if cc:
-                            reports = models.Report.query()
+                            reports = reports #.filter()
                         else:
                             if names[0]== 'TODOS':
-                                reports = models.Report.query(models.Report.group_category.IN(names[1:]))
+                                reports = reports.filter(models.Report.group_category.IN(names[1:]))
                             else:
-                                reports = models.Report.query(models.Report.group_category == names[0])
+                                reports = reports.filter(models.Report.group_category == names[0])
                     params['ddfill'] = names[0]
                 if status:
                     reports = reports.filter(models.Report.status == status) if status != 'pending' else reports.filter(models.Report.status.IN(['assigned', 'halted', 'answered', 'working']))
@@ -3377,6 +3386,8 @@ class MaterializeOrganizationInboxRequestHandler(BaseHandler):
                     params['cat'] = groupCat
                 if p in ['prev']:
                     params['p'] = p
+                if rate_easy:
+                    params['rate_easy'] = True
                 if cursor:
                     params['c'] = cursor.urlsafe()
                 return self.uri_for('materialize-'+page+'-inbox', **params)

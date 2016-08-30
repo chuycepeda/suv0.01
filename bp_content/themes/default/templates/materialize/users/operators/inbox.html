@@ -65,13 +65,18 @@
         <div class="section">
             <div class="row">
                 <div class="col s12 center">
-                    <div class="input-field col s12 m4 {% if path != uri_for('materialize-organization-urgents') %}offset-m2{% else %}offset-m4{% endif %}">
-                        <a href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light" style="font-size: 14px; width:222px">Crear reporte<i class="mdi-content-add right"></i></a>
+                    <div class="input-field col s12 m4 {% if path == uri_for('materialize-organization-urgents') %}offset-m4{% elif just_manuals %}offset-m2{% endif %}">
+                        <a href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light" style="font-size: 14px; width:260px">Crear reporte<i class="mdi-content-add right"></i></a>
                     </div>
                     {% if path != uri_for('materialize-organization-urgents') %}
                     <div class="input-field col s12 m4">
-                        <a href="{{uri_for('materialize-organization-urgents')}}" class="btn deep-orange darken-2 white-text" style="font-size:14px; width:222px">Ver urgentes <i class="mdi-av-new-releases right"></i></a>
+                        <a href="{{uri_for('materialize-organization-urgents')}}" class="btn deep-orange darken-2 white-text" style="font-size:14px; width:260px">Ver urgentes <i class="mdi-av-new-releases right"></i></a>
                     </div>
+                    {% if not just_manuals %}
+                    <div class="input-field col s12 m4">
+                        <a href="{{path}}?rate_easy=True" class="btn amber darken-1 white-text" style="font-size:14px; width:260px">Calificar resueltos <i class="mdi-action-star-rate right" style="font-size:28px;"></i></a>
+                    </div>
+                    {% endif %} 
                     {% endif %} 
                 </div>
             </div>            
@@ -204,12 +209,17 @@
                       <tr class="brand-color white-text">
                           <th>✎</th>
                           <th>Ticket</th>
+                          {% if just_manuals %}
+                          <th>Contacto</th>
+                          <th>Calificación</th>
+                          {% else %}
                           <th>Prioridad</th>
                           <th>Subcategoría</th>
                           <th>Descripción</th>
                           <th>Estado</th>
                           <th>Creado por</th>
                           <th><i class="mdi-social-notifications white-text"></i></th>
+                          {% endif %}
                           <th></th>
                       </tr>
                     </thead>
@@ -221,20 +231,37 @@
                               </td>
             
                               <td>{% if report.cdb_id != -1 %} {{report.cdb_id}} {% else %} Sin publicar {% endif %}</td>
-            
-                              <td class="tooltipped" style="background-color:{{report.get_priority_color()}}" data-position="top" data-delay="50" data-tooltip="{{report.get_benchmark()}}">{{report.get_priority() }}</td>
+                              {% if just_manuals %}
 
-                              <td class="tooltipped" style="overflow-x:hidden; max-width:200px; text-align:left" data-position="top" data-delay="50" data-tooltip="{{report.group_category}}"><span style="font-family:roboto-medium">{{report.sub_category}}</span></td>
+                                <td style="max-width:300px; text-align:left">{{report.get_contact_info()}}</td>
+                                <td style="max-width:200px; text-align:center;font-size: 34px;">
+                                  <span id="stars_{{report.key.id()}}">
+                                    <i class="rating mdi-action-star-rate {% if report.rating >= 1 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{report.key.id()}},1)"></i>
+                                    <i class="rating mdi-action-star-rate {% if report.rating >= 2 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{report.key.id()}},2)"></i>
+                                    <i class="rating mdi-action-star-rate {% if report.rating >= 3 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{report.key.id()}},3)"></i>
+                                    <i class="rating mdi-action-star-rate {% if report.rating >= 4 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{report.key.id()}},4)"></i>
+                                    <i class="rating mdi-action-star-rate {% if report.rating >= 5 %}amber-text{% else %}grey-text text-lighten-2{% endif %}" onclick="rateReport({{report.key.id()}},5)"></i>
+                                  </span>
+                                  
 
-                              <td class="truncate tooltipped" style="max-width:300px; text-align:left" data-position="right" data-delay="50" data-tooltip="{{report.description}}">{{report.description}}</td>
-                              
-                              <td>{{report.get_status()}}</td>
-                              
-                              <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.get_user_email()}}">{{report.get_user_email()}}</td>                                                  
-                              
-                              <td>{% if report.req_deletion %}<i class="mdi-action-delete {% if report.status == 'archived' %}grey{% else %}red{% endif %}-text"></i>
-                              {% elif report.status == 'spam' %}<i class="mdi-action-bug-report red-text"></i>
-                              {% elif report.urgent %}<i class="mdi-av-new-releases red-text"></i>{% endif %}</td>
+                                </td>
+
+                              {% else %}
+                                  <td class="tooltipped" style="background-color:{{report.get_priority_color()}}" data-position="top" data-delay="50" data-tooltip="{{report.get_benchmark()}}">{{report.get_priority() }}</td>
+
+                                  <td class="tooltipped" style="overflow-x:hidden; max-width:200px; text-align:left" data-position="top" data-delay="50" data-tooltip="{{report.group_category}}"><span style="font-family:roboto-medium">{{report.sub_category}}</span></td>
+
+                                  <td class="truncate tooltipped" style="max-width:300px; text-align:left" data-position="right" data-delay="50" data-tooltip="{{report.description}}">{{report.description}}</td>
+                                  
+                                  <td>{{report.get_status()}}</td>
+                                  
+                                  <td class="tooltipped" style="overflow-x:hidden; max-width:200px" data-position="top" data-delay="50" data-tooltip="{{report.get_user_email()}}">{{report.get_user_email()}}</td>                                                  
+                                  
+                                  <td>{% if report.req_deletion %}<i class="mdi-action-delete {% if report.status == 'archived' %}grey{% else %}red{% endif %}-text"></i>
+                                  {% elif report.status == 'spam' %}<i class="mdi-action-bug-report red-text"></i>
+                                  {% elif report.urgent %}<i class="mdi-av-new-releases red-text"></i>{% endif %}</td>
+                              {% endif %}
+
                               <td></td>
                           </tr>
                         {% endfor %}
@@ -372,6 +399,36 @@
               }
             }
         });
+
+        function rateReport(idx, rating){
+            $.ajax({
+                      url: "{{ uri_for('materialize-report-rate') }}",
+                      type: 'POST',
+                      data: { 
+                    'report_id': idx,
+                    'user_id': {{user_id}},
+                    '_csrf_token': '{{ csrf_token() }}',
+                    'rating': rating
+                }
+                  }).done(function(data) {
+                    console.log(data);
+              if (data.contents == 'rating request successful'){
+                  Materialize.toast('<span class="toast-success">Gracias! Ya hemos recibido tu calificación.</span>',4500);
+                  var colors = []
+                  switch(data.rating){
+                    case 1: colors = ['amber-text','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2'];break;
+                    case 2: colors = ['amber-text','amber-text','grey-text text-lighten-2','grey-text text-lighten-2','grey-text text-lighten-2'];break;
+                    case 3: colors = ['amber-text','amber-text','amber-text','grey-text text-lighten-2','grey-text text-lighten-2'];break;
+                    case 4: colors = ['amber-text','amber-text','amber-text','amber-text','grey-text text-lighten-2'];break;
+                    case 5: colors = ['amber-text','amber-text','amber-text','amber-text','amber-text'];break;
+                  }
+                  document.getElementById('stars_'+idx).innerHTML = '<i class="rating mdi-action-star-rate '+ colors[0] +'" onclick="rateReport('+ idx +',1)"></i><i class="rating mdi-action-star-rate '+ colors[1] +'" onclick="rateReport('+ idx +',2)"></i><i class="rating mdi-action-star-rate '+ colors[2] +'" onclick="rateReport('+ idx +',3)"></i><i class="rating mdi-action-star-rate '+ colors[3] +'" onclick="rateReport('+ idx +',4)"></i><i class="rating mdi-action-star-rate '+ colors[4] +'" onclick="rateReport('+ idx +',5)"></i>';
+              }
+              else
+                  Materialize.toast('<span class="toast-danger">Oops! Algo ha salido mal, por favor intenta más tarde.</span>',4500);
+
+                  });
+          }
 
     </script>
 {% endblock %}

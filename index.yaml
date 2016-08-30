@@ -760,6 +760,17 @@ indexes:
   - name: when
     direction: desc
 
+- kind: Report
+  properties:
+  - name: is_manual
+  - name: created
+    direction: desc
+
+- kind: Report
+  properties:
+  - name: is_manual
+  - name: created
+
 - kind: User
   properties:
   - name: email
