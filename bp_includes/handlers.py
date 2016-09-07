@@ -4830,9 +4830,9 @@ class MaterializeTransparencyInitiativesHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
 
-        params['areas'] = models.Area.query()
-        params['count'] = models.Area.query().count()
-        params['first_area'] = models.Area.query().get()
+        params['areas'] = models.Area.query(models.Area.inits_count > 0)
+        params['count'] = params['areas'].count()
+        params['first_area'] = params['areas'].get()
 
         
         return self.render_template('materialize/users/sections/transparency_inits.html', **params)
@@ -5405,7 +5405,7 @@ class MaterializeAreasHandler(BaseHandler):
             initiatives = models.Initiative.query(models.Initiative.area_id == int(area_id))
             for initiative in initiatives:
                 empty = False
-                html += '<div class="card col s12 m3 hoverable" onclick="loadDetail(%s)"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s%s;  -webkit-mask: url(%s) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s%s;">%s</span><div class="col s12" style="margin-bottom:18px; border-radius:2px; margin-top:25px;">' % (initiative.get_id(), "#", initiative.color, initiative.icon_url, "%", "%", "#", initiative.color, initiative.name)
+                html += '<div class="card col s12 m3 hoverable" style="margin-left: 10px!important;" onclick="loadDetail(%s)"><div class="initiative card-content center" style="padding:8px;"><p class="initiative image left" style="background-color: %s%s;  -webkit-mask: url(%s) no-repeat 50%s 50%s ;"></p><span class="center" style="text-transform: uppercase;color:%s%s;">%s</span><div class="col s12" style="margin-bottom:18px; border-radius:2px; margin-top:25px;">' % (initiative.get_id(), "#", initiative.color, initiative.icon_url, "%", "%", "#", initiative.color, initiative.name)
                 
                 if initiative.status == 'completed':
                     html += '<a class="btn-floating btn-move-up waves-effect waves-light green right tooltipped" data-position="top" data-delay="50" data-tooltip="Cumplido" style="top: 25px;left: 10px;"><i class="mdi-action-verified-user"></i></a>'

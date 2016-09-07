@@ -940,6 +940,7 @@ class Area(ndb.Model):
     name = ndb.StringProperty(required = True)
     color = ndb.StringProperty(required = True, default = "AEAEAE")
     icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")
+    inits_count = ndb.ComputedProperty(lambda self: self.get_inits_count())
 
     @classmethod
     def get_by_name(cls, name):
@@ -947,6 +948,10 @@ class Area(ndb.Model):
 
     def get_id(self):
         return self._key.id()
+
+    def get_inits_count(self):        
+        return Initiative.query(Initiative.area_id == self._key.id()).count()
+
 
 #--------------------------------------- ENDOF   T R A N S P A R E N C Y   M O D E L --------------------------------------------------------          
 
