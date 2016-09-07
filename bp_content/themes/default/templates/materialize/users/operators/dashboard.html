@@ -41,6 +41,16 @@
 {% endblock %}
 
 {% block page_content %}
+    {% if getMine %}
+        {% for name in names %}
+            <input type="hidden" class="catNames" id="{{name}}" value="{{name}}">
+        {% endfor %}
+    {# note: commented-out template because we no longer use this
+        {% for sec in secret %}
+            <input type="hidden" class="secNames" id="{{sec}}" value="{{sec}}">
+        {% endfor %}
+    #}
+    {% endif %}   
   <div class="row center" style="border-top: 1px dashed rgb(216, 216, 216);padding-top: 20px;">
       <div class="row brand-color center" style="margin-top: -20px;padding: 40px;margin-bottom: 22px;"><h5 class="white-text" style="line-height: 0px;">Números globales</h5>
             <span class="col s12 m6 indicator flow-text white-text" style="text-align:center; font-size:40px;"><h6>Usuarios registrados</h6>{{sum_users}}</span>
@@ -193,6 +203,8 @@
         var sec = {};
         var perf_sec = {};
         var dict;
+        var catsIn = [];
+        var catsInQ = [];
         var chartType = 'bar';
         var allDone = {
             'container-pie-via' : false,
@@ -650,7 +662,7 @@
                     ds = "Resuelto";
                     break;
                 case 'failed':
-                    ds = "Fallo";
+                    ds = "Cerrado";
                     break;
                 case 'archived':
                     ds = "Archivado";
@@ -670,8 +682,16 @@
         function getData(source, when){
             
             var qs = 'SELECT '+source+' as prop, count(*) FROM '+city_table_name+ ' ';            
+                        
+        {% if getMine %}            
+            qs += " WHERE group_category IN (" + catsInQ.join() + ") ";
+            if (when) qs += when.replace('WHERE', 'AND'); 
+        {% else %}
             if (when) qs += when; 
+        {% endif %}
+                        
             qs += 'GROUP BY prop';
+
             city_sql.execute(qs).done(function(data) {
                 
                 var trans = {};
@@ -765,9 +785,19 @@
                 url: url,
                 type: 'GET',
             }).done(function(data) {
-                //console.log('Dict from DS');
-                //console.log(data);
+                console.log('Dict from DS');
+                console.log(data);
+            {% if getMine %}
+                dict={};
+                if (catsIn.length > 0){
+                    for (var i = 0, j = catsIn.length; i<j; i++){
+                        dict[catsIn[i]]= data[catsIn[i]];
+                    }
+                }
+            {% else %}
                 dict = data;
+            {% endif %}
+
                 getDrillData();
                 getPerfDrillData();            
             });             
@@ -786,6 +816,11 @@
         function getPerfDrillData(when){
             perf_sec = {};
             var s = "SELECT ceil(avg(date_part('days', (terminated - created)))) AS count, group_category, sub_category FROM "+city_table_name+" WHERE status IN ('solved', 'failed', 'archived') AND terminated is not null ";
+            
+        {% if getMine %}            
+            s += "AND group_category IN (" + catsInQ.join() + ") ";
+        {% endif %}
+            
             if (when){ 
                 s+= when.replace('WHERE', 'AND');
                 var days = daydiff(parseDate($('#from').val()), parseDate($('#until').val()));
@@ -795,6 +830,9 @@
                 s+= "AND ( (now() - created) < interval '90 day')";
                 document.getElementById("perf_title").innerHTML = "Días promedio en cerrar reportes por {{first_level_caps_singular}} en los últimos 90 días.";
             }
+            
+            
+            
             s += " GROUP BY group_category, sub_category ORDER BY group_category ASC";
                         
             //console.log('s for performance: ', s);
@@ -869,8 +907,16 @@
         function getDrillData(when){
             sec = {};
             var s = "SELECT group_category, sub_category, count(*) FROM " + city_table_name +" ";
-            if (when) s+= when;
+            
+        {% if getMine %}            
+            s += " WHERE group_category IN (" + catsInQ.join() + ") ";
+            if (when) s += when.replace('WHERE', 'AND'); 
+        {% else %}
+            if (when) s += when; 
+        {% endif %}
+            
             s += "GROUP BY group_category, sub_category ORDER BY group_category asc";
+            
             
             city_sql.execute(s).done(function(data) {
                 //console.log('Data from CartoDB');
@@ -999,10 +1045,12 @@
             getPerfDrillData(perf_when);
         }
         
+        /*******************************
+    
+        ** Initial setup on DOM ready **
         
+        *******************************/
         
-        
-        //Initial setup on DOM ready
         $(document).ready(function(){   
             
             Highcharts.setOptions({
@@ -1011,6 +1059,14 @@
                 }
             });            
             
+            {% if getMine %}
+               var elements = document.getElementsByClassName('catNames');
+               $(elements).each(function(index, element){
+                      catsInQ.push("'" + this.value + "'");
+                      catsIn.push(this.value);
+                });
+            {% endif %}
+                        
             getDict();
             
             createPie(null,'container-pie-via');

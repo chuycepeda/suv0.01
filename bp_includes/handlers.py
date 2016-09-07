@@ -2560,7 +2560,45 @@ class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
     def get(self):
         if self.has_reports and (self.user_is_callcenter or self.user_is_secretary or self.user_is_agent or self.user_is_operator): #modified for every special access to be able to see it
             params = {}
-            reports = models.Report.query()
+            params['getMine']= False
+            if not self.user_is_callcenter:
+                user_info = self.user_model.get_by_id(long(self.user_id))
+                names=[]
+                if self.user_is_secretary:                
+                    secretary = models.Secretary.get_admin_by_email(user_info.email)
+                    #secretaries = models.Secretary.get_admin_by_email(user_info.email)
+                    agencies = models.Agency.query(models.Agency.secretary_id == secretary.key.id())            
+                elif self.user_is_agent:
+                    agencies = models.Agency.get_admin_by_email(user_info.email)
+                    #secretaries = ndb.get_multi([ndb.Key(models.Secretary, agency.secretary_id) for agency in agencies])
+                    
+                elif self.user_is_operator:
+                    operators = models.Operator.get_by_email(user_info.email)
+                    agencies = ndb.get_multi([ndb.Key(models.Agency, operator.agency_id) for operator in operators])             
+                    #secretaries = ndb.get_multi([ndb.Key(models.Secretary, agency.secretary_id) for agency in agencies])
+                
+                group_categories_ids = []            
+                #user_secretaries = list(set([secretary.name for secretary in secretaries]))
+                
+                for agency in agencies:
+                    if agency is not None:
+                        if agency.group_category_id is not None:
+                            group_categories_ids.append(agency.group_category_id)
+                group_categories_ids = list(set(group_categories_ids))
+                
+                if len(group_categories_ids)>0:
+                    group_categories = ndb.get_multi([ndb.Key(models.GroupCategory, groupID) for groupID in group_categories_ids])
+                    for group in group_categories:
+                        if group is not None:
+                            names.append(group.name)            
+                logging.info(names)
+                params['names']= names
+                params['getMine']= True
+                #params['secret']= user_secretaries
+                reports = models.Report.query(models.Report.group_category.IN(names))
+            else:
+                reports = models.Report.query()
+
             users = self.user_model.query()
             params['sum_users'] = users.count()
             params['sum_reports'] = reports.count()
