@@ -21,7 +21,7 @@
 		    <div class="white brand-color-text center col s10 m6 offset-m3 offset-s1" style="opacity: 1; top: 0px;">
 		      <div class="modal-content">
 	        	{% if is_referral %}									          
-              		<form id="form_register" action="/referral/" method="post">				          	
+              		<form id="form_register" action="{{ url|safe }}" method="post">				          	
 		        {% else %}
               		<form id="form_register" action="/register/" method="post">				          	
 		        {% endif %} 
