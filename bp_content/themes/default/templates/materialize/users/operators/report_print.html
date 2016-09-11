@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Impresión de reporte</title>
+    <style>
+            body {
+              background: rgb(204,204,204); 
+            }
+            page {
+              background: white;
+              display: block;
+              margin: 0 auto;
+              margin-bottom: 0.5cm;
+              box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+            }
+            page[size="A4"] {  
+              width: 21cm;
+              height: auto; 
+            }
+
+            @media print {
+              body, page {
+                margin: 0;
+                box-shadow: 0;
+              }
+            }
+
+            body { 
+                width:100% !important;
+                margin:0 !important;
+                padding:0 !important;
+                line-height: 1.4;
+                word-spacing:1.1pt;
+                letter-spacing:0.2pt; font-family: Garamond,"Times New Roman", serif; color: #000; background: none; font-size: 12pt;
+            }
+
+            /*Headings */
+            h1,h2,h3,h4,h5,h6 { font-family: Helvetica, Arial, sans-serif; }
+            h1{font-size:19pt;}
+            h2{font-size:17pt;}
+            h3{font-size:15pt;}
+            h4,h5,h6{font-size:12pt;}
+
+            code { font: 10pt Courier, monospace; } 
+            blockquote { margin: 1.3em; padding: 1em;  font-size: 10pt; }
+            hr { background-color: #ccc; }
+
+            /* Images */
+            img { float: left; margin: 1em 1.5em 1.5em 0; }
+            a img { border: none; }
+
+            /* Links */
+            a:link, a:visited { background: transparent; font-weight: 700; text-decoration: underline;color:#333; }
+            a:link[href^="http://"]:after, a[href^="http://"]:visited:after { content: " (" attr(href) ") "; font-size: 90%; }
+            a[href^="http://"] {color:#000; }
+
+            /* Table */
+            table { margin: 1px; text-align:left; }
+            th { border-bottom: 1px solid #333;  font-weight: bold; }
+            td { border-bottom: 1px solid #333; }
+            th,td { padding: 4px 10px 4px 0; }
+            tfoot { font-style: italic; }
+            caption { background: #fff; margin-bottom:2em; text-align:left; }
+            thead {display: table-header-group;}
+            tr {page-break-inside: avoid;} 
+
+            #header, #footer, #navigation, #rightSideBar, #leftSideBar 
+            {display:none;}
+
+            #printable{ padding: 1.5cm; }
+
+    </style>
+</head>
+<body>
+    <page size="A4">
+        <div id="printable" class="row">
+            <h3>
+            IMPRESIÓN DE REPORTE <img src="{{brand_logo}}" alt="" class="responsive-img right">
+            </h3>
+            <table id="tab_customers" class="hover cell-border centered display compact">
+                <thead>
+                    <tr class='warning'>
+                        <th>DATOS DEL REPORTE</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:roboto-light; font-size:12px;">
+                    <tr>
+                        <td>Estado: {{report.get_status()}}</td>
+                    </tr>
+                    <tr>
+                        <td>Canal: {{report.get_via()}}</td>
+                    </tr>
+                    <tr>
+                        <td>Ticket: {% if report.cdb_id != -1 %}{{ report.cdb_id|safe }}{% else %}Sin publicar{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <table id="tab_customers" class="hover cell-border centered display compact">
+                <thead>
+                    <tr class='warning'>
+                        <th>DATOS DEL CIUDADANO</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:roboto-light; font-size:12px;">
+                    <tr>
+                        <td>{{report.get_contact_info()}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <table id="tab_customers" class="hover cell-border centered display compact">
+                <thead>
+                    <tr class='warning'>
+                        <th>DETALLE DEL REPORTE</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:roboto-light; font-size:12px;">
+                    <tr>
+                        <td><strong>Fecha de la solicitud</strong>: {{report.get_formatted_date()}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{{first_level_caps_singular}}</strong>: {{report.get_secretary()}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{{second_level_caps_singular}}</strong>: {{report.get_agency()}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Responsable</strong>: {{report.get_stakeholder()}}</td>
+                    </tr>            
+                    <tr>
+                        <td><strong>Categoría</strong>: {{report.group_category}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Subcategoría</strong>: {{report.sub_category}}</td>
+                    </tr>            
+                    <tr>
+                        <td><strong>Ubicación</strong>: {{report.address_from}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Detalle de ubicación</strong>: {{report.address_detail}}</td>
+                    </tr>            
+                    <tr>
+                        <td><strong>Detalle del reporte</strong>: {{report.description}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <table id="tab_customers" class="hover cell-border centered display compact">
+                <thead>
+                    <tr class='warning'>
+                        <th>RESUMEN DE ACTIVIDADES</th>
+                    </tr>
+                </thead>
+                <tbody style="font-family:roboto-light; font-size:12px;">
+                    {% for idx, date, image, initial, name, email, title, contents in logs %}
+                      <tr class="collection-item avatar" style="text-align: right; height: auto; display:inline-block; width: 100%;">
+                        <td>
+                            <span class="title log-change"><span style="font-weight:bold">{{name}} &lt;{{email}}&gt;</span>: {{title}}</span>
+                            <p class="brand-color-text"> 
+                                <span class="light-blue-text">{{date}}</span>
+                                <br> 
+                                <span class="log-contents">{{contents}}</span>
+                            </p>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
+    </page>
+    <script>
+        window.print(); 
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

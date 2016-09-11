@@ -21,7 +21,7 @@
           <div class="col s12 m12 l12">
                                 
               <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">Detalle del reporte <button onclick="demoFromHTML(); return false;" class="right btn light-blue darken-2 waves-effect waves-light right" style="font-size: 14px;">Imprimir <i class="left mdi-action-print"></i></button></li>
+                <li class="active">Detalle del reporte <a href="{{ uri_for('materialize-print-report', report_id=report.get_id()) }}" class="right btn light-blue darken-2 waves-effect waves-light right white-text" style="font-size: 14px;" target="_blank">Imprimir <i class="left mdi-action-print"></i></a></li>
               </ol>          
           </div>
         </div>

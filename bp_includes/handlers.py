@@ -3704,6 +3704,20 @@ class MaterializeCallCenterReportRequestHandler(BaseHandler):
 
         return self.render_template('materialize/users/operators/report_edit.html', **params)
         
+#REPORT PRINT
+class MaterializePrintReportRequestHandler(BaseHandler):
+    @user_required
+    def edit(self, report_id):
+        if not self.has_reports:
+            self.abort(403)
+
+        report_info = get_or_404(self, report_id)
+
+        params = editReportParams(self, report_info)
+
+        return self.render_template('materialize/users/operators/report_print.html', **params)
+
+
 #SOCIAL NETWORKS
 class MaterializeCallCenterFacebookRequestHandler(BaseHandler):
     @user_required
