@@ -57,8 +57,8 @@
             /* Table */
             table { margin: 1px; text-align:left; }
             th { border-bottom: 1px solid #333;  font-weight: bold; }
-            td { border-bottom: 1px solid #333; }
-            th,td { padding: 4px 10px 4px 0; }
+            td { border-bottom: 1px solid #333;  }
+            th,td { padding: 4px 10px 4px 0;  min-width: 17.5cm;}
             tfoot { font-style: italic; }
             caption { background: #fff; margin-bottom:2em; text-align:left; }
             thead {display: table-header-group;}
@@ -75,7 +75,7 @@
     <page size="A4">
         <div id="printable" class="row">
             <h3>
-            IMPRESIÓN DE REPORTE <img src="{{brand_logo}}" alt="" class="responsive-img right">
+            IMPRESIÓN DE REPORTE <img src="{{brand_logo}}" alt="" class="responsive-img right" style="max-width: 4cm;float: right;">
             </h3>
             <table id="tab_customers" class="hover cell-border centered display compact">
                 <thead>
@@ -175,13 +175,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
