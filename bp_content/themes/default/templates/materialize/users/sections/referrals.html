@@ -7,6 +7,7 @@
  	<link href="/{{theme}}/materialize/css/prism.css" type="text/css" rel="stylesheet" media="screen,projection">
     <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
     <link href="/{{theme}}/materialize/css/plugins/multiple-emails/multiple-emails.css" type="text/css" rel="stylesheet" media="screen,projection">
+ 	<link href="/{{theme}}/materialize/css/plugins/rrssb/rrssb.css" type="text/css" rel="stylesheet" media="screen,projection">
     <style type="text/css">
 		.multiple_emails-container{
 		  	border-bottom: 1px solid rgba(203, 203, 203, 0.67);
@@ -104,44 +105,13 @@
 		                <h5 class="grey-text">Comparte tu link único.</h5>
 					</div>
 					<div class="col s12 m6 offset-m3 card">
-	                    <center>                           
-	                        <div class="row" >
-	                            <p style="transform: scale(0.85)!important;-webkit-transform: scale(0.85)!important;">
+	                        <div class="col s12 center" >
+	                            <p style="font-size: 2rem;">
 	                                {{link_referral}}
 	                            </p>
 	                        </div>
-	                        <div class="col s12 m8 offset-m2">
-	                            <div class="col s4" style="margin-bottom:20px; padding-top: 12px;border: 1px solid lightblue;border-radius: 4px;width: 110px;margin-left: 40px;background: rgba(0, 173, 238, 0.32);padding-bottom: 8px;">
-		                            <a class="twitter-share-button" href="https://twitter.com/share?url={{link_referral}}&text=¡Tú, como yo, sé parte de la transformación de {{city_name}}!&hashtags=onesmartcity"
-		                              data-size="large"
-		                              data-count="none" >
-		                            Tweet
-		                            </a>
-	                            </div>
-	                            <script>
-	                            	window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));
-	                            </script>
-
-	                            <div class="col s4" style="margin-bottom:20px; -webkit-transform: scale(1.29);transform: scale(1.29);margin-top: 6px;margin-left: 30px;padding: 10px; border: 1px solid rgb(73, 101, 181); border-radius: 4px;max-width: 100px;background: rgb(60, 86, 161);">                            
-		                            <div class="fb-share-button" data-href="{{link_referral}}" data-layout="button"></div>
-		                            <div id="fb-root"></div>
-	                            </div>
-	                            <script>
-		                            (function(d, s, id) {
-		                              var js, fjs = d.getElementsByTagName(s)[0];
-		                              if (d.getElementById(id)) return;
-		                              js = d.createElement(s); js.id = id;
-		                              js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&appId=417725118380572&version=v2.0";
-		                              fjs.parentNode.insertBefore(js, fjs);
-		                            }(document, 'script', 'facebook-jssdk'));
-	                            </script>   
-
-	                            <div class="col s4" style="margin-bottom:20px; -webkit-transform: scale(1.15);transform: scale(1.15);margin-top: 3px;padding-top: 9px; border: 1px solid rgb(221, 75, 56); border-radius: 4px;width: 110px;background: rgb(221, 75, 56);margin-left: 38px;padding-bottom: 7px;">
-	                                <div class="g-plus" data-action="share" data-annotation="none" data-height="24" data-href="{{link_referral}}"></div>
-	                            </div>
-	                            <script src="https://apis.google.com/js/platform.js" async defer>{lang: 'es-419'}</script>                         
-	                        </div>
-	                    </center> 
+		  					<span class="col s12" id="share_content" style="margin-bottom:18px;"></span>
+	                        
 					</div>
 				</div>
 			</div>
@@ -169,6 +139,17 @@
 
 <!-- ADD PAGE SCRIPT ELEMENTS-->
 {% block page_scripts %}
+    <script src="/{{theme}}/materialize/js/plugins/rrssb/rrssb.min.js"></script>
+	<script>
+		function populateShare(cdb_id){
+			var url = '{{link_referral}}';
+	    	var _html = ' <ul class="rrssb-buttons"> <li class="rrssb-facebook"><a href="https://www.facebook.com/sharer/sharer.php?u='+url+'" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid" width="29" height="29" viewBox="0 0 29 29"> <path d="M26.4 0H2.6C1.714 0 0 1.715 0 2.6v23.8c0 .884 1.715 2.6 2.6 2.6h12.393V17.988h-3.996v-3.98h3.997v-3.062c0-3.746 2.835-5.97 6.177-5.97 1.6 0 2.444.173 2.845.226v3.792H21.18c-1.817 0-2.156.9-2.156 2.168v2.847h5.045l-.66 3.978h-4.386V29H26.4c.884 0 2.6-1.716 2.6-2.6V2.6c0-.885-1.716-2.6-2.6-2.6z" class="cls-2" fill-rule="evenodd"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">facebook</span> </a> </li><li class="rrssb-twitter"> <a href="https://twitter.com/intent/tweet?text=Te%20invito%20a%20mejorar%20{{city_name}}%20'+url+'&hashtags=#onesmartcity" class="popup"> <span class="rrssb-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"> <path d="M24.253 8.756C24.69 17.08 18.297 24.182 9.97 24.62c-3.122.162-6.22-.646-8.86-2.32 2.702.18 5.375-.648 7.507-2.32-2.072-.248-3.818-1.662-4.49-3.64.802.13 1.62.077 2.4-.154-2.482-.466-4.312-2.586-4.412-5.11.688.276 1.426.408 2.168.387-2.135-1.65-2.73-4.62-1.394-6.965C5.574 7.816 9.54 9.84 13.802 10.07c-.842-2.738.694-5.64 3.434-6.48 2.018-.624 4.212.043 5.546 1.682 1.186-.213 2.318-.662 3.33-1.317-.386 1.256-1.248 2.312-2.4 2.942 1.048-.106 2.07-.394 3.02-.85-.458 1.182-1.343 2.15-2.48 2.71z"/> </svg> </span> <span class="rrssb-text" style="margin-left: 18px!important;">twitter</span> </a> </li></ul> ';
+	    	$('#share_content').html(_html);
+	    	setTimeout(function(){ rrssbInit();}, 500);
+		}
+
+		populateShare();
+	</script>
 	<script src="/{{theme}}/materialize/js/plugins/multiple-emails/multiple-emails.js"></script>
 	{% if google_clientID != '' %}
 	<script type="text/javascript">
