@@ -463,7 +463,8 @@ def editReport(self, user_info, report_id, handler):
 
         template_val = {
             "name": report_info.get_user_name(),
-            "_url": self.uri_for("materialize-reports", _full=True),
+            "_url": '%s?cdb_id=%s' % (self.uri_for("landing-map", _full=True), report_info.cdb_id),
+            #"_url": self.uri_for("materialize-reports", _full=True),
             "cdb_id": report_info.cdb_id,
             "reason": reason,
             "brand_logo": self.brand['brand_logo'],
