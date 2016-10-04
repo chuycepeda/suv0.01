@@ -25,6 +25,7 @@ package = 'Hello'
 
 api = endpoints.api(name='onesmartcity', version='v1')
 
+# useful site for generators: http://randomkeygen.com/
 API_KEY = "86F7EB9A06F708A9673198AA8DA4ABD17E54A5AA"
 
 MAX_SIZE = 1000
