@@ -207,7 +207,13 @@ class Report(ndb.Model):
     req_deletion = ndb.BooleanProperty(default = False)                                                                             #: Raised flag for user requesting deletion
     emailed_72 = ndb.BooleanProperty(default = False)                                                                               #: Raised flag for detecting if user has been emailed at most 72 hours.
     urgent = ndb.BooleanProperty(default = False)                                                                                   #: Raised flag for urgent reports
-    is_manual = ndb.BooleanProperty(default = False)                                                                                #: Raised flag for manual reports
+    is_manual = ndb.BooleanProperty(default = False)                                                                               #: Raised flag for manual reports
+    simple_status = ndb.ComputedProperty(lambda self: self.get_status())
+    simple_contact = ndb.ComputedProperty(lambda self: self.get_contact_info())
+    simple_via = ndb.ComputedProperty(lambda self: self.get_via())
+    simple_stakeholder = ndb.ComputedProperty(lambda self: self.get_stakeholder())
+    simple_priority = ndb.ComputedProperty(lambda self: self.get_priority())
+    simple_creator_email = ndb.ComputedProperty(lambda self: self.get_user_email())
     
     def get_id(self):
         return self._key.id()

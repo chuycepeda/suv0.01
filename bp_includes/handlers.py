@@ -2899,10 +2899,10 @@ class MaterializeOrganizationExportReportsHandler(BaseHandler):
             if result.status_code == 200:
                 data = json.loads(result.content)                
                 writer = csv.writer(self.response.out)
-                writer.writerow(["Calificacion", "Canal", "Subcategoria", "Informacion de contacto", "Coordenada de Longitud", "Fecha de cierre", "Folio", "Identificador del ciudadano", "Ticket", "Grupo de categoria", "Fecha", "Coordenada de Latitud", "Estado", "Ultima actualizacion", "Direccion", "Detalle", "Fecha de creacion", "Votos", "Responsable", "Prioridad", "URL de imagen"])
+                writer.writerow(["Calificacion", "Canal", "Subcategoria", "Informacion de contacto", "Coordenada de Longitud", "Fecha de cierre", "Folio", "ID del usuario", "Email del usuario", "Ticket", "Grupo de categoria", "Fecha", "Coordenada de Latitud", "Estado", "Ultima actualizacion", "Direccion", "Detalle", "Fecha de creacion", "Votos", "Responsable", "Prioridad", "URL de imagen"])
                 if data:
                     for item in data['items']:
-                        writer.writerow([ item['rating'], item['via'].encode('utf8'), item['sub_category'].encode('utf8'), item['contact_info'].encode('utf8'), item['address_lon'], item['terminated'], item['folio'].encode('utf8'), "'%s"%item['user_id'], item['cdb_id'], item['group_category'].encode('utf8'), item['when'], item['address_lat'], item['status'].encode('utf8'), item['updated'], item['address_from'].encode('utf8'), item['description'].encode('utf8'), item['created'], item['follows'], item['stakeholder'].encode('utf8'), item['priority'].encode('utf8'), str(item['image_url'])  ])
+                        writer.writerow([ item['rating'], item['via'].encode('utf8'), item['sub_category'].encode('utf8'), item['contact_info'].encode('utf8'), item['address_lon'], item['terminated'], item['folio'].encode('utf8'), "'%s"%item['user_id'], item['user_email'].encode('utf8'), item['cdb_id'], item['group_category'].encode('utf8'), item['when'], item['address_lat'], item['status'].encode('utf8'), item['updated'], item['address_from'].encode('utf8'), item['description'].encode('utf8'), item['created'], item['follows'], item['stakeholder'].encode('utf8'), item['priority'].encode('utf8'), str(item['image_url'])  ])
                         
             self.response.headers['Content-Type'] = 'application/csv'
             self.response.headers['Content-Disposition'] = 'attachment; filename=reportes.csv'

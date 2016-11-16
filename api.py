@@ -123,15 +123,16 @@ class Reports(messages.Message):
     folio = messages.StringField(12)
     contact_info = messages.StringField(13)
     user_id = messages.StringField(14)
-    image_url = messages.StringField(15)
-    group_category = messages.StringField(16)
-    sub_category  = messages.StringField(17)
-    follows = messages.IntegerField(18)
-    rating = messages.IntegerField(19)
-    via = messages.StringField(20)
-    req_deletion = messages.BooleanField(21)
-    stakeholder = messages.StringField(22)
-    priority = messages.StringField(23)
+    user_email = messages.StringField(15)
+    image_url = messages.StringField(16)
+    group_category = messages.StringField(17)
+    sub_category  = messages.StringField(18)
+    follows = messages.IntegerField(19)
+    rating = messages.IntegerField(20)
+    via = messages.StringField(21)
+    req_deletion = messages.BooleanField(22)
+    stakeholder = messages.StringField(23)
+    priority = messages.StringField(24)
 
 class ReportsCollection(messages.Message):
     """Collection of Reports."""
@@ -152,23 +153,24 @@ def getReports(page):
       when = report.when.strftime("%Y-%m-%d"),
       title =  report.title ,
       description = report.description,
-      status = report.get_status(),
+      status = report.simple_status,
       address_lat= str(report.address_from_coord.lat),
       address_lon= str(report.address_from_coord.lon),
       address_from = report.address_from,
       cdb_id = report.cdb_id,
       folio = report.folio,
-      contact_info = report.get_contact_info(),
+      contact_info = report.simple_contact,
       user_id = str(report.user_id),
+      user_email = report.simple_creator_email,
       image_url = report.image_url if report.image_url else '',
       group_category = report.group_category,
       sub_category  = report.sub_category ,
       follows = report.follows,
       rating = report.rating,
-      via = report.get_via(),
+      via = report.simple_via,
       req_deletion = report.req_deletion,
-      stakeholder = report.get_stakeholder(),
-      priority = report.get_priority()))
+      stakeholder = report.simple_stakeholder,
+      priority = report.simple_priority))
 
   return ReportsCollection(total_rows = len(reports_array), items=reports_array, pages=count/MAX_SIZE)
 

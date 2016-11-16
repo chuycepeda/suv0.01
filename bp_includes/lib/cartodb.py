@@ -46,16 +46,20 @@ class CartoDBBase(object):
     """ basic client to access cartodb api """
     MAX_GET_QUERY_LEN = 2048
 
-    def __init__(self, cartodb_domain, host='cartodb.com', protocol='https', api_version='v2'):
+    def __init__(self, cartodb_domain, host='carto.com', protocol='https', api_version='v2'):
         self.resource_url = RESOURCE_URL % {'user': cartodb_domain, 'domain': host, 'protocol': protocol, 'api_version': api_version}
+        self.client = httplib2.Http()
 
     def req(self, url, http_method="GET", http_headers=None, body=''):
         """
         this method should implement how to send a request to server using propper auth
         """
-        raise NotImplementedError('req method must be implemented')
+        resp, content = self.client.request(
+            url
+        )
+        return resp, content
 
-    def sql(self, sql, parse_json=True, do_post=True, format=None):
+    def sql(self, sql, parse_json=True, do_post=False, format=None):
         """ executes sql in cartodb server
             set parse_json to False if you want raw reponse
         """
@@ -69,7 +73,7 @@ class CartoDBBase(object):
 
         # depending on query size do a POST or GET
         if len(sql) < self.MAX_GET_QUERY_LEN and not do_post:
-            url = url + '?' + p
+            url = sql
             resp, content = self.req(url);
         else:
             resp, content = self.req(url, 'POST', body=p);
@@ -89,7 +93,6 @@ class CartoDBBase(object):
 
 
         return None
-
 
 class CartoDBOAuth(CartoDBBase):
     """
