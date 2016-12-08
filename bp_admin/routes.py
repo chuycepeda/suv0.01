@@ -20,6 +20,7 @@ _routes = [
 
     # CONFIG Brand
     RedirectRoute('/admin/brand/', operator.AdminBrandHandler, name='admin-brand', strict_slash=True),
+    RedirectRoute('/admin/configuration/', operator.AdminConfigurationHandler, name='admin-configuration', strict_slash=True),
 
     # CONFIG Categories
     RedirectRoute('/admin/categories/', operator.AdminCategoriesHandler, name='admin-categories', strict_slash=True),

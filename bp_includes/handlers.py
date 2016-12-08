@@ -511,16 +511,16 @@ def editReportParams(self, report_info):
     params['atts'] = models.Attachment.query(models.Attachment.report_id == report_info.key.id())
     params['atts'] = params['atts'].order(-models.Attachment.created)
     params['has_atts'] = True if params['atts'].count() > 0 else False
-    params['zoom'] = self.app.config.get('map_zoom')
-    params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-    params['lat'] = self.app.config.get('map_center_lat')
-    params['lng'] = self.app.config.get('map_center_lng')
+    params['zoom'] = self.configuration['map_zoom']
+    params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+    params['lat'] = self.configuration['map_center_lat']
+    params['lng'] = self.configuration['map_center_lng']
 
     params['cartodb_user'] = self.app.config.get('cartodb_user')
     params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
     params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
     params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-    params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+    params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
     return params
 
@@ -1451,7 +1451,7 @@ class MaterializeLandingRequestHandler(BaseHandler):
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
         if self.app.config.get('landing_skin') == 'a' or self.request.get('skin') == 'a':
             return self.render_template('materialize/landing/landing_a.html', **params)
@@ -1474,10 +1474,10 @@ class MaterializeLandingMapRequestHandler(BaseHandler):
         
         params['captchahtml'] = captchaBase(self)
 
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')  
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']  
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
@@ -1485,7 +1485,7 @@ class MaterializeLandingMapRequestHandler(BaseHandler):
         params['has_cic'] = self.app.config.get('has_cic')
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
 
         return self.render_template('materialize/landing/base.html', **params)
@@ -1734,16 +1734,16 @@ class MaterializeProfileRequestHandler(BaseHandler):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
         params['captchahtml'] = captchaBase(self)
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
 
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
         try:
             p_id = long(profile_id)
@@ -1906,16 +1906,16 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
     def get(self):
         """ returns simple html for a get request """
         params, user_info = disclaim(self)
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
 
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
         if not params['address_from']:
             params['address_from'] = ''
@@ -2660,16 +2660,16 @@ class MaterializeOrganizationNewReportHandler(BaseHandler):
                             break
            
         params['secs']= names[0]
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
 
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
 
         if self.user_is_secretary or self.user_is_agent or self.user_is_operator or self.user_is_callcenter:
@@ -3926,15 +3926,15 @@ class MaterializeGeomHandler(BaseHandler):
         params = {}
         params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
         params['group_color'] = self.app.config.get('brand_secondary_color')
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
         return self.render_template('materialize/users/operators/callcenter_geom.html', **params)
     
@@ -3981,15 +3981,15 @@ class MaterializeGeomEditHandler(BaseHandler):
         if not self.user_is_callcenter or self.user_callcenter_role not in ['admin', 'transparency']:
             self.abort(403)
         params = {}
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
         return self.render_template('materialize/users/operators/callcenter_geom_edit.html', **params)
     
     def post(self):
@@ -4143,15 +4143,15 @@ class MaterializeReportsEditRequestHandler(BaseHandler):
             self.abort(403)
 
         params['report'] = user_report
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
         if params['report']:
             if params['report'].user_id == int(self.user_id):
@@ -4255,7 +4255,7 @@ class MaterializeReportCardlistHandler(BaseHandler):
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
         
         return self.render_template('materialize/users/sections/reports_list.html', **params)
         
@@ -4276,15 +4276,15 @@ class MaterializeNewReportHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
         
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
         return self.render_template('materialize/users/sections/report_new.html', **params)
         
@@ -4708,15 +4708,15 @@ class MaterializeNewPetitionHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
         
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
 
         return self.render_template('materialize/users/sections/petition_new.html', **params)
 
@@ -4847,10 +4847,10 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         ####------------------------------------------------------------------####
 
         
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')  
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']  
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
@@ -4859,9 +4859,9 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         params['has_cic'] = self.app.config.get('has_cic')
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
-        params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         
         return self.render_template('materialize/users/sections/transparency_city.html', **params)

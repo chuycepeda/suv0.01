@@ -385,6 +385,29 @@ class BaseHandler(webapp2.RequestHandler):
         return params
 
     @webapp2.cached_property
+    def configuration(self):
+        params = {}
+        configuration = models.Configuration.query().get()
+        if configuration is not None:
+            params['map_center_lat'] = self.app.config.get('map_center_lat') if configuration.map_center_lat == -1 else configuration.map_center_lat
+            params['map_center_lng'] = self.app.config.get('map_center_lng') if configuration.map_center_lng == -1 else configuration.map_center_lng
+            params['map_zoom'] = self.app.config.get('map_zoom') if configuration.map_zoom == -1 else configuration.map_zoom
+            params['map_zoom_mobile'] = self.app.config.get('map_zoom_mobile') if configuration.map_zoom_mobile == -1 else configuration.map_zoom_mobile
+            params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name') if configuration.cartodb_polygon_name == '' else configuration.cartodb_polygon_name
+            params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name') if configuration.cartodb_polygon_full_name == '' else configuration.cartodb_polygon_full_name
+            params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent') if configuration.cartodb_polygon_cve_ent == -1 else configuration.cartodb_polygon_cve_ent
+        else:
+            params['map_center_lat'] = self.app.config.get('map_center_lat')
+            params['map_center_lng'] = self.app.config.get('map_center_lng')
+            params['map_zoom'] = self.app.config.get('map_zoom')
+            params['map_zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+            params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+            params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
+            params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
+        return params
+            
+
+    @webapp2.cached_property
     def right_sidenav_msg(self):
         return self.app.config.get('right_sidenav_msg')
     
@@ -470,6 +493,13 @@ class BaseHandler(webapp2.RequestHandler):
             'facebook_appID': self.facebook_appID,
             'twitter_appID': self.twitter_appID,
             'gmaps_apikey': self.gmaps_apikey,
+            'map_center_lat' : self.configuration['map_center_lat'],
+            'map_center_lng' : self.configuration['map_center_lng'],
+            'map_zoom' : self.configuration['map_zoom'],
+            'map_zoom_mobile' : self.configuration['map_zoom_mobile'],
+            'cartodb_polygon_name' : self.configuration['cartodb_polygon_name'],
+            'cartodb_polygon_full_name' : self.configuration['cartodb_polygon_full_name'],
+            'cartodb_polygon_cve_ent' : self.configuration['cartodb_polygon_cve_ent'],
         })
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):

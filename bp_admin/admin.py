@@ -105,18 +105,18 @@ class AdminElectoralHandler(BaseHandler):
     def get(self):
         params = {}
         params['nickname'] = g_users.get_current_user().email().lower()
-        params['zoom'] = self.app.config.get('map_zoom')
-        params['zoom_mobile'] = self.app.config.get('map_zoom_mobile')
-        params['lat'] = self.app.config.get('map_center_lat')
-        params['lng'] = self.app.config.get('map_center_lng')  
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
         params['right_sidenav_msg'] = self.app.config.get('right_sidenav_msg')
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
-        params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
-        params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
         params['has_cic'] = self.app.config.get('has_cic')
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')

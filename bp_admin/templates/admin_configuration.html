@@ -1,0 +1,194 @@
+{% extends 'admin_base.html' %}
+
+{% block page_css %}
+<style>
+  label.active{
+    width: 100%;
+    text-align: left;
+  }
+</style>
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active">Configura tu aplicación</li>
+            </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+
+{% block page_content %}
+<div class="container">
+      <div class="section">
+       <div class="row" style="margin-top:30px">
+            <div class="row">
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Configura tu plataforma con tus propios parámetros.</h3>
+            </div>
+            <div class="card-panel" style="margin-bottom:30px;">
+
+                <form id="form_configuration" action="{{ url|safe }}" method="post">
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="map_center_lat" id="map_center_lat" value="{{ map_center_lat }}">
+                  <input type="hidden" name="map_center_lng" id="map_center_lng" value="{{ map_center_lng }}">
+                  <input type="hidden" name="map_zoom" id="map_zoom" value="{{ map_zoom }}">
+                  <input type="hidden" name="map_zoom_mobile" id="map_zoom_mobile" value="{{ map_zoom_mobile }}">
+                  <input type="hidden" name="cartodb_polygon_name" id="cartodb_polygon_name"  value="{{cartodb_polygon_name}}">
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-social-public prefix brand-color-text"></i>
+                      <input id="cartodb_polygon_full_name" name="cartodb_polygon_full_name" type="text" value="{{cartodb_polygon_full_name}}">
+                      <label for="cartodb_polygon_full_name" class="center-align">Nombre de tu polígono municipal en mexico.carto.com (<em>nom_mun</em>)</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                      <i class="mdi-hardware-phonelink prefix brand-color-text"></i>
+                      <input id="cartodb_polygon_cve_ent" name="cartodb_polygon_cve_ent" type="number" value="{{cartodb_polygon_cve_ent}}">
+                      <label for="cartodb_polygon_cve_ent" class="center-align">Clave de entidad federativa en mexico.carto.com (<em>cve_mun</em>)</label>
+                    </div>
+                  </div>
+
+                  <div class="row margin">
+                    <div class="input-field col s12">
+                          <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="geocode('from')"></i>
+                          <input id="address_from" name="address_from" type="text" class="validate" value="" placeholder="Escribe una dirección para acercar rápidamente el mapa y puedas marcar el polígono del desarrollo" onkeydown="if (event.keyCode == 13) geocode('from');">
+                          <label for="address_from" class="active">Centra el mapa y establece el zoom que consideres apropiado.</label>
+                          <div id="map" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
+                    </div>
+                  </div>
+
+                  <div class="row container" style="padding:25px; padding-left: 55px!important;">
+                    <a class="waves-effect waves-light brand-secondary-color white-text btn right" id="submit_config_form" >Guardar Cambios
+                      <i class="mdi-content-send right"></i>
+                    </a>                          
+                  </div>
+                </form>
+            </div>           
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+
+{% block page_floatings %}
+{% endblock %}
+
+
+{% block page_scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+<script src="/{{theme}}/materialize/js/makeAJAX.js"></script>
+<script type="text/javascript">
+    
+    var mapCenter = [{{map_center_lat}},{{map_center_lng}}], map, mapzoom = {{map_zoom}};
+    var geocoder = new google.maps.Geocoder();
+    google.maps.event.addDomListener(window,'load', init);
+        
+    //Get Selectors
+    var submitBtn = document.querySelector('#submit_config_form');    
+    submitBtn.addEventListener('click', function() {
+      document.getElementById('cartodb_polygon_name').value = document.getElementById('cartodb_polygon_full_name').value;
+      document.getElementById('map_center_lat').value = map.getCenter().lat();
+      document.getElementById('map_center_lng').value = map.getCenter().lng();
+      document.getElementById('map_zoom').value = map.getZoom();
+      document.getElementById('map_zoom_mobile').value = map.getZoom() - 2;
+      document.getElementById("form_configuration").submit();
+    });
+
+    function geocode(input) {
+          var address, obj;
+          if (typeof(input) === 'string') {
+              address = document.getElementById('address_'+input).value;
+              obj = { 'address': address };
+          }else{
+              address = input;
+              obj = { 'location': address};
+          }
+          geocoder.geocode( obj, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK) {
+                  if (typeof(input) === 'string') {
+                      map.setCenter(results[0].geometry.location);
+                      switch (results[0].geometry.location_type){
+                          case 'ROOFTOP': map.setZoom(17); break;
+                          case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                          case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                          case 'APPROXIMATE': map.setZoom(13); break;
+                      }
+                      // markerDrop(results[0].geometry.location);
+                  }else{
+                      if (results[1]) {
+                          document.getElementById('address_from').value = results[1].formatted_address;
+                      } else {
+                          alert('No address geocode found');
+                      }
+                  }
+              } else {
+                  alert('Geocode unsuccessful: ' + status);
+              }
+          });
+    }  
+
+    function init(){
+      var mapOptions = {
+        center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+        zoom: mapzoom,
+        minZoom:5,
+        zoomControl: true,
+        zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.SMALL,
+          position: google.maps.ControlPosition.RIGHT_BOTTOM  
+        },
+        mapTypeControl: true,
+        mapTypeControlOptions: { 
+          mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
+        },
+        scrollwheel: false,
+        streetViewControl: true,
+        StreetViewControlOptions: {
+          position: google.maps.ControlPosition.BOTTOM_LEFT
+        },
+        panControl:true,
+        backgroundColor: 'rgb(249, 249, 249)',
+        rotateControl:true,
+        overviewMapControl:true
+      };
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+      google.maps.event.addDomListener(window, 'resize', function() {
+                setTimeout(function() {
+                    map.panTo({lat: mapCenter[0], lng: mapCenter[1]});
+                }, 400);                            
+      });
+
+      var address_from = document.getElementById('address_from');
+      var autocomplete_from = new google.maps.places.Autocomplete(address_from);
+      autocomplete_from.bindTo('bounds', map);
+
+      google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+          var place = autocomplete_from.getPlace();
+          if (!place.geometry) {
+                    return;
+          }
+          if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+          }else{
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+          }
+      });                        
+    }
+
+    
+
+</script>
+{% endblock %}

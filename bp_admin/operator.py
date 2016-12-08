@@ -94,6 +94,154 @@ class AdminBrandHandler(BaseHandler):
             self.add_message(messages.saving_error, 'danger')
             return self.get()
 
+class AdminConfigurationHandler(BaseHandler):
+    """
+    Handler to show the map page
+    """
+    def get(self):
+        """ Returns a simple HTML form for branding setup """
+        params = {}
+
+        configuration = models.Configuration.query().get()
+
+        if configuration is not None:
+            params['first_level_caps_singular'] = self.app.config.get('first_level_caps_singular') if configuration.first_level_caps_singular == '' else configuration.first_level_caps_singular
+            params['first_level_caps_plural'] = self.app.config.get('first_level_caps_plural') if configuration.first_level_caps_plural == '' else configuration.first_level_caps_plural
+            params['first_level_mins_singular'] = self.app.config.get('first_level_mins_singular') if configuration.first_level_mins_singular == '' else configuration.first_level_mins_singular
+            params['first_level_mins_plural'] = self.app.config.get('first_level_mins_plural') if configuration.first_level_mins_plural == '' else configuration.first_level_mins_plural
+            params['first_level_caps_person'] = self.app.config.get('first_level_caps_person') if configuration.first_level_caps_person == '' else configuration.first_level_caps_person
+            params['second_level_caps_singular'] = self.app.config.get('second_level_caps_singular') if configuration.second_level_caps_singular == '' else configuration.second_level_caps_singular
+            params['second_level_caps_plural'] = self.app.config.get('second_level_caps_plural') if configuration.second_level_caps_plural == '' else configuration.second_level_caps_plural
+            params['second_level_mins_singular'] = self.app.config.get('second_level_mins_singular') if configuration.second_level_mins_singular == '' else configuration.second_level_mins_singular
+            params['second_level_mins_plural'] = self.app.config.get('second_level_mins_plural') if configuration.second_level_mins_plural == '' else configuration.second_level_mins_plural
+            params['second_level_caps_person'] = self.app.config.get('second_level_caps_person') if configuration.second_level_caps_person == '' else configuration.second_level_caps_person
+            params['has_reports'] = self.app.config.get('has_reports') if configuration.has_reports is None else configuration.has_reports
+            params['has_petitions'] = self.app.config.get('has_petitions') if configuration.has_petitions is None else configuration.has_petitions
+            params['has_transparency'] = self.app.config.get('has_transparency') if configuration.has_transparency is None else configuration.has_transparency
+            params['has_social_media'] = self.app.config.get('has_social_media') if configuration.has_social_media is None else configuration.has_social_media
+            params['has_cic'] = self.app.config.get('has_cic') if configuration.has_cic is None else configuration.has_cic
+            params['captcha_public_key'] = self.app.config.get('captcha_public_key') if configuration.captcha_public_key == '' else configuration.captcha_public_key
+            params['captcha_private_key'] = self.app.config.get('captcha_private_key') if configuration.captcha_private_key == '' else configuration.captcha_private_key
+            params['twitter_url'] = self.app.config.get('twitter_url') if configuration.twitter_url == '' else configuration.twitter_url
+            params['facebook_url'] = self.app.config.get('facebook_url') if configuration.facebook_url == '' else configuration.facebook_url
+            params['twitter_handle'] = self.app.config.get('twitter_handle') if configuration.twitter_handle == '' else configuration.twitter_handle
+            params['facebook_handle'] = self.app.config.get('facebook_handle') if configuration.facebook_handle == '' else configuration.facebook_handle
+            params['google_clientID'] = self.app.config.get('google_clientID') if configuration.google_clientID == '' else configuration.google_clientID
+            params['twitter_appID'] = self.app.config.get('twitter_appID') if configuration.twitter_appID == '' else configuration.twitter_appID
+            params['facebook_appID'] = self.app.config.get('facebook_appID') if configuration.facebook_appID == '' else configuration.facebook_appID
+            params['indicoio_apikey'] = self.app.config.get('indicoio_apikey') if configuration.indicoio_apikey == '' else configuration.indicoio_apikey
+            params['bitly_login'] = self.app.config.get('bitly_login') if configuration.bitly_login == '' else configuration.bitly_login
+            params['bitly_apikey'] = self.app.config.get('bitly_apikey') if configuration.bitly_apikey == '' else configuration.bitly_apikey
+            params['gmaps_apikey'] = self.app.config.get('gmaps_apikey') if configuration.gmaps_apikey == '' else configuration.gmaps_apikey
+            params['map_center_lat'] = self.app.config.get('map_center_lat') if configuration.map_center_lat == -1 else configuration.map_center_lat
+            params['map_center_lng'] = self.app.config.get('map_center_lng') if configuration.map_center_lng == -1 else configuration.map_center_lng
+            params['map_zoom'] = self.app.config.get('map_zoom') if configuration.map_zoom == -1 else configuration.map_zoom
+            params['map_zoom_mobile'] = self.app.config.get('map_zoom_mobile') if configuration.map_zoom_mobile == -1 else configuration.map_zoom_mobile
+            params['cartodb_user'] = self.app.config.get('cartodb_user') if configuration.cartodb_user == '' else configuration.cartodb_user
+            params['cartodb_apikey'] = self.app.config.get('cartodb_apikey') if configuration.cartodb_apikey == '' else configuration.cartodb_apikey
+            params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table') if configuration.cartodb_reports_table == '' else configuration.cartodb_reports_table
+            params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table') if configuration.cartodb_pois_table == '' else configuration.cartodb_pois_table
+            params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table') if configuration.cartodb_category_dict_table == '' else configuration.cartodb_category_dict_table
+            params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table') if configuration.cartodb_polygon_table == '' else configuration.cartodb_polygon_table
+            params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name') if configuration.cartodb_polygon_name == '' else configuration.cartodb_polygon_name
+            params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name') if configuration.cartodb_polygon_full_name == '' else configuration.cartodb_polygon_full_name
+            params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent') if configuration.cartodb_polygon_cve_ent == -1 else configuration.cartodb_polygon_cve_ent
+            params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user') if configuration.cartodb_cic_user == '' else configuration.cartodb_cic_user
+            params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table') if configuration.cartodb_cic_reports_table == '' else configuration.cartodb_cic_reports_table
+            params['users_export_url'] = self.app.config.get('users_export_url') if configuration.users_export_url == '' else configuration.users_export_url
+            params['reports_export_url'] = self.app.config.get('reports_export_url') if configuration.reports_export_url == '' else configuration.reports_export_url
+            params['sendgrid_priority'] = self.app.config.get('sendgrid_priority') if configuration.sendgrid_priority is None else configuration.sendgrid_priority
+            params['sendgrid_login'] = self.app.config.get('sendgrid_login') if configuration.sendgrid_login == '' else configuration.sendgrid_login
+            params['sendgrid_passkey'] = self.app.config.get('sendgrid_passkey') if configuration.sendgrid_passkey == '' else configuration.sendgrid_passkey
+
+        else:
+            params['first_level_caps_singular'] = self.app.config.get('first_level_caps_singular')
+            params['first_level_caps_plural'] = self.app.config.get('first_level_caps_plural')
+            params['first_level_mins_singular'] = self.app.config.get('first_level_mins_singular')
+            params['first_level_mins_plural'] = self.app.config.get('first_level_mins_plural')
+            params['first_level_caps_person'] = self.app.config.get('first_level_caps_person')
+            params['second_level_caps_singular'] = self.app.config.get('second_level_caps_singular')
+            params['second_level_caps_plural'] = self.app.config.get('second_level_caps_plural')
+            params['second_level_mins_singular'] = self.app.config.get('second_level_mins_singular')
+            params['second_level_mins_plural'] = self.app.config.get('second_level_mins_plural')
+            params['second_level_caps_person'] = self.app.config.get('second_level_caps_person')
+            params['has_reports'] = self.app.config.get('has_reports')
+            params['has_petitions'] = self.app.config.get('has_petitions')
+            params['has_transparency'] = self.app.config.get('has_transparency')
+            params['has_social_media'] = self.app.config.get('has_social_media')
+            params['has_cic'] = self.app.config.get('has_cic')
+            params['captcha_public_key'] = self.app.config.get('captcha_public_key')
+            params['captcha_private_key'] = self.app.config.get('captcha_private_key')
+            params['twitter_url'] = self.app.config.get('twitter_url')
+            params['facebook_url'] = self.app.config.get('facebook_url')
+            params['twitter_handle'] = self.app.config.get('twitter_handle')
+            params['facebook_handle'] = self.app.config.get('facebook_handle')
+            params['google_clientID'] = self.app.config.get('google_clientID')
+            params['twitter_appID'] = self.app.config.get('twitter_appID')
+            params['facebook_appID'] = self.app.config.get('facebook_appID')
+            params['indicoio_apikey'] = self.app.config.get('indicoio_apikey')
+            params['bitly_login'] = self.app.config.get('bitly_login')
+            params['bitly_apikey'] = self.app.config.get('bitly_apikey')
+            params['gmaps_apikey'] = self.app.config.get('gmaps_apikey')
+            params['map_center_lat'] = self.app.config.get('map_center_lat')
+            params['map_center_lng'] = self.app.config.get('map_center_lng')
+            params['map_zoom'] = self.app.config.get('map_zoom')
+            params['map_zoom_mobile'] = self.app.config.get('map_zoom_mobile')
+            params['cartodb_user'] = self.app.config.get('cartodb_user')
+            params['cartodb_apikey'] = self.app.config.get('cartodb_apikey')
+            params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+            params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+            params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+            params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+            params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
+            params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
+            params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
+            params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+            params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+            params['users_export_url'] = self.app.config.get('users_export_url')
+            params['reports_export_url'] = self.app.config.get('reports_export_url')
+            params['sendgrid_priority'] = self.app.config.get('sendgrid_priority')
+            params['sendgrid_login'] = self.app.config.get('sendgrid_login')
+            params['sendgrid_passkey'] = self.app.config.get('sendgrid_passkey')
+
+        params['nickname'] = g_users.get_current_user().email().lower()
+
+        if params['nickname'] == 'chuycepeda@gmail.com' or params['nickname'] == 'jesus.delbosque@gmail.com':
+            return self.render_template('admin_configuration.html', **params)
+        else:
+            self.abort(403)
+
+    def post(self):
+        """ Saves a simple HTML form for branding setup """
+        try:
+            configuration = models.Configuration.query().get()
+            if configuration is None:
+                configuration = models.Configuration()
+
+            source = self.request.get('source')
+
+            configuration.map_center_lat = float(self.request.get('map_center_lat')) if float(self.request.get('map_center_lat')) != -1 else self.app.config.get('map_center_lat')
+            configuration.map_center_lng = float(self.request.get('map_center_lng')) if float(self.request.get('map_center_lng')) != -1 else self.app.config.get('map_center_lng')
+            configuration.map_zoom = int(self.request.get('map_zoom')) if int(self.request.get('map_zoom')) != -1 else self.app.config.get('map_zoom')
+            configuration.map_zoom_mobile = int(self.request.get('map_zoom_mobile')) if int(self.request.get('map_zoom_mobile')) != -1 else self.app.config.get('map_zoom_mobile')
+            configuration.cartodb_polygon_name = self.request.get('cartodb_polygon_name') if self.request.get('cartodb_polygon_name') != '' else self.app.config.get('cartodb_polygon_name')
+            configuration.cartodb_polygon_full_name = self.request.get('cartodb_polygon_full_name') if self.request.get('cartodb_polygon_full_name') != '' else self.app.config.get('cartodb_polygon_full_name')
+            configuration.cartodb_polygon_cve_ent = int(self.request.get('cartodb_polygon_cve_ent')) if int(self.request.get('cartodb_polygon_cve_ent')) != -1 else self.app.config.get('cartodb_polygon_cve_ent')
+
+            configuration.put()
+
+            if source == 'AJAX':
+                a = {'response': messages.saving_success}
+                self.response.headers['Content-Type'] = 'application/json'
+                self.response.write(json.dumps(a))  
+            else:
+                self.add_message(messages.saving_success, 'success')
+                return self.get()
+
+        except Exception as e:
+            logging.info('error in configuration post: %s' % e)
+            self.add_message(messages.saving_error, 'danger')
+            return self.get()
 
 """
 

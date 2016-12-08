@@ -86,9 +86,9 @@ $('select').material_select();
     indeterminateCheckbox.indeterminate = true;
       
   // Materialize Slider
-  $('.slider').slider({
-    full_width: true
-  });
+  // $('.slider').slider({
+  //   full_width: true
+  // });
 
   // Materialize Dropdown
   $('.dropdown-button').dropdown({
