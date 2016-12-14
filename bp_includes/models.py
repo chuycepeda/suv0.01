@@ -60,6 +60,7 @@ class Configuration(ndb.Model):
     cartodb_polygon_name = ndb.StringProperty(default = '')
     cartodb_polygon_full_name = ndb.StringProperty(default = '')
     cartodb_polygon_cve_ent = ndb.IntegerProperty(default = -1)
+    cartodb_polygon_cve_mun = ndb.IntegerProperty(default = -1)
     cartodb_cic_user = ndb.StringProperty(default = '')
     cartodb_cic_reports_table = ndb.StringProperty(default = '')
     users_export_url = ndb.StringProperty(default = '')

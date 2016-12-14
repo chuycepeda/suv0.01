@@ -63,7 +63,7 @@
         <div>
           <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
         </div>
-        <ul class="collapsible collapsible-accordion" data-collapsible="expandable">
+        <ul class="collapsible collapsible-accordion" data-collapsible="expandable" style="max-height:500px; overflow-y:scroll;">
           <li>
             <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
               <div class="collapsible-body white">
@@ -91,6 +91,12 @@
                   <input type="checkbox" class="filled-in layerControl" id="4">
                   <label for="4">AGEBs urbanos</label>
                 </p>
+                <div class="divider"></div>
+                <p style="padding: 8px;">
+                  Capas de amenidades:
+                </p>
+                <div id="amenidades"></div>
+
                 <p style="padding: 8px;text-align: right; font-size: 11px;">
                   <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
                   <br>
@@ -139,6 +145,7 @@
       var city_mun_table_name = '{{cartodb_polygon_table}}';
       var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
       var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
+      var city_polygon_cve_mun = '{{cartodb_polygon_cve_mun}}';
       var city_polygon_name = '{{cartodb_polygon_name}}';
       var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
       var mexico_sql = new cartodb.SQL({ user: 'mexico' });
@@ -325,6 +332,128 @@
                 "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/favourite1.svg",
                 "color":"F2008A"}
       };
+      var _layersArray = [
+        {
+          name: 'Abarrotes', /* le hace falta lo que hay de abarrotes en tabla nacional_denue_inegi_46112_46311 */
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46111 WHERE codigo_act ilike '461%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46111{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Tiendas de autoservicio',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46112_46311 WHERE codigo_act ilike '462%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46112_46311{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Farmacias',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46321_46531 WHERE codigo_act ilike '4641%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46321_46531{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Papelerías',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46321_46531 WHERE codigo_act ilike '465311%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46321_46531{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Ferreterías',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46591_46911 WHERE codigo_act ilike '467111%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46591_46911{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Refaccionarias',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46591_46911 WHERE codigo_act ilike '46821%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46591_46911{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Bancos',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_52 WHERE codigo_act ilike '5221%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_52{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Casas de cambio',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_52 WHERE codigo_act ilike '5231%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_52{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación básica',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6111%' and codigo_act not ilike '61115%' and codigo_act not ilike '61118%' and codigo_act not ilike '61118%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación media',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '61115%' or codigo_act ilike '61116%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación especial',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '61118%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación superior',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6112%' or codigo_act ilike '6113%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación otros',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6114%' or codigo_act ilike '6116%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Consultorios médicos',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_62 WHERE codigo_act ilike '621%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_62{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Hospitales',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_62 WHERE codigo_act ilike '622%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_62{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Museos y esparcimiento',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_71 WHERE codigo_act ilike '7121%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_71{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Hoteles',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_72 WHERE codigo_act ilike '7211%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_72{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Administración pública',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_93 WHERE codigo_act ilike '9312%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_93{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Organismos internacionales',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_93 WHERE codigo_act ilike '932%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_93{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Contención urbana',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nombre, tipo FROM nacional_pcu_v2015",
+          cartocss: '#nacional_pcu_v2015{polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}#nacional_pcu_v2015[tipo="U1"]{polygon-fill: #A6CEE3;}#nacional_pcu_v2015[tipo="U2"]{polygon-fill: #1F78B4;}#nacional_pcu_v2015[tipo="U3"]{polygon-fill: #B2DF8A;}',
+          interactivity: ["nombre", "tipo"]
+        }
+      ]
       
         
       /* MAPS RELATED */
@@ -392,60 +521,73 @@
                       cartocss: createTileStyle('normal',city_pois_table_name),
                       interactivity: city_interactivity
                   }]
-              };
-              cartodb.createLayer(map,layerSource)
-              .on('done', function(layer) {
-            map.overlayMapTypes.setAt(0, layer);
-                  for (var i = 0; i < layer.getSubLayerCount(); i++) {
-                     sublayers[i] = layer.getSubLayer(i);
-                     console.log("Congrats, you added sublayer #" + i + "!");
-                  }
-                  sublayers[1].infowindow.set('template', $('#infowindow_'+city_pois_table_name).html());
-                  cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
-                      infowindowTemplate: $('#infowindow_'+city_pois_table_name).html()
-                  });
-                  sublayers[1].setInteraction(true);                                 
-                  sublayers[1].on('featureClick', function(e, latlng, pos, data) {
-                        //do whatever
-                  }); 
-              }); 
+        };
+        cartodb.createLayer(map,layerSource)
+        .on('done', function(layer) {
+          map.overlayMapTypes.setAt(0, layer);
+          for (var i = 0; i < layer.getSubLayerCount(); i++) {
+             sublayers[i] = layer.getSubLayer(i);
+             console.log("Congrats, you added sublayer #" + i + "!");
+          }
+          sublayers[1].infowindow.set('template', $('#infowindow_'+city_pois_table_name).html());
+          cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
+              infowindowTemplate: $('#infowindow_'+city_pois_table_name).html()
+          });
+          sublayers[1].setInteraction(true);                                 
+          sublayers[1].on('featureClick', function(e, latlng, pos, data) {
+                //do whatever
+          }); 
+        }); 
+
+        // MEXICO LAYERS
+        layerSource = {
+            user_name: 'mexico',
+            type: 'cartodb',
+            sublayers: [{
+                sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_distritos_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                cartocss: "#nacional_ine_distritos_2012{polygon-fill: #0A79C9;polygon-opacity: 0.05;line-color: #0A79C9;line-width: 2;line-opacity: 1;}"
+            },{
+                sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_secciones_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF2C69;polygon-opacity: 0.05;line-color: #FF2C69;line-width: 1;line-opacity: 1;}"
+            },{
+                sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
+            }]
+        };
+        var html = '';
+        for (var i = 0, j = _layersArray.length, k=5; i<j; i++){
+          var idx = i+k;
+          html += '<p style="padding: 8px;"><input type="checkbox" class="filled-in layerControl" id="'+idx+'"><label for="'+idx+'">'+_layersArray[i].name+'</label></p>';
+
+          var elem = {
+            sql: _layersArray[i].sql,
+            cartocss: _layersArray[i].cartocss
+          }
+          layerSource.sublayers.push(elem);
+        }
+        document.getElementById('amenidades').innerHTML = html;
+        cartodb.createLayer(map,layerSource)
+        .on('done', function(layer) {
+            map.overlayMapTypes.setAt(1, layer);
+            for (var i = 2, j =0; j < layer.getSubLayerCount(); i++, j++) {
+               sublayers[i] = layer.getSubLayer(j);
+               cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(i));
+               sublayers[i].hide(); //leave all turned off.
+               console.log("Congrats, you added sublayer #" + i + "!");
+               if (i <= 4)
+                 sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
+                    console.log("populating sidebar for layerIndex: " + layerIndex);
+                    populateRightSidebar('feature', data, latlng, layerIndex);
+                 });
+            }
+        }); 
 
 
-              // MEXICO LAYERS
-              layerSource = {
-                  user_name: 'mexico',
-                  type: 'cartodb',
-                  sublayers: [{
-                      sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_distritos_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                      cartocss: "#nacional_ine_distritos_2012{polygon-fill: #0A79C9;polygon-opacity: 0.05;line-color: #0A79C9;line-width: 2;line-opacity: 1;}"
-                  },{
-                      sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_secciones_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                      cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF2C69;polygon-opacity: 0.05;line-color: #FF2C69;line-width: 1;line-opacity: 1;}"
-                  },{
-                      sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
-                      cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
-                  }]
-              };
-              cartodb.createLayer(map,layerSource)
-              .on('done', function(layer) {
-                  map.overlayMapTypes.setAt(1, layer);
-                  for (var i = 2, j =0; j < layer.getSubLayerCount(); i++, j++) {
-                     sublayers[i] = layer.getSubLayer(j);
-                     cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(i));
-                     sublayers[i].hide(); //leave all turned off.
-                     console.log("Congrats, you added sublayer #" + i + "!");
-                     sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
-                        console.log("populating sidebar for layerIndex: " + layerIndex);
-                        populateRightSidebar('feature', data, latlng, layerIndex);
-                     });
-                  }
-              }); 
-
-
-              $('.layerControl').change(function() {
-                  if (this.checked) sublayers[parseInt(this.id)].show();
-                  else sublayers[parseInt(this.id)].hide();
-              });          
+        $('.layerControl').change(function() {
+            if (this.checked) sublayers[parseInt(this.id)].show();
+            else sublayers[parseInt(this.id)].hide();
+            console.log('layer called: ' + this.id);
+        });          
       }
 
       function get_interactivity(layer_id){
@@ -456,6 +598,8 @@
                   return ["clavegeo","entidad","municipio","distrito","seccion"];
               case 4:
                   return ["cve_ageb","cve_ent","cve_mun"];
+              default:
+                  return _layersArray[layer_id-5].interactivity;
           }
       }
 

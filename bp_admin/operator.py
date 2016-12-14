@@ -146,6 +146,7 @@ class AdminConfigurationHandler(BaseHandler):
             params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name') if configuration.cartodb_polygon_name == '' else configuration.cartodb_polygon_name
             params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name') if configuration.cartodb_polygon_full_name == '' else configuration.cartodb_polygon_full_name
             params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent') if configuration.cartodb_polygon_cve_ent == -1 else configuration.cartodb_polygon_cve_ent
+            params['cartodb_polygon_cve_mun'] = self.app.config.get('cartodb_polygon_cve_mun') if configuration.cartodb_polygon_cve_mun == -1 else configuration.cartodb_polygon_cve_mun
             params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user') if configuration.cartodb_cic_user == '' else configuration.cartodb_cic_user
             params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table') if configuration.cartodb_cic_reports_table == '' else configuration.cartodb_cic_reports_table
             params['users_export_url'] = self.app.config.get('users_export_url') if configuration.users_export_url == '' else configuration.users_export_url
@@ -196,6 +197,7 @@ class AdminConfigurationHandler(BaseHandler):
             params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
             params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
             params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
+            params['cartodb_polygon_cve_mun'] = self.app.config.get('cartodb_polygon_cve_mun')
             params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
             params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
             params['users_export_url'] = self.app.config.get('users_export_url')

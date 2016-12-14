@@ -4862,6 +4862,7 @@ class MaterializeTransparencyCityHandler(BaseHandler):
         params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
         params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
         params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         
         return self.render_template('materialize/users/sections/transparency_city.html', **params)

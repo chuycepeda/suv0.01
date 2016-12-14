@@ -124,13 +124,14 @@ config = {
     'map_zoom_mobile': 10,
     'cartodb_user': 'onesmartcity', #remember to import from onesmartcity.cartodb.com 4 tables with queried LIMIT 0, plus fix datatypes after import (e.g. public_reports pvt must be boolean)
     'cartodb_apikey': '2dd2b08fe09c23bc977b051a85b2d6d725a58a54', #get new from https://<cartodb_user>.cartodb.com/your_apps
-    'cartodb_reports_table': 'public_reports',  # own cartodb reports table
-    'cartodb_pois_table': 'public_pois',  # own cartodb pois table
-    'cartodb_category_dict_table': 'cat_dict',  # own cartodb categories table
-    'cartodb_polygon_table': 'mun_poly', # own cartodb city polygon table
-    'cartodb_polygon_name': 'APO', # related to 'name' @ own cartodb city polygon table
-    'cartodb_polygon_full_name': unicode('Apodaca','utf-8'), # related to nom_mun @ mexico.cartodb.com
-    'cartodb_polygon_cve_ent': 19,          # related to cve_ent @ mexico.cartodb.com
+    'cartodb_reports_table': 'public_reports',  # own cartodb account reports table
+    'cartodb_pois_table': 'public_pois',  # own cartodb account pois table
+    'cartodb_category_dict_table': 'cat_dict',  # own cartodb account categories table
+    'cartodb_polygon_table': 'mun_poly', # own cartodb account city polygon table
+    'cartodb_polygon_name': 'APO', # own cartodb account city polygon name; overwritten by cartodb_polygon_full_name, bring row as is from mexico's nacional_municipios
+    'cartodb_polygon_full_name': unicode('Apodaca','utf-8'), # nom_mun @ mexico.cartodb.com table nacional_municipios
+    'cartodb_polygon_cve_ent': 19,          # cve_ent @ mexico.cartodb.com table nacional_municipios
+    'cartodb_polygon_cve_mun': 6,          # cve_mun @ mexico.cartodb.com table nacional_municipios
     'cartodb_cic_user': 'cicadmin',
     'cartodb_cic_reports_table': 'nl_public',
     # application endpoints

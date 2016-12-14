@@ -396,6 +396,7 @@ class BaseHandler(webapp2.RequestHandler):
             params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name') if configuration.cartodb_polygon_name == '' else configuration.cartodb_polygon_name
             params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name') if configuration.cartodb_polygon_full_name == '' else configuration.cartodb_polygon_full_name
             params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent') if configuration.cartodb_polygon_cve_ent == -1 else configuration.cartodb_polygon_cve_ent
+            params['cartodb_polygon_cve_mun'] = self.app.config.get('cartodb_polygon_cve_mun') if configuration.cartodb_polygon_cve_mun == -1 else configuration.cartodb_polygon_cve_mun
         else:
             params['map_center_lat'] = self.app.config.get('map_center_lat')
             params['map_center_lng'] = self.app.config.get('map_center_lng')
@@ -404,6 +405,7 @@ class BaseHandler(webapp2.RequestHandler):
             params['cartodb_polygon_name'] = self.app.config.get('cartodb_polygon_name')
             params['cartodb_polygon_full_name'] = self.app.config.get('cartodb_polygon_full_name')
             params['cartodb_polygon_cve_ent'] = self.app.config.get('cartodb_polygon_cve_ent')
+            params['cartodb_polygon_cve_mun'] = self.app.config.get('cartodb_polygon_cve_mun')
         return params
             
 
@@ -500,6 +502,7 @@ class BaseHandler(webapp2.RequestHandler):
             'cartodb_polygon_name' : self.configuration['cartodb_polygon_name'],
             'cartodb_polygon_full_name' : self.configuration['cartodb_polygon_full_name'],
             'cartodb_polygon_cve_ent' : self.configuration['cartodb_polygon_cve_ent'],
+            'cartodb_polygon_cve_mun' : self.configuration['cartodb_polygon_cve_mun'],
         })
         kwargs.update(self.auth_config)
         if hasattr(self, 'form'):
