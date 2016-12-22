@@ -229,6 +229,7 @@ class AdminConfigurationHandler(BaseHandler):
             configuration.cartodb_polygon_name = self.request.get('cartodb_polygon_name') if self.request.get('cartodb_polygon_name') != '' else self.app.config.get('cartodb_polygon_name')
             configuration.cartodb_polygon_full_name = self.request.get('cartodb_polygon_full_name') if self.request.get('cartodb_polygon_full_name') != '' else self.app.config.get('cartodb_polygon_full_name')
             configuration.cartodb_polygon_cve_ent = int(self.request.get('cartodb_polygon_cve_ent')) if int(self.request.get('cartodb_polygon_cve_ent')) != -1 else self.app.config.get('cartodb_polygon_cve_ent')
+            configuration.cartodb_polygon_cve_mun = int(self.request.get('cartodb_polygon_cve_mun')) if int(self.request.get('cartodb_polygon_cve_mun')) != -1 else self.app.config.get('cartodb_polygon_cve_mun')
 
             configuration.put()
 
