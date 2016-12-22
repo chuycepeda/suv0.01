@@ -395,10 +395,16 @@ class Report(ndb.Model):
         return "Hace " + str(diff) + " dias"
 
     def get_created_date(self):
-        return datetime.date(self.created.year,self.created.month,self.created.day).strftime("%Y-%m-%d")
+        import pytz
+        local_tz = pytz.timezone('America/Mexico_City') #check list at http://stackoverflow.com/questions/13866926/python-pytz-list-of-timezones
+        local_dt = datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).replace(tzinfo=pytz.utc).astimezone(local_tz)
+        return local_dt.strftime("%Y-%m-%d a las %X %p")
 
     def get_updated_date(self):
-        return datetime.date(self.updated.year,self.updated.month,self.updated.day).strftime("%Y-%m-%d")
+        import pytz
+        local_tz = pytz.timezone('America/Mexico_City') #check list at http://stackoverflow.com/questions/13866926/python-pytz-list-of-timezones
+        local_dt = datetime.datetime(self.updated.year,self.updated.month,self.updated.day, self.updated.hour, self.updated.minute, self.updated.second).replace(tzinfo=pytz.utc).astimezone(local_tz)
+        return local_dt.strftime("%Y-%m-%d a las %X %p")
 
     def get_formatted_date(self):
         return datetime.date(self.when.year,self.when.month,self.when.day).strftime("%Y-%m-%d")
@@ -715,7 +721,10 @@ class Attachment(ndb.Model):
         return user.email
 
     def get_formatted_date(self):
-        return datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).strftime("%Y-%m-%d a las %X %p (GMT-00)")
+        import pytz
+        local_tz = pytz.timezone('America/Mexico_City') #check list at http://stackoverflow.com/questions/13866926/python-pytz-list-of-timezones
+        local_dt = datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).replace(tzinfo=pytz.utc).astimezone(local_tz)
+        return local_dt.strftime("%Y-%m-%d a las %X %p")
 
 class LogChange(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)                                               
@@ -743,7 +752,10 @@ class LogChange(ndb.Model):
             return None
 
     def get_formatted_date(self):
-        return datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).strftime("%Y-%m-%d a las %X %p (GMT-00)")
+        import pytz
+        local_tz = pytz.timezone('America/Mexico_City') #check list at http://stackoverflow.com/questions/13866926/python-pytz-list-of-timezones
+        local_dt = datetime.datetime(self.created.year,self.created.month,self.created.day, self.created.hour, self.created.minute, self.created.second).replace(tzinfo=pytz.utc).astimezone(local_tz)
+        return local_dt.strftime("%Y-%m-%d a las %X %p")
 
 class Followers(ndb.Model):
     user_id = ndb.IntegerProperty(required = True)

@@ -272,7 +272,7 @@
                 <div class="navbar-fixed">
                     <nav class="white">
                         <div class="nav-wrapper">
-                            <a href="{{uri_for("landing")}}" class="brand-logo">
+                            <a href="{{uri_for("landing")}}" class="brand-logo center">
                             <img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:60px; {% endif %}">
                             <div id="main-preloader" class="preloader-wrapper small active right" style="display: none;margin-top:3px;margin-left:12px;">
                               <div class="spinner-layer spinner-blue">
@@ -339,7 +339,7 @@
 
         {% block main %}
             <!-- START MAIN -->
-            <div id="main">
+            <div id="main" style="padding-left: 0px;margin-bottom: 70px;">
                 {% block wrapper %}
                     <!-- START WRAPPER -->
                     <div class="wrapper">                                               
@@ -347,7 +347,7 @@
                         {% block sidebar_left %}
                             <!-- START LEFT SIDEBAR NAV-->
                             <aside id="left-sidebar-nav">
-                                <ul id="slide-out" class="side-nav fixed leftside-navigation">
+                                <ul id="slide-out" class="side-nav leftside-navigation">
                                     <li class="user-details brand-color">
                                         <div class="row">
                                             <div class="col col s12" style="    margin-bottom: 15px;">
@@ -452,7 +452,7 @@
                                 </ul>
                                 <!-- <a href="#" data-activates="slide-out" class="sidebar-collapse btn-floating waves-effect waves-light hide-on-large-only darken-2" style="margin-top:-5px;"><i class="mdi-navigation-more-vert" style="color: rgb(62, 193, 251);background-color: white;" ></i></a> -->
 
-                                <a href="#" data-activates="slide-out" class="sidebar-collapse hide-on-large-only waves-effect waves-light" style="top:-40px;float:right!important"><i class="mdi-navigation-more-vert brand-color-text" style="font-size: 30px;margin-top: -12px;"></i></a>
+                                <a href="#" data-activates="slide-out" class="sidebar-collapse waves-effect waves-light" style="top:-40px;float:right!important"><i class="mdi-navigation-menu brand-color-text" style="font-size: 30px;margin-top: -12px;"></i></a>
 
                             </aside>
                             <!-- END LEFT SIDEBAR NAV-->
@@ -496,7 +496,7 @@
 
         {% block footer %}
             <!-- START FOOTER -->
-            <footer class="page-footer ">
+            <footer class="page-footer " style="padding-left: 0px; {% if not is_mobile %}position: fixed; width: 100%;bottom: 0px;{% endif %}">
                 {% block page_footer %}{% endblock %}
                 <div class="footer-copyright white grey-text text-lighten-2">
                     <div class="container">
