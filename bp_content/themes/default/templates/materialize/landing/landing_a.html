@@ -192,8 +192,6 @@
 	    
 	    <!-- All JavaScript at the bottom, except these. -->
 		{% block priority_js %}
-			<script type="text/javascript" src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>	
-    		<script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
    		 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
 		{% endblock %}
 
@@ -240,8 +238,8 @@
 	                        </li>
 	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
 	                        </li>
-	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
-	                        </li>
+	                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
+	                        </li> -->
 	                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("logout") }}">Salir</a>
 	                        </li>
 		            </ul>
@@ -298,7 +296,7 @@
                                     <ul>
 									  <li><a href="{{ uri_for("materialize-reports") }}">Mis reportes</a></li>
 				                      <li><a href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a></li>
-				                      <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li>
+				                      <!-- <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li> -->
 				                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
                                     </ul>
                                 </div>
@@ -709,18 +707,6 @@
 	    			var is_Safari = false, not_Chrome = false;
 					$(function(){						
 
-						$('a[href*=#]:not([href=#])').click(function() {
-						    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
-						      var target = $(this.hash);
-						      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
-						      if (target.length) {
-						        $('html,body').animate({
-						          scrollTop: target.offset().top
-						        }, 2000);
-						        return false;
-						      }
-						    }
-						});
 					    $('.button-collapse').sideNav({
 					      edge: 'right'
 					    });

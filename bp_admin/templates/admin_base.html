@@ -221,6 +221,10 @@
                 .picker__close, .picker__today{
                     color: {{brand_color}}!important;
                 }
+
+                .cartodb-logo{
+                    display: none!important
+                }
              
             </style>
             {% block page_css %}{% endblock %}
@@ -234,8 +238,6 @@
         
         <!-- All JavaScript at the bottom, except these. -->
         {% block priority_js %}
-            <script src="/boilerplate/webcomponents/bower_components/webcomponentsjs/webcomponents.min.js"></script>    
-            <script type="text/javascript" src="/boilerplate/js/libs/modernizr-2.7.1.min.js"></script>
             <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.10/webfont.js"></script>
         {% endblock %}
 

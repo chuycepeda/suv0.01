@@ -2241,7 +2241,7 @@ class MaterializeSettingsEmailRequestHandler(BaseHandler):
         if not self.form.validate():
             _message = _(messages.saving_error)
             self.add_message(_message, 'danger')
-            return self.redirect_to('materialize-settings-account')
+            return self.redirect_to('materialize-settings-profile')
         new_email = self.form.new_email.data.strip()
         password = self.form.password.data.strip()
 
@@ -2263,7 +2263,7 @@ class MaterializeSettingsEmailRequestHandler(BaseHandler):
                     if aUser is not None:
                         message = _("Sorry, email %s is already in use." % new_email)
                         self.add_message(message, 'danger')
-                        return self.redirect_to('materialize-settings-account')
+                        return self.redirect_to('materialize-settings-profile')
 
                     # send email
                     subject = _(messages.email_emailchanged_subject)
@@ -2313,11 +2313,11 @@ class MaterializeSettingsEmailRequestHandler(BaseHandler):
                     # display successful message
                     msg = _(messages.emailchanged_success)
                     self.add_message(msg, 'success')
-                    return self.redirect_to('materialize-settings-account')
+                    return self.redirect_to('materialize-settings-profile')
 
                 else:
                     self.add_message(_(messages.emailchanged_error), "warning")
-                    return self.redirect_to('materialize-settings-account')
+                    return self.redirect_to('materialize-settings-profile')
 
 
             except (InvalidAuthIdError, InvalidPasswordError), e:
@@ -2325,7 +2325,7 @@ class MaterializeSettingsEmailRequestHandler(BaseHandler):
                 # the BaseHandler.dispatcher
                 message = _(messages.password_wrong)
                 self.add_message(message, 'danger')
-                return self.redirect_to('materialize-settings-account')
+                return self.redirect_to('materialize-settings-profile')
 
         except (AttributeError, TypeError), e:
             login_error_message = _(messages.expired_session)
@@ -2394,7 +2394,7 @@ class MaterializeSettingsPasswordRequestHandler(BaseHandler):
 
         if not self.form.validate():
             self.add_message(_(messages.passwords_mismatch), 'danger')
-            return self.redirect_to('materialize-settings-account')
+            return self.redirect_to('materialize-settings-profile')
 
         current_password = self.form.current_password.data.strip()
         password = self.form.password.data.strip()
@@ -2445,13 +2445,13 @@ class MaterializeSettingsPasswordRequestHandler(BaseHandler):
                 #Login User
                 self.auth.get_user_by_password(user.auth_ids[0], password)
                 self.add_message(_(messages.passwordchange_success), 'success')
-                return self.redirect_to('materialize-settings-account')
+                return self.redirect_to('materialize-settings-profile')
             except (InvalidAuthIdError, InvalidPasswordError), e:
                 # Returns error message to self.response.write in
                 # the BaseHandler.dispatcher
                 message = _(messages.password_wrong)
                 self.add_message(message, 'danger')
-                return self.redirect_to('materialize-settings-account')
+                return self.redirect_to('materialize-settings-profile')
         except (AttributeError, TypeError), e:
             login_error_message = _(messages.expired_session)
             self.add_message(login_error_message, 'danger')
@@ -2482,12 +2482,12 @@ class MaterializeSettingsDeleteRequestHandler(BaseHandler):
         else:
             _message = _(messages.captcha_error)
             self.add_message(_message, 'danger')
-            return self.redirect_to('materialize-settings-account')
+            return self.redirect_to('materialize-settings-profile')
 
         if not self.form.validate():
             message = _(messages.password_wrong)
             self.add_message(message, 'danger')
-            return self.redirect_to('materialize-settings-account')
+            return self.redirect_to('materialize-settings-profile')
 
         password = self.form.password.data.strip()
 
@@ -2522,14 +2522,14 @@ class MaterializeSettingsDeleteRequestHandler(BaseHandler):
                 else:
                     message = _(messages.password_wrong)
                     self.add_message(message, 'danger')
-                    return self.redirect_to('materialize-settings-account')
+                    return self.redirect_to('materialize-settings-profile')
 
             except (InvalidAuthIdError, InvalidPasswordError), e:
                 # Returns error message to self.response.write in
                 # the BaseHandler.dispatcher
                 message = _(messages.password_wrong)
                 self.add_message(message, 'danger')
-                return self.redirect_to('materialize-settings-account')
+                return self.redirect_to('materialize-settings-profile')
 
         except (AttributeError, TypeError), e:
             login_error_message = _(messages.expired_session)

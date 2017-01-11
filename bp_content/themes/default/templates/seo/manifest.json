@@ -1,0 +1,16 @@
+{
+  "short_name": "SmartUNO",
+  "name": "SmartUNO App v0.1",
+  "icons": [
+    {
+      "src": "http://one-smart-city-demo.appspot.com/default/materialize/images/app.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EBEBEB",
+  "theme_color": "#EBEBEB"
+}

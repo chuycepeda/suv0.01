@@ -4,424 +4,603 @@
 {% block title %}<title>{{app_name}} » Mi Perfil</title>{% endblock %}
    
 {% block page_css %}
-	<style shim-shadowdom>
-	    paper-tabs {
-	      background-color: transparent;
-	      color: #fff;
-	      cursor:pointer;
-	    }
-
-	    paper-tabs[noink][nobar] paper-tab.core-selected {
-	      color: #fff;      
-	    }
-
-	    paper-tabs::shadow #selectionBar {
-	      background-color: rgba(255, 255, 255, 1);
-	    }
-
-	    paper-tabs paper-tab::shadow #ink {
-	      color: rgba(255, 255, 255, 1);
-	    }
-
-	    paper-tab {
-	      cursor:pointer;
-	    }
-  	</style>
-{% endblock %}
-
-{% block page_components %}
-    <link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import">
-    <link href="/boilerplate/webcomponents/bower_components/google-signin/google-signin.html"rel="import" >
+    <style>
+        #avatar-container{
+            width: 250px;
+            height: 250px;
+            border-radius:50%;
+        }
+        .tabs .indicator{
+            background-color: {{brand_secondary_color}}!important;
+        }
+              
+    </style>
+    <link href="/{{theme}}/materialize/js/plugins/sweetalert/dist/sweetalert.css" type="text/css" rel="stylesheet" media="screen,projection">
 {% endblock %}
 
 {% block header_content %}
   <div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
-	<div class="section no-pad-bot">
-	  <div class="container">
-	    <h2 class="header center brand-color-text" style="margin-top:85px;">Configurar mi perfil</h2>        
-	  </div>
-	</div>
+    <div class="section no-pad-bot">
+      <div class="container">
+        <h2 class="header center brand-color-text" style="margin-top:25px;">Mi perfil</h2>        
+      </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block body_content %}
-	<div class="section">
-		<div class="container">
-    		<h3 class="col s12 m8 offset-m2 grey-text" style="font-weight: 200; padding-bottom: 40px; padding-top: 40px;">Llena los siguientes datos, con ellos podremos brindarte el seguimiento a tus reportes.</h3>
-    		<!--breadcrumbs start-->
-    	    <div id="breadcrumbs-wrapper" class="">
-    	      <div class="container" style="overflow: hidden;">
-    	        <paper-tabs id="scrollableTabs" selected="0" class="brand-color" scrollable style="margin-left: -20px; width: 110%;   margin-top: 5px;">
-    	          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-profile") }}', '_top')">Perfil</paper-tab>
-    	          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-referrals") }}', '_top')">Recomendaciones</paper-tab>
-    	          <paper-tab onclick="window.open('{{ uri_for("materialize-settings-account") }}', '_top')">Cuenta</paper-tab>
-                </paper-tabs>
-    	      </div>
-    	    </div>
-	    <!--breadcrumbs end-->
-    		<div class="section">
-        		<div class="row brand-color-text text-darken-4">
-        	        <form class="col s11" id="form_edit_profile" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
-        				<div class="col s12 m3 center" style="margin-top:8px;">
-        		                <div class="form-group">
-        		                    <label class="controls">
-        		                    <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Clic para subir imagen.</span>
-        		                        {% if has_picture %}
-        		                        	<img id="blah" src="{{user_picture_url}}" alt="your image" class="circle responsive-img valign z-depth-1" style="max-height:150px; cursor:pointer;border: 1px solid #005761;"/>
-        		                        {% else %}
-        		                        	<img id="blah" src="" alt="your image" class="circle responsive-img valign valign z-depth-1" style="max-height:150px; cursor:pointer;display:none;"/>
-        		                        	<div id="initial" class="circle red lighten-1" style="width: 110px;   height: 110px; display: inline-block;   vertical-align: middle;   text-align: center;   font-size: 1.5rem;   color: #fff;   font-weight: 300; position: relative; cursor:pointer;"><span style="position: absolute;top: 25px;left: 39px;font-size: 40px;">{{ name_i }}</span></div>
-        		                        {% endif %}
-        		                        <input class="btn btn-success" type='file' id="picture" name="picture" style="display:none;"/>
-        		                    </label>
-        		                </div> 
-
-                                {% if google_clientID != '' or facebook_appID != '' %}
-                                <div class="divider" style="margin-bottom: 10px;"></div>
-                                <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Conecta tus redes sociales.</span>
-                                {% endif %}     
-                                {% if google_clientID != '' %}
-                                <div class="row" style="margin-bottom: 14px; margin-top: 14px;">
-                                    <google-signin  class="left" clientId="{{google_clientID}}" scopes="https://www.googleapis.com/auth/plus.me" labelSignin="Connect profile" labelSignout="Disconnect"width="wide" height="tall" style="max-width:290px;"></google-signin>
-                                </div>      
-                                {% endif %}     
-                                {% if facebook_appID != '' %}
+    <div class="section">
+        <div class="container"> 
+            
+            <!-- TAB MENU -->
+            <div class="row">
+                <div class="col s12">
+                    <ul class="tabs white">
+                        <li class="tab col s4" id="map-tab">
+                            <a class="brand-color-text" href="#test1">
+                                <span class="hide-on-med-and-down">Perfil</span>
+                                <i class="mdi-action-account-circle hide-on-large-only" style="font-size: 2rem;"></i>
+                            </a>
+                        </li>
+                                                
+                        <li class="tab col s4">
+                            <a class="brand-color-text" href="#test2">
+                                <span class="hide-on-med-and-down">Contraseña</span>
+                                <i class="mdi-action-lock-outline hide-on-large-only" style="font-size: 2rem;"></i>
+                            </a>
+                        </li>
+                        <li class="tab col s4">
+                            <a class="brand-color-text" href="#test3">
+                                <span class="hide-on-med-and-down">Correo</span>
+                                <i class="mdi-communication-email hide-on-large-only" style="font-size: 2rem;"></i>
+                            </a>
+                        </li>
+                        <li class="tab col s4">
+                            <a class="brand-color-text" href="#test4">
+                                <span class="hide-on-med-and-down">Cuenta</span>
+                                <i class="mdi-action-delete hide-on-large-only red-text" style="font-size: 2rem;"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>      
+            <!-- END TAB MENU -->
+            
+            
+            <!-- TAB CONTENTS -->
+            <div class="row" id="test1">
+                
+                <form class="col s12" id="form_edit_profile" action="{{ url|safe }}" enctype="multipart/form-data" method="post">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <input type='file' id="picture" name="picture" hidden/>
+                    <!-- LEFT PANEL -->
+                    <div class="col s12 m2">
+                    
+                        <div id="profile-page-header" class="card" style="height: 240px">
+                            <div class="card-image waves-effect waves-block waves-light" style="height: 160px">
+                                <img class="" src="/{{theme}}/materialize/images/user-bg-simple.jpg" alt="user background">             
+                            </div>
+                            
+                            <figure id="avatar-container" class="card-profile-image" style="width:160px;top:50px;">
+                                {% if has_picture %}
+                                <img id="blah" src="/media/serve/profile/{{user_id}}/" class="circle z-depth-2 responsive-img pp">
+                                {% else %}
+                                <img id="blah" class="circle responsive-img z-depth-1" style="max-height:160px;cursor:pointer;display:none;"/>
+                                <img data-name="{{ name_i }}" data-font-weight="100" data-back-color="{{brand_secondary_color}}" data-font-size="45" class="circle avatar-initial pp"/>
+                                <span class="ultra-small" style="font-family: roboto-light;">Click to update.</span> 
+                                {% endif %}                    
+                            </figure>
+                            
+                            <div class="card-content" style="margin-top:-20px">
+                                <div class="row">                    
+                                    <div class="col s7 offset-s5" style="display: none;">
+                                        <h4 class="card-title grey-text text-darken-4" style="font-size: 20px;">Click picture to update</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+              
+                        <!-- {% if google_clientID != '' or facebook_appID != '' %}
+                        <div class="divider" style="margin-bottom: 10px;"></div>
+                        <span class="col s12" style="font-size: 1.1em;font-family: roboto-light;margin-bottom: 10px;">Connect your social profiles.</span>
+                        {% endif %}     
+                        {% if google_clientID != '' %}
+                        <div class="row" style="margin-bottom: 14px; margin-top: 14px;">
+                            <google-signin  class="left" clientId="{{google_clientID}}" scopes="https://www.googleapis.com/auth/plus.me" labelSignin="Connect profile" labelSignout="Disconnect"width="wide" height="tall" style="max-width:290px;"></google-signin>
+                        </div>      
+                        {% endif %}     
+                        {% if facebook_appID != '' %}
+                        <div class="col s12">
+                            <div class="left fb-login-button" style="margin-left: -18px;" data-max-rows="3" data-size="large" data-show-faces="true" data-auto-logout-link="true" scope="public_profile,user_friends,email" onlogin="checkFBLogin();"></div>
+                        </div>      
+                        {% endif %}  -->      
+                    
+                    </div>
+                    
+                    <!-- RIGHT PANEL -->
+                    <div class="col s12 m10">
+                        <div class="card-panel">
+                            <div class="row">
                                 <div class="col s12">
-                                    <div class="left fb-login-button" style="margin-left: -18px;" data-max-rows="3" data-size="large" data-show-faces="true" data-auto-logout-link="true" scope="public_profile,user_friends,email" onlogin="checkFBLogin();"></div>
-                                </div>      
-                                {% endif %}                        
-        				</div>
+                                    <h4 class="header2">Tu información personal</h4>
+                                    
+                                    <div class="row">
+                                          <div class="input-field col s12 m6 l4">
+                                            <input id="name" name="name" type="text" value="{{name}}">
+                                            <label for="name">Nombre</label>
+                                          </div>
+                                        
+                                          <div class="input-field col s12 m6 l4">
+                                            <input id="last_name" name="last_name" type="text" value="{{last_name}}">
+                                            <label for="last_name">Apellido Paterno</label>
+                                          </div>
+                                        
+                                          <div class="input-field col s12 m6 l4">
+                                            <input id="last_name2" name="last_name2" type="text" value="{{last_name2}}">
+                                            <label for="last_name2">Apellido Materno</label>
+                                          </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="input-field col s12 m6">
+                                            <input id="birth" name="birth" type="date" class="datepicker" value="{{birth}}">
+                                            <label for="birth">Nacimiento</label>
+                                          </div>
+
+                                          <div class="input-field col s12 m6">
+                                            <input id="phone" name="phone" type="tel" value="{{phone}}">
+                                            <label for="phone">Teléfono</label>
+                                          </div>
+                                    </div>
+
+                                    <div class="row">
+                                          <div class="input-field col s12 m6">
+                                            <select id="gender" name="gender">
+                                              {% if gender == '' or gender == 'male' %}
+                                                <option value="male" selected>Masculino</option>
+                                                <option value="female">Femenino</option>
+                                              {% else %}
+                                                <option value="male">Masculino</option>
+                                                <option value="female" selected>Femenino</option>
+                                              {% endif %}
+                                            </select>
+                                            <label>Género</label>
+                                          </div>                        
+                                          <div class="input-field col s12 m6">
+                                            <select id="scholarity" name="scholarity">
+                                              {% if scholarity == '' or scholarity == 'elementary' %}
+                                                <option value="elementary" selected>Primaria</option>
+                                                <option value="middleschool">Secundaria</option>
+                                                <option value="highschool">Bachillerato</option>
+                                                <option value="technical">Carrera Técnica</option>
+                                                <option value="undergraduate">Profesional</option>
+                                                <option value="graduate">Posgrado</option>
+                                              {% elif scholarity == 'middleschool' %}
+                                                <option value="elementary">Primaria</option>
+                                                <option value="middleschool" selected>Secundaria</option>
+                                                <option value="highschool">Bachillerato</option>
+                                                <option value="technical">Carrera Técnica</option>
+                                                <option value="undergraduate">Profesional</option>
+                                                <option value="graduate">Posgrado</option>
+                                              {% elif scholarity == 'highschool' %}
+                                                <option value="elementary">Primaria</option>
+                                                <option value="middleschool">Secundaria</option>
+                                                <option value="highschool" selected>Bachillerato</option>
+                                                <option value="technical">Carrera Técnica</option>
+                                                <option value="undergraduate">Profesional</option>
+                                                <option value="graduate">Posgrado</option>
+                                              {% elif scholarity == 'technical' %}
+                                                <option value="elementary">Primaria</option>
+                                                <option value="middleschool">Secundaria</option>
+                                                <option value="highschool">Bachillerato</option>
+                                                <option value="technical" selected>Carrera Técnica</option>
+                                                <option value="undergraduate">Profesional</option>
+                                                <option value="graduate">Posgrado</option>
+                                              {% elif scholarity == 'undergraduate' %}
+                                                <option value="elementary">Primaria</option>
+                                                <option value="middleschool">Secundaria</option>
+                                                <option value="highschool">Bachillerato</option>
+                                                <option value="technical">Carrera Técnica</option>
+                                                <option value="undergraduate" selected>Profesional</option>
+                                                <option value="graduate">Posgrado</option>
+                                              {% elif scholarity == 'graduate' %}
+                                                <option value="elementary">Primaria</option>
+                                                <option value="middleschool">Secundaria</option>
+                                                <option value="highschool">Bachillerato</option>
+                                                <option value="technical">Carrera Técnica</option>
+                                                <option value="undergraduate">Profesional</option>
+                                                <option value="graduate" selected>Posgrado</option>
+                                              {% endif %}
+                                            </select>
+                                            <label>Nivel de estudios</label>
+                                          </div>
+                                    </div>
+
+                                    <div class="input-field col s12">
+                                        <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="codeAddress('from')"></i>
+                                        <input id="address_from" name="address_from" type="text" class="validate" value="{{address_from}}" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) codeAddress('from');">
+                                        <label for="address_from" class="active">Dirección</label>
+                                        <div id="map" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
+                                    </div>                
+                                    <input type="text" id ="address_from_coord" name="address_from_coord" value="{{address_from_coord}}" hidden>
+                                    <div class="row">
+                                        <div class="input-field col s12 ">
+                                          <a class="waves-effect waves-light brand-color white-text btn right sbmt" id="edit_profile" >Actualizar
+                                            <i class="mdi-content-send right"></i>
+                                          </a>                            
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>                      
+                        </div>
+                    </div>
+                
+                </form>
+            
+            </div>
+            
+            <div class="row" id ="test2">
+                
+                <form class="col s12" id="form_edit_password" action="{{ uri_for("materialize-settings-password") }}" method="post" >
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <div class="card-panel">
+                            <div class="row">
+                                <div class="col s12">
+                  
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <i class="mdi-action-lock-outline prefix brand-color-text"></i>
+                                      <input id="current_password" name="current_password" type="password">
+                                      <label for="current_password">Contraseña actual</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <i class="mdi-action-lock prefix brand-color-text"></i>
+                                      <input id="password" name="password" type="password">
+                                      <label for="password">Nueva contraseña</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <i class="mdi-communication-vpn-key prefix brand-color-text"></i>
+                                      <input id="c_password" name="c_password" type="password">
+                                      <label for="c_password">Confirmar nueva contraseña</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="input-field col s12">
+                                        <a class="waves-effect waves-light brand-color white-text btn right sbmt" id="edit_password">Change password
+                                          <i class="mdi-content-send right"></i>
+                                        </a>
+                                      </div>
+                                  </div>
+                                
+                                </div>
+                            </div>
+                        </div>
+                </form>
+                
+            </div>
+                
+            <div class="row" id ="test3">
+                
+                <form class="col s12" id="form_edit_email" action="{{ uri_for("materialize-settings-email") }}" method="post" >
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <div class="card-panel">
+                            <div class="row">
+                                <div class="col s12">
+                                  <div class="row" style="margin-left:0px;">
+                                    <div class="input-field col s12">
+                                      <i class="mdi-communication-email prefix brand-color-text brand-color-text text-darken-3"></i>
+                                      <input id="current_email" type="email" value="{{email}}" disabled>
+                                      <label for="current_email">Correo actual</label>
+                                    </div>
+                                </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <i class="mdi-communication-email prefix brand-color-text"></i>
+                                      <input placeholder="{{email}}" id="new_email" name="new_email" type="email" class="validate">
+                                      <label for="new_email">Nueva dirección de correo</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <i class="mdi-action-lock-outline prefix brand-color-text"></i>
+                                      <input id="password" name="password" type="password" class="required">
+                                      <label for="password">Escribe tu contraseña</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="input-field col s12">
+                                        <a class="waves-effect waves-light brand-color white-text btn right sbmt" id="edit_email">Actualizar
+                                          <i class="mdi-content-send right"></i>
+                                        </a>
+                                      </div>
+                                  </div>
+                                
+                                </div>
+                            </div>
+                        </div>
+                </form>
+                
+            </div>
+            
+            <div class="row" id ="test4">
+                
+                <form class="col s12" id="form_delete_account" action="{{ uri_for("materialize-settings-delete") }}" method="post">
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <div class="card-panel">
+                            <div class="row">
+                                <div class="col s12">
+                  
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <i class="mdi-action-lock-outline prefix red-text"></i>
+                                      <input id="password" name="password" type="password">
+                                      <label for="password">Escribe tu contraseña</label>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="input-field col s12">
+                                      <div class="controls" id="captcha">
+                                          {{captchahtml | safe}}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="input-field col s12">
+                                        <a class="btn red waves-effect waves-light right sbmt" id="delete_account">Eliminar para siempre
+                                          <i class="mdi-content-send right"></i>
+                                        </a>
+                                      </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                </form>
+            
+            </div>
         
-        	            <div class="col s12 m9">
-        		            <div class="">
-        		                <div class="row">
-        		                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-        		                    <div class="row">
-        		                      <div class="input-field col s12 m6 l4">
-        		                        <input id="name" name="name" type="text" value="{{name}}">
-        		                        <label for="name">Nombre</label>
-        		                      </div>
-        		                    
-                                      <div class="input-field col s12 m6 l4">
-        		                        <input id="last_name" name="last_name" type="text" value="{{last_name}}">
-        		                        <label for="last_name">Apellido Paterno</label>
-        		                      </div>
-        		                    
-        		                      <div class="input-field col s12 m6 l4">
-        		                        <input id="last_name2" name="last_name2" type="text" value="{{last_name2}}">
-        		                        <label for="last_name2">Apellido Materno</label>
-        		                      </div>
-        		                      
-        		                    </div>
-        		                    <div class="row">
-        		                      
-        		                      <div class="input-field col s12 m6">
-        		                        <input id="birth" name="birth" type="date" class="datepicker" value="{{birth}}">
-        		                        <label for="birth">Nacimiento</label>
-        		                      </div>
-
-        		                      <div class="input-field col s12 m6">
-        		                        <input id="phone" name="phone" type="tel" value="{{phone}}">
-        		                        <label for="phone">Teléfono</label>
-        		                      </div>
-        		                              		                    
-        		                    </div>
-        		                    
-        		                    <div class="row">
-        		                      
-        		                      <div class="input-field col s12 m6">
-        		                        <select id="gender" name="gender">
-        		                          {% if gender == '' or gender == 'male' %}
-        		                          	<option value="male" selected>Masculino</option>
-        		                          	<option value="female">Femenino</option>
-        		                          {% else %}
-        		                          	<option value="male">Masculino</option>
-        		                          	<option value="female" selected>Femenino</option>
-        		                          {% endif %}
-        		                        </select>
-        		                        <label>Género</label>
-        		                      </div>                        
-        		                      <div class="input-field col s12 m6">
-        		                        <select id="scholarity" name="scholarity">
-        		                          {% if scholarity == '' or scholarity == 'elementary' %}
-        		                          	<option value="elementary" selected>Primaria</option>
-        		                          	<option value="middleschool">Secundaria</option>
-        		                          	<option value="highschool">Bachillerato</option>
-        		                          	<option value="technical">Carrera Técnica</option>
-        		                          	<option value="undergraduate">Profesional</option>
-        		                          	<option value="graduate">Posgrado</option>
-        		                          {% elif scholarity == 'middleschool' %}
-        		                          	<option value="elementary">Primaria</option>
-        		                          	<option value="middleschool" selected>Secundaria</option>
-        		                          	<option value="highschool">Bachillerato</option>
-        		                          	<option value="technical">Carrera Técnica</option>
-        		                          	<option value="undergraduate">Profesional</option>
-        		                          	<option value="graduate">Posgrado</option>
-        		                          {% elif scholarity == 'highschool' %}
-        		                          	<option value="elementary">Primaria</option>
-        		                          	<option value="middleschool">Secundaria</option>
-        		                          	<option value="highschool" selected>Bachillerato</option>
-        		                          	<option value="technical">Carrera Técnica</option>
-        		                          	<option value="undergraduate">Profesional</option>
-        		                          	<option value="graduate">Posgrado</option>
-        		                          {% elif scholarity == 'technical' %}
-        		                          	<option value="elementary">Primaria</option>
-        		                          	<option value="middleschool">Secundaria</option>
-        		                          	<option value="highschool">Bachillerato</option>
-        		                          	<option value="technical" selected>Carrera Técnica</option>
-        		                          	<option value="undergraduate">Profesional</option>
-        		                          	<option value="graduate">Posgrado</option>
-        		                          {% elif scholarity == 'undergraduate' %}
-        		                          	<option value="elementary">Primaria</option>
-        		                          	<option value="middleschool">Secundaria</option>
-        		                          	<option value="highschool">Bachillerato</option>
-        		                          	<option value="technical">Carrera Técnica</option>
-        		                          	<option value="undergraduate" selected>Profesional</option>
-        		                          	<option value="graduate">Posgrado</option>
-        		                          {% elif scholarity == 'graduate' %}
-        		                          	<option value="elementary">Primaria</option>
-        		                          	<option value="middleschool">Secundaria</option>
-        		                          	<option value="highschool">Bachillerato</option>
-        		                          	<option value="technical">Carrera Técnica</option>
-        		                          	<option value="undergraduate">Profesional</option>
-        		                          	<option value="graduate" selected>Posgrado</option>
-        		                          {% endif %}
-        		                        </select>
-        		                        <label>Nivel de estudios</label>
-        		                      </div>
-        		                    
-        		                    </div>
-
-        		                    
-        		                    <div class="input-field col s12">
-        			                    <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="codeAddress('from')"></i>
-        			                    <input id="address_from" name="address_from" type="text" class="validate" value="{{address_from}}" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) codeAddress('from');">
-        			                    <label for="address_from" class="active">Dirección</label>
-        			                    <div id="map" style="width:100%; height: 500px; top: 35px; border-radius: 4px; margin-bottom:60px"></div>
-        			                </div>                
-        			                <input type="text" id ="address_from_coord" name="address_from_coord" value="{{address_from_coord}}" hidden>
-        		                    <div class="row">
-        		                        <div class="input-field col s12 ">
-        		                          <a class="waves-effect waves-light brand-color white-text btn right" id="submit_profile_form" >Actualizar
-        		                            <i class="mdi-content-send right"></i>
-        		                          </a>	                          
-        		                        </div>
-        		                    </div>
-        		                </div>
-        		            </div>
-        		        </div>
-                    </form>
-        	    </div>
-    	    </div>
-		</div>
-   	</div>
+        </div>
+    </div>
 {% endblock %}
-
 
 {% block footer_content %}
 {% endblock %}
 
-<!-- ADD PAGE SCRIPT ELEMENTS-->
 {% block page_scripts %}
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
-	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
-	<script type="text/javascript">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+    <script src="/{{theme}}/materialize/js/cartodb.js"></script>
+    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/initial/initial.js"></script>
+    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/sweetalert/dist/sweetalert.min.js"></script> 
+    <script type="text/javascript">
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    $('.pp').css('opacity',0);
+                        $('#avatar-container').css({
+                            'background-image': 'url('+e.target.result+')',
+                            'width': '160px',
+                            'height': '160px',
+                            'border-radius':'0%',
+                            'background-size': '155px',
+                            'background-repeat': 'no-repeat',
+                            'background-position': '50%'
+                        });     
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        $("#picture").change(function(){
+            readURL(this);
+        });        
+        
+        $('.pp').click(function(){$('#picture').click()});
 
-		
+        /* MAPS RELATED */
+        var mapCenter = [{{lat}},{{lng}}];
+        var map;
+        var sublayers = [];
+        google.maps.event.addDomListener(window,'load', init);
+        var geocoder = new google.maps.Geocoder();
+        var gmarker = null;
+        var gmarkers = [];
 
-		function readURL(input) {
-	        if (input.files && input.files[0]) {
-	            var reader = new FileReader();
-	            
-	            reader.onload = function (e) {
-	                $('#blah').attr('src', e.target.result);
-	                $('#initial').hide();
-	                $('#blah').show();
-	            }
-	            
-	            reader.readAsDataURL(input.files[0]);
-	            // $( '#user_picture_form' ).submit();
-	        }
-	    }
-	    
-	    $("#picture").change(function(){
-	        readURL(this);
-	    });
+        function markerFitBounds() {
+            var bounds = new google.maps.LatLngBounds();
+            for(var i=0; i<gmarkers.length; i++) {
+                bounds.extend( gmarkers[i].getPosition() );
+            }
+            map.fitBounds(bounds);
+        }
+            
+        function dropMarker (loc) {
+            if (gmarker == null){
+                var color = "{{brand_color}}";
+                gmarker = new google.maps.Marker({
+                        animation: google.maps.Animation.DROP,
+                        position: loc,
+                        map: map,
+                        draggable: true,
+                        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+color.substr(1)
+                });
+                google.maps.event.addListener(gmarker,'dragend',function(event) {
+                        codeAddress(event.latLng);
+                });        
+            }else{
+                gmarker.setPosition(loc);
+            }
+        }
 
-	    /* MAPS RELATED */
-		var mapCenter = [{{lat}},{{lng}}];
-		var map;
-		var sublayers = [];
-		google.maps.event.addDomListener(window,'load', init);
-		var geocoder = new google.maps.Geocoder();
-	    var gmarker = null;
-	    var gmarkers = [];
+        function init(){
+            
+            /*  MAP  */
+            var mapOptions = {
+                center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+                zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
+                //minZoom:5,
+                zoomControl: true,
+                zoomControlOptions: {
+                    style: google.maps.ZoomControlStyle.SMALL,
+                    position: google.maps.ControlPosition.LEFT_BOTTOM   
+                },
+                mapTypeControl: true,
+                mapTypeControlOptions: { 
+                    mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
+                },
+                scrollwheel: false,
+                streetViewControl: true,
+                StreetViewControlOptions: {
+                    position: google.maps.ControlPosition.BOTTOM_LEFT
+                },
 
-	    function markerFitBounds() {
-	        var bounds = new google.maps.LatLngBounds();
-	        for(var i=0; i<gmarkers.length; i++) {
-	            bounds.extend( gmarkers[i].getPosition() );
-	        }
-	        map.fitBounds(bounds);
-	    }
-	        
-	    function dropMarker (loc) {	                
-	        if (gmarker == null){
-	        	var color = "{{brand_color}}";
-	            gmarker = new google.maps.Marker({
-	        			animation: google.maps.Animation.DROP,
-	        			position: loc,
-	        			map: map,
-	        			draggable: true,
-	        			icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+color.substr(1)
-	            });
-	            google.maps.event.addListener(gmarker,'dragend',function(event) {
-	                    codeAddress(event.latLng);
-	            });        
-	        }else{
-	            gmarker.setPosition(loc);
-	        }
+                panControl:false,
+                backgroundColor: 'rgb(249, 249, 249)',
+                rotateControl:true,
+                overviewMapControl:true
+            };
+            map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            
+            google.maps.event.addDomListener(window, 'resize', function() {
+                //map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+                window.setTimeout(function() {
+                      map.panTo({lat: mapCenter[0], lng: mapCenter[1]});
+                }, 400);                            
+                
+            });
 
-	    }
+            //From field
+            var address_from = document.getElementById('address_from');
+            var autocomplete_from = new google.maps.places.Autocomplete(address_from);
+            autocomplete_from.bindTo('bounds', map);
+            google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+                //address_from.className = '';
+                var place = autocomplete_from.getPlace();
+                if (!place.geometry) {
+                  // Inform the user that the place was not found and return.
+                  //input.className = 'No se encontró la ubicación';
+                  return;
+                }
+                // If the place has a geometry, then present it on a map.
+                if (place.geometry.viewport) {
+                  map.fitBounds(place.geometry.viewport);
+                  dropMarker(place.geometry.location);
+                }else{
+                  map.setCenter(place.geometry.location);
+                  map.setZoom(17);
+                  dropMarker(place.geometry.location);
+                }
+            });                                               
+            
+            google.maps.event.addListener(map, 'click', function(event) {
+                console.log(event.latLng);
+                dropMarker(event.latLng);
+                codeAddress(event.latLng);
+            });
+                            
+            if(document.getElementById('address_from_coord').value){
+                var coof = document.getElementById('address_from_coord').value;
+                var m1 = coof.split(',').map(Number);            
+                var latlng = new google.maps.LatLng(m1[0],m1[1]);
+                dropMarker (latlng);
+            }   
 
-	    function init(){
-			
-			/*  MAP  */
-			var mapOptions = {
-				center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
-				zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
-				//minZoom:5,
-				zoomControl: true,
-				zoomControlOptions: {
-					style: google.maps.ZoomControlStyle.SMALL,
-					position: google.maps.ControlPosition.LEFT_BOTTOM	
-				},
-				mapTypeControl: true,
-				mapTypeControlOptions: { 
-					mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
-				},
-				scrollwheel: false,
-				streetViewControl: true,
-				StreetViewControlOptions: {
-					position: google.maps.ControlPosition.BOTTOM_LEFT
-				},
+            // cartodb
+            var layerSource = {
+                user_name: '{{cartodb_user}}',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
+                    cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
+                }]
+            };
+            cartodb.createLayer(map,layerSource)
+            .on('done', function(layer) {
+                map.overlayMapTypes.setAt(0, layer);
+                for (var i = 0; i < layer.getSubLayerCount(); i++) {
+                   sublayers[i] = layer.getSubLayer(i);
+                   console.log("Congrats, you added sublayer #" + i + "!");
+                }
+            })
+            .error(function(err) {
+                console.log("error: " + err);
+            });    
+        }
 
-				panControl:false,
-				backgroundColor: 'rgb(249, 249, 249)',
-				rotateControl:true,
-				overviewMapControl:true
-			};
-			map = new google.maps.Map(document.getElementById('map'), mapOptions);
-			
-			google.maps.event.addDomListener(window, 'resize', function() {
-	            //map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
-	            window.setTimeout(function() {
-	                  map.panTo({lat: mapCenter[0], lng: mapCenter[1]});
-	            }, 400);                            
-	            
-	        });
-			
-			/* ADDRESS BAR METHODS */
-			function codeAddress(input) {
-		        var address, obj;
-		        if (typeof(input) === 'string') {
-		            address = document.getElementById('address_'+input).value;
-		            obj = { 'address': address };
-		        }else{
-		            address = input;
-		            obj = { 'location': address};
-		        }
-		        geocoder.geocode( obj, function(results, status) {
-		            if (status == google.maps.GeocoderStatus.OK) {
-		                
-		                if (typeof(input) === 'string') {
-		                    map.setCenter(results[0].geometry.location);
-		                    switch (results[0].geometry.location_type){
-		                        case 'ROOFTOP': map.setZoom(17); break;
-		                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
-		                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
-		                        case 'APPROXIMATE': map.setZoom(13); break;
-		                    }
-		                    dropMarker(results[0].geometry.location);
-		                }else{
-		                    if (results[1]) {
-		                        console.log(results);
-		                        document.getElementById('address_from').value = results[1].formatted_address;
-		                    } else {
-		                        window.alert('No results found');
-		                    }
-		                }
-		            
-		            } else {
-		                alert('Geocode was not successful for the following reason: ' + status);
-		            }
-		        });
-		    }
+        /* ADDRESS BAR METHODS */
+        function codeAddress(input) {
+            var address, obj;
+            if (typeof(input) === 'string') {
+                address = document.getElementById('address_'+input).value;
+                obj = { 'address': address };
+            }else{
+                address = input;
+                obj = { 'location': address};
+            }
+            geocoder.geocode( obj, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    
+                    if (typeof(input) === 'string') {
+                        map.setCenter(results[0].geometry.location);
+                        switch (results[0].geometry.location_type){
+                            case 'ROOFTOP': map.setZoom(17); break;
+                            case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                            case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                            case 'APPROXIMATE': map.setZoom(13); break;
+                        }
+                        dropMarker(results[0].geometry.location);
+                    }else{
+                        if (results[1]) {
+                            console.log(results);
+                            document.getElementById('address_from').value = results[1].formatted_address;
+                        } else {
+                            window.alert('No results found');
+                        }
+                    }
+                
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
 
-			//From field
-			var address_from = document.getElementById('address_from');
-			var autocomplete_from = new google.maps.places.Autocomplete(address_from);
-			autocomplete_from.bindTo('bounds', map);
-			google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
-			    //address_from.className = '';
-			    var place = autocomplete_from.getPlace();
-			    if (!place.geometry) {
-			      // Inform the user that the place was not found and return.
-			      //input.className = 'No se encontró la ubicación';
-			      return;
-			    }
-			    // If the place has a geometry, then present it on a map.
-			    if (place.geometry.viewport) {
-			      map.fitBounds(place.geometry.viewport);
-			      dropMarker(place.geometry.location);
-			    }else{
-			      map.setCenter(place.geometry.location);
-			      map.setZoom(17);
-			      dropMarker(place.geometry.location);
-			    }
-			});									              
-	        
-			google.maps.event.addListener(map, 'click', function(event) {
-	            console.log(event.latLng);
-	            dropMarker(event.latLng);
-	            codeAddress(event.latLng);
-	        });
-	                		
-	    	if(document.getElementById('address_from_coord').value){
-	        	var coof = document.getElementById('address_from_coord').value;
-	            var m1 = coof.split(',').map(Number);            
-	        	var latlng = new google.maps.LatLng(m1[0],m1[1]);
-	        	dropMarker (latlng);
-	    	}	
+        $('.sbmt').click(function(){          
+            if(this.id == 'delete_account'){
+                swal(   { title: "¿Seguro que deseas eliminar tu cuenta?",
+                          text: "No podrás recuperar nada de tu información.",   
+                          type: "warning",   
+                          showCancelButton: true,   
+                          cancelButtonText:"Cancelar",
+                          confirmButtonColor: "#DD6B55",   
+                          confirmButtonText: "Sí, deseo eliminar todo.",   
+                          closeOnConfirm: false 
+                        }, 
+                        function(){   
+                            swal({  title: "¡Listo!",   
+                                    text: "Tu cuenta será eliminada ahora mismo.",   
+                                    showConfirmButton: false,
+                                    type: "success",
+                                    allowEscapeKey: true,
+                                    allowOutsideClick: true 
+                                });
+                            document.getElementById('form_delete_account').submit();
+                        }
+                );        
+            }else{
+                if(this.id == 'edit_profile'){
+                    if(gmarker) document.getElementById("address_from_coord").value = gmarker.getPosition().toString().slice(1,-1);             
+                }
+                document.getElementById('form_'+this.id).submit();
+            }            
+        });
 
-	    	// cartodb
-	    	var layerSource = {
-	            user_name: '{{cartodb_user}}',
-	            type: 'cartodb',
-	            sublayers: [{
-	                sql: "SELECT {{cartodb_polygon_table}}.* FROM {{cartodb_polygon_table}} WHERE {{cartodb_polygon_table}}.name IN ('{{cartodb_polygon_name}}')",
-	                cartocss: "#{{cartodb_polygon_table}}{polygon-fill: #FF6600;polygon-opacity: 0.1;line-color: #EB332C;line-width: 1;line-opacity: 1;}"                                
-	            }]
-	        };
-	        cartodb.createLayer(map,layerSource)
-	        .on('done', function(layer) {
-			    map.overlayMapTypes.setAt(0, layer);
-	            for (var i = 0; i < layer.getSubLayerCount(); i++) {
-	               sublayers[i] = layer.getSubLayer(i);
-	               console.log("Congrats, you added sublayer #" + i + "!");
-	            }
-	        })
-	        .error(function(err) {
-	            console.log("error: " + err);
-	        });    
-		}
-
-		document.querySelector('#submit_profile_form').addEventListener('click', function() { 
-			if(gmarker)
-				document.getElementById("address_from_coord").value = gmarker.getPosition().toString().slice(1,-1);	            
-            document.getElementById("form_edit_profile").submit()
-		});
-	</script>
+        
+    </script>
     {% if google_clientID != '' %}
         <!-- DOC: https://elements.polymer-project.org/elements/google-signin -->
         <script type="text/javascript">
@@ -570,3 +749,7 @@
         </script>
     {% endif %}
 {% endblock %}
+
+
+
+

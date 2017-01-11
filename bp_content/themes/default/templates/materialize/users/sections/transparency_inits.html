@@ -47,28 +47,6 @@
         transform: scale(0.5);-webkit-transform:scale(0.5);width: 100%;height:80px;margin-bottom: -10px;margin-top:-25px;
     }
 </style>
-<style shim-shadowdom>
-    paper-tabs {
-    background-color: transparent;
-    color: {{brand_secondary_color}};
-    cursor:pointer;
-    }
-    paper-tabs[noink][nobar] paper-tab.core-selected {
-    color: {{brand_color}};
-    }
-    paper-tabs::shadow #selectionBar {
-    background-color: {{brand_color}};
-    }
-    paper-tabs paper-tab::shadow #ink {
-    color: {{brand_color}};
-    }
-    paper-tab {
-    cursor:pointer;
-    }
-</style>
-{% endblock %}
-{% block page_components %}
-<link href="/boilerplate/webcomponents/bower_components/paper-tabs/paper-tabs.html" rel="import"/>
 {% endblock %}
 {% block header_content %}
 <div class="parallax-container" style="max-height:200px;overflow:hidden;margin-bottom: -80px;">
@@ -106,19 +84,29 @@
             </h5>
             <div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;">
             </div>
+
+            <!-- TAB MENU -->
             <div class="col s12 m10 offset-m1 center">
-                <paper-tabs id="scrollableTabs" selected="0" scrollable style="margin-left: -20px;height: 80px;margin-top: 5px;">
-                    {% for area in areas %}
-                    <paper-tab onclick="loadInits('{{area.get_id()}}')" style="color: #{{area.color}};">
-                        <a class="image" style=" background-color: #{{area.color}};  -webkit-mask: url({{area.icon_url}}) no-repeat 50% 50%;transform: scale(0.5);-webkit-transform:scale(0.5);width: 30px;">
-                        </a>
-                        {{area.name}}
-                    </paper-tab>
-                    {% endfor %}
-                </paper-tabs>
-            </div>
-            <div class="col s12 m10 offset-m1 center" id="tab-content" style="margin-top:40px;">
-            </div>
+                <div class="col s12">
+                    <ul class="tabs white">
+                        {% for area in areas %}
+                        <li class="tab col s4" id="map-tab">
+                            <a href="#{{area.get_id()}}" onclick="loadInits('{{area.get_id()}}')" class="hide-on-med-and-down" style="color: #{{area.color}}; text-transform: none; font-size: 13px;">
+                                {{area.name}}
+                            </a>
+                            <a href="#{{area.get_id()}}" onclick="loadInits('{{area.get_id()}}')" class="image hide-on-large-only" style=" background-color: #{{area.color}};  -webkit-mask: url({{area.icon_url}}) no-repeat 0% 15%;width: 50px;transform: scale(0.5);-webkit-transform:scale(0.5);">
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>      
+            <!-- END TAB MENU -->
+
+            <!-- TAB CONTENTS -->
+            {% for area in areas %}
+            <div class="col s12 m10 offset-m1 center" id="{{area.get_id()}}" style="margin-top:40px;"></div>
+            {% endfor %}
         </div>
         {% endif %}
     </div>
@@ -139,8 +127,8 @@
                   console.log(data);
               }
           }).done(function(data) {
-              document.getElementById('tab-content').innerHTML = data.initiatives.html;
-              Materialize.fadeInImage('#tab-content');        
+              document.getElementById(id).innerHTML = data.initiatives.html;
+              Materialize.fadeInImage('#'+id);        
           });
           
 
