@@ -46,6 +46,10 @@
     .initiative .image{
         transform: scale(0.5);-webkit-transform:scale(0.5);width: 100%;height:80px;margin-bottom: -10px;margin-top:-25px;
     }
+
+    .tabs .indicator{
+        background-color: transparent;!important;
+    }
 </style>
 {% endblock %}
 {% block header_content %}
@@ -88,10 +92,10 @@
             <!-- TAB MENU -->
             <div class="col s12 m10 offset-m1 center">
                 <div class="col s12">
-                    <ul class="tabs white">
+                    <ul class="tabs white" style="overflow-x: scroll;">
                         {% for area in areas %}
                         <li class="tab col s4" id="map-tab">
-                            <a href="#{{area.get_id()}}" onclick="loadInits('{{area.get_id()}}')" class="hide-on-med-and-down" style="color: #{{area.color}}; text-transform: none; font-size: 13px;">
+                            <a href="#{{area.get_id()}}" onclick="loadInits('{{area.get_id()}}')" class="hide-on-med-and-down areas" style="color: #{{area.color}}; font-size: 14px;">
                                 {{area.name}}
                             </a>
                             <a href="#{{area.get_id()}}" onclick="loadInits('{{area.get_id()}}')" class="image hide-on-large-only" style=" background-color: #{{area.color}};  -webkit-mask: url({{area.icon_url}}) no-repeat 0% 15%;width: 50px;transform: scale(0.5);-webkit-transform:scale(0.5);">
@@ -129,13 +133,13 @@
           }).done(function(data) {
               document.getElementById(id).innerHTML = data.initiatives.html;
               Materialize.fadeInImage('#'+id);        
-          });
-          
-
+          });          
     }
 
     {% if count > 0 %}
-    loadInits('{{first_area.get_id()}}');
+        loadInits('{{first_area.get_id()}}');
+        var areas = document.getElementsByClassName('areas');
+        areas[0].click();
     {% endif %}
 
     function loadDetail(id){
