@@ -250,11 +250,11 @@
 	                    if (results[1]) {
 	                        document.getElementById('address_from').value = results[1].formatted_address;
 	                    } else {
-	                        alert('No address geocode found');
+	                        Materialize.toast('<span class="toast-warning">Oops! No logramos obtener la dirección.</span>',4500);
 	                    }
 	                }
 	            } else {
-	                alert('Geocode unsuccessful: ' + status);
+	                Materialize.toast('<span class="toast-warning">Oops! No logramos obtener la dirección.</span>',4500);
 	            }
 	        });
 	    }		
@@ -459,6 +459,7 @@
 						//                }, 2000);
 					}else{
 						console.log('sending report');
+    	        		Materialize.toast('<span class="toast-success">Tu reporte se está enviando...</span>',4500);
     	        		document.getElementById("form_report").submit();        
 					}
 			    })
@@ -493,26 +494,40 @@
 			// Setup the click event listeners: simply set the map to Chicago.
 			controlUI.addEventListener('click', function() {
 				$('#main-preloader').show();
-				if (navigator.geolocation) {
-			        navigator.geolocation.getCurrentPosition(function(position) {
-			            var pos = {
-			              lat: position.coords.latitude,
-			              lng: position.coords.longitude
+				// if (navigator.geolocation) {
+			 //        navigator.geolocation.getCurrentPosition(function(position) {
+			 //            var pos = {
+			 //              lat: position.coords.latitude,
+			 //              lng: position.coords.longitude
+			 //            };
+
+			 //            map.setCenter(pos);
+				// 	    map.setZoom(16);
+				// 		$('#main-preloader').hide();
+
+			 //          }, function() {
+			 //            //handleLocationError(true, infoWindow, map.getCenter());
+			 //            Materialize.toast('<span class="toast-warning">Oops! Tu dispositivo no nos permite ubicarte.</span>',4500);
+				// 		$('#main-preloader').hide();
+			 //          });
+			 //    } else {
+	   //          	Materialize.toast('<span class="toast-warning">Oops! Tu dispositivo no nos permite ubicarte.</span>',4500);
+				// 	$('#main-preloader').hide();
+			 //    }
+
+			 	var coord_str = '{{coordinates}}';
+	        	var coof = coord_str.split(',').map(Number);
+	        	var latlng = new google.maps.LatLng(coof[0],coof[1]);
+	        	markerDrop (latlng);
+	            geocode(event.latLng);
+	            var pos = {
+			              lat: coof[0],
+			              lng: coof[1]
 			            };
-
-			            map.setCenter(pos);
-					    map.setZoom(16);
-						$('#main-preloader').hide();
-
-			          }, function() {
-			            //handleLocationError(true, infoWindow, map.getCenter());
-			            Materialize.toast('<span class="toast-warning">Oops! Tu dispositivo no nos permite ubicarte.</span>',4500);
-						$('#main-preloader').hide();
-			          });
-			    } else {
-	            	Materialize.toast('<span class="toast-warning">Oops! Tu dispositivo no nos permite ubicarte.</span>',4500);
-					$('#main-preloader').hide();
-			    }
+			    map.setCenter(pos);
+				map.setZoom(14);
+				$('#main-preloader').hide();
+	    		
 			});
 		}
 	</script>

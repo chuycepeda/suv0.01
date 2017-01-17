@@ -4285,6 +4285,8 @@ class MaterializeNewReportHandler(BaseHandler):
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        import bp_includes.lib.i18n as i18n
+        params['coordinates']= i18n.get_city_lat_long(self.request)
 
         return self.render_template('materialize/users/sections/report_new.html', **params)
         
