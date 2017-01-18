@@ -72,10 +72,9 @@ class AdminSendEmailListHandler(BaseHandler):
 
         try:
             if 'ALLUSERS' in to:
-                _users = self.user_model.query()
-                for user in _users:
-                    logging.info("raising taskqueue for user id %s to email %s" % (user.key.id(),user.email))
-                    sendEmail (user.email,subject,body)
+                emails = [x.email for x in self.user_model.query()]
+                if len(emails) > 0:
+                    sendEmail (', '.join(emails),subject,body)
             else:
                 for recipents in to.split(','):
                     sendEmail (recipents.strip(),subject,body)
