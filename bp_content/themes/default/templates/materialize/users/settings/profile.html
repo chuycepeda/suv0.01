@@ -603,7 +603,7 @@
     </script>
     {% if google_clientID != '' %}
         <!-- DOC: https://elements.polymer-project.org/elements/google-signin -->
-        <script type="text/javascript">
+        <!-- <script type="text/javascript">
               var first_time = true, go_accessToken = '';
               document.querySelector('google-signin').addEventListener('google-signin-success', function(e) {
                 console.log(e.type, e.detail.result, e.detail.gapi);
@@ -636,11 +636,11 @@
                 }
                 first_time = !first_time;
               });
-        </script>
+        </script> -->
     {% endif %}
     {% if facebook_appID != '' %}
         <!-- DOC: https://developers.facebook.com/docs/facebook-login/web/login-button -->
-        <div id="fb-root"></div>
+        <!-- <div id="fb-root"></div>
         <script>(function(d, s, id) {
           var js, fjs = d.getElementsByTagName(s)[0];
           if (d.getElementById(id)) return;
@@ -746,7 +746,7 @@
                     }
                 });
             }
-        </script>
+        </script> -->
     {% endif %}
 {% endblock %}
 

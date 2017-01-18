@@ -1919,6 +1919,7 @@ class MaterializeSettingsProfileRequestHandler(BaseHandler):
 
         if not params['address_from']:
             params['address_from'] = ''
+        params['captchahtml'] = captchaBase(self)
 
         return self.render_template('materialize/users/settings/profile.html', **params)
 
