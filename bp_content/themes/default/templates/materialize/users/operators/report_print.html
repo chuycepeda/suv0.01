@@ -143,6 +143,12 @@
                     <tr>
                         <td><strong>Detalle del reporte</strong>: {{report.description}}</td>
                     </tr>
+                    <tr>
+                        <td>                            
+                            <div id="map" style="width:100%; height: 300px;"></div>
+                            <input type="hidden" id="address_from_coord" value="{{report.address_from_coord}}">
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <br>
@@ -170,8 +176,56 @@
             </table>
         </div>
     </page>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
     <script>
-        window.print(); 
+        google.maps.event.addDomListener(window,'load', init);
+        
+        var map, center = [{{lat}},{{lng}}];
+
+        function init(){
+            var mapOptions = {
+                center: new google.maps.LatLng(center[0], center[1]),
+                zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
+                zoomControl: true,
+                zoomControlOptions: {
+                  style: google.maps.ZoomControlStyle.SMALL,
+                  position: google.maps.ControlPosition.LEFT_BOTTOM 
+                },
+                mapTypeControl: true,
+                mapTypeControlOptions: { 
+                  mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.SATELLITE]
+                },
+                scrollwheel: true,
+                streetViewControl: true,
+                StreetViewControlOptions: {
+                  position: google.maps.ControlPosition.BOTTOM_LEFT
+                },
+                panControl:false,
+                backgroundColor: 'rgb(249, 249, 249)',
+                rotateControl:true,
+                overviewMapControl:true
+              };
+              map = new google.maps.Map(document.getElementById('map'), mapOptions);
+              google.maps.event.addListenerOnce(map, 'tilesloaded', function(){
+                    setTimeout(function(){window.print();}, 800);
+              });
+              if(document.getElementById('address_from_coord').value){
+                    var coof = document.getElementById('address_from_coord').value.split(',').map(Number);
+                    var latlng = new google.maps.LatLng(coof[0],coof[1]);  
+                    var marker_color = "{{brand_color}}";
+                    var marker_icon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|'+marker_color.substr(1);                   
+                    var marker = new google.maps.Marker({
+                              animation: google.maps.Animation.DROP,
+                      position: latlng,
+                      map: map,
+                      draggable: false,
+                      icon: marker_icon
+                    });
+                    map.setCenter(latlng);
+                    map.setZoom(15);
+                }
+
+        }
     </script>
 </body>
 </html>
