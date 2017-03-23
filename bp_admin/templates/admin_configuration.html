@@ -43,6 +43,25 @@
                   <input type="hidden" name="map_zoom_mobile" id="map_zoom_mobile" value="{{ map_zoom_mobile }}">
                   <input type="hidden" name="cartodb_polygon_name" id="cartodb_polygon_name"  value="{{cartodb_polygon_name}}">
 
+
+                  <div class="row margin" style="padding-bottom: 30px">
+                    <div class="input-field col s12 m6">
+                        <i class="mdi-toggle-check-box prefix brand-color-text"></i>
+                        <p style="margin-left: 45px">Servicios:</p>
+                        <p style="margin-left: 33px">
+                          <input type="checkbox" class="filled-in" id="has_reports" name="has_reports" {% if has_reports %}checked="on"{% endif %}>
+                          <label for="has_reports">Reportes</label>
+                        </p>
+                        <p style="margin-left: 33px">
+                          <input type="checkbox" class="filled-in" id="has_petitions" name="has_petitions" {% if has_petitions %}checked="on"{% endif %}>
+                          <label for="has_petitions">Propuestas</label>
+                        </p>
+                        <p style="margin-left: 33px">
+                          <input type="checkbox" class="filled-in" id="has_transparency" name="has_transparency" {% if has_transparency %}checked="on"{% endif %}>
+                          <label for="has_transparency">Transparencia</label>
+                        </p>
+                    </div>
+                  </div>
                   <div class="row margin">
                     <div class="input-field col s12">
                       <i class="mdi-social-public prefix brand-color-text"></i>

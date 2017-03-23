@@ -188,6 +188,24 @@
 		        	        </div>
 		                </div>
 		                
+		               <!-- <div class="container">                
+		                    <div class="col s12 m9 offset-m1">
+		    	                <div class="row">
+		    	                	<div class="row"> 
+		    	                		<div class="input-field col s12 m6 l4">
+				                            <p >Selecciona la colonia:</p>
+				                            <a data-hover="false" id='coloniabtn' class='dropdown-button btn brand-color truncate' href='#' data-activates='coloniadd' style="width: 250px; min-height: 45px; line-height: 45px;max-width: 250px;">---
+				                            </a>
+				                            <ul id='coloniadd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;"></ul>   
+				                            <input type="hidden" id="colonia" name="colonia" value="">
+				                            <input type="hidden" id="codigop" name="codigop" value="">
+				                            <input type="hidden" id="sector" name="sector" value="">             
+				                        </div>
+				                    </div>
+				                </div>
+				            </div>
+				        </div> -->
+
 		                <div class="input-field col s10 offset-s1">
 		                    <i class="mdi-action-search prefix brand-color-text brand-color-text" onclick="geocode('from')"></i>
 		                    <input id="address_from" name="address_from" type="text" class="validate" value="{{address_from}}" placeholder="Escribe una dirección o da clic en el mapa" onkeydown="if (event.keyCode == 13) geocode('from');">
@@ -279,16 +297,43 @@
 	<script src="/{{theme}}/materialize/js/cartodb.js"></script>
 	<script type="text/javascript" src="/default/materialize/js/plugins/dropify/dropify.js"></script>
 	<script type="text/javascript">
+		// var colonias;
+
 		$(document).ready(function(){
-	    $('.dropify').dropify({
-	                messages: {
-	                    default: 'Arrasta una foto o has clic aquí para adjuntarla.',
-	                    replace: 'Arrastra o has clic para reemplazar tu adjunto',
-	                    remove:  'Remover',
-	                    error:   'Oops!, este archivo es demasiado pesado.'
-	                }
-	            });
+    		$('.dropify').dropify({
+                messages: {
+                    default: 'Arrasta una foto o has clic aquí para adjuntarla.',
+                    replace: 'Arrastra o has clic para reemplazar tu adjunto',
+                    remove:  'Remover',
+                    error:   'Oops!, este archivo es demasiado pesado.'
+                }
+            });
+
+   //          colonias = {
+			//   "21 de Marzo": {
+			//     "cp": 54010,
+			//     "sector": "Sector 2"
+			//   }
+			// };
+
+			// var colhtml = ''
+			// for(var colonia in colonias)
+		 //        colhtml += '<li> <a class="brand-color-text" href="#" onclick="coloniaValues(this.innerHTML);return false;">'+ colonia +'</a></li>';
+	  //       document.getElementById('coloniadd').innerHTML = colhtml;
 		});
+
+		// function coloniaValues(elem){
+		// 	document.getElementById('coloniabtn').innerHTML = elem;
+		// 	document.getElementById('colonia').value = elem;
+		// 	document.getElementById('codigop').value = colonias[elem].cp;
+		// 	document.getElementById('sector').value = colonias[elem].sector;
+		// 	document.getElementById('address_from').value = elem +", Tlalnepantla de Baz, Mexico";
+		// 	geocode('from');
+		// 	console.log('colonias element: ', colonias[elem]);
+		// 	map.setZoom(15);
+		// }
+
+		
 	</script>
 	<script type="text/javascript">
 				

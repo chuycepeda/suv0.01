@@ -115,14 +115,23 @@ class BaseHandler(webapp2.RequestHandler):
 
     @webapp2.cached_property
     def has_reports(self):
+        configuration = models.Configuration.query().get()
+        if configuration is not None:
+            return configuration.has_reports
         return self.app.config.get('has_reports')
 
     @webapp2.cached_property
     def has_petitions(self):
+        configuration = models.Configuration.query().get()
+        if configuration is not None:
+            return configuration.has_petitions
         return self.app.config.get('has_petitions')
 
     @webapp2.cached_property
     def has_transparency(self):
+        configuration = models.Configuration.query().get()
+        if configuration is not None:
+            return configuration.has_transparency
         return self.app.config.get('has_transparency')
 
     @webapp2.cached_property
