@@ -29,6 +29,7 @@ class Configuration(ndb.Model):
     second_level_mins_singular = ndb.StringProperty(default = '')
     second_level_mins_plural = ndb.StringProperty(default = '')
     second_level_caps_person = ndb.StringProperty(default = '')
+    has_ai = ndb.BooleanProperty(default = True)
     has_reports = ndb.BooleanProperty(default = True)
     has_petitions = ndb.BooleanProperty(default = True)
     has_transparency = ndb.BooleanProperty(default = True)

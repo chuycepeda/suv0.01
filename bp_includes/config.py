@@ -95,6 +95,7 @@ config = {
         </p>
     """,'utf-8'),
     # application services
+    'has_ai': True,
     'has_reports': True,
     'has_petitions': True,
     'has_transparency': True,
@@ -119,8 +120,10 @@ config = {
     # slack webhook url
     'slack_webhook_url' : "https://hooks.slack.com/services/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",
     # cartodb + gmaps + cic integration
-    'gmaps_apikey':'AIzaSyAwOfCLYHEH2BLQ5L4UILvrR9w4mRWhYRE', #get new from https://console.developers.google.com/apis/credentials/key?type=CLIENT_SIDE&project=<APP_ID>
     # gmaps enabler apikey: https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend&keyType=CLIENT_SIDE&reusekey=true
+    'gmaps_apikey':'AIzaSyAwOfCLYHEH2BLQ5L4UILvrR9w4mRWhYRE', #get new from https://console.developers.google.com/apis/credentials/key?type=CLIENT_SIDE&project=<APP_ID>
+    'glang_apikey':'AIzaSyDsgX0qQmS35DW0_ETc-LoJ9E8c9TKw7h8', #get new from https://console.developers.google.com/apis/credentials/key?type=CLIENT_SIDE&project=<APP_ID>
+    'gvisi_apikey':'AIzaSyDqj35BomwVIr2VIQStpluJtwFvYqHfkaU', #get new from https://console.developers.google.com/apis/credentials/key?type=CLIENT_SIDE&project=<APP_ID>
     'map_center_lat': 25.7657687, 
     'map_center_lng': -100.2050788,
     'map_zoom': 12,

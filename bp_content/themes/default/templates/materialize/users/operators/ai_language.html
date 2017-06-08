@@ -1,0 +1,151 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block title %}
+  <title>{{app_name}} » Lenguaje</title>
+{% endblock %}
+
+{% block page_css %}
+  <link href="/{{theme}}/materialize/css/prism_o.css" type="text/css" rel="stylesheet" media="screen,projection">    
+  <style>
+      
+  </style>  
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+              <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active">
+                  Inteligencia de lenguaje           
+                </li>
+              </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+  <div class="row">
+    <div class="container">
+      <div class="section" >
+          <div class="col s10 offset-s1">
+            <div class="row">
+                  <div class="input-field col s12">
+                      <i class="mdi-maps-map prefix brand-color-text brand-color-text"></i>
+                      <textarea id="nlp_input" name="nlp_input" class="materialize-textarea" style="height: 22px;" type="text" >
+                      </textarea>
+                      <label for="nlp_input" class="active">Escribe aquí el texto que deseas analizar o has clic en el botón para analizar los últimos reportes.</label>
+                  </div>
+                  <div class="row">
+                      <div class="input-field col s10 offset-s1 center">
+                          <button class="waves-effect waves-light brand-color white-text btn-large right" id="submit_report_form">Analizar
+                              <i class="mdi-content-send right"></i>
+                          </button>   
+                          <button class="waves-effect waves-light brand-tertiary-color white-text btn-large right" id="import_report_text" style="margin-right:20px;">Importar texto
+                              <i class="mdi-file-cloud-download right"></i>
+                          </button>                           
+                      </div>
+                  </div>
+              <div class="row" id="nlp_response"></div>
+            </div>    
+          </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script src="/{{theme}}/materialize/js/cartodb.js"></script>
+    <script>  
+      $( "#import_report_text" ).click(function() {
+          var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+          city_sql.execute('SELECT description FROM {{cartodb_reports_table}} limit 30').done(function(data) {
+            var t = ''; 
+            for (var i = data.total_rows - 1; i >= 0; i--) {
+              t += ' ' + data.rows[i].description;
+            }
+            document.getElementById('nlp_input').value = t;
+          });
+      });
+    </script>
+    <script>
+      $( "#submit_report_form" ).click(function() {
+          value = document.getElementById('nlp_input').value;
+          if (value != ''){
+            $.ajax({
+                    url: "https://language.googleapis.com/v1beta1/documents:analyzeEntities?key={{glang_apikey}}",
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                      "document":{
+                        "type":"PLAIN_TEXT",
+                        "content": value
+                      },
+                      "encodingType":"UTF8"
+                    }) 
+            }).done(function(data) {
+                  console.log(data);
+                  var html = '<h5> Se han encontrado las siguientes clases:</h5>';//  (idioma: '+ data.language +'):</h5>';
+                  for (var i=0, j=data.entities.length; i<j; i++){
+                    html += '<p style="font-family:roboto-thin">"' + data.entities[i].name + '" dentro de la clase ' + data.entities[i].type +' con relevancia contextual de ' + data.entities[i].salience +'.</p>';
+                  }
+                  console.log(html);
+                  document.getElementById('nlp_response').innerHTML = html;
+
+                  if (data.language == "en" ||  data.language == "es"){
+                    $.ajax({
+                        url: "https://language.googleapis.com/v1beta1/documents:analyzeSentiment?key={{glang_apikey}}",
+                        type: 'POST',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                          "document":{
+                            "type":"PLAIN_TEXT",
+                            "content": value
+                          }
+                        }) 
+                    }).done(function(data) {
+                      console.log(data);
+                      var parsed_sentiment = data.documentSentiment.polarity, parsed_magnitude = data.documentSentiment.magnitude;
+                      if (data.documentSentiment.polarity <= -0.5) parsed_sentiment = "bastante negativo";
+                      else if (data.documentSentiment.polarity < 0) parsed_sentiment = "ligeramente negativo";
+                      else if (data.documentSentiment.polarity == 0) parsed_sentiment = "completamente neutral";
+                      else if (data.documentSentiment.polarity < 0.5) parsed_sentiment = "ligeramente positivo";
+                      else if (data.documentSentiment.polarity >= 0.5) parsed_sentiment = "bastante positivo";
+
+                      document.getElementById('nlp_response').innerHTML = '<p style="font-family:roboto-light"> El texto indica un sentimiento: <span style="font-family:roboto-black">' + parsed_sentiment + '</span>.</p>' + document.getElementById('nlp_response').innerHTML;
+                    });
+                    
+                    // $.ajax({
+                    //     url: "https://language.googleapis.com/v1beta1/documents:annotateText?key={{glang_apikey}}",
+                    //     type: 'POST',
+                    //     contentType: "application/json; charset=utf-8",
+                    //     data: JSON.stringify({
+                    //       "document":{
+                    //         "type":"PLAIN_TEXT",
+                    //         "content": value
+                    //       },
+                    //       "features": {
+                    //         "extractSyntax": true,
+                    //       "extractEntities": true,
+                    //       "extractDocumentSentiment": true,
+                    //       },
+                    //         "encodingType":"UTF8"
+                    //     }) 
+                    // }).done(function(data) {
+                    //   console.log(data);
+                    //   document.getElementById('nlp_response').innerHTML += '<p style="font-family:roboto-black"> Total sentences: ' + data.sentences.length + '.</p>';
+                    //   document.getElementById('nlp_response').innerHTML += '<p style="font-family:roboto-black"> Total entities: ' + data.entities.length + '.</p>';
+                    // });
+                  }
+            });
+          }
+          else
+            Materialize.toast('<span class="toast-warning">Agrega un texto para ser analizado.</span>',4500);
+      });
+    </script>
+{% endblock %}

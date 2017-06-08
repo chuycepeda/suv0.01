@@ -2557,6 +2557,65 @@ class MaterializeTutorialsRequestHandler(BaseHandler):
 # ------------------------------------------------------------------------------------------- #
 
 #ORGANIZATION ACCESS
+class MaterializeOrganizationAILocationHandler(BaseHandler):
+    """
+        Handler for materialized operators location intelligence
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        if not self.has_ai:
+            self.abort(403)
+
+        params, user_info = disclaim(self)
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']
+        params['right_sidenav_msg'] = self.app.config.get('right_sidenav_msg')
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        return self.render_template('materialize/users/operators/ai_location.html', **params)
+
+class MaterializeOrganizationAILanguageHandler(BaseHandler):
+    """
+        Handler for materialized operators language intelligence
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        if not self.has_ai:
+            self.abort(403)
+
+        params, user_info = disclaim(self)
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        return self.render_template('materialize/users/operators/ai_language.html', **params)
+
+class MaterializeOrganizationAIVisionHandler(BaseHandler):
+    """
+        Handler for materialized operators vision intelligence
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        if not self.has_ai:
+            self.abort(403)
+
+        params, user_info = disclaim(self)
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        return self.render_template('materialize/users/operators/ai_vision.html', **params)
+
 class MaterializeOrganizationDashboardRequestHandler(BaseHandler):
     @user_required
     def get(self):

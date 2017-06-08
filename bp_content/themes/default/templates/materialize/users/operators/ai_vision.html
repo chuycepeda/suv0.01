@@ -1,0 +1,284 @@
+{% extends '/materialize/users/operations_base.html' %}
+
+{% block title %}
+  <title>{{app_name}} » Visión</title>
+{% endblock %}
+
+{% block page_css %}
+  <link href="/{{theme}}/materialize/css/prism_o.css" type="text/css" rel="stylesheet" media="screen,projection">    
+  <style>
+      
+  </style>  
+{% endblock %}
+
+{% block breadcrums %}
+<!--breadcrumbs start-->
+<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+    <div class="container">
+        <div class="row">
+          <div class="col s12 m12 l12">
+              <ol class="breadcrumb" style="font-size: 29px;">
+                <li class="active">
+                  Inteligencia visual           
+                </li>
+              </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+  <div class="row">
+    <div class="container">
+      <div class="section" >
+          <div class="col s10 offset-s1">
+            <div class="row">
+              <div id="input-file-input" class="section">
+                <h4 class="header">Agrega una imagen para analizar</h4>
+                <div class="row">
+                  <div class="col s12 m4 l3">
+                    <p>Selecciona un archivo desde tu computadora y agregalo haciendo clic en el botón.</p>
+                  </div>
+                  <div class="col s12 m8 l9">
+                    <form action="#">
+                      <div class="file-field input-field">
+                        <div class="btn">
+                          <span>Archivo</span>
+                          <input type="file" id="inp">
+                        </div>
+                        <div class="file-path-wrapper">
+                          <input class="file-path validate" type="text">
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                  <p id="b64" style="display:none;"></p>
+                  <p id="msg" style="display:none;"> espera un segundo, estamos analizando la imagen...</p>
+                  <div style="max-height: 420px; overflow-y: scroll;"><img class="responsive-img" id="img"></div>
+                </div>
+            </div> 
+
+            <div class="row" id="vision_response"></div>
+          </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+      function readFile() {
+      if (this.files && this.files[0]) {
+        var FR= new FileReader();
+        FR.onload = function(e) {
+          document.getElementById("img").src       = e.target.result;
+          document.getElementById("b64").innerHTML = e.target.result;
+          computeVision();
+        };       
+        FR.readAsDataURL( this.files[0] );
+      }
+      else{
+          Materialize.toast('<span class="toast-warning">Please add some file to process.</span>',4500);
+
+      }
+    }
+
+    document.getElementById("inp").addEventListener("change", readFile, false);
+
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+
+    function computeVision(source){
+        $('#msg').show();
+          document.getElementById('vision_response').innerHTML = "";
+          console.log('computing vision analysis...')
+          value = document.getElementById("b64").innerHTML.split(',')[1];
+          $.ajax({
+                  url: "https://vision.googleapis.com/v1/images:annotate?key={{gvisi_apikey}}",
+                  type: 'POST',
+                  contentType: "application/json; charset=utf-8",
+                  data: JSON.stringify({
+                    "requests": [{
+                        "image":{             
+                          "content": value
+                        },
+                        "features":[
+                          {"type": "TYPE_UNSPECIFIED"},
+                          {"type": "FACE_DETECTION"},
+                          {"type": "LANDMARK_DETECTION"},
+                          {"type": "LOGO_DETECTION"},
+                          {"type": "LABEL_DETECTION"},
+                          {"type": "TEXT_DETECTION"},
+                          {"type": "SAFE_SEARCH_DETECTION"},
+                          {"type": "WEB_DETECTION"},
+                          {"type": "IMAGE_PROPERTIES"}
+                        // TYPE_UNSPECIFIED Unspecified feature type.
+                        // FACE_DETECTION Run face detection.
+                        // LANDMARK_DETECTION Run landmark detection.
+                        // LOGO_DETECTION Run logo detection.
+                        // LABEL_DETECTION  Run label detection.
+                        // TEXT_DETECTION Run OCR.
+                        // SAFE_SEARCH_DETECTION  Run various computer vision models to compute image safe-search properties.
+                        // IMAGE_PROPERTIES Compute a set of properties about the image (such as the image's dominant colors).  
+                        // WEB DETECTION Web entities requests return information about the contents of the image as they relate to the Google Knowledge Graph, as well as the image's relation to other pages and images on the web.
+
+                        // for latest elements refer to https://cloud.google.com/vision/docs/other-features               
+                        ]
+                        // ,
+                        // "imageContext":{
+
+                        // }
+                      }
+                    ]
+                  }) 
+              }).done(function(data) {
+                if (source == 'from video'){
+                  $('#vision_response').hide();
+                  if (data.responses[0].faceAnnotations){
+
+                    var dominant_mood = 'poker', max = 0;
+                    for (var i=0, j=data.responses[0].faceAnnotations.length; i<j; i++){
+                      //data.responses[0].faceAnnotations[i].detectionConfidence;
+                      //data.responses[0].faceAnnotations[i].landmarkingConfidence;
+                      max = convertEmotionInfoToNum(data.responses[0].faceAnnotations[i].angerLikelihood);
+                      dominant_mood = max > 0 ? 'anger' : dominant_mood;
+                      //data.responses[0].faceAnnotations[i].blurredLikelihood;
+                      //data.responses[0].faceAnnotations[i].headwearLikelihood;
+                      dominant_mood = convertEmotionInfoToNum(data.responses[0].faceAnnotations[i].joyLikelihood) > max ? 'joy' : dominant_mood;
+                      dominant_mood = convertEmotionInfoToNum(data.responses[0].faceAnnotations[i].sorrowLikelihood) > max ? 'sorrow' : dominant_mood;
+                      dominant_mood = convertEmotionInfoToNum(data.responses[0].faceAnnotations[i].surpriseLikelihood) > max ? 'surprise' : dominant_mood;
+                      //data.responses[0].faceAnnotations[i].underExposedLikelihood;
+
+                      // pushNotification('Face detected !', 'It looks like '+ dominant_mood +' to me...', '/materializecss/images/moods/face-'+dominant_mood+'.png');
+                    }
+                    
+                  }else{
+                    // pushNotification('oops !', 'we got no faces', 'none');
+
+                  }
+
+                }else{
+                  console.log(data);
+                  var html = '<h5> Se ha detectado lo siguiente:</h5>';
+                  
+                  if (data.responses[0].faceAnnotations){
+                    html += '<p style="font-family:roboto-black">Rostros: '+ data.responses[0].faceAnnotations.length +'</p>';
+                    for (var i=0, j=data.responses[0].faceAnnotations.length; i<j; i++){
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': face confidence :' + data.responses[0].faceAnnotations[i].detectionConfidence +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': parts confidence :' + data.responses[0].faceAnnotations[i].landmarkingConfidence +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': anger likelihood :' + data.responses[0].faceAnnotations[i].angerLikelihood +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': blurred likelihood :' + data.responses[0].faceAnnotations[i].blurredLikelihood +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': headwear likelihood :' + data.responses[0].faceAnnotations[i].headwearLikelihood +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': joy likelihood :' + data.responses[0].faceAnnotations[i].joyLikelihood +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': sorrow likelihood :' + data.responses[0].faceAnnotations[i].sorrowLikelihood +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': surprise likelihood :' + data.responses[0].faceAnnotations[i].surpriseLikelihood +'.</p>';
+                      html += '<p style="font-family:roboto-thin"> Face ' + i + ': under exposed likelihood :'  + data.responses[0].faceAnnotations[i].underExposedLikelihood +'.</p>';
+                    }
+                    // html += '<p style="font-family:roboto-light"> To see more on faces, see your chrome console.</p>';
+                  }
+
+                  html += '<p style="font-family:roboto-black">Tipo de contenido:</p>';
+                  html += '<p style="font-family:roboto-thin">Adultos:' + data.responses[0].safeSearchAnnotation.adult + '</p>';
+                  html += '<p style="font-family:roboto-thin">Medico:' + data.responses[0].safeSearchAnnotation.medical + '</p>';
+                  html += '<p style="font-family:roboto-thin">Parodia:' + data.responses[0].safeSearchAnnotation.spoof + '</p>';
+                  html += '<p style="font-family:roboto-thin">Violencia:' + data.responses[0].safeSearchAnnotation.violence + '</p>';
+                  
+
+                  if (data.responses[0].textAnnotations){
+                    html += '<p style="font-family:roboto-black">Textos: '+ data.responses[0].textAnnotations.length +'</p>';
+                    for (var i=0, j=data.responses[0].textAnnotations.length; i<j; i++){
+                      html += '<p style="font-family:roboto-thin">' + data.responses[0].textAnnotations[i].description +'.</p>';
+                    }
+                  }
+                  
+                  if (data.responses[0].labelAnnotations){
+                    html += '<p style="font-family:roboto-black">Clases: '+ data.responses[0].labelAnnotations.length +'</p>';
+                    for (var i=0, j=data.responses[0].labelAnnotations.length; i<j; i++){
+                      html += '<p style="font-family:roboto-thin">Clase: ' + data.responses[0].labelAnnotations[i].description +', score: ' + data.responses[0].labelAnnotations[i].score + '.</p>';
+                    }
+                  }
+
+                  if (data.responses[0].logoAnnotations){
+                    html += '<p style="font-family:roboto-black">Logotipos: '+ data.responses[0].logoAnnotations.length +'</p>';
+                    for (var i=0, j=data.responses[0].logoAnnotations.length; i<j; i++){
+                      html += '<p style="font-family:roboto-thin">Logo: ' + data.responses[0].logoAnnotations[i].description +', score: ' + data.responses[0].logoAnnotations[i].score + '.</p>';
+                    }
+                  }
+
+                  if (data.responses[0].landmarkAnnotations){
+                    html += '<p style="font-family:roboto-black">Ubicaciones: '+ data.responses[0].landmarkAnnotations.length +'</p>';
+                    for (var i=0, j=data.responses[0].landmarkAnnotations.length; i<j; i++){
+                      html += '<p style="font-family:roboto-thin">Lugar: ' + data.responses[0].landmarkAnnotations[i].description +', score: ' + data.responses[0].landmarkAnnotations[i].score + '.</p>';
+                    }
+                  }
+
+                  if (data.responses[0].webDetection){
+                    var total = 0, we = false, pmi = false, fmi = false;
+                    if (data.responses[0].webDetection.webEntities){
+                      total += data.responses[0].webDetection.webEntities.length;
+                      we = true;
+                    }
+                    if (data.responses[0].webDetection.partialMatchingImages){
+                      total += data.responses[0].webDetection.partialMatchingImages.length;
+                      pmi = true;
+                    }
+                    if (data.responses[0].webDetection.fullMatchingImages){
+                      total += data.responses[0].webDetection.fullMatchingImages.length;
+                      fmi = true;
+                    }
+                      html += '<p style="font-family:roboto-black">Contenido web: '+ total +'</p>';
+                      if (we)
+                        for (var i=0, j=data.responses[0].webDetection.webEntities.length; i<j; i++){
+                          html += '<p style="font-family:roboto-thin">Búsquedas asociadas: ' + data.responses[0].webDetection.webEntities[i].description +', score: ' + data.responses[0].webDetection.webEntities[i].score + '.</p>';
+                        }
+                    if (pmi)
+                        for (var i=0, j=data.responses[0].webDetection.partialMatchingImages.length; i<j; i++){
+                          html += '<p style="font-family:roboto-thin">Página con empate parcial: <a href="'+data.responses[0].webDetection.partialMatchingImages[i].url+'" target="_blank">' + data.responses[0].webDetection.partialMatchingImages[i].url + '</a>.</p>';
+                        }
+                    if (fmi)
+                        for (var i=0, j=data.responses[0].webDetection.fullMatchingImages.length; i<j; i++){
+                          html += '<p style="font-family:roboto-thin">Página con empate completo: <a href="'+data.responses[0].webDetection.fullMatchingImages[i].url+'" target="_blank">' + data.responses[0].webDetection.fullMatchingImages[i].url + '</a>.</p>';
+                        }
+                  }
+
+                  html += '<p style="font-family:roboto-black">Colores dominantes: </p>';
+                  for (var i=0, j=data.responses[0].imagePropertiesAnnotation.dominantColors.colors.length; i<j; i++){
+                    html += '<p style="font-family:roboto-thin">Color: <input type="color" name="favcolor" value="' + rgbToHex(data.responses[0].imagePropertiesAnnotation.dominantColors.colors[i].color.red, data.responses[0].imagePropertiesAnnotation.dominantColors.colors[i].color.green, data.responses[0].imagePropertiesAnnotation.dominantColors.colors[i].color.blue) + '"> score: ' + data.responses[0].imagePropertiesAnnotation.dominantColors.colors[i].score + '.</p>';
+                  }
+                  console.log(html);
+                $('#msg').hide();
+                  document.getElementById('vision_response').innerHTML = html;
+                  $('#vision_response').show();
+
+                }
+              }).error(function(data) {
+                console.log(data);
+                
+              });
+          }
+
+          function convertEmotionInfoToNum (emotion) {
+          return ({
+            VERY_UNLIKELY: 0,
+            UNLIKELY: 1,
+            POSSIBLE: 2,
+            LIKELY: 3,
+            VERY_LIKELY: 4
+          })[emotion]
+        }
+    </script>
+{% endblock %}

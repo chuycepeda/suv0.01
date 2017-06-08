@@ -114,6 +114,13 @@ class BaseHandler(webapp2.RequestHandler):
         return str(Locale.parse(self.locale).language)
 
     @webapp2.cached_property
+    def has_ai(self):
+        # configuration = models.Configuration.query().get()
+        # if configuration is not None:
+        #     return configuration.has_ai
+        return self.app.config.get('has_ai')
+
+    @webapp2.cached_property
     def has_reports(self):
         configuration = models.Configuration.query().get()
         if configuration is not None:
@@ -157,6 +164,14 @@ class BaseHandler(webapp2.RequestHandler):
     @webapp2.cached_property
     def gmaps_apikey(self):
         return self.app.config.get('gmaps_apikey')
+
+    @webapp2.cached_property
+    def glang_apikey(self):
+        return self.app.config.get('glang_apikey')
+
+    @webapp2.cached_property
+    def gvisi_apikey(self):
+        return self.app.config.get('gvisi_apikey')
 
     @webapp2.cached_property
     def user(self):
@@ -495,6 +510,7 @@ class BaseHandler(webapp2.RequestHandler):
             'landing_layout': self.get_landing_layout,
             'zendesk_code': self.app.config.get('zendesk_code'),
             'zendesk_imports': self.app.config.get('zendesk_imports'),
+            'has_ai': self.has_ai,
             'has_reports': self.has_reports,
             'has_petitions': self.has_petitions,
             'has_transparency': self.has_transparency,
@@ -504,6 +520,8 @@ class BaseHandler(webapp2.RequestHandler):
             'facebook_appID': self.facebook_appID,
             'twitter_appID': self.twitter_appID,
             'gmaps_apikey': self.gmaps_apikey,
+            'glang_apikey': self.glang_apikey,
+            'gvisi_apikey': self.gvisi_apikey,
             'map_center_lat' : self.configuration['map_center_lat'],
             'map_center_lng' : self.configuration['map_center_lng'],
             'map_zoom' : self.configuration['map_zoom'],

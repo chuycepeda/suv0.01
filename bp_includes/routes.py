@@ -82,6 +82,9 @@ _routes = [
     RedirectRoute('/user/change-email/<user_id>/<encoded_email>/<token>', handlers.MaterializeEmailChangedCompleteHandler, name='materialize-email-changed-check', strict_slash=True),    
     # User: special access
     RedirectRoute('/user/organization/directory/', handlers.MaterializeOrganizationDirectoryRequestHandler, name='materialize-organization-directory', strict_slash=True),
+    RedirectRoute('/user/organization/ai/location/', handlers.MaterializeOrganizationAILocationHandler, name='materialize-organization-ai-location', strict_slash=True),
+    RedirectRoute('/user/organization/ai/language/', handlers.MaterializeOrganizationAILanguageHandler, name='materialize-organization-ai-language', strict_slash=True),
+    RedirectRoute('/user/organization/ai/vision/', handlers.MaterializeOrganizationAIVisionHandler, name='materialize-organization-ai-vision', strict_slash=True),
     RedirectRoute('/user/organization/dashboard/', handlers.MaterializeOrganizationDashboardRequestHandler, name='materialize-organization-dashboard', strict_slash=True),
     RedirectRoute('/user/organization/report/', handlers.MaterializeOrganizationNewReportHandler, name='materialize-organization-report', strict_slash=True),
     RedirectRoute('/user/organization/report/success/', handlers.MaterializeOrganizationNewReportSuccessHandler, name='materialize-organization-report-success', strict_slash=True),
