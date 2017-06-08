@@ -2580,6 +2580,7 @@ class MaterializeOrganizationAILocationHandler(BaseHandler):
         params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
         params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
         params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
         params['has_cic'] = self.app.config.get('has_cic')
         params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
         params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')

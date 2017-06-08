@@ -6,41 +6,1418 @@
 
 {% block page_css %}
   <link href="/{{theme}}/materialize/css/prism_o.css" type="text/css" rel="stylesheet" media="screen,projection">    
+  <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css">
+  <link rel="stylesheet" href="/{{theme}}/materialize/css/plugins/ionRangeSlider/css/ion.rangeSlider.css">
+  <link rel="stylesheet" href="/{{theme}}/materialize/css/plugins/ionRangeSlider/css/ion.rangeSlider.skinModern.css">
+  <link href="/{{theme}}/materialize/css/plugins/sweetalert/dist/sweetalert.css" type="text/css" rel="stylesheet" media="screen,projection">
   <style>
-      
+        .sideItem{
+            background-color: transparent;
+            border: none;
+            line-height: 45px;
+            height: 45px;
+            font-family: roboto-light;
+        }
+        .sideItem .preIcon{
+            width: 2rem;
+            font-size: 1.6rem;
+            line-height: 3rem;
+            display: block;
+            float: left;
+            text-align: center;
+            margin-right: 1rem;
+        }
+        #chat-out .row{
+            margin-bottom: 0px!important;
+        }
+        #chat-out .row.thick{
+            border-bottom: 5px solid #e0e0e0;
+        }
+        .addresSearchbox{
+            background-color: white !important;
+            border-radius: 4px !important;
+            line-height: 20px !important;
+            text-align: center !important;
+            box-shadow: 0 1px 0 0 white !important;
+            border: 1px solid white !important;
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            width: 200px !important;
+        }
+        .animated.zoomIn { 
+            visibility: visible !important; 
+        }
+        .devInfobox{
+            z-index:996;
+            width:330px;
+            position:absolute; 
+            left:47px; 
+            height:280px;
+            {% if not is_mobile %}
+            top:135px; 
+            {% else %}
+            top:110px; 
+            {% endif %}
+            overflow-y:scroll;
+            font-family: roboto-light;
+        }
+        body, html { 
+            overflow-x: hidden; 
+            overflow-y: hidden;
+        }
+
+        div.cartodb-popup div.cartodb-popup-content-wrapper{
+          min-width: 240px!important;
+        }
   </style>  
 {% endblock %}
 
-{% block breadcrums %}
-<!--breadcrumbs start-->
-<div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
-    <div class="container">
-        <div class="row">
-          <div class="col s12 m12 l12">
-              <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">
-                  Inteligencia geoespacial           
-                </li>
-              </ol>
-          </div>
+
+{% block content %}
+    <!-- START CONTENT -->
+    <section id="content" style="overflow-y: hidden;">
+        {% block breadcrums %}
+        <!--breadcrumbs start-->
+        <div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+            <div class="container">
+                <div class="row">
+                  <div class="col s12 m12 l12">
+                      <ol class="breadcrumb" style="font-size: 29px;">
+                        <li class="active">
+                          Inteligencia geoespacial           
+                        </li>
+                      </ol>
+                  </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-<!--breadcrumbs end-->
+        <!--breadcrumbs end-->
+        {% endblock %}
+
+        <div class="row">
+          
+            <!-- MAIN MAP -->
+            <div id="map" style="height:93vh; width:100%;"></div>
+            
+            <!-- SEARCHBOX -->
+            <div class="hide-on-small-only" style="width:200px; position:absolute; top:15px; left:15px;">
+                <input class="addresSearchbox" id="search_address" type="text" placeholder="Buscar dirección..." onkeydown="if (event.keyCode == 13) codeAddress('search_address');">
+            </div>
+            
+            <!-- DEV INFOBOX -->
+            <div class="hide-on-small-only devInfobox animated">
+                <ul class="collapsible collapsible-accordion" data-collapsible="accordion" style="background-color: white;">
+                    <li>
+                        <div class="collapsible-header center" id="infobox-title">- - -</div>
+                        <div class="collapsible-body white" style="">
+                            <ul class="collection with-header no-pad-left">
+                                <li class="collection-item">
+                                    <div class="row">
+                                        <div class="col s12 grey-text text-darken-4"><span id="infobox-content"></span> </div>
+                                    </div>
+                                </li>
+                            </ul>                    
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        
+    </section>
+    <!-- END CONTENT -->
 {% endblock %}
 
-{% block page_content %}
-  <div class="row">
-    <div class="container">
-      <div class="section" >
-          
-      </div>
+{% block sidebar_right %}
+    <!-- START RIGHT SIDEBAR NAV-->
+    <aside id="right-sidebar-nav">
+        <ul id="chat-out" class="side-nav rightside-navigation">
+            
+            <!-- Searchbox -->
+            <li class="li-hover">
+                <a href="#" data-activates="chat-out" class="chat-close-collapse right"><i class="mdi-navigation-close"></i></a>
+                <div id="right-search" class="row">
+                    <div class="col s12">
+                        <div class="input-field">
+                            <i class="mdi-action-search prefix brand-color-text waves-effect circle center" id="searchbox-i"></i>
+                            <input id="searchbox" class="brand-color-text searchControl" type="text">
+                            <label for="searchbox">Búsqueda por texto</label>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            
+            <!-- Unidades Single Row -->
+            <li class="li-hover">
+                <div class="brand-color white-text row">
+                    <div class="col s8 left sideItem"><i class="mdi-maps-place preIcon"></i>Reportes</div>
+                    <div class="col s2 center sideItem">
+                        <div class="btn-floating waves-effect brand-color z-depth-0 layerControl">
+                            <i class="mdi-action-visibility-off white-text" id="0"></i>
+                        </div>
+                    </div>
+                    <div class="col s2 center sideItem">
+                        <div class="btn-floating waves-effect brand-color z-depth-0 modal-trigger" href="#modalUnits">
+                            <i class="mdi-content-filter-list white-text" id="filter-0"></i>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            
+            <!-- COLLAPSIBLES -->
+            <li class="li-hover">
+                
+                <ul class="chat-collapsible" data-collapsible="expandable" style="margin-left: -3px;">
+                    <!-- POLYGONS -->
+                    <li>
+                        <div class="collapsible-header brand-color white-text"><i class="mdi-maps-layers"></i>Polígonos</div>
+                        <div class="collapsible-body white">
+                            
+                            <!-- Radius Filter Control-->
+                            <div class="chat-out-list row">
+                                <div class="col s8 sideItem">
+                                    <i class="mdi-image-adjust preIcon" style="    font-size: 1.2rem;margin-top: 2px;transform: rotate(-20deg);"></i>
+                                    <span style="font-family: roboto-thin; font-size: 1.2rem;">Radio</span>
+                                </div>
+                                <div class="col s4 center sideItem">
+                                    <div class="switch">
+                                        <label>
+                                            <input class="filterControl" id="radius" type="checkbox">
+                                            <span class="lever"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col s12 center">
+                                    <input id="slider-p-radius" name="slider-p-radius" type="text">
+                                </div>
+                            </div>
+                            <!-- Polygon Filter Control-->
+                            <div class="chat-out-list row thick">
+                                <div class="col s8 sideItem">
+                                    <i class="mdi-rotate-120 mdi-social-share preIcon" style="    font-size: 1.2rem;margin-top: 2px;transform: rotate(-20deg);"></i>
+                                    <span style="font-family: roboto-thin; font-size: 1.2rem;">Poligono</span>
+                                </div>
+                                <div class="col s4 center sideItem">
+                                    <div class="switch">
+                                        <label>
+                                            <input class="filterControl" id="polygon" type="checkbox">
+                                            <span class="lever"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                          </div>
+                    </li>                
+                    <!-- OFFICIAL INFO -->
+                    <li>
+                        <div class="collapsible-header brand-color white-text"><i class="mdi-maps-beenhere"></i>Informacíon Oficial</div>
+                        <div class="collapsible-body white">
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">AGEBs</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="1"></i>
+                                    </div>
+                                </div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl white z-depth-0 modal-trigger" href="#modalagebs">
+                                        <i class="mdi-content-filter-list grey-text" id="filter-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Distritos</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="2"></i>
+                                    </div>
+                                </div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl white z-depth-0 modal-trigger" href="#modaldistritos">
+                                        <i class="mdi-content-filter-list grey-text" id="filter-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Secciones</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="3"></i>
+                                    </div>
+                                </div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl white z-depth-0 modal-trigger" href="#modalsecciones">
+                                        <i class="mdi-content-filter-list grey-text" id="filter-3"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Casillas</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="4"></i>
+                                    </div>
+                                </div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl white z-depth-0 modal-trigger" href="#modalcasillas">
+                                        <i class="mdi-content-filter-list grey-text" id="filter-4"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Municipios</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="5"></i>
+                                    </div>
+                                </div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl white z-depth-0 modal-trigger" href="#modalmunicipios">
+                                        <i class="mdi-content-filter-list grey-text" id="filter-5"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Estado</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="6"></i>
+                                    </div>
+                                </div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl white z-depth-0 modal-trigger" href="#modalestado">
+                                        <i class="mdi-content-filter-list grey-text" id="filter-6"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Abarrotes</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="7"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Tiendas de autoservicio</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="8"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Farmacias</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="9"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Papelerías</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="10"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Ferreterías</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="11"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Refaccionarias</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="12"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Bancos</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="13"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Casas de cambio</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="14"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Educación básica</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="15"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Educación media</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="16"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Educación especial</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="17"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Educación superior</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="18"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Educación otros</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="19"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Consultorios médicos</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="20"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Hospitales</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="21"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Museos y esparcimiento</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="22"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Hoteles</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="23"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Administración pública</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="24"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chat-out-list row">
+                                <div class="col s8 center sideItem">Organismos internacionales</div>
+                                <div class="col s2 center sideItem">
+                                    <div class="btn-floating waves-effect polyLayerControl layerControl white z-depth-0">
+                                        <i class="mdi-action-visibility-off grey-text" id="25"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>                
+                    
+                </ul>
+            </li>
+        </ul>
+    </aside>
+    <!-- END RIGHT SIDEBAR NAV -->
+
+    <!-- *********** -->
+    <!--    MODALS   -->
+    <!-- *********** -->
+    
+    <!--  modal Unidades -->
+    <div id="modalUnits" class="modal white brand-color-text">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding:10px;"></i>
+        <div class="modal-content">
+            
+            <div class="row">
+                <div class="col s12 center">
+                    <i style="font-size: 40px;" class="mdi-maps-place preIcon"></i>
+                    <p class="center login-form-text">Reportes</p>
+                </div>
+            </div>
+            
+            <!-- Views block is fieldset -->
+            <div class="row">
+                <fieldset class="col s12">
+                    <legend>VISTAS</legend>
+                    <div class="row">
+                        <p>Mostrar</p>
+                        <div class="col s12 m6 l4"> 
+                            <div class="switch" style="margin-bottom:5px">
+                                <label>
+                                    <input class="stylesControl" id="cluster-0" type="checkbox">
+                                    <span class="lever"></span>
+                                </label>
+                                <span class="card-title">Cluster</span>
+                            </div>
+                        </div>
+                    </div>                
+                </fieldset>            
+            </div>
+            <!-- Filter sections -->
+            <div class="section">
+                <h4 class="header2">Filtrar por categoría</h4>
+                <div class="row" id="unidades_selectors"></div>
+            </div>
+            <div class="divider"></div>
+            
+            <div class="section">
+                <h4 class="header2">Filtrar por estado</h4>
+                <div class="row" id="status_selectors"></div>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <div id="modalagebs" class="modal white brand-color-text center">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12 center">
+                    <p class="center login-form-text">Selecciona los AGEBs con los que deseas filtrar</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12" style="text-align: left">
+                    <div>
+                        <select class="browser-default sel2" style="width: 100%" id="sel2-p-ageb" multiple="multiple"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modaldistritos" class="modal white brand-color-text center">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12 center">
+                    <p class="center login-form-text">Selecciona los distritos con los que deseas filtrar</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12" style="text-align: left">
+                    <div>
+                        <select class="browser-default sel2" style="width: 100%" id="sel2-p-distritos" multiple="multiple"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalsecciones" class="modal white brand-color-text center">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12 center">
+                    <p class="center login-form-text">Selecciona los secciones con los que deseas filtrar</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12" style="text-align: left">
+                    <div>
+                        <select class="browser-default sel2" style="width: 100%" id="sel2-p-secciones" multiple="multiple"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalcasillas" class="modal white brand-color-text center">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12 center">
+                    <p class="center login-form-text">Selecciona los casillas con los que deseas filtrar</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12" style="text-align: left">
+                    <div>
+                        <select class="browser-default sel2" style="width: 100%" id="sel2-p-casillas" multiple="multiple"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalmunicipios" class="modal white brand-color-text center">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12 center">
+                    <p class="center login-form-text">Selecciona los municipios con los que deseas filtrar</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12" style="text-align: left">
+                    <div>
+                        <select class="browser-default sel2" style="width: 100%" id="sel2-p-municipios" multiple="multiple"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalestado" class="modal white brand-color-text center">
+        <i class="mdi-navigation-close brand-color-text right modal-action modal-close" style="padding: 10px;"></i>
+        <div class="modal-content">
+            <div class="row">
+                <div class="input-field col s12 center">
+                    <p class="center login-form-text">Selecciona los estado con los que deseas filtrar</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12" style="text-align: left">
+                    <div>
+                        <select class="browser-default sel2" style="width: 100%" id="sel2-p-estado" multiple="multiple"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block page_scripts %}
-    <script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+    <script src="/{{theme}}/materialize/js/cartodb.js"></script>
+    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/ionRangeSlider/js/ion.rangeSlider.js?v=27"></script>
+    <script type="text/javascript" src="/{{theme}}/materialize/js/plugins/sweetalert/dist/sweetalert.min.js"></script> 
+    <script src="/{{ theme }}/materialize/js/data.js?v=10"></script>
+    <script type="text/javascript">
+    //Global vars
+    var city_catMarkers = [];
+    var sublayers = [];
+    var cartodb_user = '{{cartodb_user}}';
+    var city_table_name = '{{cartodb_reports_table}}';
+    var city_mun_table_name = '{{cartodb_polygon_table}}';
+    var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
+    var city_polygon_name = '{{cartodb_polygon_name}}';
+    var city_cve_ent = {{cartodb_polygon_cve_ent}};
+    var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
+    var city_polygon_cve_mun = '{{cartodb_polygon_cve_mun}}';
+    var sql = new cartodb.SQL({ user: 'mexico' });
+    var panorama, sv = new google.maps.StreetViewService();
+    var map, mapzoom = {{zoom}}+1, mapCenter = [ {{lat}},{{lng}} ];
+    var reportDict = {};
+
+    //Polygon drawing
+    var drawingManager;
+    var customPolygons = [];
+
+    //Radio de interes
+    var radius = {
+      set : false,
+      lat : mapCenter[0],
+      lng : mapCenter[1],
+      rad : 2500
+    };
+    //Circle overlay and center marker for drag
+    var overlay, currMarker;
+    
+    //On load run Init
+    google.maps.event.addDomListener(window,'load', init);
+    
+    function clearPolygons(id){
+        if (id == 'all'){
+            console.log('clearing all polygons');
+            for (var i=0, j=customPolygons.length; i<j; i++){
+          if (!customPolygons[i]) continue;
+                customPolygons[i].setMap(null);
+            }
+            customPolygons=[];
+        }else{
+            console.log('clearing only polygon with id', id);
+            customPolygons[id] = null;
+        } 
+    }
+
+    function drawingToWKT(){
+    
+        if(customPolygons.length > 0){
+            var polyText = []; 
+            for(var i = 0, j = customPolygons.length; i < j; i++){
+          var latlngArray = [];         
+          if (!customPolygons[i]) continue;
+          $.each(customPolygons[i].getPath().getArray(), function(key, latlng){
+            latlngArray.push( latlng.lng() + ' ' + latlng.lat() );
+          });
+          latlngArray.push(latlngArray[0]);
+          polyText.push( ( j==1 ? '(' : '((' ) + latlngArray.join(",") + ( j==1 ? ')' : '))' ) );
+          }
+            var str_input = polyText.length > 0 ? ( ( customPolygons.length==1 ? 'POLYGON(' : 'MULTIPOLYGON(' ) + polyText.join(',') + ')' ) : false;
+            console.log('Geom text:', str_input);
+            
+            return str_input;
+        }else{
+            return false;
+        }
+    }
+    
+    function init(){
+                
+        var mapOptions = {
+            center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+            zoom: mapzoom,
+            minZoom:5,
+            // maxZoom:12,
+            zoomControl: {% if not is_mobile %}true{% else %}false{% endif %},
+            zoomControlOptions: {
+                position: google.maps.ControlPosition.LEFT_BOTTOM 
+            },
+            scrollwheel: true,
+            streetViewControl: {% if not is_mobile %}true{% else %}false{% endif %},
+            streetViewControlOptions: {
+                position: google.maps.ControlPosition.LEFT_BOTTOM   
+            },
+            mapTypeControl: {% if not is_mobile %}true{% else %}false{% endif %},
+            mapTypeControlOptions: {
+                mapTypeIds: [google.maps.MapTypeId.SATELLITE, 'style_1','style_2','style_3','style_4','style_5','style_6'],
+                style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                position: google.maps.ControlPosition.RIGHT_TOP   
+            },
+            panControl:{% if not is_mobile %}true{% else %}false{% endif %},
+            backgroundColor: 'rgb(249, 249, 249)',
+            rotateControl:{% if not is_mobile %}true{% else %}false{% endif %},
+            overviewMapControl:{% if not is_mobile %}true{% else %}false{% endif %}
+        };
+
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        /* GMAPS STYLES courtesy of http://snazzymaps.com/ */
+        var styler1 = [];
+        var styler2 = [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]}];
+        var styler3 =[{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]}];
+        var styler4 = [{"featureType":"water","stylers":[{"saturation":43},{"lightness":-11},{"hue":"#0088ff"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":99}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#808080"},{"lightness":54}]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"color":"#ece2d9"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#ccdca1"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#767676"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","stylers":[{"visibility":"off"}]},{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#b8cb93"}]},{"featureType":"poi.park","stylers":[{"visibility":"on"}]},{"featureType":"poi.sports_complex","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","stylers":[{"visibility":"on"}]},{"featureType":"poi.business","stylers":[{"visibility":"simplified"}]}];
+        var styler5 = [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"color":"#675a4b"}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry","stylers":[{"color":"#ffebc5"},{"lightness":"-10"}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#675a4b"}]},{"featureType":"administrative.country","elementType":"labels.text.fill","stylers":[{"color":"#b70046"}]},{"featureType":"administrative.province","elementType":"geometry.fill","stylers":[{"visibility":"off"}]},{"featureType":"administrative.province","elementType":"geometry.stroke","stylers":[{"color":"#675a4b"},{"weight":"0.50"}]},{"featureType":"administrative.province","elementType":"labels.text.fill","stylers":[{"color":"#675a4b"}]},{"featureType":"administrative.locality","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative.locality","elementType":"labels.text.fill","stylers":[{"color":"#ff850a"}]},{"featureType":"administrative.neighborhood","elementType":"geometry","stylers":[{"visibility":"on"}]},{"featureType":"administrative.neighborhood","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"saturation":"-71"},{"lightness":"-2"},{"color":"#ffebc5"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#70bfaf"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45},{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#675a4c"}]},{"featureType":"road.highway","elementType":"labels.text.fill","stylers":[{"color":"#675a4b"}]},{"featureType":"road.arterial","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"labels.text.fill","stylers":[{"color":"#675a4b"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#7ccff0"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"color":"#cfeae4"}]},{"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#109579"}]},{"featureType":"water","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]}];
+        var styler6 = [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"color":"#000000"},{"lightness":13}]},{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#144b53"},{"lightness":14},{"weight":1.4}]},{"featureType":"administrative.province","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative.locality","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative.neighborhood","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#08304b"}]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#0e5166"},{"lightness":5}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"visibility":"on"},{"color":"#7aecff"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels.icon","stylers":[{"visibility":"simplified"}]},{"featureType":"poi.attraction","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.sports_complex","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#e7ff00"},{"visibility":"on"},{"weight":"0.90"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#0b434f"},{"lightness":25},{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels.text","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#2aff00"},{"visibility":"on"},{"weight":"0.80"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"color":"#0b3d51"},{"lightness":16},{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#00ab69"},{"weight":"0.80"}]},{"featureType":"road.local","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"color":"#146474"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#ff0000"},{"weight":"0.90"}]},{"featureType":"transit","elementType":"labels.text","stylers":[{"visibility":"simplified"},{"color":"#ff6300"}]},{"featureType":"transit","elementType":"labels.icon","stylers":[{"visibility":"on"},{"color":"#ff3f00"},{"weight":"0.80"}]},{"featureType":"transit.station.bus","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.bus","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"transit.station.bus","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#010a33"}]}];
+        
+        var styleMap1 = new google.maps.StyledMapType(styler1,{name: "Map"});   
+        var styleMap2 = new google.maps.StyledMapType(styler2,{name: "Black"}); 
+        var styleMap3 = new google.maps.StyledMapType(styler3,{name: "Apple Maps"});    
+        var styleMap4 = new google.maps.StyledMapType(styler4,{name: "Mapbox "});   
+        var styleMap5 = new google.maps.StyledMapType(styler5,{name: "Outspoken "});    
+        var styleMap6 = new google.maps.StyledMapType(styler6,{name: "Midnight "}); 
+        
+        map.mapTypes.set('style_1', styleMap1);
+        map.mapTypes.set('style_2', styleMap2);
+        map.mapTypes.set('style_3', styleMap3);
+        map.mapTypes.set('style_4', styleMap4);
+        map.mapTypes.set('style_5', styleMap5);
+        map.mapTypes.set('style_6', styleMap6);
+
+        map.setMapTypeId('style_1');
+        
+        google.maps.event.addDomListener(window, "resize", function() {
+            var center = map.getCenter();
+            google.maps.event.trigger(map, "resize");
+            map.setCenter(center);
+        });
+        
+        //Autocomplete address
+        var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
+        autocomplete_from.bindTo('bounds', map);
+        google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+            var place = autocomplete_from.getPlace();
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            }else{
+                map.setCenter(place.geometry.location);
+                map.setZoom(17);
+            }
+        }); 
+
+        //Drawing Manager for polygons
+        drawingManager = new google.maps.drawing.DrawingManager({
+              drawingControl: false,
+              drawingMode: google.maps.drawing.OverlayType.POLYGON,
+              drawingControlOptions: {
+                  position: google.maps.ControlPosition.TOP_CENTER,
+                  drawingModes: ['polygon']
+              },
+              polygonOptions: {
+                  strokeColor: "#00833E",
+                  strokeOpacity: 0.60,
+                  strokeWeight: 2,
+                  fillColor: "#00833E",
+                  fillOpacity: 0.150,
+                  clickable: true,
+                  zIndex: 1,
+                  editable: true,
+                  draggable: true,
+              }
+          });
+          //Ensure drawing mode is off on load
+          drawingManager.setDrawingMode(null);
+      
+        //Polygon complete listener
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
+                //Add unique id to polyon 
+                var polygon = e.overlay;
+                polygon.polyId = customPolygons.length;
+
+                //Push to global array for manipulation (delete / edit)
+                customPolygons.push(polygon);
+
+                //Revert map mode from drawing to pan
+                drawingManager.setDrawingMode(null);
+                                                
+                //Repaint green on polyOK
+                function polyOk (){
+                    for (var i=0, j=customPolygons.length; i<j; i++){
+                  if (!customPolygons[i]) continue;
+                        customPolygons[i].setOptions({fillColor: '#00833E'});
+                    }
+                }
+                
+                //Check for overlapping polygons with PostGIS on polygon completion
+                function polyIsValid (poly) {
+                    var WKT = drawingToWKT();
+                    sql.execute("SELECT ST_IsValid(ST_GeomFromText('"+ WKT +"',4326))").done(function(response) {
+                        if(response.rows[0].st_isvalid){
+                            console.log('geometry is valid');
+                            polyOk ();
+                            if ( !drawingManager.get('drawingControl') ) drawingManager.setOptions({drawingControl: true});
+                            setQ();
+                        }else{
+                            drawingManager.setOptions({drawingControl: false});
+                            customPolygons[poly.polyId].setOptions({fillColor: 'red'});
+                            swal("Poligonos empalmados", "Arrastralos o borralos para evitarlo.", "warning")                        
+                        }
+                    });
+                }
+                
+                //Editable shape listeners on polygon completion
+                var movePointListener, newPointListener;
+                
+                function addShapeEditListeners(){
+                    movePointListener = google.maps.event.addListener(polygon.getPath(), 'set_at', function () {
+                        console.log('Point was moved');
+                                polyIsValid (polygon);
+                      });
+                    newPointListener = google.maps.event.addListener(polygon.getPath(), 'insert_at', function () {
+                      console.log('Point was inserted');
+                              polyIsValid (polygon);
+                    });
+                }
+                
+                //Add editable shape listeners on polygon complete
+                addShapeEditListeners();            
+                
+                //Drag event fires editable shape listeners, so remove on drag start
+                google.maps.event.addListener(polygon, 'dragstart', function(event) {
+                    console.log('polygon drag started');
+                  google.maps.event.removeListener(movePointListener);
+                  google.maps.event.removeListener(newPointListener);
+                });
+                
+                //On drag end add editable shape listeners again, check for overlapping polygons and edit accordingly
+                google.maps.event.addListener(polygon, 'dragend', function(event) {
+                    console.log('polygon drag finished');
+                    //Check for overlapping polygons with PostGIS on drag end
+                    polyIsValid (this);                                
+                    //Add editable shape listeners again  
+                    addShapeEditListeners();
+                });
+                
+                polyIsValid (polygon);
+
+                //Listen for right click event to delete polygons
+                google.maps.event.addListener(polygon, 'rightclick', function() {
+                    console.log('right clicked polygon with id: ' + this.polyId);
+                    if ( !drawingManager.get('drawingControl') ) drawingManager.setOptions({drawingControl: true});
+                    customPolygons[this.polyId].setMap(null);
+                    clearPolygons(this.polyId);
+                    setQ();
+                });
+        });        
+                  
+        enableControls();
+
+        createLayers();
+    }
+
+    function setQ(){
+        console.log('querying...');
+        /* 
+            sublayers[0] is the most important layer for filtering, it's the unidades table
+            sublayers[0].setSQL()
+            sublayers[0].setCartoCSS()
+            or use
+            sql.execute(query)
+            .done(function(response) {
+                console.log('query response', response);
+            });
+        */
+    }
+
+    function drawCircle() {
+        if (overlay) overlay.setMap(null);
+        if (currMarker) currMarker.setMap(null);
+        if (radius.set) {
+            overlay = new google.maps.Circle({
+                map: map,
+                center: new google.maps.LatLng(radius.lat, radius.lng),
+                radius: radius.rad,
+                strokeColor: "#00833e",
+                strokeOpacity: 0.60,
+                strokeWeight: 2,
+                fillColor: "#00833e",
+                fillOpacity: 0.150,
+                //draggable: true
+            });
+            
+            currMarker = new google.maps.Marker({
+                position: new google.maps.LatLng(radius.lat, radius.lng),
+                draggable: true,
+                icon: {
+                    url: "https://maps.gstatic.com/intl/en_us/mapfiles/markers2/measle_blue.png",
+                    size: new google.maps.Size(7, 7),
+                    anchor: new google.maps.Point(4, 4)
+                },
+                map: map
+            });
+            overlay.bindTo('center', currMarker, 'position');
+            
+            //drag from center marker event            
+            google.maps.event.addListener(currMarker, 'dragend', function(event) {
+                console.log('drag finished');
+                radius.lat = overlay.getCenter().lat();
+                radius.lng = overlay.getCenter().lng();
+                setQ();
+        });
+        
+        }
+    }
+
+    function updateBounds() {
+        var bounds = new google.maps.LatLngBounds();
+        var myLatLng = new google.maps.LatLng(radius.lat, radius.lng);
+        bounds.extend(myLatLng);
+        myLatLng = new google.maps.LatLng(radius.lat + 0.01 * radius.rad / 1000, radius.lng + 0.01 * radius.rad / 1000);
+        bounds.extend(myLatLng);
+        myLatLng = new google.maps.LatLng(radius.lat - 0.01 * radius.rad / 1000, radius.lng - 0.01 * radius.rad / 1000);
+        bounds.extend(myLatLng);
+        map.fitBounds(bounds);
+    }
+
+    function codeAddress(input) {
+        var address, obj;                               
+
+        address = document.getElementById(input).value;
+        obj = { 'address': address };
+        geocoder.geocode( obj, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                
+                if (typeof(input) === 'string') {
+                    map.setCenter(results[0].geometry.location);
+                    switch (results[0].geometry.location_type){
+                        case 'ROOFTOP': map.setZoom(17); break;
+                        case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                        case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                        case 'APPROXIMATE': map.setZoom(13); break;
+                    }
+                }else{
+                    if (results[1]) {
+                        document.getElementById(input).value = results[1].formatted_address;
+                    } else {
+                        console.log('No results found');
+                    }
+                }
+            
+            } else {
+                console.log('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+        
+    function addCommas(val) {
+        while (/(\d+)(\d{3})/.test(val.toString())) {
+            var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+        }
+        return val;
+    } 
+
+    function enableControls(){
+
+        //Radius slider
+        $("#slider-p-radius").ionRangeSlider({
+            grid: false,
+            min: 100,
+            max: 5000,
+            from: 2500,
+            step: 100,
+            keyboard: true,
+            keyboard_step: 2,
+            prettify_enabled:true,
+            prettify: function(num){
+                return num < 1000 ? num + ' m' : num/1000 + ' km';
+            },
+            onFinish: function (data) {
+                console.log('finish radius slider');
+                console.log(data);
+                radius.rad = data.from;
+                setQ();
+            },
+            onChange: function (data) {
+                console.log('change radius slider');
+                console.log(data);
+                if (overlay) overlay.setRadius(data.from);
+            },
+            onUpdate: function (data) {
+                console.log('update radius slider');
+                console.log(data);
+            },
+            disable: true
+        });
+        var radiusSlider = $("#slider-p-radius").data("ionRangeSlider");
+        
+        //Radius on/off switch
+        $('#radius').change(function() {
+          this.checked ? radius.set = true : radius.set = false;
+            if ( $('#polygon').prop('checked') ) $('#polygon').click();
+          if (radius.set) {
+            radiusSlider.update({ disable: false });
+            radius.lat = map.getCenter().lat();
+            radius.lng = map.getCenter().lng();
+            radius.rad = parseInt($("#slider-p-radius").val());
+          }else{
+                //if ( $('#pcuRow').css('display') == 'none' ) $('#pcuRow').fadeIn('slow');
+            radiusSlider.update({ disable: true });
+          }
+          drawCircle();
+            setQ();
+        });        
+
+        //Draw Polygon on/off
+        $('#polygon').change(function() {
+            if (this.checked){
+                //if ( $('#pcuRow').css('display') == 'block' ) $('#pcuRow').fadeOut('slow');
+                if ( $('#radius').prop('checked') ) $('#radius').click();
+                drawingManager.setOptions({drawingControl: true});
+                drawingManager.setDrawingMode('polygon');
+                drawingManager.setMap(map);
+            }else{
+                //if ( $('#pcuRow').css('display') == 'none' ) $('#pcuRow').fadeIn('slow');
+                drawingManager.setOptions({drawingControl: false});
+                drawingManager.setDrawingMode(null);
+                drawingManager.setMap(null);
+                clearPolygons('all');
+                setQ();
+            }
+        }); 
+
+        //Layers control using visible icon
+        $('.layerControl i').click(function() {
+            if ( $( this ).hasClass( "mdi-action-visibility-off" ) ) {
+                $(this).removeClass('mdi-action-visibility-off').addClass('mdi-action-visibility');
+                if (this.id != "0") if ( $('.devInfobox').hasClass('zoomOutLeft') ) $('.devInfobox').removeClass('zoomOutLeft').addClass('zoomInLeft');
+                sublayers[parseInt(this.id)].show();
+            }else if ( $( this ).hasClass( "mdi-action-visibility" ) ) {
+              $(this).removeClass('mdi-action-visibility').addClass('mdi-action-visibility-off');
+              if (this.id != "0") $('.devInfobox').addClass('zoomOutLeft');
+              sublayers[parseInt(this.id)].hide();
+          }
+        });
+
+        //stylesControl
+        $('.stylesControl').change(function() {
+            var target = this.id.split('-');
+            this.checked ? setStyle(this.id) : setStyle( 'clear-' + target[1] );
+
+            //Radiolike functionality
+            var styleBtns = document.getElementsByClassName('stylesControl');
+            for (var i = 0 , j = styleBtns.length; i<j; i++){
+                if ( styleBtns[i].id == this.id ) {continue}
+                //off for same group
+                if ( styleBtns[i].id.split('-')[1] == target[1] )  styleBtns[i].checked = false;
+            }
+        });
+
+        //searchControl
+        $('.searchControl').keyup(function() {
+            if ($(this).val()) {
+                $("#"+this.id+"-i").removeClass('mdi-action-search brand-color-text').addClass('mdi-action-highlight-remove red-text text-darken-4');
+            } else {
+                $("#"+this.id+"-i").removeClass('mdi-action-highlight-remove red-text text-darken-4').addClass('mdi-action-search brand-color-text');
+            }            
+            setQ();
+        });
+
+        // clear text search for desarrollos
+        $('#searchbox-i').click(function() {
+            if ( $( this ).hasClass( "mdi-action-highlight-remove red-text text-darken-4" ) ) {
+                $('#searchbox').val('');
+                $("label[for='searchbox']").removeClass('active');
+                $(this).removeClass('mdi-action-highlight-remove red-text text-darken-4').addClass('mdi-action-search brand-color-text');
+                setQ();
+            }
+        });
+    }
+
+    function createLayers(){
+
+      /*  
+          Ordered as:
+            0 - Reportes
+            1 - AGEBs
+            2 - Distritos
+            3 - Secciones
+            4 - Casillas
+            5 - Municipios
+            6 - Estado
+            7 - 'Abarrotes', // le hace falta lo que hay de abarrotes en tabla nacional_denue_inegi_46112_46311 
+            8 - 'Tiendas de autoservicio',
+            9 - 'Farmacias',
+            10 - 'Papelerías',
+            11 - 'Ferreterías',
+            12 - 'Refaccionarias',
+            13 - 'Bancos',
+            14 - 'Casas de cambio',
+            15 - 'Educación básica',
+            16 - 'Educación media',
+            17 - 'Educación especial',
+            18 - 'Educación superior',
+            19 - 'Educación otros',
+            20 - 'Consultorios médicos',
+            21 - 'Hospitales',
+            22 - 'Museos y esparcimiento',
+            23 - 'Hoteles',
+            24 - 'Administración pública',
+            25 - 'Organismos internacionales',
+      */
+
+      // CITY LAYERS
+      var city_query= "SELECT " + city_table_name + ".* FROM " + city_table_name;
+      var city_css = '#layer [\'mapnik::geometry_type\'=1] { marker-fill: ramp([group_category], ("#7F3C8D", "#11A579", "#3969AC", "#F2B701"), ("Obras publicas", "Alumbrado", "Parques y plazas", "Parques o plazas"));  } #layer {marker-width: 7;marker-fill-opacity: 0.9;marker-allow-overlap: true;marker-line-width: 1;marker-line-color: #FFF;marker-line-opacity: 1;}';
+      var layerSource = {
+          user_name: cartodb_user,
+          type: 'cartodb',
+          sublayers: [{
+              sql: city_query,
+              cartocss: city_css
+          }]
+      };
+
+      // MEXICO LAYERS
+      var mlayerSource = {
+          user_name: 'mexico',
+          type: 'cartodb',
+          sublayers: [{
+              sql: "SELECT nacional_ageb.* FROM nacional_ageb WHERE cve_ent = " + city_cve_ent,
+              cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
+          },{
+              sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012 where entidad = "+city_cve_ent,
+              cartocss: "#nacional_ine_distritos_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 2;line-opacity: 1;}"
+          },{
+              sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012 where entidad = "+city_cve_ent,
+              cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF505B;polygon-opacity: 0.05;line-color: #FF505B;line-width: 1;line-opacity: 1;}"
+          },{
+              sql: "SELECT nacional_ine_casillas_2012.* FROM nacional_ine_casillas_2012 where entidad = "+city_cve_ent,
+              cartocss: "#nacional_ine_casillas_2012{marker-fill: #A53ED5;marker-line-color: #FFFFFF; line-width: 8;line-opacity: 1;marker-allow-overlap:true; marker-comp-op:color-burn;}"
+          },{
+              sql: "SELECT nacional_municipios.* FROM nacional_municipios where cve_ent = "+city_cve_ent,
+              cartocss: "#nacional_municipios{polygon-fill: {{brand_color}};polygon-opacity: 0.05;line-color: {{brand_color}};line-width: 2;line-opacity: 1;}"
+          },{
+              sql: "SELECT nacional_estados.* FROM nacional_estados where cve_ent = "+city_cve_ent,
+              cartocss: "#nacional_estados{polygon-fill: {{brand_color}};polygon-opacity: 0.05;line-color: {{brand_color}};line-width: 3;line-opacity: 1;}"
+          },{
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46111 WHERE codigo_act ilike '461%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_46111{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46112_46311 WHERE codigo_act ilike '462%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_46112_46311{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46321_46531 WHERE codigo_act ilike '4641%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_46321_46531{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46321_46531 WHERE codigo_act ilike '465311%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_46321_46531{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46591_46911 WHERE codigo_act ilike '467111%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_46591_46911{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46591_46911 WHERE codigo_act ilike '46821%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_46591_46911{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_52 WHERE codigo_act ilike '5221%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_52{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_52 WHERE codigo_act ilike '5231%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_52{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6111%' and codigo_act not ilike '61115%' and codigo_act not ilike '61118%' and codigo_act not ilike '61118%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '61115%' or codigo_act ilike '61116%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '61118%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6112%' or codigo_act ilike '6113%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6114%' or codigo_act ilike '6116%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_62 WHERE codigo_act ilike '621%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_62{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_62 WHERE codigo_act ilike '622%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_62{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_71 WHERE codigo_act ilike '7121%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_71{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_72 WHERE codigo_act ilike '7211%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_72{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_93 WHERE codigo_act ilike '9312%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_93{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          },
+          {
+            sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_93 WHERE codigo_act ilike '932%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+            cartocss: '#nacional_denue_inegi_93{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}'
+          }]
+      };
+
+      cartodb.createLayer(map,layerSource)
+      .on('done', function(layer) {
+          map.overlayMapTypes.setAt(0, layer);
+          for (var i = 0; i < layer.getSubLayerCount(); i++) {
+             sublayers[i] = layer.getSubLayer(i);
+             cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(i), get_interactivity(i));
+             sublayers[i].setInteraction(true);                
+             sublayers[i].hide(); 
+             console.log("Congrats, you added sublayer #" + i + ", sql: "+ layerSource.sublayers[i].sql +"!");
+          }
+      }); 
+
+      cartodb.createLayer(map,mlayerSource)
+      .on('done', function(layer) {
+          map.overlayMapTypes.setAt(1, layer);
+          for (var i = 0; i < layer.getSubLayerCount(); i++) {
+             sublayers[i+1] = layer.getSubLayer(i);
+             cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(i), get_interactivity(i+1));
+             sublayers[i+1].setInteraction(true);   
+             sublayers[i+1].hide(); 
+             if (i < 6)
+               sublayers[i+1].on('featureClick', function(e, latlng, pos, data, layerIndex) {
+                    console.log("populating sidebar for layerIndex: " + layerIndex);
+                    populateInfobox(data, latlng, layerIndex);
+               });
+             console.log("Congrats, you added sublayer #" + i + ", sql: "+ mlayerSource.sublayers[i].sql +"!");
+          }
+      }); 
+
+    }
+
+    function get_interactivity(layer_id){
+        switch(layer_id){
+            case 6: 
+                return ["nom_ent","cve_ent"];
+            case 5: 
+                return ["nom_mun","cve_ent","cve_mun"];
+            case 4:
+                return ["entidad","municipio","distrito","seccion","nombre"];
+            case 3:
+                return ["clavegeo","entidad","municipio","distrito","seccion"];
+            case 2:
+                return ["clavegeo","entidad","distrito"];
+            case 1:
+                return ["cve_ageb","cve_ent","cve_mun"];
+            case 0:
+                return ["cartodb_id", "group_category", "sub_category", "via", "description", "_when", "address_from", "folio", "follows", "rating", "status", "image_url", "via", "title", "uuid"];
+            default:
+                return ["nom_estab", "nombre_act"];
+        }
+    }
+
+    function setStyle(style){
+      console.log('changing cartoCSS...');
+      var target = style.split('-');
+      switch(target[0]){
+        case 'clear':
+            sublayers[target[1]].setCartoCSS('#layer [\'mapnik::geometry_type\'=1] { marker-fill: ramp([group_category], ("#7F3C8D", "#11A579", "#3969AC", "#F2B701"), ("Obras publicas", "Alumbrado", "Parques y plazas", "Parques o plazas"));  } #layer {marker-width: 7;marker-fill-opacity: 0.9;marker-allow-overlap: true;marker-line-width: 1;marker-line-color: #FFF;marker-line-opacity: 1;}');
+            break;
+        case 'cluster':
+            sublayers[target[1]].setCartoCSS('#layer [\'mapnik::geometry_type\'=1] { marker-fill: ramp([group_category], ("#7F3C8D", "#11A579", "#3969AC", "#F2B701"), ("Obras publicas", "Alumbrado", "Parques y plazas", "Parques o plazas"));  } #layer {marker-width: 7;marker-fill-opacity: 0.9;marker-allow-overlap: false;marker-line-width: 1;marker-line-color: #FFF;marker-line-opacity: 1;}');
+            break;
+      }
+    }
+
+    var ageb_response, ageb_content;
+    function populateInfobox(data, latlng, layerIndex){
+      switch(layerIndex+1){
+        case 1:
+              $('#infobox-title').html('<h5 class="center grey-text">AGEB: '+ data.cve_ageb + '</h5>');
+              sql.execute("SELECT * FROM nacional_ageb_data where cve_ent = " + data.cve_ent + " and cve_mun = " + data.cve_mun + " and cve_ageb = '" + data.cve_ageb + "'").done(function(response) {
+                  console.log('nacional_ageb_data', response);
+                  ageb_response = response.rows[0];
+                  ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                  agebArr.forEach(getAGEB);
+
+                  $('#infobox-content').html(ageb_content);
+
+              });
+              break;
+        case 2:
+            $('#infobox-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
+            sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                console.log('nacional_ine_distritos_2012', response);
+                var content = '';
+                $('#infobox-content').html(content);
+            });
+            break;
+        case 3:
+            $('#infobox-title').html('<h5 class="center grey-text">Seccion: '+ data.seccion + '</h5>');
+
+            sql.execute("SELECT * FROM nacional_ine_secciones_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                console.log('nacional_ine_secciones_2012', response);
+                response = response.rows[0];
+                var content ='<p class=" grey-text">Esta sección pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
+                content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+                content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
+                content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos. Y '+response.hogjef_f+' son liderados por una mujer.</p>';
+                var lim = response.pclim_aud + response.pclim_leng + response.pclim_men + response.pclim_men2 + response.pclim_mot + response.pclim_vis + response.pcon_lim;
+                content+='<p class=" grey-text">Existían '+lim+' personas discapacitadas y aproximadamente '+response.psinder+' personas no contaban con servicios de salud.</p>';
+                var peac = Math.round(response.pocupada/response.pea*100) || 0;
+                content+='<p class=" grey-text">Con una tasa de empleo del '+peac+'%.</p>';
+                content+='<p class=" grey-text">En temas de bienes por vivienda, '+response.vph_autom+' tienen automóvil, '+response.vph_c_elec+' acceso a red eléctrica, '+response.vph_cel+' tienen teléfono celular, '+response.vph_pc+' cuentan con una computadora, '+response.vph_inter+' tienen acceso a internet, '+response.vph_pisodt+' cuentan con piso, '+response.vph_tv+' tienen televisión, '+response.vph_radio+' tienen radio, '+response.vph_refri+' tienen refrigerador y '+response.vph_lavad+' tienen lavadora.</p>';
+
+                $('#infobox-content').html(content);
+            });
+            break;
+        case 4:
+            $('#infobox-title').html('<h5 class="center grey-text">Seccion: '+ data.seccion + ' Casilla: '+ data.nombre + '</h5>');
+            sql.execute("SELECT * FROM nacional_ine_casillas_2012 where entidad = " + data.entidad + " and municipio = " + data.municipio + " and distrito = " + data.distrito + " and seccion = " + data.seccion + " and nombre = '" + data.nombre +"'").done(function(response) {
+                console.log('nacional_ine_casillas_2012', response);
+                var content = '';
+                var response = response.rows[0];
+                sql.execute("SELECT * FROM nacional_ine_secciones_2012 where distrito = " + response.distrito + " and seccion = "+response.seccion).done(function(_response) {
+                    console.log('nacional_ine_secciones_2012', _response);
+                    var response = _response.rows[0];
+                    content +='<p class=" grey-text">Esta casilla pertenece a la sección '+response.seccion+', que pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
+                    content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+                    content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
+                    content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos. Y '+response.hogjef_f+' son liderados por una mujer.</p>';
+                    var lim = response.pclim_aud + response.pclim_leng + response.pclim_men + response.pclim_men2 + response.pclim_mot + response.pclim_vis + response.pcon_lim;
+                    content+='<p class=" grey-text">Existían '+lim+' personas discapacitadas y aproximadamente '+response.psinder+' personas no contaban con servicios de salud.</p>';
+                    var peac = Math.round(response.pocupada/response.pea*100) || 0;
+                    content+='<p class=" grey-text">Con una tasa de empleo del '+peac+'%.</p>';
+                    content+='<p class=" grey-text">En temas de bienes por vivienda, '+response.vph_autom+' tienen automóvil, '+response.vph_c_elec+' acceso a red eléctrica, '+response.vph_cel+' tienen teléfono celular, '+response.vph_pc+' cuentan con una computadora, '+response.vph_inter+' tienen acceso a internet, '+response.vph_pisodt+' cuentan con piso, '+response.vph_tv+' tienen televisión, '+response.vph_radio+' tienen radio, '+response.vph_refri+' tienen refrigerador y '+response.vph_lavad+' tienen lavadora.</p>';
+
+                    $('#infobox-content').html(content);
+                });
+
+            });
+            break;
+        case 5:
+              $('#infobox-title').html('<h5 class="center grey-text">Municipio: '+ data.cve_mun + '</h5>');
+              sql.execute("SELECT * FROM nacional_municipal_data where cve_ent = " + data.cve_ent + " and cve_mun = " + data.cve_mun).done(function(response) {
+                  console.log('nacional_municipal_data', response);
+                  ageb_response = response.rows[0];
+                  ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                  agebArr.forEach(getAGEB);
+
+                  $('#infobox-content').html(ageb_content);
+
+              });
+              break;
+        case 6:
+              $('#infobox-title').html('<h5 class="center grey-text">Estado: '+ data.cve_ent + '</h5>');
+              sql.execute("SELECT * FROM nacional_estatal_data where cve_ent = " + data.cve_ent).done(function(response) {
+                  console.log('nacional_estatal_data', response);
+                  ageb_response = response.rows[0];
+                  ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                  agebArr.forEach(getAGEB);
+
+                  $('#infobox-content').html(ageb_content);
+
+              });
+              break;                    
+      }
+    }
+    function getAGEB(item,index){
+      ageb_content += '<p class="grey-text">' + inegiDict[item] + ': <span style="font-family:roboto-black;">'+ ageb_response[item] +'</span></p>'
+    }
 
     </script>
 {% endblock %}

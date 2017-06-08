@@ -640,7 +640,7 @@ var inegiDict = {
 	"viv8_r" : "Porcentaje de viviendas particulares habitadas con dos dormitorios y más", 
 	"viv9" : "Viviendas particulares habitadas con más de 25 ocupantes por dormitorio", 
 	"viv9_r" : "Porcentaje de viviendas particulares habitadas con más de 25 ocupantes por dormitorio"
-}
+};
 
 var agebArr = [
 	"disc1", 
@@ -1143,4 +1143,4 @@ var agebArr = [
 	"viv40_r", 
 	"viv41", 
 	"viv41_r"
-]
+];

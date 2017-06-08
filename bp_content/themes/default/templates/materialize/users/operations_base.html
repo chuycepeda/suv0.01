@@ -329,6 +329,10 @@
                             <ul class="right hide-on-med-and-down">
                                 <li><a href="javascript:void(0);" class="waves-effect waves-block waves-light toggle-fullscreen grey-text text-ligthen-1"><i class="mdi-action-settings-overscan"></i></a>
                                 </li>
+                                {% if path == uri_for('materialize-organization-ai-location') %}
+                                <li><a href="#" data-activates="chat-out" class="chat-collapse waves-effect waves-light darken-2"><i class="mdi-image-tune brand-color-text"></i></a>    
+                                </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </nav>
