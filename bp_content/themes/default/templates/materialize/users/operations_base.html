@@ -232,6 +232,10 @@
                     display: none!important;
                 }
 
+                a.brand-logo {
+                    max-height: 63px;
+                }
+
             </style>
             {% block page_css %}{% endblock %}
             {% if user_id %}
@@ -275,7 +279,7 @@
                     <nav class="white">
                         <div class="nav-wrapper">
                             <a href="{{uri_for("landing")}}" class="brand-logo center">
-                            <img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:60px; {% endif %}">
+                            <img src="{% if is_mobile %}{{brand_favicon}}{% else %}{{brand_logo}}{% endif %}" style="margin-top:3px; {% if is_mobile %}margin-left:4px; height:50px; {% else %}margin-left:5px; height:58px; {% endif %}">
                             <div id="main-preloader" class="preloader-wrapper small active right" style="display: none;margin-top:3px;margin-left:12px;">
                               <div class="spinner-layer spinner-blue">
                                 <div class="circle-clipper left">

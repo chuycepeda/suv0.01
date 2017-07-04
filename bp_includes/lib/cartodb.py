@@ -59,7 +59,7 @@ class CartoDBBase(object):
         )
         return resp, content
 
-    def sql(self, sql, parse_json=True, do_post=False, format=None):
+    def sql(self, sql, parse_json=True, do_post=True, format=None):
         """ executes sql in cartodb server
             set parse_json to False if you want raw reponse
         """

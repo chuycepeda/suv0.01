@@ -171,6 +171,7 @@ def cartoInsert(self, report_id, manual, notify_organization):
         unquoted_url = ("https://%s.cartodb.com/api/v2/sql?q=INSERT INTO %s (created, pvt, the_geom, _when, title, description, status, address_from, folio, image_url, group_category, sub_category, follows, rating, via, man, uuid) VALUES ('%s', %s, ST_GeomFromText('POINT(%s %s)', 4326),'%s','%s','%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s', %s, '%s')&api_key=%s" % (cartodb_domain, cartodb_table, report_info.created.strftime("%Y-%m-%d %H:%M:%S"), private, report_info.address_from_coord.lon, report_info.address_from_coord.lat, report_info.when.strftime("%Y-%m-%d"),report_info.title,report_info.description,report_info.status,report_info.address_from,report_info.folio,report_info.image_url,report_info.group_category,report_info.sub_category,report_info.follows,report_info.rating,report_info.via,manual,report_info.key.id(),api_key)).encode('utf8')
         url = urllib.quote(unquoted_url, safe='~@$&()*!+=:;,.?/\'')
         try:
+            logging.info(url)
             t = urlfetch.fetch(url)
             logging.info("insert request to cartodb responded: %s" % t.content)
             #SELECT CARTODB_ID & ASSIGN

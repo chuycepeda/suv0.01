@@ -25,6 +25,20 @@
               <ol class="breadcrumb" style="font-size: 29px;">
                 <li class="active">
                 Comentarios en el muro de Facebook 
+                </li>
+              </ol>
+          </div>
+        </div>
+    </div>
+</div>
+<!--breadcrumbs end-->
+{% endblock %}
+
+{% block page_content %}
+    <div class="container">
+      <div class="section">
+       <div class="row">
+            <div class="col s12">
                   <button class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;" id="loginbtn" {% if facebook_appID %} onclick="myFacebookLogin()" >Inicia sesión con Facebook {% else %}>Facebook sin configuración {% endif %}</button>
                   <div id="main-preloader" class="preloader-wrapper small active right" style="display:none;">
                     <div class="spinner-layer spinner-green-only">
@@ -40,27 +54,13 @@
                     </div>
                   </div>
                   <a id="new-rep" href="{{uri_for('materialize-organization-report')}}" class="btn brand-color white-text waves-effect waves-light right" style="font-size: 14px; margin-right:20px;display:none;" target="_blank">Crear reporte<i class="mdi-content-add right"></i></a>
-                </li>
-              </ol>
-            
-          </div>
-        </div>
-    </div>
-</div>
-<!--breadcrumbs end-->
-{% endblock %}
-
-{% block page_content %}
-    <div class="container">
-      <div class="section">
-       <div class="row" style="margin-top:30px">
-            <div class="row">
-              <div class="col s12">
+              </div>
+              <div class="col s12" style="margin-top: 15px">
                 <ul class="collection with-header" id="feed">    
                   <li id="init-header" class="collection-header"><h4>Inicia sesión para cargar los comentarios en el muro oficial.</h4></li>              
                 </ul>
               </div>
-            </div>
+            
         </div>
       </div>
     </div>
@@ -198,12 +198,12 @@
               console.log('feed', response);
               var _feed = document.getElementById('feed');
               var url='', d=0;
-              var html='<li class="collection-header blue darken-4 white-text"><h4>Comentarios recientes en /{{facebook_handle}}.</h4></li>';
+              var html='<li class="collection-header blue darken-4 white-text"><h4>Comentarios recientes en:</h4><a class="valign-wrapper" href="https://www.facebook.com/{{facebook_handle}}" target="_blanck"><img class="responsive-img" src="/{{theme}}/materialize/images/facebook-256.png" style="max-height: 35px; margin-right:5px;"><span class="white-text" style="font-size: 20px;">/{{facebook_handle}}</span></a></li>';
               
               //Populate collection
               for (var i=0, j=response.data.length; i<j; i++){
                 d = 5-i%2*2;
-                html += '<li class="grey lighten-'+d+' collection-item"><div class="row"><span class="col s12">'+ response.data[i].message +'</span></div><div class="row"><button onclick="openConversation(\''+response.data[i].id.trim()+'\');return false;" class="btn left blue darken-2 truncate" style="margin-top:10px;margin-bottom:10px">Ver conversación (<span id="counter_'+response.data[i].id.trim()+'">-</span>) <i class="mdi-editor-mode-comment right"></i></button><button onclick="createReport(\''+response.data[i].id.trim()+'\');return false;" class="btn right brand-color truncate" style="margin-top:10px;margin-bottom:10px">Crear reporte<i class="mdi-content-send right"></i></button></div></li>';
+                html += '<li class="grey lighten-'+d+' collection-item"><div class="row"><span class="col s12">'+ (response.data[i].message || response.data[i].story || '' ) +'</span></div><div class="row"><button onclick="openConversation(\''+response.data[i].id.trim()+'\');return false;" class="btn left blue darken-2 truncate" style="margin-top:10px;margin-bottom:10px">Ver conversación (<span id="counter_'+response.data[i].id.trim()+'">-</span>) <i class="mdi-editor-mode-comment right"></i></button><button onclick="createReport(\''+response.data[i].id.trim()+'\');return false;" class="btn right brand-color truncate" style="margin-top:10px;margin-bottom:10px">Crear reporte<i class="mdi-content-send right"></i></button></div></li>';
                 counter_ids.push('counter_'+response.data[i].id.trim());                
               }
               _feed.innerHTML = html;

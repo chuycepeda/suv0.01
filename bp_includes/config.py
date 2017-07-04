@@ -107,8 +107,8 @@ config = {
     # application on social media
     'twitter_url': 'https://twitter.com/miciudadenlinea',
     'facebook_url': 'https://www.facebook.com/miciudadenlinea',
-    'twitter_handle': 'apodacaorgullodenl',
-    'facebook_handle':'apodacaorgullodenl',
+    'twitter_handle': 'gobloscabos',
+    'facebook_handle':'ayuntamientodeloscabos',
     'google_clientID': '280514157419-ijeb15qf3u5nqp4ceg5r0vqia81nadqt.apps.googleusercontent.com', #get it new from https://console.cloud.google.com/apis/credentials?project=<APP_ID>
     'twitter_appID': '678306982604894208', #get it new from https://twitter.com/settings/widgets
     'facebook_appID': '523620084480399', #get it new from https://developers.facebook.com/apps/ or add redirect URI at https://developers.facebook.com/apps/523620084480399/fb-login/
