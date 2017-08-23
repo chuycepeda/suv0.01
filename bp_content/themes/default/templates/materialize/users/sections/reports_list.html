@@ -232,9 +232,10 @@
                 	}
                     
                     var d = new Date(data.rows[i].created);
+                    var dm = d.getMonth() + 1;
                     items.push({
                       type: 'smallItem',
-                      label: d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate()  + " " + d.getHours() + ":" + d.getMinutes(),
+                      label: d.getFullYear() + "-" + dm + "-" + d.getDate()  + " " + d.getHours() + ":" + d.getMinutes(),
                       picto: '<a style="background-color: #'+reportDict[data.rows[i].group_category].color+';height: 250%;width: 250%;margin-left: -50%;margin-top: -55%;" class="image"></a>',
                       shortContent: shrt,
                       fullContent: full,

@@ -3811,6 +3811,7 @@ class MaterializeInitiativesHandler(BaseHandler):
             self.abort(403)
         params = {}
         params['initiatives'] = models.Initiative.query()
+        params['initiatives'] = params['initiatives'].order(-models.Initiative.updated)
         params['group_color'] = self.app.config.get('brand_secondary_color')
         return self.render_template('materialize/users/operators/callcenter_initiatives.html', **params)        
     
