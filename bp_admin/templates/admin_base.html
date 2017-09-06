@@ -360,27 +360,23 @@
                                                <div class="collapsible-body">
                                                     <ul>
                                                 {% if nickname == 'chuycepeda@gmail.com' or nickname == 'jesus.delbosque@gmail.com' %}
-                                                        <li {% if uri_for('admin-configuration') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-configuration') }}"><em>Parámetros de plataforma</em></a></li>
+                                                        <li {% if uri_for('admin-configuration') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-configuration') }}"><strong>Parámetros de plataforma</strong></a></li>
                                                 {% endif %}
                                                         <li {% if uri_for('admin-brand') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-brand') }}">Marca</a></li>
                                                 {% if has_reports %}
-                                                        <li {% if uri_for('admin-categories') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">Reportes</a></li>
-                                                {% endif %}
-                                                {% if has_petitions %}
-                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">Propuestas</a></li>
-                                                {% endif%}
-                                                {% if has_transparency %}
-                                                        <li {% if uri_for('admin-areas') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-areas') }}">Compromisos</a></li>
-                                                {% endif %}
-                                                {% if has_urbanism %}
-                                                        <li {% if uri_for('admin-urbanism') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-urbanism') }}">Urbanismo</a></li>
-                                                {% endif %}
-                                                {% if has_reports %}
+                                                        <li {% if uri_for('admin-categories') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-categories') }}">Categorías (Reportes)</a></li>
                                                         <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización y enlaces</a></li>
                                                 {% endif %}
-                                                {% if has_reports or has_transparency or has_urbanism %}
-                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Plantel</a></li>
+                                                {% if has_petitions %}
+                                                        <li {% if uri_for('admin-topics') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-topics') }}">Asuntos (Propuestas)</a></li>
+                                                {% endif%}
+                                                {% if has_transparency %}
+                                                        <li {% if uri_for('admin-areas') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-areas') }}">Áreas (Compromisos)</a></li>
                                                 {% endif %}
+                                                {% if has_urbanism %}
+                                                        <li {% if uri_for('admin-urbanism') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-urbanism') }}">Temas (Urbanismo)</a></li>
+                                                {% endif %}
+                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Permisos de acceso</a></li>
                                                     </ul>
                                                </div>
                                             </li>
