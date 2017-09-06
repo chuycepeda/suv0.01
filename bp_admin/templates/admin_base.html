@@ -356,7 +356,7 @@
                                     </li>
                                     <li class="no-padding" style="margin-bottom: 15px;">
                                         <ul class="collapsible collapsible-accordion">
-                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if uri_for('admin-categories') in path or uri_for('admin-topics') in path or uri_for('admin-organization') in path or uri_for('admin-callcenter') in path or uri_for('admin-brand') in path or uri_for('admin-areas') in path or uri_for('admin-configuration') in path %}active{% endif %}"><i class="mdi-action-settings-applications grey-text left"></i>Configuración</a>
+                                            <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if uri_for('admin-categories') in path or uri_for('admin-topics') in path or uri_for('admin-organization') in path or uri_for('admin-callcenter') in path or uri_for('admin-brand') in path or uri_for('admin-areas') in path or uri_for('admin-configuration') in path or uri_for('admin-urbanism') in path %}active{% endif %}"><i class="mdi-action-settings-applications grey-text left"></i>Configuración</a>
                                                <div class="collapsible-body">
                                                     <ul>
                                                 {% if nickname == 'chuycepeda@gmail.com' or nickname == 'jesus.delbosque@gmail.com' %}
@@ -379,7 +379,7 @@
                                                         <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización y enlaces</a></li>
                                                 {% endif %}
                                                 {% if has_reports or has_transparency or has_urbanism %}
-                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Tu plantel</a></li>
+                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Plantel</a></li>
                                                 {% endif %}
                                                     </ul>
                                                </div>

@@ -78,7 +78,7 @@
     <section id="content" style="overflow-y: hidden;">
         {% block breadcrums %}
         <!--breadcrumbs start-->
-        <div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px;">
+        <div id="breadcrumbs-wrapper" class=" grey lighten-3" style="  min-height: 70px; display: none">
             <div class="container">
                 <div class="row">
                   <div class="col s12 m12 l12">
@@ -633,6 +633,11 @@
         </div>
     </div>
 {% endblock %}
+
+
+{% block footer %}
+{% endblock %}
+
 
 {% block page_scripts %}
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
