@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active">Configura tu plantel de atención ciudadana{% if has_transparency %} y transparencia{% endif %}<a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a></li>
+                <li class="active">Configura tu plantel<a class="btn waves-effect waves-light right brand-color white-text modal-trigger" href="#modal1" style="font-size: 18px;">Agregar Operador<i class="mdi-action-note-add left"></i></a></li>
                 
             </ol>
           </div>
@@ -43,7 +43,7 @@
       <div class="section">
        <div class="row" style="margin-top:30px">
             <div class="row">
-              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega a tus operadores de atención ciudadana{% if has_transparency %} y transparencia{% endif %}.</h3>
+              <h3 class="col s12 m7 offset-m1 grey-text" style="font-weight: 200; line-height: 60px; letter-spacing: 0.2px;">Agrega al personal que usará tu plataforma.</h3>
             </div>
             <table id="data-table-simple" class="dt-responsive no-wrap centered display compact">
                 <thead style="font-family:roboto; color:#777777;">
@@ -107,18 +107,23 @@
         <div class="input-field col s12 l6">
             <!-- Dropdown Trigger -->
             <i class="mdi-action-group-work left brand-color-text active" style="font-size: 32px;margin-left:5px;"></i>
-            <input type="hidden" id="adminrole" name="adminrole" value="callcenter">
+            <input type="hidden" id="adminrole" name="adminrole" value="admin">
             <label for="adminrole" class="center-align" style="margin-left:45px;">Rol:</label><br><br>
-            <a data-hover="false" id="rolebtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='roledd' style="min-width: 250px; min-height: 45px; line-height: 45px;">Atención Ciudadana</a>
-            <blockquote id="permission" class="grey-text text-lighten-1 left" style="text-align: justify; margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};">Este nivel de acceso permite al operador ver estadísticas y bandeja de reportes{% if has_social_media %}, y la conexión con redes sociales{% endif %}.</blockquote>
+            <a data-hover="false" id="rolebtn" class='dropdown-button btn brand-color truncate' href='#' data-activates='roledd' style="min-width: 250px; min-height: 45px; line-height: 45px;">Acceso universal</a>
+            <blockquote id="permission" class="grey-text text-lighten-1 left" style="text-align: justify; margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};">Este nivel de acceso permite al operador ver todo lo que los operadores pueden ver.</blockquote>
             <!-- Dropdown Structure -->
             <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+              {% if has_reports %}
               <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
-              {% if has_transparency %}
-              <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
-              {% endif %}
               {% if has_social_media %}
                 <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
+              {% endif %}
+              {% endif %}
+              {% if has_transparency %}
+              <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
+              {% endif %}              
+              {% if has_urbanism %}
+                <li> <a class="brand-color-text" href="#" onclick="fillDd('urbanism', this);return false;">Urbanismo</a></li>
               {% endif %}
               <li> <a class="brand-color-text" href="#" onclick="fillDd('admin', this);return false;">Acceso universal</a></li>
             </ul>                
@@ -159,20 +164,27 @@
         $('#adminrole').val(val);
         $('#rolebtn').html(elem.innerHTML);
         switch(val){
+          {% if has_reports %}
           case 'callcenter':
             document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver estadísticas y bandeja de reportes{% if has_social_media %}, y la conexión con redes sociales{% endif %}.';
             break;
+          {% if has_social_media %}
+          case 'socialnetworks':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador crear reportes a partir de la conexión con las redes sociales.';
+            break;
+          {% endif %}
+          {% endif %}
           case 'admin':
-            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores de atención CAIC {% if has_transparency %}y transparencia {% endif %}pueden ver.';
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores pueden ver.';
             break;
           {% if has_transparency %}
           case 'transparency':
             document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador administrar los compromisos y la transparencia de obras.';
             break;
-          {% endif %}
-          {% if has_social_media %}
-          case 'socialnetworks':
-            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador crear reportes a partir de la conexión con las redes sociales.';
+          {% endif %}          
+          {% if has_urbanism %}
+          case 'urbanism':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador gestionar los apartados de urbanismo.';
             break;
           {% endif %}
         }

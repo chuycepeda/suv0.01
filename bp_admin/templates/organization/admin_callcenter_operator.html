@@ -26,7 +26,7 @@
         <div class="row">
           <div class="col s12 m12 l12">
             <ol class="breadcrumb" style="font-size: 29px;">
-                <li class="active"><a href="{{ uri_for('admin-callcenter') }}">Atención ciudadana{% if has_transparency %} y transparencia{% endif %}</a> | Operador </li>
+                <li class="active"><a href="{{ uri_for('admin-callcenter') }}">Tu plantel</a> | Operador </li>
             </ol>
           </div>
         </div>
@@ -120,12 +120,17 @@
                         <blockquote id="permission" class="grey-text text-lighten-1 left" style="text-align: justify; margin-left: 45px;margin-top: 10px;border-left: 5px solid {{brand_color}};"></blockquote>
                         <!-- Dropdown Structure -->
                         <ul id='roledd' class='dropdown-content' style="max-height: 250px; font-weight: bolder;">
+                          {% if has_reports %}
                           <li> <a class="brand-color-text" href="#" onclick="fillDd('callcenter', this);return false;">Atención ciudadana</a></li>
-                          {% if has_transparency %}
-                            <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
-                          {% endif %}
                           {% if has_social_media %}
                             <li> <a class="brand-color-text" href="#" onclick="fillDd('socialnetworks', this);return false;">Redes sociales</a></li>
+                          {% endif %}
+                          {% endif %}
+                          {% if has_transparency %}
+                            <li> <a class="brand-color-text" href="#" onclick="fillDd('transparency', this);return false;">Transparencia</a></li>
+                          {% endif %}                          
+                          {% if has_urbanism %}
+                            <li> <a class="brand-color-text" href="#" onclick="fillDd('urbanism', this);return false;">Urbanismo</a></li>
                           {% endif %}
                           <li> <a class="brand-color-text" href="#" onclick="fillDd('admin', this);return false;">Acceso universal</a></li>
                         </ul>                
@@ -189,20 +194,27 @@
 
     function populateBlockquote(val){
       switch(val){
+          {% if has_reports %}
           case 'callcenter':
             document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver estadísticas y bandeja de reportes{% if has_social_media %}, y la conexión con redes sociales{% endif %}.';
             break;
+          {% if has_social_media %}
+          case 'socialnetworks':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador crear reportes a partir de la conexión con las redes sociales.';
+            break;
+          {% endif %}
+          {% endif %}
           case 'admin':
-            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores de atención CAIC {% if has_transparency %}y transparencia {% endif %}pueden ver.';
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador ver todo lo que los operadores pueden ver.';
             break;
           {% if has_transparency %}
           case 'transparency':
             document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador administrar los compromisos y la transparencia de obras.';
             break;
-          {% endif %}
-          {% if has_social_media %}
-          case 'socialnetworks':
-            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador crear reportes a partir de la conexión con las redes sociales.';
+          {% endif %}          
+          {% if has_urbanism %}
+          case 'urbanism':
+            document.getElementById('permission').innerHTML = 'Este nivel de acceso permite al operador gestionar los apartados de urbanismo.';
             break;
           {% endif %}
         }

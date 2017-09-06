@@ -287,13 +287,15 @@
 						{% endif %}
 
 
-                        {% if has_reports or has_transparency %}
+                        {% if has_reports or has_transparency or has_urbanism %}
 					    	{% if user_is_callcenter and user_callcenter_role in ['callcenter','admin'] %}
 					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
 					    	{% elif user_is_callcenter and user_callcenter_role in ['socialnetworks'] %}
 					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-facebook")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-					    	{% elif user_is_callcenter and user_callcenter_role in ['transparency'] %}
+					    	{% elif user_is_callcenter and user_callcenter_role in ['transparency', 'admin'] %}
 					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-initiatives")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+					    	{% elif user_is_callcenter and user_callcenter_role in ['urbanism', 'admin'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-urbanism")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
 							{% elif user_is_secretary %}
 					    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
 							{% elif user_is_agent %}
@@ -347,6 +349,23 @@
 		                    </li>	
 						{% endif %}
 
+
+						<!-- URBANISM DROPDOWN -->
+						{% if has_urbanism %}
+							<ul id="urbanism-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-urbanism-map") }}">Mapa</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-urbanism-new") }}">Análisis</a>
+			                        </li>
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-urbanism-dashboard") }}">Estadística</a>
+			                        </li>
+				            </ul>
+				            <li class="nav-urbanism" {% if path == uri_for('materialize-urbanism-new') or path == uri_for('materialize-urbanism-map') or path == uri_for('materialize-urbanism-dashboard') %}style="border-bottom: 5px solid {{brand_secondary_color}};"{% endif %}>
+		                        <a class="btn-flat dropdown-button waves-effect waves-light profile-btn right" href="#" data-activates="urbanism-dropdown" style="height: 56px; margin-top: 8px;line-height: 1.5rem;position: relative;"><span style="padding: 15px;height: 46px;text-transform: none;" class="valign-wrapper">Urbanismo{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
+		                    </li>	
+						{% endif %}
+
+
 						<!-- USER DROPDOWN -->
 						    <ul id="profile-dropdown" class="dropdown-content" style="margin-top:10px; border-radius:4px; padding:10px">
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-settings-profile") }}">Mi perfil</a>
@@ -361,6 +380,10 @@
                             	  {% endif %}
                             	  {% if has_transparency %}
 			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-transparency-budget-new") }}">Mi presupuesto</a>
+			                        </li>
+                            	  {% endif %}
+                            	  {% if has_urbanism %}
+			                      <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-urbanism-notifications") }}">Mis notificaciones</a>
 			                        </li>
                             	  {% endif %}
 			                      <!-- <li><a  style="font-size: 1rem;padding: 0.5rem; font-weight:bold" class="brand-color-text" href="{{ uri_for("materialize-referrals") }}">Recomendar</a>
@@ -397,21 +420,24 @@
 					     <li class="divider"></li>
 						{% endif %}
 
-                        {% if has_reports %}
-					    {% if user_is_callcenter %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-					     <li class="divider"></li>
-						{% elif user_is_secretary %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-					     <li class="divider"></li>
-						{% elif user_is_agent %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-					     <li class="divider"></li>
-						{% elif user_is_operator %}
-				    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-top:8px; margin-bottom:8px; margin-left: 20px;margin-right: 20px;">Gestión</a></li>
-					     <li class="divider"></li>
+                        {% if has_reports or has_transparency or has_urbanism %}
+					    	{% if user_is_callcenter and user_callcenter_role in ['callcenter','admin'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+					    	{% elif user_is_callcenter and user_callcenter_role in ['socialnetworks'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-facebook")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+					    	{% elif user_is_callcenter and user_callcenter_role in ['transparency', 'admin'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-initiatives")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+					    	{% elif user_is_callcenter and user_callcenter_role in ['urbanism', 'admin'] %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-callcenter-urbanism")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% elif user_is_secretary %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-secretary-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% elif user_is_agent %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-agent-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% elif user_is_operator %}
+					    	<li id="nav-inbox"><a href="{{uri_for("materialize-operator-inbox")}}" class="menu-item brand-color white-text" style="margin-left: 20px;margin-right: 20px;">Gestión</a></li>
+							{% endif %}
 						{% endif %}
-						{% endif %}
+
 							<!-- USER DROPDOWN -->
 							    <li class="no-padding">
 			                        <ul class="collapsible collapsible-accordion">
@@ -429,6 +455,9 @@
                             	  				  {% if has_transparency %}
 												  <li><a href="{{ uri_for("materialize-transparency-budget-new") }}">Mi presupuesto</a></li>
                             	  				  {% endif %}
+                            	  				  {% if has_urbanism %}
+							                      <li><a  href="{{ uri_for("materialize-urbanism-notifications") }}">Mis notificaciones</a></li>
+				                            	  {% endif %}
 							                      <!-- <li><a href="{{ uri_for("materialize-referrals") }}">Recomendar</a></li> -->
 							                      <li><a href="{{ uri_for("logout") }}">Salir</a></li>
 			                                    </ul>
@@ -490,6 +519,26 @@
 			                    </li>
 							    <li class="divider"></li>
                         	{% endif %}
+							<!-- URBANISM DROPDOWN -->
+							{% if has_urbanism %}
+								<li class="no-padding">
+				                        <ul class="collapsible collapsible-accordion">
+				                            <li class="bold">
+										    	<a class="collapsible-header waves-effect waves-light">Urbanismo{% if not is_mobile %}<i class="material-icons right" style="margin-left: 5px; font-size: 14px;">arrow_drop_down</i>{% endif %}</span></a>
+				                            	<div class="collapsible-body">
+				                                    <ul>
+													  <li><a href="{{ uri_for("materialize-urbanism-map") }}">Mapa</a></li>
+								                      <li><a href="{{ uri_for("materialize-urbanism-new") }}">Análisis</a></li>
+								                      <li><a href="{{ uri_for("materialize-urbanism-dashboard") }}">Estadística</a></li>
+				                                    </ul>
+				                                </div>
+				                            </li>
+				                        </ul>
+				                    </li>
+								    <li class="divider"></li>
+							{% endif %}
+
+
 				    {% endif %}
 				    {% if path == uri_for('landing-map') %}
 					    <li>
@@ -677,6 +726,7 @@
                   {% if path != uri_for('materialize-organization-directory') %}<li><a href="{{ uri_for('materialize-organization-directory') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="directorio"><i class="large mdi-communication-quick-contacts-dialer"></i></a></li>{% endif %}
                   {% if path != uri_for('contact') %}<li><a href="{{ uri_for('contact') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="contáctanos"><i class="large mdi-communication-email"></i></a></li>{% endif %}
                   {% if path != uri_for('landing-map') and has_reports %}<li><a href="{{ uri_for('landing-map') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver mapa"><i class="large mdi-social-public"></i></a></li>{% endif %}
+                  {% if has_urbanism %}<li><a href="{{ uri_for('materialize-urbanism-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="participar"><i class="large mdi-image-nature-people"></i></a></li>{% endif %}
                   {% if has_transparency %}<li><a href="{{ uri_for('materialize-transparency-init') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="ver compromisos"><i class="large mdi-action-visibility"></i></a></li>{% endif %}
                   {% if has_petitions %}<li><a href="{{ uri_for('materialize-petition-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear propuesta"><i class="large mdi-image-wb-incandescent"></i></a></li>{% endif %}
                   {% if has_reports %}<li><a href="{{ uri_for('materialize-report-new') }}" class="tooltipped btn-floating brand-color" data-position="left" data-delay="50" data-tooltip="crear reporte"><i class="large mdi-maps-place"></i></a></li>{% endif %}

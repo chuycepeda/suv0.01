@@ -48,6 +48,9 @@ _routes = [
     RedirectRoute('/report/urgent/', handlers.MaterializeUrgentRequestHandler, name='materialize-report-urgent', strict_slash=True),   
     RedirectRoute('/report/log/delete/<log_id>/', handlers.MaterializeLogChangeDeleteHandler, name='materialize-log-delete', strict_slash=True, handler_method='edit'),
     RedirectRoute('/report/att/delete/<att_id>/', handlers.MaterializeAttachmentDeleteHandler, name='materialize-att-delete', strict_slash=True, handler_method='edit'),
+    #: user individual access
+    RedirectRoute('/user/reports/', handlers.MaterializeReportsRequestHandler, name='materialize-reports', strict_slash=True),
+    RedirectRoute('/user/reports/<report_id>/', handlers.MaterializeReportsEditRequestHandler, name='materialize-reports-edit', strict_slash=True),
     
     # Petitions
     RedirectRoute('/petition/list/', handlers.MaterializePetitionCardlistHandler, name='materialize-petition-cardlist', strict_slash=True),
@@ -55,6 +58,8 @@ _routes = [
     RedirectRoute('/petition/image/upload/<petition_id>', handlers.MaterializePetitionUploadImageHandler, name='petition-image-upload', strict_slash=True),
     RedirectRoute('/petition/success/', handlers.MaterializeNewPetitionSuccessHandler, name='materialize-petition-success', strict_slash=True),
     RedirectRoute('/petition/topics/', handlers.MaterializeTopicsHandler, name='materialize-petition-topics', strict_slash=True),
+    #: user individual access
+    RedirectRoute('/user/petitions/', handlers.MaterializePetitionsRequestHandler, name='materialize-petitions', strict_slash=True),
 
     # Transparency
     RedirectRoute('/transparency/city/', handlers.MaterializeTransparencyCityHandler, name='materialize-transparency-city', strict_slash=True),
@@ -65,13 +70,18 @@ _routes = [
     RedirectRoute('/transparency/areas/', handlers.MaterializeAreasHandler, name='materialize-transparency-areas', strict_slash=True),
     RedirectRoute('/transparency/budget/user.json', handlers.MaterializeUserBudgetHandler, name='materialize-transparency-budget-user', strict_slash=True),
 
-    # User: all
+    # Urbanism
+    RedirectRoute('/urbanism/new/', handlers.MaterializeUrbanismNewHandler, name='materialize-urbanism-new', strict_slash=True),
+    RedirectRoute('/urbanism/map/', handlers.MaterializeUrbanismMapHandler, name='materialize-urbanism-map', strict_slash=True),
+    RedirectRoute('/urbanism/dashboard/', handlers.MaterializeUrbanismDashboardHandler, name='materialize-urbanism-dashboard', strict_slash=True),
+    RedirectRoute('/user/urbanism/', handlers.MaterializeUrbanismRequestHandler, name='materialize-urbanism-notifications', strict_slash=True),
+    RedirectRoute('/user/urbanism/<notification_id>/', handlers.MaterializeUrbanismNotificationHandler, name='materialize-transparency-initiative', strict_slash=True, handler_method='edit'),
+
+
+    # Users: public access
     RedirectRoute('/user/welcome/', handlers.MaterializeWelcomeRequestHandler, name='materialize-welcome', strict_slash=True),
     RedirectRoute('/user/profile/<profile_id>/', handlers.MaterializeProfileRequestHandler, name='materialize-profile', strict_slash=True),
     RedirectRoute('/user/referrals/', handlers.MaterializeReferralsRequestHandler, name='materialize-referrals', strict_slash=True),
-    RedirectRoute('/user/reports/', handlers.MaterializeReportsRequestHandler, name='materialize-reports', strict_slash=True),
-    RedirectRoute('/user/reports/<report_id>/', handlers.MaterializeReportsEditRequestHandler, name='materialize-reports-edit', strict_slash=True),
-    RedirectRoute('/user/petitions/', handlers.MaterializePetitionsRequestHandler, name='materialize-petitions', strict_slash=True),
     RedirectRoute('/user/settings/profile/', handlers.MaterializeSettingsProfileRequestHandler, name='materialize-settings-profile', strict_slash=True),
     RedirectRoute('/user/settings/social/', handlers.MaterializeSettingsSocialRequestHandler, name='materialize-settings-social', strict_slash=True),
     RedirectRoute('/user/settings/email/', handlers.MaterializeSettingsEmailRequestHandler, name='materialize-settings-email', strict_slash=True),
@@ -80,7 +90,8 @@ _routes = [
     RedirectRoute('/user/settings/referrals/', handlers.MaterializeSettingsReferralsRequestHandler, name='materialize-settings-referrals', strict_slash=True),
     RedirectRoute('/user/settings/account/', handlers.MaterializeSettingsAccountRequestHandler, name='materialize-settings-account', strict_slash=True),
     RedirectRoute('/user/change-email/<user_id>/<encoded_email>/<token>', handlers.MaterializeEmailChangedCompleteHandler, name='materialize-email-changed-check', strict_slash=True),    
-    # User: special access
+    
+    # Users: special access
     RedirectRoute('/user/organization/directory/', handlers.MaterializeOrganizationDirectoryRequestHandler, name='materialize-organization-directory', strict_slash=True),
     RedirectRoute('/user/organization/ai/location/', handlers.MaterializeOrganizationAILocationHandler, name='materialize-organization-ai-location', strict_slash=True),
     RedirectRoute('/user/organization/ai/language/', handlers.MaterializeOrganizationAILanguageHandler, name='materialize-organization-ai-language', strict_slash=True),
@@ -94,31 +105,43 @@ _routes = [
     RedirectRoute('/user/organization/users/<user_id>/', handlers.MaterializeOrganizationUserReportsHandler, name='materialize-organization-user-reports', strict_slash=True),
     RedirectRoute('/user/organization/export/reports/', handlers.MaterializeOrganizationExportReportsHandler, name='materialize-organization-export-reports', strict_slash=True),
     RedirectRoute('/user/organization/export/users/', handlers.MaterializeOrganizationExportUsersHandler, name='materialize-organization-export-users', strict_slash=True),
+    
     # User: secretary access
     RedirectRoute('/user/secretary/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-secretary-inbox', strict_slash=True),
     RedirectRoute('/user/secretary/report/<report_id>/', handlers.MaterializeSecretaryReportRequestHandler, name='materialize-secretary-report', strict_slash=True, handler_method='edit'),
+    
     # User: agent access
     RedirectRoute('/user/agent/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-agent-inbox', strict_slash=True),
     RedirectRoute('/user/agent/report/<report_id>/', handlers.MaterializeAgentReportRequestHandler, name='materialize-agent-report', strict_slash=True, handler_method='edit'),
+    
     # User: operator access
     RedirectRoute('/user/operator/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-operator-inbox', strict_slash=True),
     RedirectRoute('/user/operator/report/<report_id>/', handlers.MaterializeOperatorReportRequestHandler, name='materialize-operator-report', strict_slash=True, handler_method='edit'),
+    
     # User: callcenter access
     RedirectRoute('/user/callcenter/inbox/', handlers.MaterializeOrganizationInboxRequestHandler, name='materialize-callcenter-inbox', strict_slash=True),
     RedirectRoute('/user/callcenter/report/<report_id>/', handlers.MaterializeCallCenterReportRequestHandler, name='materialize-callcenter-report', strict_slash=True, handler_method='edit'),
+    
     # User: print report
     RedirectRoute('/user/callcenter/report/print/<report_id>/', handlers.MaterializePrintReportRequestHandler, name='materialize-print-report', strict_slash=True, handler_method='edit'),
+    
     # User: callcenter access for social networks
     RedirectRoute('/user/callcenter/facebook/', handlers.MaterializeCallCenterFacebookRequestHandler, name='materialize-callcenter-facebook', strict_slash=True),
     RedirectRoute('/user/callcenter/twitter/', handlers.MaterializeCallCenterTwitterRequestHandler, name='materialize-callcenter-twitter', strict_slash=True),
+    
     # User: callcenter access for initiatives
     RedirectRoute('/user/callcenter/initiatives/', handlers.MaterializeInitiativesHandler, name='materialize-callcenter-initiatives', strict_slash=True),
     RedirectRoute('/user/callcenter/initiatives/<init_id>/', handlers.MaterializeInitiativeEditHandler, name='materialize-callcenter-initiative-edit', strict_slash=True, handler_method='edit'),
     RedirectRoute('/user/callcenter/initiatives/image/upload/<initiative_id>/', handlers.MaterializeInitiativeImageUploadHandler, name='materialize-callcenter-initiative-image-upload', strict_slash=True),
+    
     # User: callcenter access for geo transparency
     RedirectRoute('/user/callcenter/geom/', handlers.MaterializeGeomHandler, name='materialize-callcenter-geom', strict_slash=True),
     RedirectRoute('/user/callcenter/geom/edit/', handlers.MaterializeGeomEditHandler, name='materialize-callcenter-geom-edit', strict_slash=True),
-
+    
+    # User: callcenter access for urbanism
+    RedirectRoute('/user/callcenter/urbanism/', handlers.MaterializeCallCenterUrbanismHandler, name='materialize-callcenter-urbanism', strict_slash=True),
+    RedirectRoute('/user/callcenter/urbanism/<init_id>/', handlers.MaterializeCallCenterUrbanismEditHandler, name='materialize-callcenter-urbanism-edit', strict_slash=True, handler_method='edit'),
+    
     #Cronjobs
     RedirectRoute('/cronjob-auto72/', handlers.Auto72CronjobHandler, name='cronjob-auto72', strict_slash=True),  
     RedirectRoute('/cronjob-forgot/', handlers.ForgotCronjobHandler, name='cronjob-forgot', strict_slash=True),  

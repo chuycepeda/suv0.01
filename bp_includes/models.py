@@ -35,6 +35,7 @@ class Configuration(ndb.Model):
     has_transparency = ndb.BooleanProperty(default = True)
     has_social_media = ndb.BooleanProperty(default = True)
     has_cic = ndb.BooleanProperty(default = False)
+    has_urbanism = ndb.BooleanProperty(default = True)
     captcha_public_key = ndb.StringProperty(default = '')
     captcha_private_key = ndb.StringProperty(default = '')
     twitter_url = ndb.StringProperty(default = '')
@@ -617,7 +618,7 @@ class Operator(ndb.Model):
 class CallCenterOperator(ndb.Model):
     email= ndb.StringProperty(required = True)
     name= ndb.StringProperty()
-    role = ndb.StringProperty(required = True, choices = ['callcenter','transparency', 'socialnetworks', 'admin'], default = 'callcenter')
+    role = ndb.StringProperty(required = True, choices = ['callcenter','transparency', 'socialnetworks', 'urbanism', 'admin'], default = 'callcenter')
 
     @classmethod
     def get_by_email(cls, email):
@@ -647,7 +648,9 @@ class CallCenterOperator(ndb.Model):
         elif self.role == 'transparency':
             return "Transparencia"     
         elif self.role == 'socialnetworks':
-            return "Redes sociales"     
+            return "Redes sociales"   
+        elif self.role == 'urbanism':
+            return "Urbanismo"    
         else:
             return "Acceso universal"
 
@@ -1011,7 +1014,6 @@ class Area(ndb.Model):
     name = ndb.StringProperty(required = True)
     color = ndb.StringProperty(required = True, default = "AEAEAE")
     icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")
-    inits_count = ndb.ComputedProperty(lambda self: self.get_inits_count())
 
     @classmethod
     def get_by_name(cls, name):
@@ -1020,11 +1022,90 @@ class Area(ndb.Model):
     def get_id(self):
         return self._key.id()
 
-    def get_inits_count(self):        
-        return Initiative.query(Initiative.area_id == self._key.id()).count()
-
 
 #--------------------------------------- ENDOF   T R A N S P A R E N C Y   M O D E L --------------------------------------------------------          
+
+
+#--------------------------------------- U R B A N I S M      M O D E L -------------------------------------------------------------
+
+class Urbanism(ndb.Model):
+    name = ndb.StringProperty(required = True)
+    color = ndb.StringProperty(required = True, default = "AEAEAE")
+    icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")
+
+    @classmethod
+    def get_by_name(cls, name):
+        return cls.query(cls.name == name).get()                                                                            
+
+    def get_id(self):
+        return self._key.id()
+
+
+class UrbanismNotification(ndb.Model):
+    updated = ndb.DateTimeProperty(auto_now = True)                                                                                 #: Modification date on ndb
+    name = ndb.StringProperty(required = True)
+    color = ndb.StringProperty(required = True, default = "AEAEAE")
+    icon_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/postal-code-prefix.svg")
+    status = ndb.StringProperty(required = True, default = "open", choices=['open', 'measuring', 'delayed', 'near', 'completed'])
+    lead = ndb.StringProperty()
+    description = ndb.TextProperty()
+    urbanism_id = ndb.IntegerProperty(required = True)
+    location = ndb.GeoPtProperty()                                                                                        
+    image_url = ndb.StringProperty(required = True, default="http://one-smart-city-demo.appspot.com/default/materialize/images/landing/splash_secondary.png")
+
+    @classmethod
+    def get_by_name(cls, name):
+        return cls.query(cls.name == name).get()                                                                            
+
+    @classmethod
+    def get_by_urbanism_id(cls, urbanism_id):
+        return cls.query(cls.urbanism_id == urbanism_id).get()                                                                                      
+
+    def get_id(self):
+        return self._key.id()
+
+    def get_status(self):
+        if self.status == 'open':
+            return 'Iniciado'        
+        if self.status == 'measuring':
+            return 'En progreso'
+        if self.status == 'delayed':
+            return 'Retrasado'
+        if self.status == 'near':
+            return 'A punto de cumplir'
+        if self.status == 'completed':
+            return 'Cumplido'
+
+    def get_status_color(self):
+        if self.status == 'open':
+            return '9e9e9e' #grey    
+        if self.status == 'measuring':
+            return '03a9f4' #light-blue
+        if self.status == 'delayed':
+            return 'ffc107' #amber
+        if self.status == 'near':
+            return '8bc34a' #light-green
+        if self.status == 'completed':
+            return '4caf50' #green
+
+    def get_area_name(self):
+        if self.urbanism_id:
+            area = Urbanism.get_by_id(long(self.urbanism_id))
+            if area:
+                return area.name
+        return ""
+
+    def get_human_updated_date(self):
+        d1 = datetime.datetime(self.updated.year,self.updated.month,self.updated.day)
+        d2 = datetime.datetime(datetime.date.today().year,datetime.date.today().month,datetime.date.today().day)
+        diff = (d2-d1).days
+        return "Hace " + str(diff) + " dias"
+
+    def get_updated_date(self):
+        return datetime.date(self.updated.year,self.updated.month,self.updated.day).strftime("%Y-%m-%d")
+
+
+#--------------------------------------- ENDOF   U R B A N I S M   M O D E L --------------------------------------------------------          
 
 #--------------------------------------- H E L P E R S    M O D E L S -----------------------------------------------------------          
 

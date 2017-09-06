@@ -142,6 +142,13 @@ class BaseHandler(webapp2.RequestHandler):
         return self.app.config.get('has_transparency')
 
     @webapp2.cached_property
+    def has_urbanism(self):
+        configuration = models.Configuration.query().get()
+        if configuration is not None:
+            return configuration.has_urbanism
+        return self.app.config.get('has_urbanism')
+
+    @webapp2.cached_property
     def has_social_media(self):
         return self.app.config.get('has_social_media')
 
@@ -516,6 +523,7 @@ class BaseHandler(webapp2.RequestHandler):
             'has_transparency': self.has_transparency,
             'has_social_media': self.has_social_media,
             'has_cic': self.has_cic,
+            'has_urbanism': self.has_urbanism,
             'google_clientID': self.google_clientID,
             'facebook_appID': self.facebook_appID,
             'twitter_appID': self.twitter_appID,

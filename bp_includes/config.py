@@ -100,6 +100,7 @@ config = {
     'has_petitions': True,
     'has_transparency': True,
     'has_social_media': True,
+    'has_urbanism': True,
     'has_cic': False,
     # get your own recaptcha keys by registering at http://www.google.com/recaptcha/
     'captcha_public_key': "6LcMfv0SAAAAAGMJ9i-g5aJhXFvSHpPsqDLOHTUD",

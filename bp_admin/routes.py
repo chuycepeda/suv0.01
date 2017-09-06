@@ -34,7 +34,10 @@ _routes = [
     # CONFIG Initiatives
     RedirectRoute('/admin/areas/', operator.AdminAreasHandler, name='admin-areas', strict_slash=True),
     RedirectRoute('/admin/areas/<area_id>/', operator.AdminAreaEditHandler, name='admin-area-edit', strict_slash=True, handler_method='edit'),
-    
+
+    # CONFIG Urbanism
+    RedirectRoute('/admin/urbanism/', operator.AdminUrbanismHandler, name='admin-urbanism', strict_slash=True),
+    RedirectRoute('/admin/urbanism/<urbanism_id>/', operator.AdminUrbanismEditHandler, name='admin-urbanism-edit', strict_slash=True, handler_method='edit'),    
     
     # CONFIG Organization
     RedirectRoute('/admin/organization/', operator.AdminOrganizationHandler, name='admin-organization', strict_slash=True),

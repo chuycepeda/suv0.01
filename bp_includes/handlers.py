@@ -4098,6 +4098,165 @@ class MaterializeGeomEditHandler(BaseHandler):
 
         return self.get() 
 
+# URBANISM
+class MaterializeCallCenterUrbanismHandler(BaseHandler):
+    @user_required
+    def get(self):
+        if not self.user_is_callcenter or self.user_callcenter_role not in ['admin', 'transparency']:
+            self.abort(403)
+        params = {}
+        params['initiatives'] = models.Initiative.query()
+        params['initiatives'] = params['initiatives'].order(-models.Initiative.updated)
+        params['group_color'] = self.app.config.get('brand_secondary_color')
+        return self.render_template('materialize/users/operators/callcenter_initiatives.html', **params)        
+    
+    def post(self):
+        try:
+            name = self.request.get('name').strip()
+            icon_url = self.request.get('subicon')
+            description = self.request.get('description')
+            lead = self.request.get('lead')
+            relevance = self.request.get('relevance')
+            area_name = self.request.get('agegroupcat')
+            value = self.request.get('metric')
+            status = self.request.get('status')
+
+            initiative = models.Initiative.query(models.Initiative.name == name).get()
+            if initiative is not None:
+                self.add_message(messages.nametaken, 'danger')
+            else:
+                area = models.Area.query(models.Area.name == area_name).get()
+                if area is None:
+                    logging.info("area is none")
+                    self.add_message(messages.saving_error, 'danger')
+                    return self.get()  
+
+                initiative = models.Initiative()
+                initiative.name = name
+                initiative.color = area.color
+                initiative.icon_url = icon_url
+                initiative.lead = lead
+                initiative.description = description
+                initiative.relevance = relevance
+                initiative.area_id = area.key.id()
+                initiative.value = value
+                initiative.status = status
+                initiative.put()
+
+                self.add_message(messages.saving_success, 'success')
+        except Exception as e:
+            self.add_message(messages.saving_error, 'danger')
+            logging.info("error in post: %s" % e)
+        
+        return self.get()  
+
+class MaterializeCallCenterUrbanismEditHandler(BaseHandler):
+    def get_or_404(self, init_id):
+        try:
+            initiative = models.Initiative.get_by_id(long(init_id))
+            if initiative:
+                return initiative
+        except ValueError:
+            pass
+        self.abort(404)
+
+    @user_required
+    def edit(self, init_id):
+        if not self.user_is_callcenter or self.user_callcenter_role not in ['admin', 'transparency']:
+            self.abort(403)
+
+        if self.request.POST:
+            initiative = self.get_or_404(init_id)
+            delete = self.request.get('delete')
+            
+            try:
+
+                if delete == 'confirmed_deletion':
+                    #DELETE INITIATIVE 
+                    initiative.key.delete()
+
+                    self.add_message(messages.saving_success, 'success')
+                elif delete == 'category_edition':
+                    #INITIATIVE EDITION
+                    name = self.request.get('name').strip()
+                    icon_url = self.request.get('subicon')
+                    description = self.request.get('description')
+                    lead = self.request.get('lead')
+                    relevance = self.request.get('relevance')
+                    area_name = self.request.get('agegroupcat')
+                    value = self.request.get('metric')
+                    status = self.request.get('status')
+
+                    _initiative = models.Initiative.query(models.Initiative.name == name).get()
+                    if _initiative is not None and int(_initiative.key.id()) != int(init_id):
+                        self.add_message(messages.nametaken, 'danger')
+                    else:
+                        area = models.Area.query(models.Area.name == area_name).get()
+                        if area is None:
+                            self.add_message(messages.saving_error, 'danger')
+                            return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id) 
+                        initiative.name = name
+                        initiative.color = area.color
+                        initiative.icon_url = icon_url
+                        initiative.lead = lead
+                        initiative.description = description
+                        initiative.relevance = relevance
+                        initiative.value = value
+                        initiative.status = status
+                        initiative.area_id = area.key.id()
+                        initiative.put()
+
+                        if hasattr(self.request.POST['file'], 'filename'):
+                            #create attachment
+                            from google.appengine.api import urlfetch
+                            from poster.encode import multipart_encode, MultipartParam
+                            
+                            urlfetch.set_default_fetch_deadline(45)
+
+                            payload = {}
+                            upload_url = blobstore.create_upload_url('/user/callcenter/initiatives/image/upload/%s/' %(initiative.key.id()))
+                            file_data = self.request.POST['file']
+                            payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                                     filetype=file_data.type,
+                                                                     fileobj=file_data.file)
+                            data,headers= multipart_encode(payload)
+                            t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                            
+                            logging.info('t.content: %s' % t.content)
+                            
+                            if t.content == 'success':
+                                message = _(messages.saving_success)
+                                self.add_message(message, 'success')
+                                return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+                                
+                            else:
+                                message = _(messages.attach_error)
+                                self.add_message(message, 'danger')            
+                                return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+                                                  
+                        else:
+                            message = _(messages.saving_success)
+                            self.add_message(message, 'success')
+                            return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+                            
+
+
+                        self.add_message(messages.saving_success, 'success')
+
+                return self.redirect_to("materialize-callcenter-initiatives")
+                
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error updating initiative: %s ' % e)
+                self.add_message(messages.saving_error, 'danger')
+                return self.redirect_to("materialize-callcenter-initiative-edit", init_id=init_id)
+        else:
+            initiative = self.get_or_404(init_id)
+
+        params = {
+            'initiative': initiative
+        }
+
+        return self.render_template('materialize/users/operators/callcenter_initiative_edit.html', **params)
 
 # ------------------------------------------------------------------------------------------- #
 """                                     CORE REPORT HANDLERS                                """
@@ -4949,7 +5108,7 @@ class MaterializeTransparencyInitiativesHandler(BaseHandler):
             params = {}
         ####------------------------------------------------------------------####
 
-        params['areas'] = models.Area.query(models.Area.inits_count > 0)
+        params['areas'] = models.Area.query()
         params['count'] = params['areas'].count()
         params['first_area'] = params['areas'].get()
 
@@ -5019,6 +5178,197 @@ class MaterializeTransparencyBudgetNewHandler(BaseHandler):
         ####------------------------------------------------------------------####
         
         return self.render_template('materialize/users/sections/transparency_budget_new.html', **params)
+
+
+# ------------------------------------------------------------------------------------------- #
+"""                              CORE URBANISM HANDLERS                                     """
+# ------------------------------------------------------------------------------------------- #
+
+class MaterializeUrbanismNewHandler(BaseHandler):
+    """
+    Handler for materialized urbanism
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize urbanism"""
+        if not self.has_urbanism:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']  
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        
+        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+
+class MaterializeUrbanismMapHandler(BaseHandler):
+    """
+    Handler for materialized urbanism
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize urbanism"""
+        if not self.has_urbanism:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']  
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        
+        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+
+class MaterializeUrbanismDashboardHandler(BaseHandler):
+    """
+    Handler for materialized urbanism
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize urbanism"""
+        if not self.has_urbanism:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']  
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        
+        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+
+class MaterializeUrbanismRequestHandler(BaseHandler):
+    """
+    Handler for materialized urbanism
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize urbanism"""
+        if not self.has_urbanism:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']  
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        
+        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+
+class MaterializeUrbanismNotificationHandler(BaseHandler):
+    """
+    Handler for materialized urbanism
+    """  
+    @user_required
+    def get(self):
+        """ Returns a simple HTML for materialize urbanism"""
+        if not self.has_urbanism:
+            self.abort(403)
+
+        ####-------------------- P R E P A R A T I O N S --------------------####
+        if self.user:
+            params, user_info = disclaim(self)
+        else:
+            params = {}
+        ####------------------------------------------------------------------####
+        
+        params['zoom'] = self.configuration['map_zoom']
+        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
+        params['lat'] = self.configuration['map_center_lat']
+        params['lng'] = self.configuration['map_center_lng']  
+        params['cartodb_user'] = self.app.config.get('cartodb_user')
+        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
+        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
+        params['has_cic'] = self.app.config.get('has_cic')
+        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
+        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
+        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
+        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
+        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
+        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
+        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        
+        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+
 
 
 # ------------------------------------------------------------------------------------------- #

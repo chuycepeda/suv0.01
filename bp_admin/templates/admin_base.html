@@ -372,9 +372,14 @@
                                                 {% if has_transparency %}
                                                         <li {% if uri_for('admin-areas') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-areas') }}">Compromisos</a></li>
                                                 {% endif %}
+                                                {% if has_urbanism %}
+                                                        <li {% if uri_for('admin-urbanism') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-urbanism') }}">Urbanismo</a></li>
+                                                {% endif %}
                                                 {% if has_reports %}
                                                         <li {% if uri_for('admin-organization') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-organization') }}">Organización y enlaces</a></li>
-                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Atención{% if has_transparency %} y transparencia{% else %} ciudadana{% endif %}</a></li>
+                                                {% endif %}
+                                                {% if has_reports or has_transparency or has_urbanism %}
+                                                        <li {% if uri_for('admin-callcenter') in path %}class="active"{% endif %}><a href="{{ uri_for('admin-callcenter') }}">Tu plantel</a></li>
                                                 {% endif %}
                                                     </ul>
                                                </div>
@@ -408,7 +413,7 @@
 
                                     <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>    -->                                 
 
-                                    <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
+                                    <!-- <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
                                             <li class="bold"><a class="collapsible-header waves-effect waves-cyan {% if path == uri_for('admin-stats-reports') or path == uri_for('admin-stats-organization') %}active{% endif %}"><i class="mdi-action-assessment grey-text left"></i>Estadísticas</a>
                                                <div class="collapsible-body">
@@ -423,7 +428,7 @@
                                         </ul>
                                     </li>
                                     
-                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li>
+                                    <li class="li-hover"><div class="divider" style="  padding: 2px;"></div></li> -->
 
                                     <li class="no-padding" style="margin-bottom: 15px;margin-top: 15px;">
                                         <ul class="collapsible collapsible-accordion">
@@ -563,6 +568,19 @@
                                                     <div class="col card-panel s12 m2 offset-m1 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('admin-areas')}}";'>
                                                       <h2 class="grey-text"><i class="mdi-action-visibility" style="font-size:34px"></i></h2>
                                                       <h5 class="brand-color-text" style="font-family: roboto-thin;">Configurar<br>compromisos</h5>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                                {% if has_urbanism %}
+                                                <div class="row"><div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div></div>
+                                                <div class="row">
+                                                    <div class="center col s12 m6 offset-m1">
+                                                        <h3 class="brand-secondary-color-text" style="font-weight: 400">Urbanismo</h3>
+                                                        <h3 class="grey-text" style="font-weight: 200; line-height: 45px;">Administra los temas de interés urbano.</h3>
+                                                    </div>
+                                                    <div class="col card-panel s12 m2 offset-m1 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('admin-urbanism')}}";'>
+                                                      <h2 class="grey-text"><i class="mdi-image-nature-people" style="font-size:34px"></i></h2>
+                                                      <h5 class="brand-color-text" style="font-family: roboto-thin;">Configurar<br>temas</h5>
                                                     </div>
                                                 </div>
                                                 {% endif %}

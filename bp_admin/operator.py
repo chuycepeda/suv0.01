@@ -120,6 +120,7 @@ class AdminConfigurationHandler(BaseHandler):
             params['has_transparency'] = self.app.config.get('has_transparency') if configuration.has_transparency is None else configuration.has_transparency
             params['has_social_media'] = self.app.config.get('has_social_media') if configuration.has_social_media is None else configuration.has_social_media
             params['has_cic'] = self.app.config.get('has_cic') if configuration.has_cic is None else configuration.has_cic
+            params['has_urbanism'] = self.app.config.get('has_urbanism') if configuration.has_urbanism is None else configuration.has_urbanism
             params['captcha_public_key'] = self.app.config.get('captcha_public_key') if configuration.captcha_public_key == '' else configuration.captcha_public_key
             params['captcha_private_key'] = self.app.config.get('captcha_private_key') if configuration.captcha_private_key == '' else configuration.captcha_private_key
             params['twitter_url'] = self.app.config.get('twitter_url') if configuration.twitter_url == '' else configuration.twitter_url
@@ -171,6 +172,7 @@ class AdminConfigurationHandler(BaseHandler):
             params['has_transparency'] = self.app.config.get('has_transparency')
             params['has_social_media'] = self.app.config.get('has_social_media')
             params['has_cic'] = self.app.config.get('has_cic')
+            params['has_urbanism'] = self.app.config.get('has_urbanism')
             params['captcha_public_key'] = self.app.config.get('captcha_public_key')
             params['captcha_private_key'] = self.app.config.get('captcha_private_key')
             params['twitter_url'] = self.app.config.get('twitter_url')
@@ -233,6 +235,7 @@ class AdminConfigurationHandler(BaseHandler):
             configuration.has_reports = True if 'on' in self.request.get('has_reports') else False
             configuration.has_petitions = True if 'on' in self.request.get('has_petitions') else False
             configuration.has_transparency = True if 'on' in self.request.get('has_transparency') else False
+            configuration.has_urbanism = True if 'on' in self.request.get('has_urbanism') else False
 
             configuration.put()
 
@@ -763,6 +766,91 @@ class AdminAreaEditHandler(BaseHandler):
 
         params['nickname'] = g_users.get_current_user().email().lower()
         return self.render_template('transparency/admin_area_edit.html', **params)
+
+"""
+
+    URBANISM HANDLERS
+
+"""
+class AdminUrbanismHandler(BaseHandler):
+    def get(self):
+        params = {}
+        params['nickname'] = g_users.get_current_user().email().lower()
+        params['areas'] = models.Urbanism.query()
+        params['group_color'] = self.app.config.get('brand_secondary_color')
+        return self.render_template('urbanism/admin_areas.html', **params)
+    
+    def post(self):
+        name = self.request.get('name').strip()
+        color = self.request.get('color').upper()[1:]
+        icon_url = self.request.get('subicon')
+        urbanism = models.Urbanism.query(models.Urbanism.name == name).get()
+        if urbanism is not None:
+            self.add_message(messages.nametaken, 'danger')
+        else:
+            urbanism = models.Urbanism()
+            urbanism.name = name
+            urbanism.color = color
+            urbanism.icon_url = icon_url
+            urbanism.put()
+            self.add_message(messages.saving_success, 'success')
+        
+        return self.get()  
+
+class AdminUrbanismEditHandler(BaseHandler):
+    def get_or_404(self, urbanism_id):
+        try:
+            area = models.Urbanism.get_by_id(long(urbanism_id))
+            if area:
+                return area
+        except ValueError:
+            pass
+        self.abort(404)
+
+    def edit(self, urbanism_id):
+        if self.request.POST:
+            area = self.get_or_404(urbanism_id)
+            delete = self.request.get('delete')
+            
+            try:
+
+                if delete == 'confirmed_deletion':
+                    #DELETE AREA CATEGORY
+                    area.key.delete()
+
+                    self.add_message(messages.saving_success, 'success')
+                    return self.redirect_to("admin-urbanism")
+                elif delete == 'category_edition':
+                    #AREA EDITION
+                    name = self.request.get('name').strip()
+                    color = self.request.get('color').upper()[1:]
+                    icon_url = self.request.get('subicon')
+
+                    _area = models.Urbanism.query(models.Urbanism.name == name).get()
+                    if _area is not None and int(_area.key.id()) != int(urbanism_id):
+                        self.add_message(messages.nametaken, 'danger')
+                    else:
+                        area.name = name
+                        area.color = color
+                        area.icon_url = icon_url
+                        area.put()
+                        self.add_message(messages.saving_success, 'success')
+
+                    return self.redirect_to("admin-urbanism")
+                
+            except (AttributeError, KeyError, ValueError), e:
+                logging.error('Error updating area: %s ' % e)
+                self.add_message(messages.saving_error, 'danger')
+                return self.redirect_to("admin-urbanism-edit", urbanism_id=urbanism_id)
+        else:
+            area = self.get_or_404(urbanism_id)
+
+        params = {
+            'area': area
+        }
+
+        params['nickname'] = g_users.get_current_user().email().lower()
+        return self.render_template('urbanism/admin_area_edit.html', **params)
 
 
 """

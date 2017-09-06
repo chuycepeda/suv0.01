@@ -114,6 +114,19 @@
                 </div>
 	    	</div>
 			{% endif %}
+			{% if has_urbanism %}
+			<div class="row"><div class="divider col s12 m10 offset-m1" style="margin-bottom:20px;"></div></div>
+			<div class="row">
+		        <div class="center col s12 m6 offset-m1">
+					<h3 class="brand-secondary-color-text" style="font-weight: 400">Urbanismo</h3>
+		        	<h3 class="grey-text" style="font-weight: 200; line-height: 45px;">Quiero participar en el análisis de mi entorno.</h3>
+				</div>
+				<div class="col card-panel s12 m2 offset-m1 white center create hoverable" style="padding-top: 30px;padding-bottom: 60px;cursor: pointer;" onclick='window.location = "{{uri_for('materialize-urbanism-new')}}";'>
+		          <h2 class="grey-text"><i class="mdi-image-nature-people" style="font-size:34px"></i></h2>
+                  <h5 class="brand-color-text" style="font-family: roboto-thin;">Evaluar entorno</h5>
+                </div>
+	    	</div>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}
