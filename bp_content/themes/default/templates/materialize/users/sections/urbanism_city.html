@@ -1,0 +1,868 @@
+{% extends landing_layout %}
+
+<!-- ADD PAGE HEAD ELEMENTS -->
+{% block title %}<title>{{app_name}} » Urbanismo</title>{% endblock %}
+   
+{% block page_css %}
+  <link href="/{{theme}}/materialize/css/plugins/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet" media="screen,projection">
+  <link rel="stylesheet" href="/{{theme}}/materialize/css/cartodb.css" />
+  <style>
+    .rating:hover{
+      color:#ffc107!important;
+      transform: scale(1.75);
+      -webkit-transform: scale(1.75);
+    }
+
+    .rating{
+      font-size: 30px;
+      transform: scale(1.5);
+      -webkit-transform: scale(1.5);
+    }
+
+    .create{
+      transition-timing-function: ease-in;
+        transition: border 0.3s;
+        -webkit-transition-timing-function: ease-in;
+        -webkit-transition: border 0.3s;
+    }
+
+    .create:hover{
+      border-bottom: 6px solid {{brand_color}};
+    }
+
+    .chip {
+        display: inline-block;
+        height: 32px;
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.6);
+        line-height: 32px;
+        padding: 0 12px;
+        border-radius: 16px;
+        background-color: #e4e4e4;
+    }
+
+    .hoverable:hover{
+          box-shadow: #A9A6A6 0px 8px 23px 6px;
+          transition: all .3s ease-out;
+        }
+
+        .hoverable{
+          transition: all .3s ease-out;
+    }
+  </style>
+{% endblock %}
+
+{% block page_components %}
+{% endblock %}
+
+{% block body_content %}
+    <div id="map">        
+    </div>
+    <div style="width:270px; position:fixed; top:12%; left:3%;">
+        <div>
+          <input id="search_address" type="text" placeholder="Buscar dirección... 🔎" onkeydown="if (event.keyCode == 13) codeAddress('search_address');" style="    background-color: white;border-radius: 4px;line-height: 20px;text-align: center;box-shadow: 0 1px 0 0 white!important;border: 1px solid white!important;padding-left: 12px;padding-right: 12px;width: 244px!important;">
+        </div>
+        <ul class="collapsible collapsible-accordion" data-collapsible="expandable" style="max-height:500px; overflow-y:scroll;">
+          <li>
+            <div class="collapsible-header white-text truncate brand-secondary-color"> <i class="mdi-maps-layers"></i> Capas de información.</div>
+              <div class="collapsible-body white">
+                <p style="padding: 8px;">
+                  <input type="checkbox" class="filled-in layerControl" id="0" checked>
+                  <label for="0">Polígono municipal</label>
+                </p>
+                <div class="divider"></div>
+                <p style="padding: 8px;">
+                  Capas urbanismo:
+                </p>
+                <p style="padding: 8px;">
+                  <input type="checkbox" class="filled-in layerControl" id="1" checked>
+                  <label for="1">Intersecciones</label>
+                </p>               
+                <div class="divider"></div>
+                <p style="padding: 8px;">
+                  Capas contextuales:
+                </p>
+                <p style="padding: 8px;">
+                  <input type="checkbox" class="filled-in layerControl" id="2">
+                  <label for="2">Distritos electorales</label>
+                </p>  
+                <p style="padding: 8px;">
+                  <input type="checkbox" class="filled-in layerControl" id="3">
+                  <label for="3">Secciones electorales</label>
+                </p>
+                <p style="padding: 8px;">
+                  <input type="checkbox" class="filled-in layerControl" id="4">
+                  <label for="4">AGEBs urbanos</label>
+                </p>
+                <div class="divider"></div>
+                <p style="padding: 8px;">
+                  Capas de amenidades:
+                </p>
+                <div id="amenidades"></div>
+
+                <p style="padding: 8px;text-align: right; font-size: 11px;">
+                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_inegi" target="_blank">Ver descriptores INEGI</a>
+                  <br>
+                  <a href="https://mexico.cartodb.com/tables/meta_catalogo_descriptores_ife" target="_blank" style="margin-right: 3px;">Ver descriptores INE</a>
+                </p>
+              </div>
+          </li>
+        </ul>
+    </div> 
+{% endblock %}
+
+{% block right_sidebar %}
+    <!-- Right sidebar -->
+    <a id="chatout-btn-hidden" href="#" data-activates="chat-out" class="grey-text chat-collapse" style="display:none"><i class="large mdi-communication-live-help"></i></a>
+    <aside id="right-sidebar-nav">
+        <ul id="chat-out" class="side-nav rightside-navigation" style="margin-top:65px;max-height:90%;padding:6px;overflow: scroll; font-family: roboto-light!important;">
+            <li class="li-hover">
+                <a href="#" data-activates="chat-out" class="chat-close-collapse right" onclick="$('#right-sidebar-nav').hide()"><i class="mdi-navigation-close"></i></a>
+            </li>
+            <li class="li-hover">
+                <div id="right-sidebar-logo" class="container row" style="margin-top:40px;">
+                </div>
+            </li>
+            <li class="li-hover">
+                <div id="right-sidebar-title" class="container row" style="margin-top:40px;">
+                </div>
+            </li>
+            <li class="li-hover">
+                <div id="right-sidebar-content" class="container row" style="margin-top:40px;text-align: justify;">                                            
+                </div>
+            </li>
+        </ul>
+    </aside>
+{% endblock %}
+
+{% block page_scripts %}
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places,panoramio,weather,visualization&key={{gmaps_apikey}}"></script>
+  <!-- <script src="/{{theme}}/materialize/js/cartodb.js"></script> -->
+  <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    <script src="/{{ theme }}/materialize/js/data.js"></script>
+    <script type="text/javascript">
+      // cartodb
+      var city_user = '{{cartodb_user}}';
+      var city_table_name = '{{cartodb_reports_table}}';
+      var city_pois_table_name = '{{cartodb_pois_table}}';
+      var city_mun_table_name = '{{cartodb_polygon_table}}';
+      var city_polygon_full_name = '{{cartodb_polygon_full_name}}';
+      var city_polygon_cve_ent = '{{cartodb_polygon_cve_ent}}';
+      var city_polygon_cve_mun = '{{cartodb_polygon_cve_mun}}';
+      var city_polygon_name = '{{cartodb_polygon_name}}';
+      var city_sql = new cartodb.SQL({ user: '{{cartodb_user}}' });
+      var mexico_sql = new cartodb.SQL({ user: 'mexico' });
+      var sublayers = [];
+      var _reportDict = {
+                "Administración Pública": {"categories": [
+                  "Equipamiento",
+                  "Estudios, proyectos y gastos indirectos",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"BA6432"},
+                "Agropecuario": {"categories": [
+                  "Agrícola",
+                  "Pecuario"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/marker4.svg",
+                "color":"76C4A1"},
+                "Agua Potable, Alcantarillado y Saneamiento": {"categories": [
+                  "Agua potable",
+                  "Alcantarillado",
+                  "Estudios, proyectos y pago de afectaciones",
+                  "Saneamiento"
+                ],
+                "icon_url":"http://one-smart-city-demo.appspot.com/default/materialize/images/google_icons/plumber.svg",
+                "color":"169FBA"},
+                "Asistencia Social": {"categories": [
+                  "Apoyos",
+                  "Becas",
+                  "Campañas",
+                  "Cursos y talleres",
+                  "Equipamiento",
+                  "Estimulos",
+                  "Infraestructura",
+                  "Premios económicos",
+                  "Prevención",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"AB3EC6"},
+                "Cultura": {"categories": [
+                  "Becas",
+                  "Biblioteca",
+                  "Centro cultural",
+                  "Centro histórico",
+                  "Edificio histórico",
+                  "Festival",
+                  "Fideicomiso",
+                  "Monumento histórico",
+                  "Museo",
+                  "Programa cultural",
+                  "Teatro"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins21.svg",
+                "color":"AB3E3D"},
+                "Deporte": {"categories": [
+                  "Arena",
+                  "Auditorio",
+                  "Canchas",
+                  "Centro acuático",
+                  "Equipamiento",
+                  "Estadio",
+                  "Gimnasio",
+                  "Lienzo charro",
+                  "Pista de atletismo",
+                  "Plaza de toros",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins87.svg",
+                "color":"31B73D"},
+                "Educación": {"categories": [
+                  "Educación",
+                  "Educación básica",
+                  "Educación media",
+                  "Educación superior",
+                  "Especial",
+                  "Otros"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins67.svg",
+                "color":"FBB73D"},
+                "Fomento Económico": {"categories": [
+                  "Apoyos",
+                  "Convenios",
+                  "Empleo",
+                  "Equipamiento",
+                  "Estudios y proyectos",
+                  "Infraestructura",
+                  "Pymes",
+                  "Urbanización industrial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins11.svg",
+                "color":"0C53DF"},
+                "Infraestructura Social": {"categories": [
+                  "Apoyos",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BA53DF"},
+                "Infraestructura Urbana": {"categories": [
+                  "Alumbrado público",
+                  "Asta bandera",
+                  "Avenidas y boulevares",
+                  "Bacheo",
+                  "Banquetas",
+                  "Bardas y muros de contención",
+                  "Calles",
+                  "Camellones",
+                  "Cancha de usos múltiples",
+                  "Demoliciones",
+                  "Edificio público",
+                  "Electrificación",
+                  "Equipamiento urbano",
+                  "Equipo de luz solar",
+                  "Estudios y proyectos",
+                  "Fachadas",
+                  "Foros",
+                  "Libramientos",
+                  "Limpieza y mantenimiento",
+                  "Obras alternas",
+                  "Parque",
+                  "Pavimentación",
+                  "Plaza pública y jardines",
+                  "Puentes",
+                  "Recarpeteo",
+                  "Señalización y nomenclaturas",
+                  "Techumbres",
+                  "Unidad deportiva"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"BABABA"},
+                "Infraestructura Vial": {"categories": [
+                  "Caminos",
+                  "Carreteras",
+                  "Carreteras alimentadoras",
+                  "Estudios, proyectos y afectaciones",
+                  "Pavimentación",
+                  "Puentes",
+                  "Sistema vial"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/building.svg",
+                "color":"DE7B00"},
+                "Medio Ambiente": {"categories": [
+                  "Aire limpio",
+                  "Forestal",
+                  "Iluminación urbana sustentable",
+                  "Medio ambiente",
+                  "Monitoreo ambiental",
+                  "Parque",
+                  "Planta de tratamiento",
+                  "Programa",
+                  "Relleno sanitario",
+                  "Uso de suelo"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins5.svg",
+                "color":"107B00"},
+                "Salud": {"categories": [
+                  "Centro de salud",
+                  "Hospitales",
+                  "Otros",
+                  "Unidad especialidades medicas"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/pins41.svg",
+                "color":"1000D5"},
+                "Seguridad Pública": {"categories": [
+                  "Capacitación",
+                  "Equipamiento",
+                  "Infraestructura",
+                  "Programas",
+                  "Seguridad vecinal"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/location5.svg",
+                "color":"10008A"},
+                "Turismo": {"categories": [
+                  "Centro histórico",
+                  "Infraestructura turística",
+                  "Programas",
+                  "Promotoras",
+                  "Proyectos",
+                  "Pueblos mágicos"
+                ],
+                "icon_url":"http://com.cartodb.users-assets.production.s3.amazonaws.com/pin-maps/favourite1.svg",
+                "color":"F2008A"}
+      };
+      var _layersArray = [
+        {
+          name: 'Abarrotes', /* le hace falta lo que hay de abarrotes en tabla nacional_denue_inegi_46112_46311 */
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46111 WHERE codigo_act ilike '461%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46111{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Tiendas de autoservicio',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46112_46311 WHERE codigo_act ilike '462%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46112_46311{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Farmacias',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46321_46531 WHERE codigo_act ilike '4641%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46321_46531{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Papelerías',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46321_46531 WHERE codigo_act ilike '465311%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46321_46531{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Ferreterías',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46591_46911 WHERE codigo_act ilike '467111%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46591_46911{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Refaccionarias',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_46591_46911 WHERE codigo_act ilike '46821%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_46591_46911{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Bancos',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_52 WHERE codigo_act ilike '5221%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_52{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Casas de cambio',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_52 WHERE codigo_act ilike '5231%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_52{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación básica',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6111%' and codigo_act not ilike '61115%' and codigo_act not ilike '61118%' and codigo_act not ilike '61118%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación media',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '61115%' or codigo_act ilike '61116%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación especial',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '61118%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación superior',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6112%' or codigo_act ilike '6113%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Educación otros',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_61 WHERE codigo_act ilike '6114%' or codigo_act ilike '6116%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_61{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Consultorios médicos',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_62 WHERE codigo_act ilike '621%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_62{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Hospitales',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_62 WHERE codigo_act ilike '622%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_62{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Museos y esparcimiento',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_71 WHERE codigo_act ilike '7121%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_71{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Hoteles',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_72 WHERE codigo_act ilike '7211%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_72{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Administración pública',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_93 WHERE codigo_act ilike '9312%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_93{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Organismos internacionales',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nom_estab, nombre_act FROM nacional_denue_inegi_93 WHERE codigo_act ilike '932%' and cve_ent = " + city_polygon_cve_ent + " and cve_mun = " + city_polygon_cve_mun,
+          cartocss: '#nacional_denue_inegi_93{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+          interactivity: ["nom_estab", "nombre_act"]
+        },
+        {
+          name: 'Contención urbana',
+          sql: "SELECT cartodb_id, the_geom, the_geom_webmercator, nombre, tipo FROM nacional_pcu_v2015",
+          cartocss: '#nacional_pcu_v2015{polygon-opacity: 0.7;line-color: #FFF;line-width: 0.5;line-opacity: 1;}#nacional_pcu_v2015[tipo="U1"]{polygon-fill: #A6CEE3;}#nacional_pcu_v2015[tipo="U2"]{polygon-fill: #1F78B4;}#nacional_pcu_v2015[tipo="U3"]{polygon-fill: #B2DF8A;}',
+          interactivity: ["nombre", "tipo"]
+        }
+      ]
+      
+        
+      /* MAPS RELATED */
+      var panorama, sv = new google.maps.StreetViewService();
+      var mapCenter = [{{lat}},{{lng}}] , map;
+      google.maps.event.addDomListener(window,'load', init);
+          var query;                    
+      
+      function init(){
+        var mapOptions = {
+          center: new google.maps.LatLng(mapCenter[0], mapCenter[1]),
+          zoom: {% if is_mobile %}{{zoom_mobile}}{% else %}{{zoom}}{% endif %},
+          minZoom:5,
+          zoomControl: true,
+          zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.SMALL,  
+            position: google.maps.ControlPosition.LEFT_BOTTOM 
+          },
+          mapTypeControl: false,
+          scrollwheel: false,
+          streetViewControl: true,
+          streetViewControlOptions: {
+            position: google.maps.ControlPosition.LEFT_BOTTOM 
+          },
+          panControl:false,
+          backgroundColor: 'rgb(249, 249, 249)',
+          rotateControl:true,
+          overviewMapControl:true
+        };
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        
+        google.maps.event.addDomListener(window, 'resize', function() {
+                  map.setCenter({lat: mapCenter[0], lng: mapCenter[1]});
+              });
+
+              var autocomplete_from = new google.maps.places.Autocomplete(document.getElementById('search_address'))
+        autocomplete_from.bindTo('bounds', map);
+        google.maps.event.addListener(autocomplete_from, 'place_changed', function() {
+            var place = autocomplete_from.getPlace();
+            if (place.geometry.viewport) {
+              map.fitBounds(place.geometry.viewport);
+            }else{
+              map.setCenter(place.geometry.location);
+              map.setZoom(17);
+            }
+        }); 
+
+        var centerControlDiv = document.createElement('div');
+        var centerControl = new CenterControl(centerControlDiv, map);
+        centerControlDiv.index = 1;
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(centerControlDiv);
+
+
+        // CITY LAYERS
+        var city_query= "SELECT " + city_pois_table_name + ".* FROM " + city_pois_table_name + "," + city_mun_table_name + " WHERE ST_Intersects(" + city_pois_table_name + ".the_geom, " + city_mun_table_name + ".the_geom) AND " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')";    
+              var city_interactivity = ["cartodb_id","the_geom","the_geom_webmercator","tipo_de_via","semaforos_ciclista_total","semaforos_ciclista_existente","semaforos_ciclista_recomendado","semaforos_peatonal_total","semaforos_peatonal_existente","semaforos_peatonal_recomendado","semaforos_vehicular_total","semaforos_vehicular_existente","semaforos_vehicular_recomendado","obstactulos_moviles_descripcion","obstactulos_moviles_cantidad","obstactulos_fijos_descripcion","obstactulos_fijos_cantidad","numero_de_carriles_por_cruzar_calle_2","numero_de_carriles_por_cruzar_calle_1","islas_de_descanso_total","islas_de_descanso_existentes","islas_de_descanso_recomendadas","luminarias_total","luminarias_exitentes","luminarias_recomendadas","senalizacion_wayfinding_total","senalizacion_wayfinding_existente","senalizacion_wayfinding_recomendada","senalizacion_velocidad_maxima_permitida_vertical_total","senalizacion_velocidad_maxima_permitida_vertical_existente","senalizacion_velocidad_maxima_permitida_vertical_recomendada","senalizacion_velocidad_maxima_permitida_horizontal_total"];
+        layerSource = {
+                  user_name: city_user,
+                  type: 'cartodb',
+                  sublayers: [{
+                      sql: "SELECT " + city_mun_table_name + ".* FROM " + city_mun_table_name + " WHERE " + city_mun_table_name + ".name IN ('" + city_polygon_name + "')",
+                      cartocss: "#" + city_mun_table_name + "{line-color: {{brand_secondary_color}};line-width: 3;line-opacity: 1;}"
+                  },{
+                      sql: city_query,
+                      cartocss: '#{{cartodb_pois_table}}{marker-fill-opacity: 0.9;marker-line-color: #FFF;marker-line-width: 1;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 10;marker-fill: {{brand_color}};marker-allow-overlap: true;}',
+                      interactivity: city_interactivity
+                  }]
+        };
+        cartodb.createLayer(map,layerSource)
+        .on('done', function(layer) {
+          map.overlayMapTypes.setAt(0, layer);
+          for (var i = 0; i < layer.getSubLayerCount(); i++) {
+             sublayers[i] = layer.getSubLayer(i);
+             console.log("Congrats, you added sublayer #" + i + "!");
+          }
+          // sublayers[1].infowindow.set('template', $('#infowindow_'+city_pois_table_name).html());
+          // cdb.vis.Vis.addInfowindow(map, sublayers[1], city_interactivity, {
+          //     infowindowTemplate: $('#infowindow_'+city_pois_table_name).html()
+          // });
+          cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(1), city_interactivity);
+          sublayers[1].setInteraction(true);                                 
+          // sublayers[1].on('featureClick', function(e, latlng, pos, data) {
+          // }); 
+        }); 
+
+        // MEXICO LAYERS
+        layerSource = {
+            user_name: 'mexico',
+            type: 'cartodb',
+            sublayers: [{
+                sql: "SELECT nacional_ine_distritos_2012.* FROM nacional_ine_distritos_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_distritos_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                cartocss: "#nacional_ine_distritos_2012{polygon-fill: #0A79C9;polygon-opacity: 0.05;line-color: #0A79C9;line-width: 2;line-opacity: 1;}"
+            },{
+                sql: "SELECT nacional_ine_secciones_2012.* FROM nacional_ine_secciones_2012, nacional_municipios WHERE ST_Intersects(nacional_ine_secciones_2012.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                cartocss: "#nacional_ine_secciones_2012{polygon-fill: #FF2C69;polygon-opacity: 0.05;line-color: #FF2C69;line-width: 1;line-opacity: 1;}"
+            },{
+                sql: "SELECT nacional_ageb.* FROM nacional_ageb, nacional_municipios WHERE ST_Intersects(nacional_ageb.the_geom, nacional_municipios.the_geom) AND (nacional_municipios.nom_mun IN ('" + city_polygon_full_name + "') AND nacional_municipios.cve_ent IN (" + city_polygon_cve_ent + "))",
+                cartocss: "#nacional_ageb{polygon-fill: #56107E;polygon-opacity: 0.05;line-color: #56107E;line-width: 2;line-opacity: 1;}"
+            }]
+        };
+        var html = '';
+        for (var i = 0, j = _layersArray.length, k=5; i<j; i++){
+          var idx = i+k;
+          html += '<p style="padding: 8px;"><input type="checkbox" class="filled-in layerControl" id="'+idx+'"><label for="'+idx+'">'+_layersArray[i].name+'</label></p>';
+
+          var elem = {
+            sql: _layersArray[i].sql,
+            cartocss: _layersArray[i].cartocss
+          }
+          layerSource.sublayers.push(elem);
+        }
+        document.getElementById('amenidades').innerHTML = html;
+        cartodb.createLayer(map,layerSource)
+        .on('done', function(layer) {
+            map.overlayMapTypes.setAt(1, layer);
+            for (var i = 2, j =0; j < layer.getSubLayerCount(); i++, j++) {
+               sublayers[i] = layer.getSubLayer(j);
+               cartodb.vis.Vis.addInfowindow(map, layer.getSubLayer(j), get_interactivity(i));
+               sublayers[i].hide(); //leave all turned off.
+               console.log("Congrats, you added sublayer #" + i + "!");
+               if (i <= 4)
+                 sublayers[i].on('featureClick', function(e, latlng, pos, data, layerIndex) {
+                    console.log("populating sidebar for layerIndex: " + layerIndex);
+                    populateRightSidebar('feature', data, latlng, layerIndex);
+                 });
+            }
+        }); 
+
+
+        $('.layerControl').change(function() {
+            if (this.checked) sublayers[parseInt(this.id)].show();
+            else sublayers[parseInt(this.id)].hide();
+            console.log('layer called: ' + this.id);
+        });          
+      }
+
+      function get_interactivity(layer_id){
+          switch(layer_id){
+              case 2:
+                  return ["clavegeo","entidad","distrito"];
+              case 3:
+                  return ["clavegeo","entidad","municipio","distrito","seccion"];
+              case 4:
+                  return ["cve_ageb","cve_ent","cve_mun"];              
+              default:
+                  return _layersArray[layer_id-5].interactivity;
+          }
+      }
+
+      var ageb_response, ageb_content;
+      function populateRightSidebar(handle, data, latlng, layerIndex){
+          switch(handle){
+              case 'info':
+                  $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-communication-live-help"></i></p>');
+                  $('#right-sidebar-title').html('<h5 class="center grey-text">¡Bienvenido!</h5>');
+                  $('#right-sidebar-content').html('<p class="grey-text">Para comenzar a usar tu plataforma es muy sencillo.</p><p class="grey-text"><span class="brand-color-text"><i class="mdi-navigation-menu" style="font-size:20px;" ></i></span> este es tu botón de menú principal. Ahí encontrarás el botón para activar las capas de información - <span class="brand-color-text"><i class="mdi-maps-layers" style="font-size:20px;" ></i>Capas de información</span> - y el botón para activar los filtros de información - <span class="brand-color-text"><i class="mdi-content-filter-list" style="font-size:20px;" ></i>Controles de filtrado</span>.</p><br><p class="grey-text">Además, en la parte superior cuentas con botones que te permitirán cambiar la vista de despliegue para que puedas apreciarlo de manera geoespacial <span class="brand-color-text">Mapa</span>, o bien, a manera de tarjetas <span class="brand-color-text">Listas</span>. En ambos casos, hacer clic sobre la información que deseas te permitirá ver reportes gráficos sobre los estadísticos asociados, así como también editar los campos de información que desees.</p>');
+                  $('#right-sidebar-nav').show();
+                  return false;
+              case 'feature':
+                  map.setCenter(new google.maps.LatLng(latlng[0], latlng[1]));
+                  switch(layerIndex){
+                      case 0:
+                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-crop-din"></i></p>');
+                          $('#right-sidebar-title').html('<h5 class="center grey-text">Distrito: '+ data.distrito + '</h5>');
+                          mexico_sql.execute("SELECT * FROM nacional_ine_distritos_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                              console.log('nacional_ine_distritos_2012', response);
+                              var content = '';
+                              /* 
+
+                                      AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                      Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                              */
+                              $('#right-sidebar-content').html(content);
+                          });
+                          break;
+                      case 1:
+                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-flip"></i></p>');
+                          $('#right-sidebar-title').html('<h5 class="center grey-text">Seccion: '+ data.seccion + '</h5>');
+
+                          mexico_sql.execute("SELECT * FROM nacional_ine_secciones_2012 where clavegeo = '" + data.clavegeo + "'").done(function(response) {
+                              console.log('nacional_ine_secciones_2012', response);
+                              response = response.rows[0];
+                              var content ='<p class=" grey-text">Esta sección pertenece al Distrito '+response.distrito+', en el Estado de '+estado[response.entidad-1]+'.</p>';
+                              /* 
+
+                                      AJAX ASYNC GET FROM DIFFERENT TABLES 
+                                      Traer resultados de cada año y columna de cada partido, para cada tipo de elección.
+
+                              */
+                              content+='<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+                              content+='<p class=" grey-text">El grado de escolaridad promedio era de '+response.graproes+' años.</p>';
+                              content+='<p class=" grey-text">El '+response.hogjef_f+'% de los hogares los lideraba una mujer.</p>';
+                              content+='<p class=" grey-text">Había '+response.pobtot+' habitantes ('+response.pobmas+' hombres y '+response.pobfem+' mujeres) en '+response.tvivhab+' viviendas de las cuales '+response.vph_c_serv+' cuentan con servicios básicos.</p>';
+                              var lim = response.pclim_aud + response.pclim_leng + response.pclim_men + response.pclim_men2 + response.pclim_mot + response.pclim_vis + response.pcon_lim;
+                              content+='<p class=" grey-text">Existían '+lim+' personas discapacitadas y aproximadamente '+response.psinder+' personas no contaban con servicios de salud.</p>';
+                              var peac = Math.round(response.pocupada/response.pea*100) || 0;
+                              content+='<p class=" grey-text">Con una tasa de empleo del '+peac+'%.</p>';
+                              content+='<p class=" grey-text">En temas de bienes por vivienda, '+response.vph_autom+' tienen automóvil, '+response.vph_c_elec+' acceso a red eléctrica, '+response.vph_cel+' tienen teléfono celular, '+response.vph_pc+' cuentan con una computadora, '+response.vph_inter+' tienen acceso a internet, '+response.vph_pisodt+' cuentan con piso, '+response.vph_tv+' tienen televisión, '+response.vph_radio+' tienen radio, '+response.vph_refri+' tienen refrigerador y '+response.vph_lavad+' tienen lavadora.</p>';
+
+                              $('#right-sidebar-content').html(content);
+                          });
+                          break;
+                      case 2:
+                          $('#right-sidebar-logo').html('<p class="center grey-text"><i class="large mdi-image-filter-center-focus"></i></p>');
+                          $('#right-sidebar-title').html('<h5 class="center grey-text">AGEB: '+ data.cve_ageb + '</h5>');
+                          mexico_sql.execute("SELECT * FROM nacional_ageb_data where cve_ent = " + data.cve_ent + " and cve_mun = " + data.cve_mun + " and cve_ageb = '" + data.cve_ageb + "'").done(function(response) {
+                              console.log('nacional_ageb_data', response);
+                              ageb_response = response.rows[0];
+                              ageb_content = '<h6 class=" grey-text" style="font-weight:bolder;">Demografía, INEGI 2010</h6>';
+
+                              agebArr.forEach(getAGEB);
+
+                              $('#right-sidebar-content').html(ageb_content);
+
+                          });
+                          break;
+                  }
+                  if (!$('#chatout-btn-hidden').is(":visible")){
+                    $('#right-sidebar-nav').show();
+                    $('#chatout-btn-hidden').click();
+                  }
+                  return false;
+          }
+      }
+
+      function getAGEB(item,index){
+        ageb_content += '<p class="grey-text">' + inegiDict[item] + ': <span style="font-family:roboto-black;">'+ ageb_response[item] +'</span></p>'
+      }
+
+      function codeAddress(input) {
+            var address, obj;                     
+
+              address = document.getElementById(input).value;
+              obj = { 'address': address };
+            geocoder.geocode( obj, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    
+                    if (typeof(input) === 'string') {
+                        map.setCenter(results[0].geometry.location);
+                        switch (results[0].geometry.location_type){
+                            case 'ROOFTOP': map.setZoom(17); break;
+                            case 'RANGE_INTERPOLATED': map.setZoom(16); break;
+                            case 'GEOMETRIC_CENTER': map.setZoom(15); break;
+                            case 'APPROXIMATE': map.setZoom(13); break;
+                        }
+                    }else{
+                        if (results[1]) {
+                            document.getElementById(input).value = results[1].formatted_address;
+                        } else {
+                            console.log('No results found');
+                        }
+                    }
+                
+                } else {
+                    console.log('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+      }
+
+      function CenterControl(controlDiv, map) {
+        // Set CSS for the control border.
+        var controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = '#fff';
+        controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginBottom = '2px';
+        controlUI.style.marginLeft = '10px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'Click to locate you.';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior.
+        var controlText = document.createElement('div');
+        controlText.style.color = 'rgb(25,25,25)';
+        controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+        controlText.style.fontSize = '16px';
+        controlText.style.lineHeight = '15px';
+        controlText.innerHTML = '<i class="mdi-maps-my-location grey-text text-darken-1" style="font-size:20px; padding:3px;"></i>';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listeners: simply set the map to Chicago.
+        controlUI.addEventListener('click', function() {
+          $('#main-preloader').show();
+          if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mapGoPosition);
+            } else {
+                  Materialize.toast('<span class="toast-warning">Oops! This navigator has no support for locating you.</span>',4500);
+            $('#main-preloader').hide();
+            }
+        });
+      }
+
+      function mapGoPosition(position) {
+        map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+        map.setZoom(16);
+        $('#main-preloader').hide();
+      }
+
+      function getUrlVars(){
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+            if (vars[hash[0]]) if (vars[hash[0]].search(/#/) != -1) vars[hash[0]]=vars[hash[0]].substr(0,vars[hash[0]].search(/#/));
+        }
+        return vars;
+      }
+        
+      function addCommas(val) {
+        while (/(\d+)(\d{3})/.test(val.toString())) {
+          var val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+        }
+        return val;
+      }     
+
+      function createTileStyle(tStyle, table) {
+          var mOverlap;
+          var close;
+          var tileStyle = "#" + table + "{";
+          switch (tStyle) {
+              case 'normal':
+                  mOverlap = true;
+                  closeStyle = "}";
+                  break;
+              case 'cluster':
+                  mOverlap = false;
+                  closeStyle = "}";
+                  break;
+              case 'heat':
+                  return "#" + table + "{marker-fill:{{brand_secondary_color}};marker-width:10;marker-line-color:#FFF;marker-line-width:1;marker-line-opacity:1;marker-fill-opacity:0.9;marker-comp-op:multiply;marker-type:ellipse;marker-placement:point;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}";
+              case 'intensity':
+                  return "#" + table + "{first/marker-fill:#005761;first/marker-opacity:0.01;first/marker-width:80;first/marker-line-width:0;first/marker-placement:point;first/marker-allow-overlap:true;first/marker-comp-op:lighten;second/marker-fill:#005761;second/marker-opacity:0.02;second/marker-width:50;second/marker-line-width:0;second/marker-placement:point;second/marker-allow-overlap:true;second/marker-comp-op:lighten;third/marker-fill:#005761;third/marker-opacity:0.15;third/marker-width:20;third/marker-line-width:0;third/marker-placement:point;third/marker-allow-overlap:true;third/marker-comp-op:lighten;}";                         
+              case 'bubble':
+                  mOverlap = false;
+                  closeStyle = "}#" + table + "{marker-fill:#FF5C00;marker-line-color:#FFF;marker-line-width:2;marker-line-opacity:1;marker-opacity:0.9;marker-placement:point;marker-type:ellipse;marker-allow-overlap:true;marker-clip:false;marker-multi-policy:largest;}"
+                  break;
+              default:
+                  mOverlap = true;
+                  closeStyle = "}";
+                  break;
+          }
+          
+          tileStyle += "marker-file: url(http://com.cartodb.users-assets.production.s3.amazonaws.com/maki-icons/marker-18.svg);marker-fill-opacity: 1.0;marker-line-color: {{brand_secondary_color}};marker-line-width: 2;marker-line-opacity: 1;marker-placement: point;marker-type: ellipse;marker-width: 30;marker-fill: {{brand_tertiary_color}};marker-allow-overlap:" + mOverlap +";";
+      
+          for (var x in _reportDict){
+              tileStyle += '[sector="'+x+'"] {marker-file: url('+ _reportDict[x].icon_url +');marker-fill: #'+_reportDict[x].color+';marker-width: 30;}';    
+                
+          }
+          
+          tileStyle += closeStyle;
+          
+          if (tStyle == "bubble") {
+              for (var j = upperVotes.length - 1; j >= 0; j--) {
+                  tileStyle += "#" + table + "[votes<=" + upperVotes[j] + "]{marker-width:" + widthMarkers[j] + ";marker-line-color:yellow;marker-line-width:10;}";
+              }
+          }
+          return tileStyle;
+      } 
+  </script>
+  <script type="infowindow/html" id="infowindow_{{cartodb_pois_table}}">
+            <div class="cartodb-popup header blue v2">
+              <a href="#close" class="cartodb-popup-close-button close">x</a>
+              <div class="cartodb-popup-header" style="min-height: 75px!important; background: {{brand_secondary_color}};">                
+              {% raw %}    
+              <h4 style="color:white">Categoría</h4>
+                  <h3 style="color:white">{{category}}</h3>
+              </div>
+              <div class="cartodb-popup-content-wrapper" style="background: white;">
+                <div class="cartodb-popup-content">
+                  <img src="{{image_url}}" alt="" class="responsive-img"/>
+                  <h4>Sector</h4>
+                  <p>{{sector}}</p>
+                  <h4>{{second_level_caps_singular}}</h4>
+                  <p>{{agency}}</p>
+                  <h4>Monto</h4>
+                  <p>${{amount}}</p>
+                  <h4>Tipo</h4>
+                  <p>{{kind}}</p>
+                  <h4>Dirección</h4>
+                  <p>{{address_from}}</p>
+                  <h4>Descripción</h4>
+                  <p>{{description}}</p>
+                  <h4>Fuente de financiamiento</h4>
+                  <p>{{fund_source}}</p>
+                  <h4>Clave de identificación</h4>
+                  <p>{{identifier}}</p>
+                  <h4>Líder o Auditor</h4>
+                  <p>{{leader}}</p>
+                  <h4>Localidad</h4>
+                  <p>{{locality}}</p>
+                  <h4>Nombre</h4>
+                  <p>{{name}}</p>
+                  <br>
+                </div>
+              </div>
+            {% endraw %}  
+              <div class="cartodb-popup-tip-container">
+              </div>
+            </div>
+            </div>
+  </script>
+{% endblock %}

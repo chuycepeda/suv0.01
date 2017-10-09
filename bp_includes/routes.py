@@ -72,9 +72,10 @@ _routes = [
 
     # Urbanism
     RedirectRoute('/urbanism/new/', handlers.MaterializeUrbanismNewHandler, name='materialize-urbanism-new', strict_slash=True),
+    RedirectRoute('/urbanism/new/intersection/', handlers.MaterializeUrbanismNewIntersectionHandler, name='materialize-urbanism-new-intersection', strict_slash=True),
     RedirectRoute('/urbanism/map/', handlers.MaterializeUrbanismMapHandler, name='materialize-urbanism-map', strict_slash=True),
     RedirectRoute('/urbanism/dashboard/', handlers.MaterializeUrbanismDashboardHandler, name='materialize-urbanism-dashboard', strict_slash=True),
-    RedirectRoute('/user/urbanism/', handlers.MaterializeUrbanismRequestHandler, name='materialize-urbanism-notifications', strict_slash=True),
+    RedirectRoute('/user/urbanism/', handlers.MaterializeUserUrbanismHandler, name='materialize-urbanism-notifications', strict_slash=True),
     RedirectRoute('/user/urbanism/<notification_id>/', handlers.MaterializeUrbanismNotificationHandler, name='materialize-transparency-initiative', strict_slash=True, handler_method='edit'),
 
 

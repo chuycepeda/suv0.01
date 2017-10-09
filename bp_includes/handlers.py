@@ -5186,11 +5186,25 @@ class MaterializeTransparencyBudgetNewHandler(BaseHandler):
 
 class MaterializeUrbanismNewHandler(BaseHandler):
     """
+        Handler for materialized terms of use
+    """
+    @user_required
+    def get(self):
+        """ returns simple html for a get request """
+        if self.user_id:
+            params, user_info = disclaim(self)
+        else:
+            params = {} 
+        params['captchahtml'] = captchaBase(self)
+        return self.render_template('materialize/users/sections/urbanism_new.html', **params)
+
+class MaterializeUrbanismNewIntersectionHandler(BaseHandler):
+    """
     Handler for materialized urbanism
     """  
     @user_required
     def get(self):
-        """ Returns a simple HTML for materialize urbanism"""
+        """ Returns a simple HTML form for materialize home """
         if not self.has_urbanism:
             self.abort(403)
 
@@ -5204,22 +5218,87 @@ class MaterializeUrbanismNewHandler(BaseHandler):
         params['zoom'] = self.configuration['map_zoom']
         params['zoom_mobile'] = self.configuration['map_zoom_mobile']
         params['lat'] = self.configuration['map_center_lat']
-        params['lng'] = self.configuration['map_center_lng']  
+        params['lng'] = self.configuration['map_center_lng']
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['has_cic'] = self.app.config.get('has_cic')
-        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
-        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
         params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
-        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
-        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
-        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
-        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
+        import bp_includes.lib.i18n as i18n
+        params['coordinates']= i18n.get_city_lat_long(self.request)
+
+        return self.render_template('materialize/users/sections/urbanism_new_intersection.html', **params)
         
-        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+
+    @user_required
+    def post(self):
+        """ Get fields from POST dict """
+        
+        if not self.has_reports:
+            self.abort(403)
+
+        address_from = self.request.get('address_from')
+        address_from_coord = self.request.get('address_from_coord')
+        catGroup = self.request.get('catGroup')
+        subCat = self.request.get('subCat')
+        description = self.request.get('description')
+        when = self.request.get('when')
+        
+        try:
+            user_info = self.user_model.get_by_id(long(self.user_id))   
+
+            user_report = models.Report()
+            user_report.user_id = int(self.user_id) if int(self.user_id) is not None else -1
+            user_report.address_from_coord = ndb.GeoPt(address_from_coord)
+            user_report.address_from = address_from
+            user_report.when = date(int(when[:4]), int(when[5:7]), int(when[8:]))
+            user_report.title = u'%s #%s' % (self.brand['app_name'],subCat)
+            user_report.description = description
+            user_report.group_category = catGroup
+            user_report.sub_category  = subCat
+            user_report.contact_info = u'%s, %s, %s, %s, %s' % (user_info.name, user_info.last_name, user_info.address.address_from, user_info.phone, user_info.email)
+            if user_info.credibility <= 0:
+                user_report.status = 'spam'
+            
+            user_report.put()
+            
+
+            if hasattr(self.request.POST['file'], 'filename'):
+                #create attachment
+                from google.appengine.api import urlfetch
+                from poster.encode import multipart_encode, MultipartParam
+                
+                urlfetch.set_default_fetch_deadline(45)
+
+                payload = {}
+                upload_url = blobstore.create_upload_url('/report/image/upload/%s' %(user_report.key.id()))
+                file_data = self.request.POST['file']
+                payload['file'] = MultipartParam('file', filename=file_data.filename,
+                                                         filetype=file_data.type,
+                                                         fileobj=file_data.file)
+                data,headers= multipart_encode(payload)
+                t = urlfetch.fetch(url=upload_url, payload="".join(data), method=urlfetch.POST, headers=headers)
+                
+                logging.info('t.content: %s' % t.content)
+                
+                if t.content == 'success':
+                    message = _(messages.report_success)
+                    self.add_message(message, 'success')
+                    return self.redirect_to('materialize-report-success')
+                else:
+                    message = _(messages.attach_error)
+                    self.add_message(message, 'danger')            
+                    return self.get()                    
+            else:
+                message = _(messages.report_success)
+                self.add_message(message, 'success')
+                return self.redirect_to('materialize-report-success')
+
+        except Exception as e:
+            logging.info('error in post: %s' % e)
+            message = _(messages.saving_error)
+            self.add_message(message, 'danger')
+            return self.get()
 
 class MaterializeUrbanismMapHandler(BaseHandler):
     """
@@ -5244,7 +5323,7 @@ class MaterializeUrbanismMapHandler(BaseHandler):
         params['lng'] = self.configuration['map_center_lng']  
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
+        params['cartodb_pois_table'] = 'urbanismo_intersecciones' #self.app.config.get('cartodb_pois_table')
         params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
         params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
         params['has_cic'] = self.app.config.get('has_cic')
@@ -5256,7 +5335,7 @@ class MaterializeUrbanismMapHandler(BaseHandler):
         params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         
-        return self.render_template('materialize/users/sections/transparency_city.html', **params)
+        return self.render_template('materialize/users/sections/urbanism_city.html', **params)
 
 class MaterializeUrbanismDashboardHandler(BaseHandler):
     """
@@ -5295,7 +5374,7 @@ class MaterializeUrbanismDashboardHandler(BaseHandler):
         
         return self.render_template('materialize/users/sections/transparency_city.html', **params)
 
-class MaterializeUrbanismRequestHandler(BaseHandler):
+class MaterializeUserUrbanismHandler(BaseHandler):
     """
     Handler for materialized urbanism
     """  
