@@ -5186,20 +5186,6 @@ class MaterializeTransparencyBudgetNewHandler(BaseHandler):
 
 class MaterializeUrbanismNewHandler(BaseHandler):
     """
-        Handler for materialized terms of use
-    """
-    @user_required
-    def get(self):
-        """ returns simple html for a get request """
-        if self.user_id:
-            params, user_info = disclaim(self)
-        else:
-            params = {} 
-        params['captchahtml'] = captchaBase(self)
-        return self.render_template('materialize/users/sections/urbanism_new.html', **params)
-
-class MaterializeUrbanismNewIntersectionHandler(BaseHandler):
-    """
     Handler for materialized urbanism
     """  
     @user_required
@@ -5227,7 +5213,7 @@ class MaterializeUrbanismNewIntersectionHandler(BaseHandler):
         import bp_includes.lib.i18n as i18n
         params['coordinates']= i18n.get_city_lat_long(self.request)
 
-        return self.render_template('materialize/users/sections/urbanism_new_intersection.html', **params)
+        return self.render_template('materialize/users/sections/urbanism_new.html', **params)
         
 
     @user_required
@@ -5335,9 +5321,9 @@ class MaterializeUrbanismMapHandler(BaseHandler):
         params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         
-        return self.render_template('materialize/users/sections/urbanism_city.html', **params)
+        return self.render_template('materialize/users/sections/urbanism_map.html', **params)
 
-class MaterializeUrbanismDashboardHandler(BaseHandler):
+class MaterializeUrbanismNotificationsHandler(BaseHandler):
     """
     Handler for materialized urbanism
     """  
@@ -5372,82 +5358,7 @@ class MaterializeUrbanismDashboardHandler(BaseHandler):
         params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
         params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
         
-        return self.render_template('materialize/users/sections/transparency_city.html', **params)
-
-class MaterializeUserUrbanismHandler(BaseHandler):
-    """
-    Handler for materialized urbanism
-    """  
-    @user_required
-    def get(self):
-        """ Returns a simple HTML for materialize urbanism"""
-        if not self.has_urbanism:
-            self.abort(403)
-
-        ####-------------------- P R E P A R A T I O N S --------------------####
-        if self.user:
-            params, user_info = disclaim(self)
-        else:
-            params = {}
-        ####------------------------------------------------------------------####
-        
-        params['zoom'] = self.configuration['map_zoom']
-        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
-        params['lat'] = self.configuration['map_center_lat']
-        params['lng'] = self.configuration['map_center_lng']  
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['has_cic'] = self.app.config.get('has_cic')
-        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
-        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
-        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
-        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
-        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
-        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
-        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
-        
-        return self.render_template('materialize/users/sections/transparency_city.html', **params)
-
-class MaterializeUrbanismNotificationHandler(BaseHandler):
-    """
-    Handler for materialized urbanism
-    """  
-    @user_required
-    def get(self):
-        """ Returns a simple HTML for materialize urbanism"""
-        if not self.has_urbanism:
-            self.abort(403)
-
-        ####-------------------- P R E P A R A T I O N S --------------------####
-        if self.user:
-            params, user_info = disclaim(self)
-        else:
-            params = {}
-        ####------------------------------------------------------------------####
-        
-        params['zoom'] = self.configuration['map_zoom']
-        params['zoom_mobile'] = self.configuration['map_zoom_mobile']
-        params['lat'] = self.configuration['map_center_lat']
-        params['lng'] = self.configuration['map_center_lng']  
-        params['cartodb_user'] = self.app.config.get('cartodb_user')
-        params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
-        params['cartodb_pois_table'] = self.app.config.get('cartodb_pois_table')
-        params['cartodb_category_dict_table'] = self.app.config.get('cartodb_category_dict_table')
-        params['cartodb_polygon_table'] = self.app.config.get('cartodb_polygon_table')
-        params['has_cic'] = self.app.config.get('has_cic')
-        params['cartodb_cic_user'] = self.app.config.get('cartodb_cic_user')
-        params['cartodb_cic_reports_table'] = self.app.config.get('cartodb_cic_reports_table')
-        params['cartodb_polygon_name'] = self.configuration['cartodb_polygon_name']
-        params['cartodb_polygon_full_name'] = self.configuration['cartodb_polygon_full_name']
-        params['cartodb_polygon_cve_ent'] = self.configuration['cartodb_polygon_cve_ent']
-        params['cartodb_polygon_cve_mun'] = self.configuration['cartodb_polygon_cve_mun']
-        params['cartodb_markers_url'] = self.uri_for("landing", _full=True)+"default/materialize/images/markers/"
-        
-        return self.render_template('materialize/users/sections/transparency_city.html', **params)
-
+        return self.render_template('materialize/users/sections/urbanism_notifications.html', **params)
 
 
 # ------------------------------------------------------------------------------------------- #
