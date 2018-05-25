@@ -2601,6 +2601,7 @@ class MaterializeOrganizationAILanguageHandler(BaseHandler):
         params, user_info = disclaim(self)
         params['cartodb_user'] = self.app.config.get('cartodb_user')
         params['cartodb_reports_table'] = self.app.config.get('cartodb_reports_table')
+        params['indicoio_apikey'] = self.app.config.get('indicoio_apikey')
         return self.render_template('materialize/users/operators/ai_language.html', **params)
 
 class MaterializeOrganizationAIVisionHandler(BaseHandler):
